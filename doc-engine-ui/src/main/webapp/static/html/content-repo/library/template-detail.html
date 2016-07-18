@@ -1,0 +1,60 @@
+<script type="text/ng-template" id="template-detail.html">
+  <form>
+    <div class="modal-header">
+      <h3 class="modal-title">
+        Document Information 
+        <span class="pull-right">Name: {{ selectedDoc.name }}</span>
+      </h3>
+    </div>
+    
+    <div class="modal-body">
+
+      <div class="well row">
+
+        <h4 class="text-center modal-view-header">Document Details</h4>
+
+        <div class="col-md-6">
+          <label for="name">Name:</label><br/>
+          <input id="name" class="form-control" ng-model="selectedDoc.name" readonly></input> 
+        </div>
+
+        <div class="col-md-6">
+          <label for="contentCd">Content Code:</label><br/>
+          <input id="contentCd" class="form-control" ng-model="selectedDoc.contentCd" readonly></input>
+        </div>
+
+        <div class="col-md-12">
+          <label for="description">Description:</label><br/>
+          <textarea id="description" class="form-control" ng-model="selectedDoc.description" readonly></textarea>
+        </div>
+
+      </div>      
+
+	  <div class="well row">
+
+		<h4 class="text-center modal-view-header">Template Body (HTML)</h4><br/>
+
+		<div class="col-md-12">
+          <pre><textarea readonly class="form-control" ng-model="selectedDoc.body"></textarea></pre>
+		</div>
+
+	  </div>
+
+	  <div class="well row">
+
+		<h4 class="text-center modal-view-header">Template Style (CSS)</h4><br/>
+
+		<div class="col-md-12">
+		  <pre><textarea readonly class="form-control" ng-model="selectedDoc.css"></textarea></pre>
+		</div>
+
+      </div>
+
+    </div>
+        
+    <div class="modal-footer">
+      <button class="btn-lg btn-danger pull-left" ng-click="edit()">Edit Template</button>
+      <button class="btn-lg btn-success" ng-click="close()">Close</button>
+    </div>
+  </form>
+</script>

@@ -1,0 +1,7 @@
+<div ng-controller="CreateNewDocumentCtrl">
+ 
+  <div ng-show="!isDocumentReady()" ng-include="'html/doc-central/create-a-doc/basic-info.html'"></div>
+  
+  <div ng-show="isDocumentReady()" ng-include="'html/doc-central/editor/edit-document.html'"></div>
+  
+</div>

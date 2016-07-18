@@ -1,0 +1,52 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>doc-engine-ui</artifactId>
+	<name>Document Engine User Interface</name>
+	<packaging>war</packaging>
+	<parent>
+		<groupId>com.itgfirm.docengine</groupId>
+		<artifactId>doc-engine-parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/webapp</directory>
+			</resource>
+		</resources>
+	    <plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>
+						com.itgfirm.docengine.DocEngine
+					</mainClass>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+	    </plugins>
+	</build>
+	<dependencies>
+		<!-- MUST BE IN YOUR LOCAL REPO -->
+		<dependency>
+			<groupId>com.itgfirm.docengine</groupId>
+			<artifactId>doc-engine-advanced-web</artifactId>
+		</dependency>	
+		<dependency>
+			<groupId>com.itgfirm.docengine</groupId>
+			<artifactId>doc-engine-ix</artifactId>
+		</dependency>	
+		<dependency>
+			<groupId>com.itgfirm.docengine</groupId>
+			<artifactId>doc-engine-security</artifactId>
+		</dependency>	
+	</dependencies>
+</project>

@@ -1,0 +1,111 @@
+<script type="text/ng-template" id="token-edit.html">
+  <form editable-form name="itemEditForm" onaftersave="save()">
+    <div class="modal-header">
+      <h3 class="modal-title">
+        Token Definition - Edit Token 
+        <span class="pull-right">Name: {{ tokenToEdit.tokenName }}</span>
+      </h3>
+    </div>
+  
+    <div class="modal-body">
+    
+  	  <div class="well row">
+
+		<div class="col-md-6">
+          <h4 class="text-center modal-view-header">Token Information</h4>
+		</div>
+
+		<div class="col-md-6">
+          <h4 class="text-center modal-view-header">Data Capture Information</h4>
+        </div>
+
+        <div class="col-md-6">
+		  <label>Description:</label>
+  		  <textarea class="form-control" ng-model="tokenToEdit.tokenDescription"></textarea>
+          <label>Alternate Text:</label>
+  		  <textarea class="form-control" ng-model="tokenToEdit.altText"></textarea>
+        </div>
+
+        <div class="col-md-6">
+          <label>Task:</label>
+          <input class="form-control" type="text" ng-model="tokenToEdit.taskName"></input> 
+          <label>Field:</label>
+          <input class="form-control" type="text" ng-model="tokenToEdit.taskFieldLabel"></input>
+  		  <label>Field Instructions:</label>
+          <input class="form-control" type="text" ng-model="tokenToEdit.taskFieldInstruction"></input>
+        </div>
+
+      </div>
+  
+	  <div class="well row">
+
+        <h4 class="text-center modal-view-header">Request for Lease Proposals Definition</h4>
+
+        <div class="col-md-4">
+          <label>Entity:</label>
+          <textarea class="form-control" ng-model="tokenToEdit.rlpEntity"></textarea>
+        </div>
+
+        <div class="col-md-4">
+          <label>Attribute:</label>
+          <textarea class="form-control wordwrap" ng-model="tokenToEdit.rlpAttribute"></textarea>
+        </div>
+
+        <div class="col-md-4">
+          <label>Where:</label>
+  		  <textarea class="form-control wordwrap" ng-model="tokenToEdit.rlpWhere"></textarea>
+        </div>
+
+      </div>
+  
+      <div class="well row">
+
+        <h4 class="text-center modal-view-header">Proposed Lease Definition</h4>
+
+        <div class="col-md-4">
+          <label>Entity:</label>
+          <textarea class="form-control" ng-model="tokenToEdit.proposedEntity"></textarea>
+        </div>
+
+        <div class="col-md-4">
+          <label>Attribute:</label>
+          <textarea class="form-control wordwrap" ng-model="tokenToEdit.proposedAttribute"></textarea>
+        </div>
+
+        <div class="col-md-4">
+          <label>Where:</label>
+  		  <textarea class="form-control wordwrap" ng-model="tokenToEdit.proposedWhere"></textarea>
+        </div>
+
+      </div>
+
+      <div class="well row">
+
+        <h4 class="text-center modal-view-header">Awarded Lease Definition</h4>
+
+        <div class="col-md-4">
+  		  <label>Entity:</label>
+  		  <textarea class="form-control" ng-model="tokenToEdit.awardedEntity"></textarea>
+        </div>
+
+        <div class="col-md-4">
+          <label>Attribute:</label>
+  		  <textarea class="form-control wordwrap" ng-model="tokenToEdit.awardedAttribute"></textarea>
+        </div>
+
+        <div class="col-md-4">
+          <label>Where:</label>
+  		  <textarea class="form-control wordwrap" ng-model="tokenToEdit.awardedWhere"></textarea>
+        </div>
+
+      </div>
+
+    </div>
+  
+    <div class="modal-footer">
+      <button class="btn-lg btn-success" type="submit" ng-disabled="itemEdit.$waiting">Save</button>
+	  &nbsp;&nbsp;&nbsp;
+      <button class="btn-lg btn-warning" type="button" ng-disabled="itemEdit.$waiting" ng-click="cancel()">Cancel</button>
+    </div>
+  </form>
+</script>

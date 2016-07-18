@@ -1,0 +1,19 @@
+<div class="container">
+  <div class="jumbotron">
+    <h1>Edit Document</h1>
+  </div>
+</div>
+
+<div ng-controller="GetCompiledDocumentInstanceCtrl">
+
+  <div class="container" ng-show="!isBodyReady()">
+    <button class="btn-lg btn-success pull-right"
+      type=button
+      ng-click="getDocumentBody()">Document Is Ready, Click To View</button>  
+  </div>
+  
+  <div class="container" ng-show="isBodyReady()">
+    <div ng-bind-html="getBody()"></div>
+  </div>
+  
+</div>

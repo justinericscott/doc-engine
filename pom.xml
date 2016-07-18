@@ -1,0 +1,292 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.docengine</groupId>
+	<artifactId>doc-engine</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>Document Engine</name>
+	<developers>
+		<developer>
+			<name>Justin Scott</name>
+			<email>justinericscott@gmail.com</email>
+		</developer>
+	</developers>
+	<description><![CDATA[Document Engine Prototype
+To use:
+1. Create a folder somewhere to house config files and logs. 
+   EX: /doc-engine
+
+2. Create a system variable called DOC_ENGINE_HOME.
+
+3. Enter the root directory you just created. 
+   EX. /doc-engine
+
+4. Create a sub folder called config. 
+   EX: /doc-engine/config
+
+5. Create a file called custom.properties.
+
+6. In order to use an external database, 
+   you will need to configure JDBC. 
+   MySQL EX:
+	jdbc.driverClassName=com.mysql.jdbc.Driver
+	jdbc.url=jdbc:mysql://localhost/somedb
+	jdbc.username=someusername
+	jdbc.password=somepassword
+7. In order to enable SSL using the included keystore, 
+   you will need to configure the embedded app server. 
+   EX:
+	server.port=443
+	server.ssl.enabled=true
+	server.ssl.key-store-type=JKS
+	server.ssl.key-store=somefileondisk.keystore
+	server.ssl.key-store-password=somepassword
+	server.ssl.key-alias=somealias
+	
+	To create your own self-signed certificate:
+		keytool -genkey -alias somealias -keypass somepassword -keyalg RSA -keystore somefileondisk.keystore
+
+	To add types jar to your repo (Assumes executing from same directory as jar file to install): 
+	mvn install:install-file -Dfile=doc-engine-types.jar -DgroupId=com.itgfirm.docengine 
+	-DartifactId=doc-engine-types -Dversion=0.0.1-SNAPSHOT -Dpackaging=jar -DgeneratePom=true
+	
+	To add Oracle JDBC driver to your local repo  (Assumes executing from same directory as jar file to install):
+	mvn install:install-file -Dfile=ojdbc6.jar -DgroupId=com.oracle 
+	-DartifactId=ojdbc6 -Dversion=11.2.0.4 -Dpackaging=jar -DgeneratePom=true]]>
+	</description>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.2.3.RELEASE</version>
+	</parent>
+	<modules>
+		<module>doc-engine-advanced</module>
+		<module>doc-engine-advanced-types</module>
+		<module>doc-engine-advanced-web</module>
+		<module>doc-engine-advanced-web-pkg</module>
+		<module>doc-engine-api</module>
+		<module>doc-engine-appian-types</module>
+		<module>doc-engine-core</module>
+		<module>doc-engine-core-types</module>
+		<module>doc-engine-core-web</module>
+		<module>doc-engine-core-web-pkg</module>
+		<module>doc-engine-ix</module>
+		<module>doc-engine-security</module>
+		<module>doc-engine-ui</module>
+	</modules>
+	<properties>
+		<c3p0.version>0.9.5</c3p0.version>
+		<htmltopdf.version>1.8</htmltopdf.version>
+		<jackson.version>2.2.0</jackson.version>
+		<java.version>1.8</java.version>
+		<oracle.version>11.2.0.2</oracle.version>
+		<poi.version>3.11</poi.version>
+		<kie.version>6.2.0.Final</kie.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<build>
+		<finalName>${project.artifactId}</finalName>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<configuration>
+						<source>${java.version}</source>
+						<target>${java.version}</target>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.5.2</version>
+				</plugin>
+				<plugin>
+					<groupId>org.kie</groupId>
+					<artifactId>kie-maven-plugin</artifactId>
+					<version>${kie.version}</version>
+					<extensions>true</extensions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.itgfirm.docengine</groupId>
+				<artifactId>doc-engine-advanced</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.itgfirm.docengine</groupId>
+				<artifactId>doc-engine-advanced-types</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.itgfirm.docengine</groupId>
+				<artifactId>doc-engine-advanced-web</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.itgfirm.docengine</groupId>
+				<artifactId>doc-engine-api</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.itgfirm.docengine</groupId>
+				<artifactId>doc-engine-core</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.itgfirm.docengine</groupId>
+				<artifactId>doc-engine-core-types</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.itgfirm.docengine</groupId>
+				<artifactId>doc-engine-core-web</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.itgfirm.docengine</groupId>
+				<artifactId>doc-engine-ix</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.itgfirm.docengine</groupId>
+				<artifactId>doc-engine-security</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.itgfirm.docengine</groupId>
+				<artifactId>doc-engine-ui</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.itgfirm.htmltopdf</groupId>
+				<artifactId>htmltopdf</artifactId>
+				<version>${htmltopdf.version}</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>log4j</artifactId>
+						<groupId>log4j</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter</artifactId>
+				<version>1.2.3.RELEASE</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-starter-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-web</artifactId>
+				<version>1.2.3.RELEASE</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-starter-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.freemarker</groupId>
+				<artifactId>freemarker</artifactId>
+				<version>2.3.22</version>
+			</dependency>
+			<dependency>
+				<groupId>org.drools</groupId>
+				<artifactId>drools-decisiontables</artifactId>
+				<version>${kie.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.mchange</groupId>
+				<artifactId>c3p0</artifactId>
+				<version>${c3p0.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.datatype</groupId>
+				<artifactId>jackson-datatype-hibernate4</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>oracle</groupId>
+				<artifactId>ojdbc</artifactId>
+				<version>${oracle.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi-ooxml</artifactId>
+				<version>${poi.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	<reporting>
+		<plugins>
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.4</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>2.12</version>
+			</plugin>
+		</plugins>
+	</reporting>
+	<repositories>
+		<repository>
+			<id>deployment</id>
+			<url>http://SCOTTJ.itg.com:8081/nexus/content/groups/public/</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>deployment</id>
+			<url>http://SCOTTJ.itg.com:8081/nexus/content/groups/public/</url>
+		</pluginRepository>
+	</pluginRepositories>
+	<distributionManagement>
+		<repository>
+			<uniqueVersion>false</uniqueVersion>
+			<id>deployment</id>
+			<name>My Local Release Repository</name>
+			<url>http://SCOTTJ.itg.com:8081/nexus/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<uniqueVersion>false</uniqueVersion>
+			<id>deployment</id>
+			<name>My Local Snapshot Repository</name>
+			<url>http://SCOTTJ.itg.com:8081/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+<!-- 		<snapshotRepository> -->
+<!-- 			<uniqueVersion>false</uniqueVersion> -->
+<!-- 			<id>itg-snapshots</id> -->
+<!-- 			<name>ITG Snapshots</name> -->
+<!-- 			<url>http://SCOTTJ.itg.com:8081/nexus/content/repositories/snapshots</url> -->
+<!-- 			<layout>default</layout> -->
+<!-- 		</snapshotRepository> -->
+<!-- 		<site> -->
+<!-- 			<id>itgsvn</id> -->
+<!-- 			<name>Appian CDTs</name> -->
+<!-- 			<url>scp://http://SCOTTJ.itg.com:8081/nexus/content/sites/site/${project.groupId}/${project.artifactId}/${project.version}</url> -->
+<!-- 		</site> -->
+	</distributionManagement>
+	<scm>
+		<connection>scm:svn:https://SCOTTJ.itg.com:8443/svn/justinsvn/trunk/doc-engine-parent/</connection>
+		<developerConnection>scm:svn:https://SCOTTJ.itg.com:8443/svn/justinsvn/trunk/doc-engine-parent/</developerConnection>
+		<url>scm:svn:https://SCOTTJ.itg.com:8443/svn/justinsvn/trunk/doc-engine-parent/</url>
+	</scm>
+</project>

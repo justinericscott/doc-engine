@@ -1,0 +1,16 @@
+<div class="container">
+  <div class="jumbotron">
+    <h1>Template Library</h1>
+  </div>
+</div>
+
+<!-- Document Selection Grid -->
+<div class="container" ng-controller="GetDocumentSourcesAllGridCtrl" ng-animate>
+  <div class="grid-default" ng-click="isSelected() && open()" ui-grid="gridOptions" ui-grid-selection></div>  
+</div> 
+
+<!-- Modal View Template -->
+<div ng-include="'html/content-repo/library/template-detail.html'"></div>
+
+<!-- Modal Edit Template -->
+<div ng-include="'html/content-repo/library/template-edit.html'"></div>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="docEngine" ng-controller="SecurityCtrl">
+  <head>
+    <title>Document Engine</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- CSS Dependencies-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="angular/ui-grid-stable.css" />
+    <link type="text/css" rel="stylesheet" href="angular/xeditable.css" />
+    <!-- DocEngine CSS -->
+    <link type="text/css" rel="stylesheet" href="css/default.css" />
+  </head>  
+  <body ng-controller="CommonFunctionsCtrl">
+  
+    <!-- TOP FIXED NAVIGATION BAR: USES BOOTSTRAP.CSS & BOOTSTRAP.JS -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button class="navbar-toggle collapsed" type="button" 
+            data-toggle="collapse" data-target="#navbar" 
+            aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#/">Document Engine</a>
+        </div>
+        
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav" ng-show="authenticated">
+            <li><a href="#/create-a-document">Create A Document</a></li>
+            <li><a href="#/document-central">Document Central</a></li>
+            <li><a href="#/content-repository">Content Repository</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    
+    <!-- VIEW ROUTER: SEE DOC-ENGINE.JS -->
+    <div ng-view></div>
+    
+    <!-- TEMPORARY BANNER WHILE PROTOTYPING -->
+    <div class="container alert alert-danger center-bold" 
+      role="alert">
+      <p>Under Construction</p>
+    </div>
+    
+    <!-- BOTTOM FIXED BAR -->
+    <div class="navbar-inverse navbar-fixed-bottom viewport-footer">
+      <div class="container">
+        Document Engine: Prototype
+        <span class="pull-right">ITG</span>
+      </div>
+    </div>
+    
+    <!-- JavaScript Dependencies -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.10/angular.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.10/angular-animate.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    <!-- Angular.js Plugins -->
+    <script type="text/javascript" src="angular/angular-sanitize.js"></script>    
+    <script type="text/javascript" src="angular/angular-resource.js"></script>
+    <script type="text/javascript" src="angular/angular-route.js"></script>
+    <script type="text/javascript" src="angular/ui-bootstrap.js"></script>
+    <script type="text/javascript" src="angular/ui-grid-stable.js"></script>
+    <script type="text/javascript" src="angular/xeditable.js"></script>
+    <!-- DocEngine JavaScript -->
+    <script type="text/javascript" src="js/doc-engine.js"></script>
+    <script type="text/javascript" src="js/ctrl-main.js"></script>
+    <script type="text/javascript" src="js/ctrl-template-library.js"></script>
+    <script type="text/javascript" src="js/ctrl-token-dictionary.js"></script>
+    <script type="text/javascript" src="js/ctrl-document.js"></script>    
+  </body>  
+</html>

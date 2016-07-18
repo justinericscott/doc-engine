@@ -1,0 +1,42 @@
+<div class="container">
+  <div class="jumbotron">
+    <h1>Create A Document</h1>      
+  </div>
+</div>
+
+<form editable-form name="basicInfoForm">
+  <div class="container">
+    <div class="well">
+      <div class="row">
+        <label for="projectId">Project ID:</label>
+        <input id="projectId" class="form-control" ng-model="newDoc.projectId"></input>
+      </div>
+      <div class="row">
+        <label for="code">Content Code:</label>
+        <input id="code" class="form-control" ng-model="newDoc.code"></input>
+      </div>
+      <div class="row">
+        <div class="pull-left"><br/>
+          <button class="btn-lg btn-danger" 
+            type="button" 
+            ng-disabled="itemEdit.$waiting" 
+            ng-click="clear()">
+            Clear Form
+          </button>      
+        </div>
+        <div class="pull-right"><br/>
+          <button class="btn-lg btn-success" 
+            type="submit" 
+            ng-disabled="itemEdit.$waiting" 
+            ng-click="start()">
+            Start
+          </button>
+          &nbsp;&nbsp;&nbsp;
+          <button class="btn-lg btn-warning"
+            type=button
+            ng-click="cancel()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
