@@ -4,8 +4,8 @@
 	<artifactId>doc-engine-advanced-web</artifactId>
 	<name>Document Engine Advanced Web</name>
 	<parent>
-		<groupId>com.itgfirm.docengine</groupId>
-		<artifactId>doc-engine-parent</artifactId>
+		<groupId>com.docengine</groupId>
+		<artifactId>doc-engine</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<build>
@@ -28,11 +28,11 @@
 	<dependencies>
 		<!-- MUST BE IN YOUR LOCAL REPO -->
 		<dependency>
-			<groupId>com.itgfirm.docengine</groupId>
+			<groupId>com.docengine</groupId>
 			<artifactId>doc-engine-core-web</artifactId>
 		</dependency>		
 		<dependency>
-			<groupId>com.itgfirm.docengine</groupId>
+			<groupId>com.docengine</groupId>
 			<artifactId>doc-engine-advanced</artifactId>
 		</dependency>		
 	</dependencies>

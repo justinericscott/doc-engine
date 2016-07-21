@@ -4,8 +4,8 @@
 	<artifactId>doc-engine-advanced-web-pkg</artifactId>
 	<name>Document Engine Advanced Web Package</name>
 	<parent>
-		<groupId>com.itgfirm.docengine</groupId>
-		<artifactId>doc-engine-parent</artifactId>
+		<groupId>com.docengine</groupId>
+		<artifactId>doc-engine</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<build>
@@ -28,7 +28,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<mainClass>
-						com.itgfirm.docengine.DocEngine
+						com.docengine.DocEngine
 					</mainClass>
 				</configuration>
 				<executions>
@@ -44,7 +44,7 @@
 	<dependencies>
 		<!-- MUST BE IN YOUR LOCAL REPO -->
 		<dependency>
-			<groupId>com.itgfirm.docengine</groupId>
+			<groupId>com.docengine</groupId>
 			<artifactId>doc-engine-advanced-web</artifactId>
 		</dependency>
 	</dependencies>

@@ -4,8 +4,8 @@
 	<artifactId>doc-engine-advanced-types</artifactId>
 	<name>Document Engine Advanced Types</name>
 	<parent>
-		<groupId>com.itgfirm.docengine</groupId>
-		<artifactId>doc-engine-parent</artifactId>
+		<groupId>com.docengine</groupId>
+		<artifactId>doc-engine</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<build>
@@ -27,12 +27,12 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>com.itgfirm.docengine</groupId>
+			<groupId>com.docengine</groupId>
 			<artifactId>doc-engine-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.itgfirm.docengine</groupId>
+			<groupId>com.docengine</groupId>
 			<artifactId>doc-engine-core-types</artifactId>
 			<scope>provided</scope>
 		</dependency>

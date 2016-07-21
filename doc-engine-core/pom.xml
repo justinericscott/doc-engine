@@ -7,8 +7,8 @@
 		<start-class>com.itgfirm.docengine.DocEngine</start-class>
 	</properties>
 	<parent>
-		<groupId>com.itgfirm.docengine</groupId>
-		<artifactId>doc-engine-parent</artifactId>
+		<groupId>com.docengine</groupId>
+		<artifactId>doc-engine</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<build>
@@ -31,11 +31,11 @@
 	<dependencies>
 		<!-- MUST BE IN YOUR LOCAL REPO -->
 		<dependency>
-			<groupId>com.itgfirm.docengine</groupId>
+			<groupId>com.docengine</groupId>
 			<artifactId>doc-engine-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.itgfirm.docengine</groupId>
+			<groupId>com.docengine</groupId>
 			<artifactId>doc-engine-core-types</artifactId>
 		</dependency>
 		<!-- LOCATED IN ITG REPO -->

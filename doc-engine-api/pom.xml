@@ -4,8 +4,8 @@
 	<artifactId>doc-engine-api</artifactId>
 	<name>Document Engine API</name>
 	<parent>
-		<groupId>com.itgfirm.docengine</groupId>
-		<artifactId>doc-engine-parent</artifactId>
+		<groupId>com.docengine</groupId>
+		<artifactId>doc-engine</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>	
 	<build>

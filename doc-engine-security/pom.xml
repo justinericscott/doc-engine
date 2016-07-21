@@ -4,8 +4,8 @@
 	<artifactId>doc-engine-security</artifactId>
 	<name>Document Engine Security</name>
 	<parent>
-		<groupId>com.itgfirm.docengine</groupId>
-		<artifactId>doc-engine-parent</artifactId>
+		<groupId>com.docengine</groupId>
+		<artifactId>doc-engine</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<build>
@@ -35,7 +35,7 @@
 <!-- 			<artifactId>spring-security-config</artifactId> -->
 <!-- 		</dependency> -->
 		<dependency>
-			<groupId>com.itgfirm.docengine</groupId>
+			<groupId>com.docengine</groupId>
 			<artifactId>doc-engine-core-web</artifactId>
 			<scope>provided</scope>
 		</dependency>

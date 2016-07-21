@@ -114,52 +114,52 @@ To use:
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>com.itgfirm.docengine</groupId>
+				<groupId>com.docengine</groupId>
 				<artifactId>doc-engine-advanced</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.itgfirm.docengine</groupId>
+				<groupId>com.docengine</groupId>
 				<artifactId>doc-engine-advanced-types</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.itgfirm.docengine</groupId>
+				<groupId>com.docengine</groupId>
 				<artifactId>doc-engine-advanced-web</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.itgfirm.docengine</groupId>
+				<groupId>com.docengine</groupId>
 				<artifactId>doc-engine-api</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.itgfirm.docengine</groupId>
+				<groupId>com.docengine</groupId>
 				<artifactId>doc-engine-core</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.itgfirm.docengine</groupId>
+				<groupId>com.docengine</groupId>
 				<artifactId>doc-engine-core-types</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.itgfirm.docengine</groupId>
+				<groupId>com.docengine</groupId>
 				<artifactId>doc-engine-core-web</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.itgfirm.docengine</groupId>
+				<groupId>com.docengine</groupId>
 				<artifactId>doc-engine-ix</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.itgfirm.docengine</groupId>
+				<groupId>com.docengine</groupId>
 				<artifactId>doc-engine-security</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.itgfirm.docengine</groupId>
+				<groupId>com.docengine</groupId>
 				<artifactId>doc-engine-ui</artifactId>
 				<version>${project.version}</version>
 			</dependency>

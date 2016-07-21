@@ -4,8 +4,8 @@
 	<artifactId>doc-engine-core-types</artifactId>
 	<name>Document Engine Core Types</name>
 	<parent>
-		<groupId>com.itgfirm.docengine</groupId>
-		<artifactId>doc-engine-parent</artifactId>
+		<groupId>com.docengine</groupId>
+		<artifactId>doc-engine</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<build>
@@ -31,12 +31,12 @@
 			<artifactId>jackson-datatype-hibernate4</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.itgfirm.docengine</groupId>
+			<groupId>com.docengine</groupId>
 			<artifactId>doc-engine-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.itgfirm.htmltopdf</groupId>
+			<groupId>com.htmltopdf</groupId>
 			<artifactId>htmltopdf</artifactId>
 			<scope>provided</scope>
 		</dependency>

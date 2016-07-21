@@ -4,8 +4,8 @@
 	<artifactId>doc-engine-ix</artifactId>
 	<name>Document Engine Import/Export</name>
 	<parent>
-		<groupId>com.itgfirm.docengine</groupId>
-		<artifactId>doc-engine-parent</artifactId>
+		<groupId>com.docengine</groupId>
+		<artifactId>doc-engine</artifactId>
 		<version>0.0.1-SNAPSHOT</version>	
 	</parent>
 	<build>
@@ -31,7 +31,7 @@
 			<artifactId>poi-ooxml</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.itgfirm.docengine</groupId>
+			<groupId>com.docengine</groupId>
 			<artifactId>doc-engine-advanced</artifactId>
 			<scope>provided</scope>
 		</dependency>
