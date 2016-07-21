@@ -36,7 +36,7 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.htmltopdf</groupId>
+			<groupId>com.itgfirm</groupId>
 			<artifactId>htmltopdf</artifactId>
 			<scope>provided</scope>
 		</dependency>

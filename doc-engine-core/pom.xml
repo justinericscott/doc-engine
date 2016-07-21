@@ -40,7 +40,7 @@
 		</dependency>
 		<!-- LOCATED IN ITG REPO -->
 		<dependency>
-			<groupId>com.itgfirm.htmltopdf</groupId>
+			<groupId>com.itgfirm</groupId>
 			<artifactId>htmltopdf</artifactId>
 		</dependency>
 		<!-- SPRING FRAMEWORK -->
