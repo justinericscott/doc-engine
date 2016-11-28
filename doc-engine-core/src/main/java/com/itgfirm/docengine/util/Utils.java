@@ -5,23 +5,19 @@ package com.itgfirm.docengine.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Collection;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.itgfirm.docengine.types.Clause;
-import com.itgfirm.docengine.types.Content;
-import com.itgfirm.docengine.types.Instance;
-import com.itgfirm.docengine.types.Paragraph;
-import com.itgfirm.docengine.types.Section;
-import com.itgfirm.docengine.types.TokenDefinition;
+import com.itgfirm.docengine.types.jpa.ClauseJpaImpl;
+import com.itgfirm.docengine.types.jpa.ContentJpaImpl;
+import com.itgfirm.docengine.types.jpa.InstanceJpaImpl;
+import com.itgfirm.docengine.types.jpa.ParagraphJpaImpl;
+import com.itgfirm.docengine.types.jpa.SectionJpaImpl;
+import com.itgfirm.docengine.types.jpa.TokenDefinitionJpaImpl;
 
 /**
  * @author Justin Scott
@@ -29,46 +25,25 @@ import com.itgfirm.docengine.types.TokenDefinition;
  *         TODO: Description
  */
 public class Utils {
-	private static final Logger LOG = LogManager.getLogger(Utils.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
 
-	public static String[] breakSqlScriptIntoStatements(File file) {
-		String sql = Utils.readFile(file);
-		String[] script = null;
-		if (Utils.isNotNullOrEmpty(sql)) {
-			LOG.trace("Splitting Script.");
-			script = sql.split(";");
+	public static String[] breakSqlScriptIntoStatements(final File file) {
+		if (isNotNullAndExists(file)) {
+			final String sql = readFile(file);
+			String[] script = null;
+			if (isNotNullOrEmpty(sql)) {
+				LOG.trace("Splitting Script.");
+				script = sql.split(";");
+			}
+			return script;			
 		}
-		return script;
+		return null;
 	}
 
-	public static void closeQuietly(InputStream in) {
-		try {
-			in.close();
-		} catch (IOException e) {
-			LOG.error(e.getMessage(), e);
-		}
-	}
-
-	public static void closeQuietly(OutputStream out) {
-		try {
-			out.close();
-		} catch (IOException e) {
-			LOG.error(e.getMessage(), e);
-		}
-	}
-
-	public static void closeQuietly(Connection conn) {
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			LOG.error(e.getMessage(), e);
-		}
-	}
-
-	public static boolean isAllSections(Collection<?> content) {
+	public static boolean isAllSections(final Iterable<?> content) {
 		if (isNotNullOrEmpty(content)) {
-			for (Object o : content) {
-				if (!(o instanceof Section))
+			for (final Object o : content) {
+				if (!(o instanceof SectionJpaImpl))
 					return false;
 			}
 			return true;
@@ -76,22 +51,10 @@ public class Utils {
 		return false;
 	}
 
-	public static boolean isAllClauses(Collection<?> content) {
+	public static boolean isAllClauses(final Iterable<?> content) {
 		if (isNotNullOrEmpty(content)) {
-			for (Object o : content) {
-				if (!(o instanceof Clause))
-					return false;
-			}
-			return true;
-		}
-		LOG.debug("Null Or Empty Clause Collection.");
-		return false;
-	}
-
-	public static boolean isAllParagraphs(Collection<?> content) {
-		if (isNotNullOrEmpty(content)) {
-			for (Object o : content) {
-				if (!(o instanceof Paragraph))
+			for (final Object o : content) {
+				if (!(o instanceof ClauseJpaImpl))
 					return false;
 			}
 			return true;
@@ -99,72 +62,63 @@ public class Utils {
 		return false;
 	}
 
-	public static boolean isExist(Content content) {
-		if (content != null && isNotNullOrZero(content.getId())) {
-			LOG.debug("Returning TRUE: " + content.getContentCd()
-					+ " | PARAM_ID: "
-					+ content.getId());
+	public static boolean isAllParagraphs(final Iterable<?> content) {
+		if (isNotNullOrEmpty(content)) {
+			for (final Object o : content) {
+				if (!(o instanceof ParagraphJpaImpl))
+					return false;
+			}
 			return true;
 		}
 		return false;
 	}
 
-	public static boolean isNotNullAndExists(File file) {
+	public static boolean isNotNullAndExists(final File file) {
 		return (file != null && file.exists());
 	}
-	
-	public static boolean isNotNullOrEmpty(Collection<?> collection) {
+
+	public static boolean isNotNullOrEmpty(final Collection<?> collection) {
 		return (collection != null && !collection.isEmpty());
 	}
 
-	public static boolean isNotNullOrEmpty(Object object) {
-		if (object instanceof String) {
-			String string = (String) object;
-			return (string != null && !string.trim().toString().isEmpty());
-		}
-		return (object != null && !object.toString().isEmpty());
+	public static boolean isNotNullOrEmpty(final Iterable<?> iterable) {
+		return (iterable != null && iterable.iterator().hasNext());
 	}
 
-	public static boolean isNotNullOrEmpty(Content content) {
-		if (content != null) {
-			return content.isValid();
-		}
-		return false;
+	public static boolean isNotNullOrEmpty(final Object object) {
+		return (object != null && !object.toString().trim().isEmpty());
 	}
 
-	public static boolean isNotNullOrEmpty(Instance instance) {
-		if (instance != null) {
-			return instance.isValid();
-		}
-		return false;
+	public static boolean isNotNullOrEmpty(final ContentJpaImpl content) {
+		return (content != null && content.isValid());
 	}
 
-	public static boolean isNotNullOrEmpty(TokenDefinition token) {
-		if (token != null) {
-			return token.isValid();
-		}
-		return false;
+	public static boolean isNotNullOrEmpty(final InstanceJpaImpl instance) {
+		return (instance != null && instance.isValid());
 	}
 
-	public static boolean isNotNullOrZero(Number val) {
-		if (val != null) {
-			Long id = val.longValue();
-			if (id > 0)
-				return true;
-		}
-		return false;
+	public static boolean isNotNullOrEmpty(final TokenDefinitionJpaImpl token) {
+		return (token != null && token.isValid());
 	}
 
-	private static String readFile(File file) {
-		byte[] bytes = null;
-		try {
-			bytes = Files.readAllBytes(Paths.get(file.getPath()));
-		} catch (IOException e) {
-			LOG.debug(e.getMessage(), e);
+	public static boolean isNotNullOrZero(final Number val) {
+		return (val != null && val.longValue() != 0);
+	}
+
+	private static String readFile(final File file) {
+		if (isNotNullAndExists(file)) {
+			byte[] bytes = null;
+			try {
+				bytes = Files.readAllBytes(Paths.get(file.getPath()));
+			} catch (final IOException e) {
+				LOG.debug(e.getMessage(), e);
+			}
+			return new String(bytes);			
 		}
-		return new String(bytes);
+		return null;
 	}
 
 	private Utils() {
+		// Do not instantiate
 	}
 }

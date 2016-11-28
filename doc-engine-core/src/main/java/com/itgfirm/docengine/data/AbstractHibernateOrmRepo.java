@@ -5,15 +5,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.transaction.Transactional;
-
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.itgfirm.docengine.util.Utils;
 
@@ -22,41 +19,14 @@ import com.itgfirm.docengine.util.Utils;
  * 
  *         Base Class for all ORM needs.
  */
-@Transactional
+//@Transactional
+@Deprecated
 public abstract class AbstractHibernateOrmRepo {
-	private static final Logger LOG = LogManager.getLogger(AbstractHibernateOrmRepo.class);
-	@Autowired
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractHibernateOrmRepo.class);
+//	@Autowired
 	protected SessionFactory factory;
 
 	public AbstractHibernateOrmRepo() {}
-
-	/**
-	 * Performs the delete operation.
-	 * 
-	 * @param object
-	 */
-	protected void delete(Object object) {
-		if (Utils.isNotNullOrEmpty(object)) {
-			Session session = getSession();
-			session.delete(object);
-			session.flush();
-		} else {
-			LOG.trace("Object Must Not Be Null Or Empty!");
-		}
-	}
-
-	/**
-	 * Performs the delete operation on a list of items.
-	 * 
-	 * @param list
-	 */
-	protected void deleteAll(List<?> list) {
-		if (Utils.isNotNullOrEmpty(list)) {
-			for (Object o : list) {
-				delete(o);
-			}
-		}
-	}
 
 	/**
 	 * Retrieves all records for a given Class.

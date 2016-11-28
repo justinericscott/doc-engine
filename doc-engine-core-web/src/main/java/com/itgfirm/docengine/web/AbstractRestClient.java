@@ -7,8 +7,8 @@ import java.util.Map;
 
 import javax.persistence.MappedSuperclass;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -29,7 +29,7 @@ import com.itgfirm.docengine.util.Utils;
  */
 @MappedSuperclass
 public abstract class AbstractRestClient extends RestTemplate {
-	private static final Logger LOG = LogManager.getLogger(AbstractRestClient.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractRestClient.class);
 	private static final String HTTPS = "https://";
 	private static final String HTTP = "http://";
 	@Autowired

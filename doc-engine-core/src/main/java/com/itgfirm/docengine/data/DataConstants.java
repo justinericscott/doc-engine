@@ -9,7 +9,7 @@ public class DataConstants {
 	/** ########## COMMON FIELD NAMES ########## **/
 	public static final String PARAM_BODY = "body";
 	public static final String PARAM_CONTENT_CD = "contentCd";
-	public static final String PARAM_PARENT = "parent";
+//	public static final String PARAM_PARENT = "parent";
 	public static final String PARAM_DOCUMENT = "document";
 	public static final String PARAM_SECTION = "section";
 	public static final String PARAM_CLAUSE = "clause";
@@ -19,37 +19,37 @@ public class DataConstants {
 	public static final String PARAM_IS_XABLE_BLN = "isXable";
 
 	/** ########## OBJECT NAMES ########## **/
-	public static final String OBJECT_CONTENT = "ContentJpaImpl";
+//	public static final String OBJECT_CONTENT = "ContentJpaImpl";
 	public static final String OBJECT_INSTANCE = "InstanceJpaImpl";
-	public static final String OBJECT_DOCUMENT = "DocumentJpaImpl";
+//	public static final String OBJECT_DOCUMENT = "DocumentJpaImpl";
 	public static final String OBJECT_DOCUMENT_INSTANCE = "DocumentInstanceJpaImpl";
-	public static final String OBJECT_SECTION = "SectionJpaImpl";
+//	public static final String OBJECT_SECTION = "SectionJpaImpl";
 	public static final String OBJECT_SECTION_INSTANCE = "SectionInstanceJpaImpl";
-	public static final String OBJECT_CLAUSE = "ClauseJpaImpl";
+//	public static final String OBJECT_CLAUSE = "ClauseJpaImpl";
 	public static final String OBJECT_CLAUSE_INSTANCE = "ClauseInstanceJpaImpl";
-	public static final String OBJECT_PARAGRAPH = "ParagraphJpaImpl";
+//	public static final String OBJECT_PARAGRAPH = "ParagraphJpaImpl";
 	public static final String OBJECT_PARAGRAPH_INSTANCE = "ParagraphInstanceJpaImpl";
 	public static final String OBJECT_TOKEN_DEFINITION = "TokenDefinitionJpaImpl";
 
 	/** ########## CONTENT QUERIES ########## **/
 	/** BY CODE **/
-	public static final String GET_CONTENT_BY_CONTENT_CD = "from " + OBJECT_CONTENT
-			+ " where " + PARAM_CONTENT_CD + " = :" + PARAM_CONTENT_CD;
+//	public static final String GET_CONTENT_BY_CONTENT_CD = "from " + OBJECT_CONTENT
+//			+ " where " + PARAM_CONTENT_CD + " = :" + PARAM_CONTENT_CD;
 
 	/** BY PARENT **/
-	public static final String GET_SECTIONS_BY_PARENT = "from " + OBJECT_SECTION + " where "
-			+ PARAM_DOCUMENT + " = :" + PARAM_DOCUMENT;
-	public static final String GET_CLAUSES_BY_PARENT = "from " + OBJECT_CLAUSE + " where "
-			+ PARAM_SECTION + " = :" + PARAM_SECTION;
-	public static final String GET_PARAGRAPHS_BY_PARENT = "from " + OBJECT_PARAGRAPH
-			+ " where " + PARAM_CLAUSE + " = :" + PARAM_CLAUSE;
+//	public static final String GET_SECTIONS_BY_PARENT = "from " + OBJECT_SECTION + " where "
+//			+ PARAM_DOCUMENT + " = :" + PARAM_DOCUMENT;
+//	public static final String GET_CLAUSES_BY_PARENT = "from " + OBJECT_CLAUSE + " where "
+//			+ PARAM_SECTION + " = :" + PARAM_SECTION;
+//	public static final String GET_PARAGRAPHS_BY_PARENT = "from " + OBJECT_PARAGRAPH
+//			+ " where " + PARAM_CLAUSE + " = :" + PARAM_CLAUSE;
 
 	/** BY CODE / BODY LIKE **/
-	public static final String GET_CONTENTS_BY_CODE_LIKE = "from " + OBJECT_CONTENT
-			+ " where " + PARAM_CONTENT_CD + " like :" + PARAM_CONTENT_CD;
-	public static final String GET_CONTENTS_BY_CONTENT_CD_AND_BODY_LIKE = "from "
-			+ OBJECT_CONTENT + " where " + PARAM_CONTENT_CD + " like :" + PARAM_CONTENT_CD
-			+ " and " + PARAM_BODY + " like :" + PARAM_BODY;
+//	public static final String GET_CONTENTS_BY_CODE_LIKE = "from " + OBJECT_CONTENT
+//			+ " where " + PARAM_CONTENT_CD + " like :" + PARAM_CONTENT_CD;
+//	public static final String GET_CONTENTS_BY_CONTENT_CD_AND_BODY_LIKE = "from "
+//			+ OBJECT_CONTENT + " where " + PARAM_CONTENT_CD + " like :" + PARAM_CONTENT_CD
+//			+ " and " + PARAM_BODY + " like :" + PARAM_BODY;
 
 	/** ########## INSTANCE QUERIES ########## **/
 	/** BY PROJECT ID AND CODE **/

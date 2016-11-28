@@ -5,27 +5,25 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.hibernate.QueryException;
-import org.springframework.stereotype.Repository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.itgfirm.docengine.data.AbstractHibernateOrmRepo;
 import com.itgfirm.docengine.data.DataConstants;
-import com.itgfirm.docengine.types.TokenDefinition;
 import com.itgfirm.docengine.types.jpa.TokenDefinitionJpaImpl;
 import com.itgfirm.docengine.util.Utils;
 
 /**
  * @author Justin Scott TODO: Description
  */
-@Repository
-class DefaultTokenDictionaryRepoImpl extends AbstractHibernateOrmRepo implements
-		TokenDictionaryRepo {
-	private static final Logger LOG = LogManager
-			.getLogger(DefaultTokenDictionaryRepoImpl.class);
+//@Repository
+@Deprecated
+class DefaultTokenDictionaryRepoImpl extends AbstractHibernateOrmRepo {
+	private static final Logger LOG = LoggerFactory.getLogger(DefaultTokenDictionaryRepoImpl.class);
 
-	public DefaultTokenDictionaryRepoImpl() {}
+	public DefaultTokenDictionaryRepoImpl() {
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -33,11 +31,9 @@ class DefaultTokenDictionaryRepoImpl extends AbstractHibernateOrmRepo implements
 	 * @see com.itgfirm.docengine.repo.TokenRepo#getAll()
 	 */
 	@SuppressWarnings("unchecked")
-	@Override
-	public List<TokenDefinition> get() {
+	public List<TokenDefinitionJpaImpl> get() {
 		LOG.trace("Attempting To Get All Token Definitions.");
-		List<TokenDefinition> items =
-				(List<TokenDefinition>) super.get(TokenDefinitionJpaImpl.class);
+		List<TokenDefinitionJpaImpl> items = (List<TokenDefinitionJpaImpl>) super.get(TokenDefinitionJpaImpl.class);
 		if (Utils.isNotNullOrEmpty(items)) {
 			int size = items.size();
 			LOG.trace("Found " + size + " Tokens Definitions Token Dictionary.");
@@ -54,23 +50,21 @@ class DefaultTokenDictionaryRepoImpl extends AbstractHibernateOrmRepo implements
 	 * 
 	 * @see com.itgfirm.docengine.repo.TokenRepo#getById(java.lang.Long)
 	 */
-	@Override
-	public TokenDefinition get(Long id) {
+	public TokenDefinitionJpaImpl get(Long id) {
 		LOG.trace("Attempting To Get Token Definition For ID: " + id);
-		return (TokenDefinition) super.get(TokenDefinitionJpaImpl.class, id);
+		return (TokenDefinitionJpaImpl) super.get(TokenDefinitionJpaImpl.class, id);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.itgfirm.docengine.token.TokenDictionaryRepo#get( java.lang.String)
+	 * @see com.itgfirm.docengine.token.TokenDictionaryRepo#get(
+	 * java.lang.String)
 	 */
-	@Override
-	public TokenDefinition get(String code) {
+	public TokenDefinitionJpaImpl get(String code) {
 		LOG.trace("Attempting To Get Token Definition For Code: " + code);
-		List<TokenDefinition> defs =
-				getWithQuery(DataConstants.GET_TOKEN_DEF_BY_TOKEN_CD,
-						DataConstants.PARAM_TOKEN_CD, code);
+		List<TokenDefinitionJpaImpl> defs = getWithQuery(DataConstants.GET_TOKEN_DEF_BY_TOKEN_CD, DataConstants.PARAM_TOKEN_CD,
+				code);
 		if (Utils.isNotNullOrEmpty(defs)) {
 			return defs.get(0);
 		}
@@ -80,27 +74,25 @@ class DefaultTokenDictionaryRepoImpl extends AbstractHibernateOrmRepo implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.itgfirm.docengine.token.TokenDictionaryRepo#getByCodeLike( java.lang.String)
+	 * @see com.itgfirm.docengine.token.TokenDictionaryRepo#getByCodeLike(
+	 * java.lang.String)
 	 */
-	@Override
-	public List<TokenDefinition> getByCodeLike(String like) {
+	public List<TokenDefinitionJpaImpl> getByCodeLike(String like) {
 		LOG.trace("Attempting To Get Token Definition For Code-Like: " + like);
-		return getWithQuery(DataConstants.GET_TOKEN_DEF_BY_CODE_LIKE,
-				DataConstants.PARAM_TOKEN_CD, like);
+		return getWithQuery(DataConstants.GET_TOKEN_DEF_BY_CODE_LIKE, DataConstants.PARAM_TOKEN_CD, like);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.itgfirm.docengine.token.TokenDictionaryRepo#getWithQuery( java.lang.String,
-	 * java.lang.String, java.lang.Object)
+	 * @see com.itgfirm.docengine.token.TokenDictionaryRepo#getWithQuery(
+	 * java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	@SuppressWarnings("unchecked")
-	@Override
-	public List<TokenDefinition> getWithQuery(String query, String paramName, Object value) {
+	public List<TokenDefinitionJpaImpl> getWithQuery(String query, String paramName, Object value) {
 		LOG.trace("Attempting To Get Token Definition With Query: " + query);
 		try {
-			return (List<TokenDefinition>) super.getWithQuery(query, paramName, value);
+			return (List<TokenDefinitionJpaImpl>) super.getWithQuery(query, paramName, value);
 		} catch (NoSuchElementException | IllegalArgumentException e) {
 			LOG.error("Problem With Query.", e);
 			return null;
@@ -110,17 +102,14 @@ class DefaultTokenDictionaryRepoImpl extends AbstractHibernateOrmRepo implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.itgfirm.docengine.token.TokenDictionaryRepo#getWithQuery( java.lang.String,
-	 * java.lang.String[], java.lang.Object[])
+	 * @see com.itgfirm.docengine.token.TokenDictionaryRepo#getWithQuery(
+	 * java.lang.String, java.lang.String[], java.lang.Object[])
 	 */
 	@SuppressWarnings("unchecked")
-	@Override
-	public List<TokenDefinition> getWithQuery(String query, String[] paramNames,
-			Object[] values) {
-		LOG.trace("Attempting To Get Token Definition With Multiple Param " + "Query: "
-				+ query);
+	public List<TokenDefinitionJpaImpl> getWithQuery(String query, String[] paramNames, Object[] values) {
+		LOG.trace("Attempting To Get Token Definition With Multiple Param " + "Query: " + query);
 		try {
-			return (List<TokenDefinition>) super.getWithQuery(query, paramNames, values);
+			return (List<TokenDefinitionJpaImpl>) super.getWithQuery(query, paramNames, values);
 		} catch (NoSuchElementException | IllegalArgumentException | QueryException e) {
 			LOG.error("Problem With Query.", e);
 			return null;
@@ -133,16 +122,15 @@ class DefaultTokenDictionaryRepoImpl extends AbstractHibernateOrmRepo implements
 	 * @see com.itgfirm.docengine.repo.TokenRepo#merge(
 	 * com.itgfirm.docengine.types.jpa.jpa.TokenDictionaryItem)
 	 */
-	@Override
-	public TokenDefinition merge(TokenDefinition token) {
+	public TokenDefinitionJpaImpl merge(TokenDefinitionJpaImpl token) {
 		if (Utils.isNotNullOrEmpty(token)) {
 			LOG.trace("Attempting To Merge Token Definition: " + token.getTokenCd());
 			if (Utils.isNotNullOrZero(token.getId())) {
 				LOG.trace("Attempting To Update Token Definition: " + token.getTokenCd());
-				return (TokenDefinition) super.merge((TokenDefinitionJpaImpl) token);
+				return (TokenDefinitionJpaImpl) super.merge((TokenDefinitionJpaImpl) token);
 			} else if (!Utils.isNotNullOrEmpty(get(token.getTokenCd()))) {
 				LOG.trace("Attempting To Insert Token Definition: " + token.getTokenCd());
-				return (TokenDefinition) super.merge((TokenDefinitionJpaImpl) token);
+				return (TokenDefinitionJpaImpl) super.merge((TokenDefinitionJpaImpl) token);
 			} else {
 				LOG.trace("Token Definition Already Exists: " + token.getTokenCd());
 			}
@@ -158,12 +146,11 @@ class DefaultTokenDictionaryRepoImpl extends AbstractHibernateOrmRepo implements
 	 * @see com.itgfirm.docengine.token.TokenDictionaryRepo#delete(
 	 * com.itgfirm.docengine.types.jpa.jpa.TokenDefinition)
 	 */
-	@Override
-	public boolean delete(TokenDefinition token) {
+	public boolean delete(TokenDefinitionJpaImpl token) {
 		if (Utils.isNotNullOrEmpty(token)) {
 			LOG.trace("Attempting To Delete Token Definition: " + token.getTokenCd());
 			Long id = token.getId();
-			super.delete((TokenDefinitionJpaImpl) token);
+//			super.delete((TokenDefinitionJpaImpl) token);
 			token = get(id);
 			if (Utils.isNotNullOrEmpty(token)) {
 				LOG.trace("Item Was NOT Deleted: " + token.getTokenCd());
@@ -178,15 +165,15 @@ class DefaultTokenDictionaryRepoImpl extends AbstractHibernateOrmRepo implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.itgfirm.docengine.token.TokenDictionaryRepo#deleteByCodeLike( java.lang.String)
+	 * @see com.itgfirm.docengine.token.TokenDictionaryRepo#deleteByCodeLike(
+	 * java.lang.String)
 	 */
-	@Override
 	public boolean deleteByCodeLike(String like) {
 		List<Boolean> results = new ArrayList<Boolean>();
-		List<TokenDefinition> tokens = getByCodeLike(like);
+		List<TokenDefinitionJpaImpl> tokens = getByCodeLike(like);
 		if (Utils.isNotNullOrEmpty(tokens)) {
 			LOG.trace("Attempting To Delete Token Definition For Code-Like: " + like);
-			for (TokenDefinition t : tokens) {
+			for (TokenDefinitionJpaImpl t : tokens) {
 				results.add(delete(t));
 			}
 			if (results.contains(false)) {

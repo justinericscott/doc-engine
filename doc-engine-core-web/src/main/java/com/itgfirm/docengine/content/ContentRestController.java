@@ -2,8 +2,6 @@ package com.itgfirm.docengine.content;
 
 import java.util.List;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -30,8 +28,6 @@ import com.itgfirm.docengine.web.RestUrls;
 @RestController
 @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 class ContentRestController {
-	@SuppressWarnings("unused")
-	private static final Logger LOG = LogManager.getLogger(ContentRestController.class);
 	@Autowired @Qualifier("default")
 	private ContentService service;
 

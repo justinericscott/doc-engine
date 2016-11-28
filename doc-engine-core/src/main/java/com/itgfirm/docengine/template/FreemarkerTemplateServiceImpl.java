@@ -8,9 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.itgfirm.docengine.util.Utils;
 
@@ -29,13 +28,13 @@ import freemarker.template.Version;
  * 
  *         TODO: Description
  */
-@Service
+//@Service
 class FreemarkerTemplateServiceImpl implements TemplateService {
-	private static final Logger LOG = LogManager
-			.getLogger(FreemarkerTemplateServiceImpl.class);
+	private static final Logger LOG = LoggerFactory.getLogger(FreemarkerTemplateServiceImpl.class);
 	private static final String DEFAULT_TEMPLATE_NAME = "default";
 
-	private FreemarkerTemplateServiceImpl() {}
+	private FreemarkerTemplateServiceImpl() {
+	}
 
 	public String process(String template, Map<String, Object> tokens) {
 		if (Utils.isNotNullOrEmpty(template) && Utils.isNotNullOrEmpty(tokens)) {
@@ -103,31 +102,29 @@ class FreemarkerTemplateServiceImpl implements TemplateService {
 				Iterator<Entry<String, Object>> iter = tokens.entrySet().iterator();
 				while (iter.hasNext()) {
 					Entry<String, Object> token = iter.next();
-					stringTokens.add("TOKEN: " + token.getKey() + " === "
-							+ token.getValue().toString());
+					stringTokens.add("TOKEN: " + token.getKey() + " === " + token.getValue().toString());
 				}
 				StringBuilder sb = new StringBuilder();
 				for (String t : stringTokens) {
 					sb.append(t + "\n");
 				}
 				if (template != null) {
-					LOG.error("Problem Processing Template:\n ---- OFFENDING TEMPLATE:\n"
-							+ template + " ---- OFFENRING TOKENS:\n" + sb.toString(), e);
+					LOG.error("Problem Processing Template:\n ---- OFFENDING TEMPLATE:\n" + template
+							+ " ---- OFFENRING TOKENS:\n" + sb.toString(), e);
 					return template;
 				} else {
-					LOG.error("Problem Processing Template! "
-							+ "Cannot Obtain Template To Display!\n ---- OFFENDING TOKENS:\n"
-							+ sb.toString(), e);
+					LOG.error(
+							"Problem Processing Template! "
+									+ "Cannot Obtain Template To Display!\n ---- OFFENDING TOKENS:\n" + sb.toString(),
+							e);
 				}
 			} else {
 				if (template != null) {
 					LOG.error("Problem Processing Template! "
-							+ "Cannot Obtain Tokens To Display!\n ---- OFFENDING TEMPLATE:\n"
-							+ template, e);
+							+ "Cannot Obtain Tokens To Display!\n ---- OFFENDING TEMPLATE:\n" + template, e);
 					return template;
 				} else {
-					LOG.error("Problem Processing Template! "
-							+ "Cannot Obtain Template And Tokens To Display!", e);
+					LOG.error("Problem Processing Template! " + "Cannot Obtain Template And Tokens To Display!", e);
 				}
 			}
 		} // StringWriter does not need to be closed.

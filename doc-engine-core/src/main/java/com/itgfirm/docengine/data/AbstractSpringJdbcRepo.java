@@ -4,37 +4,31 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
-import javax.transaction.Transactional;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
-
 import com.itgfirm.docengine.util.Utils;
-import com.itgfirm.docengine.util.Constants;
 
 /**
  * @author Justin Scott
  * 
  *         Base Class for all JDBC needs.
  */
-@Transactional
+//@Transactional
+@Deprecated
 public abstract class AbstractSpringJdbcRepo extends JdbcDaoSupport {
-	private static final Logger LOG = LogManager.getLogger(AbstractSpringJdbcRepo.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractSpringJdbcRepo.class);
 
-	@Autowired
-	@Qualifier(value = RepositoryConfig.QUALIFIER_EXTERNAL_DATASOURCE)
-	private DataSource ds;
+//	@Autowired
+//	@Qualifier(value = RepositoryConfig.QUALIFIER_EXTERNAL_DATASOURCE)
+//	private DataSource ds;
 
-	@Value(Constants.PROPERTY_EXTERNAL_URL)
-	protected String externalUrl;
+//	@Value(Constants.PROPERTY_EXTERNAL_URL)
+//	protected String externalUrl;
 
 	public AbstractSpringJdbcRepo() {}
 
@@ -110,6 +104,6 @@ public abstract class AbstractSpringJdbcRepo extends JdbcDaoSupport {
 	@PostConstruct
 	private void init() {
 		LOG.trace("Setting DataSource.");
-		setDataSource(ds);
+//		setDataSource(ds);
 	}
 }

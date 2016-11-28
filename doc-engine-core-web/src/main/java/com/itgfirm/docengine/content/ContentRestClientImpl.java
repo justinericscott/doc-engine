@@ -3,8 +3,6 @@ package com.itgfirm.docengine.content;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -23,8 +21,6 @@ import com.itgfirm.docengine.web.RestUrls;
  */
 @Component(CoreWebConstants.QUALIFIER_REST_CLIENT_CONTENT)
 class ContentRestClientImpl extends AbstractRestClient implements RestClient {
-	@SuppressWarnings("unused")
-	private static final Logger LOG = LogManager.getLogger(ContentRestClientImpl.class);
 
 	public ContentRestClientImpl() {}
 

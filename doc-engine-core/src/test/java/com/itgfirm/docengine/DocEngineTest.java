@@ -1,20 +1,15 @@
-/**TODO: License
- */
 package com.itgfirm.docengine;
 
-import org.junit.Assert;
+import static org.junit.Assert.*;
+
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-/**
- * @author Justin Scott
- * TODO: Description
- */
+import com.itgfirm.docengine.util.Constants;
+
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Ignore
-public class DocEngineTest extends Assert {
+public class DocEngineTest {
 
 	@Test
 	public void aa_MainTest() {
@@ -22,8 +17,7 @@ public class DocEngineTest extends Assert {
 		DocEngine.main();
 		DocEngine.main();
 		assertTrue(DocEngine.running());
-		assertEquals(1, DocEngine.stop());
-		assertEquals(0, DocEngine.stop());
+		DocEngine.main(new String[] { Constants.ENGINE_CONTROL_STOP });
 		assertFalse(DocEngine.running());
 	}
 }

@@ -4,41 +4,39 @@
 package com.itgfirm.docengine.util;
 
 /**
- * @author Justin Scott
+ * @author Justin Scott<br>
  * 
  *         TODO: Description
  */
 public final class Constants {
 
-	/* SYSTEM */
-	/** For Application Disk Storage Location **/
-	public static final String SYS_VAR_DOC_ENGINE_HOME = "DOC_ENGINE_HOME";
+	public static final String AUTOWIRE_QUALIFIER_DEFAULT = "default";
+	public static final String AUTOWIRE_QUALIFIER_ADVANCED = "advanced";
+	public static final String AUTOWIRE_QUALIFIER_SECTION = "section";
+	public static final String AUTOWIRE_QUALIFIER_CLAUSE = "clause";
+	public static final String AUTOWIRE_QUALIFIER_PARAGRAPH = "paragraph";
+	public static final String AUTOWIRE_QUALIFIER_INSTANCE = "instance";
+	public static final String AUTOWIRE_QUALIFIER_JDBC_TX = "jdbcTransactionManager";
+	public static final String AUTOWIRE_QUALIFIER_ORM_TX = "transactionManager";
+	
+	public static final String DATASTORE_PRIMARY = "datasource.primary";
+	public static final String DATASTORE_SECONDARY = "datasource.secondary";
 
-	/* INTERNAL */
-	/** For Spring PropertyResources **/
+	public static final String ENGINE_CONTROL_STOP = "stop";
+	
+	public static final String HIBERNATE_TO_DDL_AUTO = "hibernate.hbm2ddl.auto";
+	public static final String HIBERNATE_TO_DDL_AUTO_UPDATE = "update";
+	
+	public static final String JPA_PACKAGE = "com.itgfirm.docengine.types.jpa";
+
 	public static final String PROPERTY_DEFAULT = "classpath:default.properties";
 	public static final String PROPERTY_CUSTOM = "file:${DOC_ENGINE_HOME}/config/custom.properties";
+	
+	public static final String REPO_PACKAGE = "com.itgfirm.docengine.repository";
 
-	/** Property Placeholders **/
-	public static final String PROPERTY_PRIMARY_DRIVER_CLASS = "${primary.driverClassName}";
-	public static final String PROPERTY_PRIMARY_PASSWORD = "${primary.password}";
-	public static final String PROPERTY_PRIMARY_URL = "${primary.url}";
-	public static final String PROPERTY_PRIMARY_USERNAME = "${primary.username}";
-
-	public static final String PROPERTY_EXTERNAL_DRIVER_CLASS = "${external.driverClassName}";
-	public static final String PROPERTY_EXTERNAL_PASSWORD = "${external.password}";
-	public static final String PROPERTY_EXTERNAL_URL = "${external.url}";
-	public static final String PROPERTY_EXTERNAL_USERNAME = "${external.username}";
-
-	public static final String PROPERTY_HIBERNATE_HBM2DDL = "${hibernate.hbm2ddl.auto}";
-	public static final String PROPERTY_HIBERNATE_SHOW_SQL = "${hibernate.show_sql}";
-	public static final String PROPERTY_HIBERNATE_DEFAULT_SCHEMA = "${hibernate.default_schema}";
-
-	public static final String PROPERTY_SYSTEM_URL = "${system.url}";
-	public static final String PROPERTY_SERVER_CONTEXT = "${server.contextPath}";
-	public static final String PROPERTY_SERVER_PORT = "${server.port}";
-	public static final String PROPERTY_SERVER_SSL_ENABLED = "${server.ssl.enabled}";
+	public static final String SYSTEM_VARIABLE_FOR_HOME = "DOC_ENGINE_HOME";
 
 	private Constants() {
+		// Do not instantiate
 	}
 }

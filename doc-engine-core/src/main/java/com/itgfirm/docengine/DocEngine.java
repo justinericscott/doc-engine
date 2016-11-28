@@ -6,8 +6,9 @@ package com.itgfirm.docengine;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,67 +19,68 @@ import org.springframework.context.annotation.PropertySources;
 import com.itgfirm.docengine.util.Constants;
 
 /**
- * @author Justin Scott
- * TODO: Description
+ * @author Justin Scott<br>
+ *         TODO: Description
  */
 @SpringBootApplication
-@PropertySources({
-	@PropertySource( value = Constants.PROPERTY_DEFAULT ),
-	@PropertySource( value = Constants.PROPERTY_CUSTOM, ignoreResourceNotFound = true)
-})
+@PropertySources({ @PropertySource(value = Constants.PROPERTY_DEFAULT),
+		@PropertySource(value = Constants.PROPERTY_CUSTOM, ignoreResourceNotFound = true) })
 public class DocEngine {
-	private static final Class<DocEngine> app = DocEngine.class;
-	private static final Logger LOG = LogManager.getLogger(app);
+	private static final Class<DocEngine> APPLICATION = DocEngine.class;
+	private static final Logger LOG = LoggerFactory.getLogger(APPLICATION);
 	private static volatile ConfigurableApplicationContext ctx;
 	private static volatile AtomicBoolean running = new AtomicBoolean(false);
-	
+
 	public static void main() {
 		DocEngine.main(null);
 	}
-	
-	public static synchronized void main(String[] args) {
-		if(args != null) {
-			if (Arrays.asList(args).contains("stop")) {
-				stop();
-			} else {
-				start(args);
-			}
+
+	public static void main(final String[] args) {
+		if (args != null && Arrays.asList(args).contains(Constants.ENGINE_CONTROL_STOP)) {
+			stop();
 		} else {
-			args = new String[]{};
 			start(args);
 		}
 	}
-	
+
 	public static synchronized boolean running() {
 		return running.get();
-	}	
-	
-	public static synchronized int stop() {
-		if (running()) {
-			ExitCodeGenerator exit = new ExitCodeGenerator() {
-				@Override public int getExitCode() { return 1; }
-			};
-			int code = SpringApplication.exit(ctx, exit);
-			running.set(false);
-			ctx = null;
-			return code;
-		} else {
-			ctx = null;
-			LOG.debug("Document Engine Is Not Running.");
-			return 0;
-		}
 	}
-	
-	private static void start(String[] args) {
+
+	private static void start(final String[] args) {
 		if (!running()) {
-			LOG.debug("Starting Document Engine...");
-			ctx = SpringApplication.run(app, args);
+			LOG.info("Starting Document Engine...");
+			if (args != null) {
+				ctx = SpringApplication.run(APPLICATION, args);
+			} else {
+				ctx = SpringApplication.run(APPLICATION, new String[] {});
+			}
 			if (ctx.isActive()) {
 				running.set(true);
-				LOG.debug("Document Engine Started...");
+				LOG.info("Document Engine Started.");
 			}
 		} else {
-			LOG.info("Document Engine Is Already Running.");
+			LOG.info("Document Engine is already running!");
+		}
+	}
+
+	private static synchronized void stop() {
+		if (running()) {
+			LOG.info("Shutting down the Document Engine...");
+			final ExitCodeGenerator exit = new ExitCodeGenerator() {
+				@Override
+				public int getExitCode() {
+					return 1;
+				}
+			};
+			final int code = SpringApplication.exit(ctx, exit);
+			if (code == 1) {
+				running.set(false);
+				ctx = null;
+				LOG.info("Document Engine is shutdown.");
+			}
+		} else {
+			LOG.info("Document Engine is not running!");
 		}
 	}
 }
