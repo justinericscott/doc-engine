@@ -1,7 +1,7 @@
 /**
  * TODO: License
  */
-package com.itgfirm.docengine.document;
+package com.itgfirm.docengine.service;
 
 import com.itgfirm.docengine.types.jpa.InstanceJpaImpl;
 

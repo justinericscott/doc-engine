@@ -24,8 +24,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  *         ClauseJpaImpl InstanceJpaImpl Data Model
  */
 @Entity
-@DiscriminatorValue(JPA_DISCRIMINATOR_CLAUSE)
-@JsonIdentityInfo(property = JSON_IDENTITY_PROPERTY, generator = ObjectIdGenerators.IntSequenceGenerator.class)
+@DiscriminatorValue(JPA_DSCRMNTR_CLAUSE)
+@JsonIdentityInfo(property = JSON_PROP_ID, generator = ObjectIdGenerators.IntSequenceGenerator.class)
 public class ClauseInstanceJpaImpl extends InstanceJpaImpl {
 	private static final String JPA_COLUMN_PARENT = "PARENT_ID";
 	private static final String JPA_MAPPED_BY_CLAUSE = "clause";

@@ -1,28 +1,30 @@
 package com.itgfirm.docengine.types.jpa;
 
+import static javax.persistence.DiscriminatorType.*;
+import static javax.persistence.InheritanceType.*;
+
 import static com.itgfirm.docengine.types.jpa.TypeUtils.*;
 import static com.itgfirm.docengine.types.jpa.TypeConstants.*;
 
 import java.sql.Timestamp;
-import java.time.Instant;
-import java.util.Calendar;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.itgfirm.docengine.annotation.ExportOrder;
+
+import com.itgfirm.docengine.annotation.ExcelColumn;
+import com.itgfirm.docengine.annotation.ExcelColumnOrder;
+import com.itgfirm.docengine.annotation.ExcelSheet;
 
 /**
  * @author Justin Scott
@@ -30,75 +32,90 @@ import com.itgfirm.docengine.annotation.ExportOrder;
  *         ContentJpaImpl Data Model
  */
 @Entity
-@Table(name = JPA_TABLE_CONTENT)
-@DiscriminatorColumn(name = JPA_DISCRIMINATOR_COLUMN, discriminatorType = DiscriminatorType.STRING)
-@DiscriminatorValue(JPA_DISCRIMINATOR_CONTENT)
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Table(name = JPA_TBL_CONTENT)
+@ExcelSheet(IX_SHEET_NAME_CONTENT)
+@Inheritance(strategy = SINGLE_TABLE)
+@DiscriminatorValue(JPA_DSCRMNTR_CONTENT)
+@DiscriminatorColumn(name = JPA_DSCRMNTR_COL, discriminatorType = STRING)
 public class ContentJpaImpl extends AbstractJpaModel implements Comparable<ContentJpaImpl> {
 	private static final Logger LOG = LoggerFactory.getLogger(ContentJpaImpl.class);
-	private static final String JPA_COLUMN_BODY = "BODY_TXT";
-	private static final String JPA_COLUMN_CATEGORY = "CATEGORY_CD";
-	private static final String JPA_COLUMN_CONTENT_CD = "CONTENT_CD";
-	private static final String JPA_COLUMN_CONTENT_ID = JPA_TABLE_CONTENT + "_ID";
-	private static final String JPA_COLUMN_CONTENT_NBR = "CONTENT_NBR";
-	private static final String JPA_COLUMN_CSS = "CSS_TXT";
-	private static final String JPA_COLUMN_DESCRIPTION = "DESCRIPTION_TXT";
-	private static final String JPA_COLUMN_FLAGS = "FLAGS_CD";
-	private static final String JPA_COLUMN_HELPER = "HELPER_TXT";
-	private static final String JPA_COLUMN_NAME = "NAME_TXT";
-	private static final String JPA_COLUMN_ORDER = "ORDER_BY";
-	private static final String JPA_COLUMN_VALID_END = "VALID_END_DT";
-	private static final String JPA_COLUMN_VALID_START = "VALID_START_DT";
-	private static final String JPA_SEQUENCE_CONTENT = JPA_TABLE_CONTENT + "_SQ";
-	protected static final String JPA_COLUMN_PARENT = "PARENT_ID";
+	private static final String JPA_COL_BODY = "BODY_TXT";
+	private static final String JPA_COL_CATEGORY = "CATEGORY_CD";
+	private static final String JPA_COL_CONTENT_CD = "CONTENT_CD";
+	private static final String JPA_COL_CONTENT_ID = JPA_TBL_CONTENT + "_ID";
+	private static final String JPA_COL_CONTENT_NBR = "CONTENT_NBR";
+	private static final String JPA_COL_CSS = "CSS_TXT";
+	private static final String JPA_COL_DESCRIPTION = "DESC_TXT";
+	private static final String JPA_COL_FLAGS = "FLAGS_CD";
+	private static final String JPA_COL_HELPER = "HELPER_TXT";
+	private static final String JPA_COL_NAME = "NAME_TXT";
+	private static final String JPA_COL_ORDER = "ORDER_BY";
+	private static final String JPA_COL_VALID_END = "VALID_END_DT";
+	private static final String JPA_COL_VALID_START = "VALID_START_DT";
+	private static final String JPA_SEQ_CONTENT = JPA_TBL_CONTENT + "_SQ";
+	protected static final String JPA_COL_PARENT = "PARENT_ID";
 
 	/** Fields **/
 	@Id
-	@ExportOrder(1)
-	@GeneratedValue(generator = JPA_SEQUENCE_CONTENT, strategy = GenerationType.AUTO)
-	@SequenceGenerator(name = JPA_SEQUENCE_CONTENT, sequenceName = JPA_SEQUENCE_CONTENT)
-	@Column(name = JPA_COLUMN_CONTENT_ID)
+	@ExcelColumn("Content ID")
+	@ExcelColumnOrder(1)
+	@GeneratedValue(generator = JPA_SEQ_CONTENT, strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = JPA_SEQ_CONTENT, sequenceName = JPA_SEQ_CONTENT)
+	@Column(name = JPA_COL_CONTENT_ID)
 	private Long id;
-	@ExportOrder(2)
-	@Column(name = JPA_COLUMN_PARENT, insertable = false, updatable = false)
+	@ExcelColumn("Parent ID")
+	@ExcelColumnOrder(2)
+	@Column(name = JPA_COL_PARENT, insertable = false, updatable = false)
 	private Long parentId;
-	@ExportOrder(3)
-	@Column(name = JPA_COLUMN_CONTENT_CD, length = 100, nullable = false, unique = true)
+	@ExcelColumn("Content Code")
+	@ExcelColumnOrder(3)
+	@Column(name = JPA_COL_CONTENT_CD, length = 100, nullable = false, unique = true)
 	private String contentCd;
-	@ExportOrder(4)
-	@Column(name = JPA_COLUMN_NAME, length = 1000)
+	@ExcelColumn("Name")
+	@ExcelColumnOrder(4)
+	@Column(name = JPA_COL_NAME, length = 1000)
 	private String name;
-	@ExportOrder(5)
-	@Column(name = JPA_COLUMN_DESCRIPTION, length = 4000)
+	@ExcelColumn("Description")
+	@ExcelColumnOrder(5)
+	@Column(name = JPA_COL_DESCRIPTION, length = 4000)
 	private String description;
-	@ExportOrder(6)
-	@Column(name = JPA_COLUMN_CONTENT_NBR, length = 10)
+	@ExcelColumn("Content Number")
+	@ExcelColumnOrder(6)
+	@Column(name = JPA_COL_CONTENT_NBR, length = 10)
 	private String contentNumber;
-	@ExportOrder(7)
-	@Column(name = JPA_COLUMN_BODY, length = 4000, nullable = false)
+	@ExcelColumn("Content Body")
+	@ExcelColumnOrder(7)
+	@Column(name = JPA_COL_BODY, length = 4000, nullable = false)
 	private String body;
-	@ExportOrder(8)
-	@Column(name = JPA_COLUMN_CSS, length = 4000)
+	@ExcelColumn("Content CSS")
+	@ExcelColumnOrder(8)
+	@Column(name = JPA_COL_CSS, length = 4000)
 	private String css;
-	@ExportOrder(9)
-	@Column(name = JPA_COLUMN_HELPER, length = 4000)
+	@ExcelColumn("Helper Text")
+	@ExcelColumnOrder(9)
+	@Column(name = JPA_COL_HELPER, length = 4000)
 	private String helper;
-	@ExportOrder(10)
-	@Column(name = JPA_COLUMN_CATEGORY, length = 100)
+	@ExcelColumn("Category Code")
+	@ExcelColumnOrder(10)
+	@Column(name = JPA_COL_CATEGORY, length = 100)
 	private String category;
-	@ExportOrder(11)
-	@Column(name = JPA_COLUMN_FLAGS, length = 100)
+	@ExcelColumn("Flags")
+	@ExcelColumnOrder(11)
+	@Column(name = JPA_COL_FLAGS, length = 100)
 	private String flags;
-	@ExportOrder(12)
-	@Column(name = JPA_COLUMN_ORDER)
+	@ExcelColumn("Order By")
+	@ExcelColumnOrder(12)
+	@Column(name = JPA_COL_ORDER)
 	private Integer orderBy;
-	@ExportOrder(13)
-	@Column(name = JPA_COLUMN_VALID_START, nullable = false)
-	private Timestamp validStart = Timestamp.from(Calendar.getInstance().toInstant());
-	@ExportOrder(14)
-	@Column(name = JPA_COLUMN_VALID_END, nullable = false)
-	private Timestamp validEnd = Timestamp.from(Instant.MAX);
-	
+	@ExcelColumn("Start Date")
+	@ExcelColumnOrder(13)
+	@Column(name = JPA_COL_VALID_START, nullable = false)
+	private Timestamp validStart = now();
+	@ExcelColumnOrder(14)
+	@ExcelColumn("End Date")
+	@Column(name = JPA_COL_VALID_END, nullable = false)
+	private Timestamp validEnd = max();
+
 	public ContentJpaImpl() {
 		// Default constructor for Spring
 	}
@@ -141,7 +158,7 @@ public class ContentJpaImpl extends AbstractJpaModel implements Comparable<Conte
 	}
 
 	// Disables unintended change of Primary Key
-	final void setId(final Long id) {
+	public final void setId(final Long id) {
 		this.id = id;
 	}
 
@@ -150,7 +167,7 @@ public class ContentJpaImpl extends AbstractJpaModel implements Comparable<Conte
 	}
 
 	// Disables unintended change of Foreign Key
-	final void setParentId(final Long parentId) {
+	public final void setParentId(final Long parentId) {
 		this.parentId = parentId;
 	}
 

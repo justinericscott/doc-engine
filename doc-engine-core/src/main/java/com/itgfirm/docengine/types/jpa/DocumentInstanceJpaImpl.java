@@ -17,8 +17,8 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
  *         DocumentJpaImpl InstanceJpaImpl Data Model
  */
 @Entity
-@DiscriminatorValue(JPA_DISCRIMINATOR_DOCUMENT)
-@JsonIdentityInfo(property = JSON_IDENTITY_PROPERTY, generator = ObjectIdGenerators.IntSequenceGenerator.class)
+@DiscriminatorValue(JPA_DSCRMNTR_DOCUMENT)
+@JsonIdentityInfo(property = JSON_PROP_ID, generator = ObjectIdGenerators.IntSequenceGenerator.class)
 public class DocumentInstanceJpaImpl extends InstanceJpaImpl {
 	private static final Logger LOG = LoggerFactory.getLogger(DocumentInstanceJpaImpl.class);
 

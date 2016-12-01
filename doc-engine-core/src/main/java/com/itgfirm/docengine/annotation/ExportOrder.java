@@ -24,5 +24,5 @@ public @interface ExportOrder {
 	 * 
 	 * @return Column order
 	 */
-	int value();
+//	int value();
 }

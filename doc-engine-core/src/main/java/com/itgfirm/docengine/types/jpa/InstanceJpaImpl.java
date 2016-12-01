@@ -26,15 +26,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Entity
-@Table(name = JPA_TABLE_INSTANCE)
-@DiscriminatorColumn(name = JPA_DISCRIMINATOR_COLUMN, discriminatorType = DiscriminatorType.STRING)
-@DiscriminatorValue(JPA_DISCRIMINATOR_INSTANCE)
+@Table(name = JPA_TBL_INSTANCE)
+@DiscriminatorColumn(name = JPA_DSCRMNTR_COL, discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue(JPA_DSCRMNTR_INSTANCE)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class InstanceJpaImpl extends AbstractJpaModel implements Comparable<InstanceJpaImpl> {
 	private static final Logger LOG = LoggerFactory.getLogger(InstanceJpaImpl.class);
 	private static final String JPA_COLUMN_CUSTOM_BODY = "CUSTOM_BODY_TXT";
 	private static final String JPA_COLUMN_FLAGS = "FLAGS_TXT";
-	private static final String JPA_COLUMN_INSTANCE_ID = JPA_TABLE_INSTANCE + "_ID";
+	private static final String JPA_COLUMN_INSTANCE_ID = JPA_TBL_INSTANCE + "_ID";
 	private static final String JPA_COLUMN_IS_AD_HOC = "IS_AD_HOC_BLN";
 	private static final String JPA_COLUMN_IS_MARKED_FOR_ACTION = "IS_MARKED_FOR_ACTION_BLN";
 	private static final String JPA_COLUMN_IS_STRIKE_HEADER = "IS_STRIKE_HEADER_BLN";
@@ -42,8 +42,8 @@ public class InstanceJpaImpl extends AbstractJpaModel implements Comparable<Inst
 	private static final String JPA_COLUMN_ORDER = "ORDER_BY";
 	private static final String JPA_COLUMN_PROJECT = "PROJECT_NBR";
 	private static final String JPA_COLUMN_STATUS = "STATUS_CD";
-	private static final String JPA_JOIN_COLUMN_CONTENT = JPA_TABLE_CONTENT + "_ID";
-	private static final String JPA_SEQUENCE_INSTANCE = JPA_TABLE_INSTANCE + "_SQ";
+	private static final String JPA_JOIN_COLUMN_CONTENT = JPA_TBL_CONTENT + "_ID";
+	private static final String JPA_SEQUENCE_INSTANCE = JPA_TBL_INSTANCE + "_SQ";
 	private static final String STATUS_AUTO_IN = "Automatically Included";
 
 	/** Fields **/

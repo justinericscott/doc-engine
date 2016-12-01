@@ -24,13 +24,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  *         SectionJpaImpl Data Model
  */
 @Entity
-@DiscriminatorValue(value = JPA_DISCRIMINATOR_SECTION)
-@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = JSON_IDENTITY_PROPERTY)
+@DiscriminatorValue(value = JPA_DSCRMNTR_SECTION)
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = JSON_PROP_ID)
 public class SectionJpaImpl extends ContentJpaImpl {
 	private static final String JPA_MAPPED_BY_SECTION = "section";
 
 	/** Parent Type **/
-	@JoinColumn(name = JPA_COLUMN_PARENT)
+	@JoinColumn(name = JPA_COL_PARENT)
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, targetEntity = AdvancedDocumentJpaImpl.class)
 	@JsonDeserialize(as = AdvancedDocumentJpaImpl.class)
 	private AdvancedDocumentJpaImpl document;

@@ -23,9 +23,9 @@ import org.slf4j.LoggerFactory;
  *         TODO: Description
  */
 @Entity
-@Table(name = JPA_TABLE_TOKEN_DICTIONARY)
-@DiscriminatorColumn(name = JPA_DISCRIMINATOR_COLUMN, discriminatorType = DiscriminatorType.STRING)
-@DiscriminatorValue(JPA_DISCRIMINATOR_TOKEN)
+@Table(name = JPA_TBL_TOKEN_DICTIONARY)
+@DiscriminatorColumn(name = JPA_DSCRMNTR_COL, discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue(JPA_DSCRMNTR_TOKEN)
 public class TokenDefinitionJpaImpl extends AbstractJpaModel implements Comparable<TokenDefinitionJpaImpl> {
 	private static final Logger LOG = LoggerFactory.getLogger(TokenDefinitionJpaImpl.class);
 	private static final String JPA_COLUMN_ALT_TEXT = "ALT_TXT";
@@ -43,9 +43,9 @@ public class TokenDefinitionJpaImpl extends AbstractJpaModel implements Comparab
 	private static final String JPA_COLUMN_TOKEN_CD = "TOKEN_CD";
 	private static final String JPA_COLUMN_PROCESS = "PROCESS_TXT";
 	private static final String JPA_COLUMN_TASK = "TASK_TXT";
-	private static final String JPA_COLUMN_TOKEN_ID = JPA_TABLE_TOKEN_DICTIONARY + "_ID";
+	private static final String JPA_COLUMN_TOKEN_ID = JPA_TBL_TOKEN_DICTIONARY + "_ID";
 	private static final String JPA_COLUMN_WHERE = "WHERE_TXT";
-	private static final String JPA_SEQUENCE_TOKEN = JPA_TABLE_TOKEN_DICTIONARY + "_SQ";
+	private static final String JPA_SEQUENCE_TOKEN = JPA_TBL_TOKEN_DICTIONARY + "_SQ";
 
 	@Id
 	@GeneratedValue(generator = JPA_SEQUENCE_TOKEN, strategy = GenerationType.AUTO)

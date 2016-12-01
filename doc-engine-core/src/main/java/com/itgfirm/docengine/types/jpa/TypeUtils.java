@@ -1,5 +1,8 @@
 package com.itgfirm.docengine.types.jpa;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.Calendar;
 import java.util.Collection;
 
 /**
@@ -16,7 +19,7 @@ public class TypeUtils {
 	private TypeUtils() {
 		// Do not instantiate
 	}
-	
+
 	/**
 	 * TODO: Description
 	 * 
@@ -56,5 +59,23 @@ public class TypeUtils {
 	public static boolean isNotNullOrZero(final Number number) {
 		return (number != null && (number.longValue() > 0 || number.intValue() > 0 || number.doubleValue() > 0
 				|| number.floatValue() > 0));
+	}
+
+	/**
+	 * TODO: Description
+	 * 
+	 * @return
+	 */
+	public static Timestamp now() {
+		return Timestamp.from(Calendar.getInstance().toInstant());
+	}
+
+	/**
+	 * TODO: Description
+	 * 
+	 * @return
+	 */
+	public static Timestamp max() {
+		return Timestamp.from(Instant.MAX);
 	}
 }

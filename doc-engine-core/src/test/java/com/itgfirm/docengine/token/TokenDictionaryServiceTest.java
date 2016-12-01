@@ -139,7 +139,7 @@ public class TokenDictionaryServiceTest extends AbstractTest {
 
 	@Test
 	public void da_GetProjectTokenDataMap() {
-		String projectId = TestConstants.TEST_PROJECT_ID;
+		String projectId = TestConstants.TEST_DATA_PROJECT_ID;
 		assertNull(tokenDictionaryService.get());
 		assertNull(tokenDictionaryService.getTokenDataMap(projectId));
 		setupExternalSchema();
@@ -265,36 +265,36 @@ public class TokenDictionaryServiceTest extends AbstractTest {
 		// Project Number
 		TokenDefinitionJpaImpl projectNumberRlp = new TokenDefinitionJpaImpl(TestConstants.TEST_CODE_PROJECT_NBR_R101,
 				TestConstants.TEST_NAME_PROJECT_NUMBER);
-		projectNumberRlp.setEntity(TestConstants.TEST_ENTITY);
-		projectNumberRlp.setAttribute(TestConstants.TEST_ATTRIBUTE_PROJECT_NBR);
-		projectNumberRlp.setWhere(TestConstants.TEST_WHERE);
-		projectNumberRlp.setDocumentCd(TestConstants.TEST_DOC_TYPE_R101);
+		projectNumberRlp.setEntity(TestConstants.TEST_NAME_ENTITY);
+		projectNumberRlp.setAttribute(TestConstants.TEST_NAME_ATTRIBUTE_PROJECT_NBR);
+		projectNumberRlp.setWhere(TestConstants.TEST_NAME_WHERE);
+		projectNumberRlp.setDocumentCd(TestConstants.TEST_CODE_DOC_TYPE_R101);
 
 		TokenDefinitionJpaImpl projectNumberPropLease = new TokenDefinitionJpaImpl(projectNumberRlp,
 				TestConstants.TEST_CODE_PROJECT_NBR_L201_PROPOSED);
-		projectNumberPropLease.setDocumentCd(TestConstants.TEST_DOC_TYPE_L201);
-		projectNumberPropLease.setPhase(TestConstants.TEST_PHASE_PROPOSED);
+		projectNumberPropLease.setDocumentCd(TestConstants.TEST_CODE_DOC_TYPE_L201);
+		projectNumberPropLease.setPhase(TestConstants.TEST_CODE_PHASE_PROPOSED);
 
 		TokenDefinitionJpaImpl projectNumberAwardLease = new TokenDefinitionJpaImpl(projectNumberPropLease,
 				TestConstants.TEST_CODE_PROJECT_NBR_L201_AWARDED);
-		projectNumberAwardLease.setPhase(TestConstants.TEST_PHASE_AWARDED);
+		projectNumberAwardLease.setPhase(TestConstants.TEST_CODE_PHASE_AWARDED);
 
 		// Lease Number
 		TokenDefinitionJpaImpl leaseNumberRlp = new TokenDefinitionJpaImpl(TestConstants.TEST_CODE_LEASE_NBR_R101,
 				TestConstants.TEST_NAME_LEASE_NUMBER);
-		leaseNumberRlp.setEntity(TestConstants.TEST_ENTITY);
-		leaseNumberRlp.setAttribute(TestConstants.TEST_ATTRIBUTE_LEASE_NBR);
-		leaseNumberRlp.setWhere(TestConstants.TEST_WHERE);
-		leaseNumberRlp.setDocumentCd(TestConstants.TEST_DOC_TYPE_R101);
+		leaseNumberRlp.setEntity(TestConstants.TEST_NAME_ENTITY);
+		leaseNumberRlp.setAttribute(TestConstants.TEST_NAME_ATTRIBUTE_LEASE_NBR);
+		leaseNumberRlp.setWhere(TestConstants.TEST_NAME_WHERE);
+		leaseNumberRlp.setDocumentCd(TestConstants.TEST_CODE_DOC_TYPE_R101);
 
 		TokenDefinitionJpaImpl leaseNumberPropLease = new TokenDefinitionJpaImpl(leaseNumberRlp,
 				TestConstants.TEST_CODE_LEASE_NBR_L201_PROPOSED);
-		leaseNumberPropLease.setDocumentCd(TestConstants.TEST_DOC_TYPE_L201);
-		leaseNumberPropLease.setPhase(TestConstants.TEST_PHASE_PROPOSED);
+		leaseNumberPropLease.setDocumentCd(TestConstants.TEST_CODE_DOC_TYPE_L201);
+		leaseNumberPropLease.setPhase(TestConstants.TEST_CODE_PHASE_PROPOSED);
 
 		TokenDefinitionJpaImpl leaseNumberAwardLease = new TokenDefinitionJpaImpl(leaseNumberPropLease,
 				TestConstants.TEST_CODE_LEASE_NBR_L201_AWARDED);
-		leaseNumberAwardLease.setPhase(TestConstants.TEST_PHASE_AWARDED);
+		leaseNumberAwardLease.setPhase(TestConstants.TEST_CODE_PHASE_AWARDED);
 
 		List<TokenDefinitionJpaImpl> tokens = new ArrayList<TokenDefinitionJpaImpl>();
 		tokens.add(projectNumberRlp);

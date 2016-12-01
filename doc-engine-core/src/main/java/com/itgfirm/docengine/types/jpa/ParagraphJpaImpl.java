@@ -21,8 +21,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  *         ParagraphJpaImpl Data Model
  */
 @Entity
-@DiscriminatorValue(value = JPA_DISCRIMINATOR_PARAGRAPH)
-@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = JSON_IDENTITY_PROPERTY)
+@DiscriminatorValue(value = JPA_DSCRMNTR_PARAGRAPH)
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = JSON_PROP_ID)
 public class ParagraphJpaImpl extends ContentJpaImpl {
 	private static final String JPA_COLUMN_IS_SUB = "IS_SUB_PARA_BLN";
 	private static final String JPA_COLUMN_IS_FIRST = "IS_FIRST_BLN";
@@ -42,7 +42,7 @@ public class ParagraphJpaImpl extends ContentJpaImpl {
 	private boolean isOptional = false;
 
 	/** Parent Type **/
-	@JoinColumn(name = JPA_COLUMN_PARENT)
+	@JoinColumn(name = JPA_COL_PARENT)
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, targetEntity = ClauseJpaImpl.class)
 	@JsonDeserialize(as = ClauseJpaImpl.class)
 	private ClauseJpaImpl clause;

@@ -21,8 +21,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  *         DocumentJpaImpl Data Model
  */
 @Entity
-@DiscriminatorValue(JPA_DISCRIMINATOR_ADV_DOCUMENT)
-@JsonIdentityInfo(property = JSON_IDENTITY_PROPERTY, generator = ObjectIdGenerators.IntSequenceGenerator.class)
+@DiscriminatorValue(JPA_DSCRMNTR_ADV_DOCUMENT)
+@JsonIdentityInfo(property = JSON_PROP_ID, generator = ObjectIdGenerators.IntSequenceGenerator.class)
 public class AdvancedDocumentJpaImpl extends ContentJpaImpl {
 	private static final String JPA_MAPPED_BY_DOCUMENT = "document";
 

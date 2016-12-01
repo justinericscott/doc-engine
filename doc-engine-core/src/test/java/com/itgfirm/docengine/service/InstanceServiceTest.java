@@ -3,6 +3,7 @@
 package com.itgfirm.docengine.service;
 
 import static com.itgfirm.docengine.util.Constants.*;
+import static com.itgfirm.docengine.util.TestConstants.*;
 import static com.itgfirm.docengine.util.TestUtils.*;
 import static org.junit.Assert.*;
 

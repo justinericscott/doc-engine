@@ -19,8 +19,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  *         ParagraphJpaImpl InstanceJpaImpl Data Model
  */
 @Entity
-@DiscriminatorValue(JPA_DISCRIMINATOR_PARAGRAPH)
-@JsonIdentityInfo(property = JSON_IDENTITY_PROPERTY, generator = ObjectIdGenerators.IntSequenceGenerator.class)
+@DiscriminatorValue(JPA_DSCRMNTR_PARAGRAPH)
+@JsonIdentityInfo(property = JSON_PROP_ID, generator = ObjectIdGenerators.IntSequenceGenerator.class)
 public class ParagraphInstanceJpaImpl extends InstanceJpaImpl {
 	private static final String JPA_COLUMN_PARENT = "PARENT_ID";
 
