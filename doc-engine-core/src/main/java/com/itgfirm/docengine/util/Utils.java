@@ -3,7 +3,7 @@
  */
 package com.itgfirm.docengine.util;
 
-import static com.itgfirm.docengine.util.Constants.*;
+import static com.itgfirm.docengine.DocEngine.Constants.*;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;

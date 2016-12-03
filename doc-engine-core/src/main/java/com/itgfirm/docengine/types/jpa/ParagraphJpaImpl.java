@@ -1,7 +1,6 @@
 package com.itgfirm.docengine.types.jpa;
 
-import static com.itgfirm.docengine.types.jpa.TypeConstants.*;
-import static com.itgfirm.docengine.types.jpa.TypeUtils.*;
+import static com.itgfirm.docengine.types.jpa.AbstractJpaModel.ModelConstants.*;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,6 +14,9 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import com.itgfirm.docengine.annotation.ExcelColumn;
+import com.itgfirm.docengine.annotation.ExcelColumnOrder;
+
 /**
  * @author Justin Scott
  * 
@@ -24,24 +26,28 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @DiscriminatorValue(value = JPA_DSCRMNTR_PARAGRAPH)
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = JSON_PROP_ID)
 public class ParagraphJpaImpl extends ContentJpaImpl {
-	private static final String JPA_COLUMN_IS_SUB = "IS_SUB_PARA_BLN";
-	private static final String JPA_COLUMN_IS_FIRST = "IS_FIRST_BLN";
-	private static final String JPA_COLUMN_IS_LAST = "IS_LAST_BLN";
-	private static final String JPA_COLUMN_IS_PARENT = "IS_PARENT_BLN";
-	private static final String JPA_COLUMN_IS_OPTIONAL = "IS_OPTIONAL_BLN";
-
-	@Column(name = JPA_COLUMN_IS_SUB)
+	
+	@ExcelColumn(EXCEL_COL_IS_SUB)
+	@ExcelColumnOrder(15)
+	@Column(name = JPA_COL_IS_SUB)
 	private boolean isSubPara = false;
-	@Column(name = JPA_COLUMN_IS_FIRST)
+	@ExcelColumn(EXCEL_COL_IS_FIRST)
+	@ExcelColumnOrder(16)
+	@Column(name = JPA_COL_IS_FIRST)
 	private boolean isFirst = false;
-	@Column(name = JPA_COLUMN_IS_LAST)
+	@ExcelColumn(EXCEL_COL_IS_LAST)
+	@ExcelColumnOrder(17)
+	@Column(name = JPA_COL_IS_LAST)
 	private boolean isLast = false;
-	@Column(name = JPA_COLUMN_IS_PARENT)
+	@ExcelColumn(EXCEL_COL_IS_PARENT)
+	@ExcelColumnOrder(18)
+	@Column(name = JPA_COL_IS_PARENT)
 	private boolean isParent = false;
-	@Column(name = JPA_COLUMN_IS_OPTIONAL)
+	@ExcelColumn(EXCEL_COL_IS_OPTIONAL)
+	@ExcelColumnOrder(19)
+	@Column(name = JPA_COL_IS_OPTIONAL)
 	private boolean isOptional = false;
 
-	/** Parent Type **/
 	@JoinColumn(name = JPA_COL_PARENT)
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, targetEntity = ClauseJpaImpl.class)
 	@JsonDeserialize(as = ClauseJpaImpl.class)

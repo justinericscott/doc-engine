@@ -1,7 +1,6 @@
 package com.itgfirm.docengine.types.jpa;
 
-import static com.itgfirm.docengine.types.jpa.TypeUtils.*;
-import static com.itgfirm.docengine.types.jpa.TypeConstants.*;
+import static com.itgfirm.docengine.types.jpa.AbstractJpaModel.ModelConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
@@ -27,16 +26,12 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @DiscriminatorValue(JPA_DSCRMNTR_SECTION)
 @JsonIdentityInfo(property = JSON_PROP_ID, generator = ObjectIdGenerators.IntSequenceGenerator.class)
 public class SectionInstanceJpaImpl extends InstanceJpaImpl {
-	private static final String JPA_COLUMN_PARENT = "PARENT_ID";
-	private static final String JPA_MAPPED_BY_SECTION = "section";
 
-	/** Parent Type **/
-	@JoinColumn(name = JPA_COLUMN_PARENT)
+	@JoinColumn(name = JPA_COL_PARENT)
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, targetEntity = AdvancedDocumentInstanceJpaImpl.class)
 	@JsonDeserialize(as = AdvancedDocumentInstanceJpaImpl.class)
 	private AdvancedDocumentInstanceJpaImpl document;
 
-	/** Child Type **/
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = JPA_MAPPED_BY_SECTION, targetEntity = ClauseInstanceJpaImpl.class)
 	@JsonDeserialize(contentAs = ClauseInstanceJpaImpl.class)
 	private Collection<ClauseInstanceJpaImpl> clauses;

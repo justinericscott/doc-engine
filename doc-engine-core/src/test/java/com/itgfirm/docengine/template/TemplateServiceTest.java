@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import com.itgfirm.docengine.util.AbstractTest;
 /**
  * @author Justin Scott TODO: Description
  */
+@Ignore
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TemplateServiceTest extends AbstractTest {
 	private static final String template = "Hello, ${name!\" ... What's Your Name?\"}!!!";

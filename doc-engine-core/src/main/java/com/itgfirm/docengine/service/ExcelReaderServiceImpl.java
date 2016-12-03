@@ -69,7 +69,8 @@ class ExcelReaderServiceImpl implements ExcelReaderService {
 				if (header == null) {
 					header = (Collection<String>) getFieldNames(clazz, rows.next());
 					if (header == null) {
-						LOG.debug(String.format("The header row must not be null while creating objects!\nCLASS: %s", clazz.getName()));
+						LOG.debug(String.format("The header row must not be null while creating objects!\nCLASS: %s", (clazz != null ? clazz.getName() : null)));
+						return null;
 					}
 				} else if (header.size() > 0) {
 					list.add(createObject(clazz, rows.next(), header));

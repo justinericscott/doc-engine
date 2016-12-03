@@ -1,7 +1,6 @@
 package com.itgfirm.docengine.types.jpa;
 
-import static com.itgfirm.docengine.types.jpa.TypeConstants.*;
-import static com.itgfirm.docengine.types.jpa.TypeUtils.*;
+import static com.itgfirm.docengine.types.jpa.AbstractJpaModel.ModelConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
@@ -24,7 +23,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @DiscriminatorValue(JPA_DSCRMNTR_ADV_DOCUMENT)
 @JsonIdentityInfo(property = JSON_PROP_ID, generator = ObjectIdGenerators.IntSequenceGenerator.class)
 public class AdvancedDocumentJpaImpl extends ContentJpaImpl {
-	private static final String JPA_MAPPED_BY_DOCUMENT = "document";
 
 	/** Child Type **/
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = JPA_MAPPED_BY_DOCUMENT, targetEntity = SectionJpaImpl.class)

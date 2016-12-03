@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.util.List;
 
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import com.itgfirm.docengine.util.TestUtils;
  * 
  *         TODO: Description
  */
+@Ignore
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class LogicServiceTest extends AbstractTest {
 	private static final String EXPECTED = "Project Number Matches. Logic works!";

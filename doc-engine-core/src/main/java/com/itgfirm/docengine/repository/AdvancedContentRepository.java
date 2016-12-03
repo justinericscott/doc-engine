@@ -1,5 +1,7 @@
 package com.itgfirm.docengine.repository;
 
+import static com.itgfirm.docengine.DocEngine.Constants.*;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -8,9 +10,8 @@ import com.itgfirm.docengine.types.jpa.AdvancedDocumentJpaImpl;
 import com.itgfirm.docengine.types.jpa.ClauseJpaImpl;
 import com.itgfirm.docengine.types.jpa.ParagraphJpaImpl;
 import com.itgfirm.docengine.types.jpa.SectionJpaImpl;
-import com.itgfirm.docengine.util.Constants;
 
-@Qualifier(Constants.AUTOWIRE_QUALIFIER_ADVANCED)
+@Qualifier(AUTOWIRE_QUALIFIER_ADVANCED)
 public interface AdvancedContentRepository extends ContentRepository {
 	static final String OBJECT_SECTION = "SectionJpaImpl";
 	static final String OBJECT_CLAUSE = "ClauseJpaImpl";

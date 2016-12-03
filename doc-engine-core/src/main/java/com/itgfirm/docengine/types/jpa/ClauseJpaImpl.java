@@ -1,7 +1,6 @@
 package com.itgfirm.docengine.types.jpa;
 
-import static com.itgfirm.docengine.types.jpa.TypeConstants.*;
-import static com.itgfirm.docengine.types.jpa.TypeUtils.*;
+import static com.itgfirm.docengine.types.jpa.AbstractJpaModel.ModelConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
@@ -27,7 +26,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @DiscriminatorValue(value = JPA_DSCRMNTR_CLAUSE)
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = JSON_PROP_ID)
 public class ClauseJpaImpl extends ContentJpaImpl {
-	private static final String JPA_MAPPED_BY_CLAUSE = "clause";
 
 	/** Parent Type **/
 	@JoinColumn(name = JPA_COL_PARENT)

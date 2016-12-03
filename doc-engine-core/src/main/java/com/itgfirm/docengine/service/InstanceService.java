@@ -3,7 +3,7 @@
  */
 package com.itgfirm.docengine.service;
 
-import static com.itgfirm.docengine.util.Constants.*;
+import static com.itgfirm.docengine.DocEngine.Constants.*;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 

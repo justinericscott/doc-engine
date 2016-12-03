@@ -1,6 +1,6 @@
 package com.itgfirm.docengine.data;
 
-import static com.itgfirm.docengine.util.Constants.*;
+import static com.itgfirm.docengine.DocEngine.Constants.*;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;

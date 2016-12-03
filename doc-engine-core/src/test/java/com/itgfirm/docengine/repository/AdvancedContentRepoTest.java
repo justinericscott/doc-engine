@@ -2,7 +2,7 @@ package com.itgfirm.docengine.repository;
 
 import static org.junit.Assert.*;
 
-import static com.itgfirm.docengine.util.Constants.*;
+import static com.itgfirm.docengine.DocEngine.Constants.*;
 import static com.itgfirm.docengine.util.TestUtils.*;
 
 import org.hibernate.LazyInitializationException;

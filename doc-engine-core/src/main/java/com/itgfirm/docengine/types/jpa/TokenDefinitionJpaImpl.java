@@ -1,16 +1,18 @@
 package com.itgfirm.docengine.types.jpa;
 
-import static com.itgfirm.docengine.types.jpa.TypeUtils.*;
-import static com.itgfirm.docengine.types.jpa.TypeConstants.*;
+import static javax.persistence.DiscriminatorType.STRING;
+import static javax.persistence.GenerationType.AUTO;
+import static javax.persistence.InheritanceType.SINGLE_TABLE;
+
+import static com.itgfirm.docengine.types.jpa.AbstractJpaModel.ModelConstants.*;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -24,73 +26,49 @@ import org.slf4j.LoggerFactory;
  */
 @Entity
 @Table(name = JPA_TBL_TOKEN_DICTIONARY)
-@DiscriminatorColumn(name = JPA_DSCRMNTR_COL, discriminatorType = DiscriminatorType.STRING)
+@Inheritance(strategy = SINGLE_TABLE)
+@DiscriminatorColumn(name = JPA_DSCRMNTR_COL, discriminatorType = STRING)
 @DiscriminatorValue(JPA_DSCRMNTR_TOKEN)
 public class TokenDefinitionJpaImpl extends AbstractJpaModel implements Comparable<TokenDefinitionJpaImpl> {
 	private static final Logger LOG = LoggerFactory.getLogger(TokenDefinitionJpaImpl.class);
-	private static final String JPA_COLUMN_ALT_TEXT = "ALT_TXT";
-	private static final String JPA_COLUMN_ATTRIBUTE = "ATTRIBUTE_TXT";
-	private static final String JPA_COLUMN_DESCRIPTION = "DESCRIPTION_TXT";
-	private static final String JPA_COLUMN_DOCUMENT_CD = "DOCUMENT_CD";
-	private static final String JPA_COLUMN_ENTITY = "ENTITY_TXT";
-	private static final String JPA_COLUMN_FIELD_LABEL = "FIELD_LABEL_TXT";
-	private static final String JPA_COLUMN_FIELD_INSTR = "FIELD_INSTR_TXT";
-	private static final String JPA_COLUMN_FLAGS = "FLAGS_CD";
-	private static final String JPA_COLUMN_IS_ROMAN = "IS_ROMAN_BLN";
-	private static final String JPA_COLUMN_IS_X_ABLE = "IS_X_ABLE_BLN";
-	private static final String JPA_COLUMN_NAME = "NAME_TXT";
-	private static final String JPA_COLUMN_PHASE_CD = "PHASE_CD";
-	private static final String JPA_COLUMN_TOKEN_CD = "TOKEN_CD";
-	private static final String JPA_COLUMN_PROCESS = "PROCESS_TXT";
-	private static final String JPA_COLUMN_TASK = "TASK_TXT";
-	private static final String JPA_COLUMN_TOKEN_ID = JPA_TBL_TOKEN_DICTIONARY + "_ID";
-	private static final String JPA_COLUMN_WHERE = "WHERE_TXT";
-	private static final String JPA_SEQUENCE_TOKEN = JPA_TBL_TOKEN_DICTIONARY + "_SQ";
 
 	@Id
-	@GeneratedValue(generator = JPA_SEQUENCE_TOKEN, strategy = GenerationType.AUTO)
-	@SequenceGenerator(name = JPA_SEQUENCE_TOKEN, sequenceName = JPA_SEQUENCE_TOKEN)
-	@Column(name = JPA_COLUMN_TOKEN_ID)
+	@GeneratedValue(generator = JPA_SEQ_TOKEN, strategy = AUTO)
+	@SequenceGenerator(name = JPA_SEQ_TOKEN, sequenceName = JPA_SEQ_TOKEN)
+	@Column(name = JPA_COL_TOKEN_ID)
 	private Long id;
 
-	/** TOKEN DETAILS **/
-	@Column(name = JPA_COLUMN_NAME, length = 100)
+	@Column(name = JPA_COL_NAME, length = 100)
 	private String name;
-	@Column(name = JPA_COLUMN_TOKEN_CD, length = 100, nullable = false, unique = true)
+	@Column(name = JPA_COL_TOKEN_CD, length = 100, nullable = false, unique = true)
 	private String tokenCd;
-	@Column(name = JPA_COLUMN_DOCUMENT_CD, length = 100)
+	@Column(name = JPA_COL_DOCUMENT_CD, length = 100)
 	private String documentCd;
-	@Column(name = JPA_COLUMN_PHASE_CD, length = 100)
+	@Column(name = JPA_COL_PHASE_CD, length = 100)
 	private String phase;
-	@Column(name = JPA_COLUMN_DESCRIPTION, length = 1000)
+	@Column(name = JPA_COL_DESCRIPTION, length = 1000)
 	private String description;
-
-	/** TOKEN CONFIG **/
-	@Column(name = JPA_COLUMN_ALT_TEXT, length = 100)
+	@Column(name = JPA_COL_ALT_TEXT, length = 100)
 	private String altText;
-	@Column(name = JPA_COLUMN_FLAGS, length = 100)
+	@Column(name = JPA_COL_FLAGS, length = 100)
 	private String flags;
-	@Column(name = JPA_COLUMN_IS_X_ABLE)
+	@Column(name = JPA_COL_IS_X_ABLE)
 	private Boolean isXable = false;
-	@Column(name = JPA_COLUMN_IS_ROMAN)
+	@Column(name = JPA_COL_IS_ROMAN)
 	private Boolean isRoman = false;
-
-	/** DATABASE INFO **/
-	@Column(name = JPA_COLUMN_ENTITY, length = 100)
+	@Column(name = JPA_COL_ENTITY, length = 100)
 	private String entity;
-	@Column(name = JPA_COLUMN_ATTRIBUTE, length = 4000)
+	@Column(name = JPA_COL_ATTRIBUTE, length = 4000)
 	private String attribute;
-	@Column(name = JPA_COLUMN_WHERE, length = 4000)
+	@Column(name = JPA_COL_WHERE, length = 4000)
 	private String where;
-
-	/** INPUT INFORMATION **/
-	@Column(name = JPA_COLUMN_PROCESS, length = 100)
+	@Column(name = JPA_COL_PROCESS, length = 100)
 	private String process;
-	@Column(name = JPA_COLUMN_TASK, length = 100)
+	@Column(name = JPA_COL_TASK, length = 100)
 	private String task;
-	@Column(name = JPA_COLUMN_FIELD_LABEL, length = 100)
+	@Column(name = JPA_COL_FIELD_LABEL, length = 100)
 	private String label;
-	@Column(name = JPA_COLUMN_FIELD_INSTR, length = 1000)
+	@Column(name = JPA_COL_FIELD_INSTR, length = 1000)
 	private String instructions;
 
 	public TokenDefinitionJpaImpl() {
@@ -132,8 +110,7 @@ public class TokenDefinitionJpaImpl extends AbstractJpaModel implements Comparab
 		return id;
 	}
 
-	// To disable unintended change of Primary Key
-	final void setId(final Long id) {
+	public final void setId(final Long id) {
 		this.id = id;
 	}
 
@@ -297,11 +274,6 @@ public class TokenDefinitionJpaImpl extends AbstractJpaModel implements Comparab
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
 	@Override
 	public final int compareTo(final TokenDefinitionJpaImpl o) {
 		return this.getTokenCd().compareTo(o.getTokenCd());

@@ -1,10 +1,10 @@
 package com.itgfirm.docengine.types.jpa;
 
-import static javax.persistence.DiscriminatorType.*;
-import static javax.persistence.InheritanceType.*;
+import static javax.persistence.DiscriminatorType.STRING;
+import static javax.persistence.GenerationType.AUTO;
+import static javax.persistence.InheritanceType.SINGLE_TABLE;
 
-import static com.itgfirm.docengine.types.jpa.TypeUtils.*;
-import static com.itgfirm.docengine.types.jpa.TypeConstants.*;
+import static com.itgfirm.docengine.types.jpa.AbstractJpaModel.ModelConstants.*;
 
 import java.sql.Timestamp;
 
@@ -13,7 +13,6 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.SequenceGenerator;
@@ -33,86 +32,70 @@ import com.itgfirm.docengine.annotation.ExcelSheet;
  */
 @Entity
 @Table(name = JPA_TBL_CONTENT)
-@ExcelSheet(IX_SHEET_NAME_CONTENT)
+@ExcelSheet(EXCEL_SHEET_NAME_CONTENT)
 @Inheritance(strategy = SINGLE_TABLE)
 @DiscriminatorValue(JPA_DSCRMNTR_CONTENT)
 @DiscriminatorColumn(name = JPA_DSCRMNTR_COL, discriminatorType = STRING)
 public class ContentJpaImpl extends AbstractJpaModel implements Comparable<ContentJpaImpl> {
 	private static final Logger LOG = LoggerFactory.getLogger(ContentJpaImpl.class);
-	private static final String JPA_COL_BODY = "BODY_TXT";
-	private static final String JPA_COL_CATEGORY = "CATEGORY_CD";
-	private static final String JPA_COL_CONTENT_CD = "CONTENT_CD";
-	private static final String JPA_COL_CONTENT_ID = JPA_TBL_CONTENT + "_ID";
-	private static final String JPA_COL_CONTENT_NBR = "CONTENT_NBR";
-	private static final String JPA_COL_CSS = "CSS_TXT";
-	private static final String JPA_COL_DESCRIPTION = "DESC_TXT";
-	private static final String JPA_COL_FLAGS = "FLAGS_CD";
-	private static final String JPA_COL_HELPER = "HELPER_TXT";
-	private static final String JPA_COL_NAME = "NAME_TXT";
-	private static final String JPA_COL_ORDER = "ORDER_BY";
-	private static final String JPA_COL_VALID_END = "VALID_END_DT";
-	private static final String JPA_COL_VALID_START = "VALID_START_DT";
-	private static final String JPA_SEQ_CONTENT = JPA_TBL_CONTENT + "_SQ";
-	protected static final String JPA_COL_PARENT = "PARENT_ID";
 
-	/** Fields **/
 	@Id
-	@ExcelColumn("Content ID")
+	@ExcelColumn(EXCEL_COL_CONTENT_ID)
 	@ExcelColumnOrder(1)
-	@GeneratedValue(generator = JPA_SEQ_CONTENT, strategy = GenerationType.AUTO)
+	@GeneratedValue(generator = JPA_SEQ_CONTENT, strategy = AUTO)
 	@SequenceGenerator(name = JPA_SEQ_CONTENT, sequenceName = JPA_SEQ_CONTENT)
 	@Column(name = JPA_COL_CONTENT_ID)
 	private Long id;
-	@ExcelColumn("Parent ID")
+	@ExcelColumn(EXCEL_COL_PARENT)
 	@ExcelColumnOrder(2)
 	@Column(name = JPA_COL_PARENT, insertable = false, updatable = false)
 	private Long parentId;
-	@ExcelColumn("Content Code")
+	@ExcelColumn(EXCEL_COL_CONTENT_CD)
 	@ExcelColumnOrder(3)
 	@Column(name = JPA_COL_CONTENT_CD, length = 100, nullable = false, unique = true)
 	private String contentCd;
-	@ExcelColumn("Name")
+	@ExcelColumn(EXCEL_COL_NAME)
 	@ExcelColumnOrder(4)
 	@Column(name = JPA_COL_NAME, length = 1000)
 	private String name;
-	@ExcelColumn("Description")
+	@ExcelColumn(EXCEL_COL_DESCRIPTION)
 	@ExcelColumnOrder(5)
 	@Column(name = JPA_COL_DESCRIPTION, length = 4000)
 	private String description;
-	@ExcelColumn("Content Number")
+	@ExcelColumn(EXCEL_COL_CONTENT_NBR)
 	@ExcelColumnOrder(6)
 	@Column(name = JPA_COL_CONTENT_NBR, length = 10)
 	private String contentNumber;
-	@ExcelColumn("Content Body")
+	@ExcelColumn(EXCEL_COL_BODY)
 	@ExcelColumnOrder(7)
 	@Column(name = JPA_COL_BODY, length = 4000, nullable = false)
 	private String body;
-	@ExcelColumn("Content CSS")
+	@ExcelColumn(EXCEL_COL_CSS)
 	@ExcelColumnOrder(8)
 	@Column(name = JPA_COL_CSS, length = 4000)
 	private String css;
-	@ExcelColumn("Helper Text")
+	@ExcelColumn(EXCEL_COL_HELPER)
 	@ExcelColumnOrder(9)
 	@Column(name = JPA_COL_HELPER, length = 4000)
 	private String helper;
-	@ExcelColumn("Category Code")
+	@ExcelColumn(EXCEL_COL_CATEGORY)
 	@ExcelColumnOrder(10)
 	@Column(name = JPA_COL_CATEGORY, length = 100)
 	private String category;
-	@ExcelColumn("Flags")
+	@ExcelColumn(EXCEL_COL_FLAGS)
 	@ExcelColumnOrder(11)
 	@Column(name = JPA_COL_FLAGS, length = 100)
 	private String flags;
-	@ExcelColumn("Order By")
+	@ExcelColumn(EXCEL_COL_ORDER)
 	@ExcelColumnOrder(12)
 	@Column(name = JPA_COL_ORDER)
 	private Integer orderBy;
-	@ExcelColumn("Start Date")
+	@ExcelColumn(EXCEL_COL_VALID_START)
 	@ExcelColumnOrder(13)
 	@Column(name = JPA_COL_VALID_START, nullable = false)
 	private Timestamp validStart = now();
+	@ExcelColumn(EXCEL_COL_VALID_END)
 	@ExcelColumnOrder(14)
-	@ExcelColumn("End Date")
 	@Column(name = JPA_COL_VALID_END, nullable = false)
 	private Timestamp validEnd = max();
 
@@ -157,7 +140,6 @@ public class ContentJpaImpl extends AbstractJpaModel implements Comparable<Conte
 		return id;
 	}
 
-	// Disables unintended change of Primary Key
 	public final void setId(final Long id) {
 		this.id = id;
 	}
@@ -166,7 +148,6 @@ public class ContentJpaImpl extends AbstractJpaModel implements Comparable<Conte
 		return parentId;
 	}
 
-	// Disables unintended change of Foreign Key
 	public final void setParentId(final Long parentId) {
 		this.parentId = parentId;
 	}

@@ -1,7 +1,7 @@
 package com.itgfirm.docengine.service;
 
 import static org.junit.Assert.*;
-import static com.itgfirm.docengine.util.Constants.*;
+import static com.itgfirm.docengine.DocEngine.Constants.*;
 import static com.itgfirm.docengine.util.TestUtils.*;
 
 import java.util.Collection;
@@ -86,7 +86,7 @@ public class AdvancedContentServiceTest extends AbstractTest {
 	@Test
 	public void b_FindTest() {
 		// Get sub-classes, no eagerKids
-		final AdvancedDocumentJpaImpl document = createDocument(11);
+		final AdvancedDocumentJpaImpl document = createDocument(19);
 		assertTrue(AdvancedDocumentJpaImpl.class.equals(service.findOne(document.getId()).getClass()));
 		assertTrue(AdvancedDocumentJpaImpl.class.equals(service.findByContentCd(document.getContentCd()).getClass()));
 		try {

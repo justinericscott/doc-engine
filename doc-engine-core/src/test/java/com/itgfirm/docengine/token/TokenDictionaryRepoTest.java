@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
@@ -17,6 +18,7 @@ import com.itgfirm.docengine.util.TestUtils;
 /**
  * @author Justin Scott TODO: Description
  */
+@Ignore
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Deprecated
 public class TokenDictionaryRepoTest extends AbstractTest {

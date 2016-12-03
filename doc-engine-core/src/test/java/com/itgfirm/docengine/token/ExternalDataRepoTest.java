@@ -1,12 +1,14 @@
 package com.itgfirm.docengine.token;
 
 import static org.junit.Assert.*;
+import static com.itgfirm.docengine.DocEngine.Constants.*;
 
 import java.io.File;
 
 import javax.annotation.PostConstruct;
 
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
@@ -17,13 +19,13 @@ import com.itgfirm.docengine.data.ExternalAttributeImpl;
 import com.itgfirm.docengine.data.ExternalEntityImpl;
 import com.itgfirm.docengine.data.ExternalSchemaImpl;
 import com.itgfirm.docengine.util.AbstractTest;
-import com.itgfirm.docengine.util.Constants;
 import com.itgfirm.docengine.util.TestUtils;
 import com.itgfirm.docengine.util.Utils;
 
 /**
  * @author Justin Scott TODO: Description
  */
+@Ignore
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Deprecated
 public class ExternalDataRepoTest extends AbstractTest {
@@ -32,7 +34,7 @@ public class ExternalDataRepoTest extends AbstractTest {
 
 //	@Autowired
 	private DefaultExternalDataRepoImpl externalRepo;
-	@Value(value = Constants.DATASTORE_SECONDARY)
+	@Value(value = DATASTORE_SECONDARY)
 	private String externalUrl;
 
 	@Test

@@ -1,6 +1,7 @@
 package com.itgfirm.docengine.token;
 
 import static org.junit.Assert.*;
+import static com.itgfirm.docengine.DocEngine.Constants.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
@@ -20,7 +22,6 @@ import org.springframework.beans.factory.annotation.Value;
 
 import com.itgfirm.docengine.types.jpa.TokenDefinitionJpaImpl;
 import com.itgfirm.docengine.util.AbstractTest;
-import com.itgfirm.docengine.util.Constants;
 import com.itgfirm.docengine.util.TestConstants;
 import com.itgfirm.docengine.util.TestUtils;
 import com.itgfirm.docengine.util.Utils;
@@ -28,6 +29,7 @@ import com.itgfirm.docengine.util.Utils;
 /**
  * @author Justin Scott TODO: Description
  */
+@Ignore
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @SuppressWarnings(value = "deprecation" )
 public class TokenDictionaryServiceTest extends AbstractTest {
@@ -37,7 +39,7 @@ public class TokenDictionaryServiceTest extends AbstractTest {
 	private TokenDictionaryService tokenDictionaryService;
 //	@Autowired
 	private DefaultExternalDataRepoImpl externalRepo;
-	@Value(value = Constants.DATASTORE_SECONDARY)
+	@Value(value = DATASTORE_SECONDARY)
 	private String externalUrl;
 
 	@Test

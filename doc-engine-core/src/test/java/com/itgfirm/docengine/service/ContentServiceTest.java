@@ -1,7 +1,7 @@
 package com.itgfirm.docengine.service;
 
 import static org.junit.Assert.*;
-import static com.itgfirm.docengine.util.Constants.*;
+import static com.itgfirm.docengine.DocEngine.Constants.*;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;

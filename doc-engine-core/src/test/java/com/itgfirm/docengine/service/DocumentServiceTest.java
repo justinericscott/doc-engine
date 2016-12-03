@@ -6,7 +6,8 @@ import static org.junit.Assert.*;
 import static com.itgfirm.docengine.util.TestConstants.*;
 
 import org.junit.FixMethodOrder;
-//import org.junit.Test;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ import com.itgfirm.docengine.util.AbstractTest;
 /**
  * @author Justin Scott TODO: Description
  */
+@Ignore
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DocumentServiceTest extends AbstractTest {
 	public static final Logger LOG = LoggerFactory.getLogger(DocumentServiceTest.class);
@@ -29,7 +31,7 @@ public class DocumentServiceTest extends AbstractTest {
 	@Autowired
 	private InstanceService instanceService;
 
-//	@Test
+	@Test
 	public void aa_CreateTest() {
 		AdvancedDocumentInstanceJpaImpl doc = (AdvancedDocumentInstanceJpaImpl) documentService
 				.create(TEST_DATA_PROJECT_ID, TEST_CODE_DOC_TYPE_R101);

@@ -1,11 +1,12 @@
 package com.itgfirm.docengine.service;
 
 import static org.junit.Assert.*;
-import static com.itgfirm.docengine.util.Constants.*;
+import static com.itgfirm.docengine.DocEngine.Constants.*;
 
 import java.io.File;
 
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import com.itgfirm.docengine.types.jpa.ContentJpaImpl;
 import com.itgfirm.docengine.util.AbstractTest;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@Ignore
 public class ImportExportServiceTest extends AbstractTest {
 
 	@Autowired

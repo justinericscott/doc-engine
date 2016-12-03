@@ -1,16 +1,16 @@
 package com.itgfirm.docengine.types.jpa;
 
-import static com.itgfirm.docengine.types.jpa.TypeUtils.*;
-import static com.itgfirm.docengine.types.jpa.TypeConstants.*;
+import static javax.persistence.DiscriminatorType.STRING;
+import static javax.persistence.GenerationType.AUTO;
+
+import static com.itgfirm.docengine.types.jpa.AbstractJpaModel.ModelConstants.*;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -25,54 +25,40 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+
 @Entity
 @Table(name = JPA_TBL_INSTANCE)
-@DiscriminatorColumn(name = JPA_DSCRMNTR_COL, discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = JPA_DSCRMNTR_COL, discriminatorType = STRING)
 @DiscriminatorValue(JPA_DSCRMNTR_INSTANCE)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class InstanceJpaImpl extends AbstractJpaModel implements Comparable<InstanceJpaImpl> {
 	private static final Logger LOG = LoggerFactory.getLogger(InstanceJpaImpl.class);
-	private static final String JPA_COLUMN_CUSTOM_BODY = "CUSTOM_BODY_TXT";
-	private static final String JPA_COLUMN_FLAGS = "FLAGS_TXT";
-	private static final String JPA_COLUMN_INSTANCE_ID = JPA_TBL_INSTANCE + "_ID";
-	private static final String JPA_COLUMN_IS_AD_HOC = "IS_AD_HOC_BLN";
-	private static final String JPA_COLUMN_IS_MARKED_FOR_ACTION = "IS_MARKED_FOR_ACTION_BLN";
-	private static final String JPA_COLUMN_IS_STRIKE_HEADER = "IS_STRIKE_HEADER_BLN";
-	private static final String JPA_COLUMN_MARKED_COMMENT = "MARKED_FOR_ACTION_COMMENT_TXT";
-	private static final String JPA_COLUMN_ORDER = "ORDER_BY";
-	private static final String JPA_COLUMN_PROJECT = "PROJECT_NBR";
-	private static final String JPA_COLUMN_STATUS = "STATUS_CD";
-	private static final String JPA_JOIN_COLUMN_CONTENT = JPA_TBL_CONTENT + "_ID";
-	private static final String JPA_SEQUENCE_INSTANCE = JPA_TBL_INSTANCE + "_SQ";
-	private static final String STATUS_AUTO_IN = "Automatically Included";
 
-	/** Fields **/
 	@Id
-	@GeneratedValue(generator = JPA_SEQUENCE_INSTANCE, strategy = GenerationType.AUTO)
-	@SequenceGenerator(name = JPA_SEQUENCE_INSTANCE, sequenceName = JPA_SEQUENCE_INSTANCE)
-	@Column(name = JPA_COLUMN_INSTANCE_ID)
+	@GeneratedValue(generator = JPA_SEQ_INSTANCE, strategy = AUTO)
+	@SequenceGenerator(name = JPA_SEQ_INSTANCE, sequenceName = JPA_SEQ_INSTANCE)
+	@Column(name = JPA_COL_INSTANCE_ID)
 	private Long id;
-	@Column(name = JPA_COLUMN_PROJECT, length = 100, nullable = false)
+	@Column(name = JPA_COL_PROJECT, length = 100, nullable = false)
 	private String projectId;
-	@Column(name = JPA_COLUMN_CUSTOM_BODY, length = 4000)
+	@Column(name = JPA_COL_CUSTOM_BODY, length = 4000)
 	private String customBody;
-	@Column(name = JPA_COLUMN_FLAGS, length = 100)
+	@Column(name = JPA_COL_FLAGS, length = 100)
 	private String flags;
-	@Column(name = JPA_COLUMN_STATUS, length = 100)
+	@Column(name = JPA_COL_STATUS, length = 100)
 	private String statusCd;
-	@Column(name = JPA_COLUMN_ORDER)
+	@Column(name = JPA_COL_ORDER)
 	private Integer orderBy;
-	@Column(name = JPA_COLUMN_IS_AD_HOC)
+	@Column(name = JPA_COL_IS_AD_HOC)
 	private boolean isAdHoc = false;
-	@Column(name = JPA_COLUMN_IS_STRIKE_HEADER)
+	@Column(name = JPA_COL_IS_STRIKE_HEADER)
 	private boolean isStrikeHeader = false;
-	@Column(name = JPA_COLUMN_IS_MARKED_FOR_ACTION)
+	@Column(name = JPA_COL_IS_MARKED_FOR_ACTION)
 	private boolean isMarkedForAction = false;
-	@Column(name = JPA_COLUMN_MARKED_COMMENT)
+	@Column(name = JPA_COL_MARKED_COMMENT)
 	private String markedForActionComment;
 
-	/** Source ContentJpaImpl **/
-	@JoinColumn(name = JPA_JOIN_COLUMN_CONTENT, nullable = false)
+	@JoinColumn(name = JPA_MAPPED_BY_CONTENT, nullable = false)
 	@ManyToOne(cascade = CascadeType.REFRESH, targetEntity = ContentJpaImpl.class)
 	@JsonDeserialize(as = ContentJpaImpl.class)
 	private ContentJpaImpl content;
@@ -113,8 +99,7 @@ public class InstanceJpaImpl extends AbstractJpaModel implements Comparable<Inst
 		return id;
 	}
 
-	// Disables unintended change of the Primary Key
-	final void setId(final Long id) {
+	public final void setId(final Long id) {
 		this.id = id;
 	}
 
@@ -126,7 +111,6 @@ public class InstanceJpaImpl extends AbstractJpaModel implements Comparable<Inst
 		this.projectId = projectId;
 	}
 
-	// Reduced visibility to ensure getBody & setBody are used.
 	@JsonIgnore
 	public final String getCustomBody() {
 		return customBody;

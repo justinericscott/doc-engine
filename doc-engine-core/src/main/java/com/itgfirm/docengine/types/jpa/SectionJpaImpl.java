@@ -1,7 +1,6 @@
 package com.itgfirm.docengine.types.jpa;
 
-import static com.itgfirm.docengine.types.jpa.TypeConstants.*;
-import static com.itgfirm.docengine.types.jpa.TypeUtils.*;
+import static com.itgfirm.docengine.types.jpa.AbstractJpaModel.ModelConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
@@ -27,7 +26,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @DiscriminatorValue(value = JPA_DSCRMNTR_SECTION)
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = JSON_PROP_ID)
 public class SectionJpaImpl extends ContentJpaImpl {
-	private static final String JPA_MAPPED_BY_SECTION = "section";
 
 	/** Parent Type **/
 	@JoinColumn(name = JPA_COL_PARENT)
@@ -70,8 +68,8 @@ public class SectionJpaImpl extends ContentJpaImpl {
 	}
 
 	public final void addClause(final ClauseJpaImpl clause) {
-		if (TypeUtils.isNotNullOrEmpty(clause)) {
-			if (!TypeUtils.isNotNullOrEmpty(this.clauses)) {
+		if (isNotNullOrEmpty(clause)) {
+			if (!isNotNullOrEmpty(this.clauses)) {
 				this.clauses = new TreeSet<ClauseJpaImpl>();
 			}
 			clause.setSection(this);

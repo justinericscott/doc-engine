@@ -1,7 +1,6 @@
 package com.itgfirm.docengine.types.jpa;
 
-import static com.itgfirm.docengine.types.jpa.TypeUtils.*;
-import static com.itgfirm.docengine.types.jpa.TypeConstants.*;
+import static com.itgfirm.docengine.types.jpa.AbstractJpaModel.ModelConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
