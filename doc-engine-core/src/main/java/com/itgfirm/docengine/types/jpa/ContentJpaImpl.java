@@ -262,7 +262,7 @@ public class ContentJpaImpl extends AbstractJpaModel implements Comparable<Conte
 			return false;
 		}
 		if (!isNotNullOrEmpty(body)) {
-			LOG.debug("Content body must not be null or empty!");
+			LOG.debug("Content body must not be null or empty for ID {} and Code {}!", id, contentCd);
 			return false;
 		}
 		return true;

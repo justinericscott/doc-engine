@@ -64,5 +64,5 @@ public interface ExcelReaderService {
 	 *            Expected return array type.
 	 * @return Array of {@link Object}s molded from the provided {@link Class}.
 	 */
-	Iterable<?> read(Class<?> clazz, File file);
+	<T> Iterable<T> read(Class<T> clazz, File file);
 }

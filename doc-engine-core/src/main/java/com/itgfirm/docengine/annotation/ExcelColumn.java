@@ -17,7 +17,6 @@ import java.lang.annotation.Target;
  * Example: @ExcelColumn("Project Number")<br>
  * <br>
  * 
- * @author <a href="mailto:justin.scott@itgfirm.com">Justin Scott</a>
  * @see <a href="https://poi.apache.org/spreadsheet/index.html">Excel POI</a>
  */
 @Documented

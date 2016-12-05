@@ -17,7 +17,7 @@ import javax.persistence.MappedSuperclass;
  */
 @MappedSuperclass
 public abstract class AbstractJpaModel {
-	
+
 	@Column(name = JPA_COL_CREATED_BY, nullable = false)
 	private Long createdBy = -1L;
 	@Column(name = JPA_COL_CREATED_DT, nullable = false)
@@ -53,7 +53,7 @@ public abstract class AbstractJpaModel {
 	static Timestamp max() {
 		return Timestamp.from(Instant.MAX);
 	}
-	
+
 	public AbstractJpaModel() {
 		// Default constructor for Spring
 	}
@@ -89,32 +89,36 @@ public abstract class AbstractJpaModel {
 	public final void setUpdatedDt(final Timestamp updatedDt) {
 		this.updatedDt = updatedDt;
 	}
-	
-	static final class ModelConstants {
-		static final String EXCEL_COL_BODY = "Content Body";
-		static final String EXCEL_COL_CATEGORY = "Category Code";
-		static final String EXCEL_COL_CONTENT_CD = "Content Code";
+
+	public static final class ModelConstants {
 		static final String EXCEL_COL_CONTENT_ID = "Content ID";
-		static final String EXCEL_COL_CONTENT_NBR = "Content Number";
-		static final String EXCEL_COL_CSS = "Content CSS";
+		static final String EXCEL_COL_PARENT = "Parent ID";
+		static final String EXCEL_COL_CONTENT_CD = "Content Code";
+		static final String EXCEL_COL_NAME = "Name";
 		static final String EXCEL_COL_DESCRIPTION = "Description";
-		static final String EXCEL_COL_FLAGS = "Flags";
+		static final String EXCEL_COL_CONTENT_NBR = "Content Number";
+		static final String EXCEL_COL_BODY = "Content Body";
+		static final String EXCEL_COL_CSS = "Content CSS";
 		static final String EXCEL_COL_HELPER = "Helper Text";
+		static final String EXCEL_COL_CATEGORY = "Category Code";
+		static final String EXCEL_COL_FLAGS = "Flags";
+		static final String EXCEL_COL_ORDER = "Order By";
+		static final String EXCEL_COL_VALID_START = "Start Date";
+		static final String EXCEL_COL_VALID_END = "End Date";
 		static final String EXCEL_COL_IS_FIRST = "Is First in a List";
 		static final String EXCEL_COL_IS_LAST = "Is Last in a List";
 		static final String EXCEL_COL_IS_OPTIONAL = "Is an Optional Paragraph";
 		static final String EXCEL_COL_IS_PARENT = "Is a Parent to a Sub-Paragraph";
 		static final String EXCEL_COL_IS_SUB = "Is a Sub-Paragraph";
-		static final String EXCEL_COL_NAME = "Name";
-		static final String EXCEL_COL_ORDER = "Order By";
-		static final String EXCEL_COL_PARENT = "Parent ID";
-		static final String EXCEL_COL_VALID_END = "End Date";
-		static final String EXCEL_COL_VALID_START = "Start Date";
-		
-		static final String EXCEL_SHEET_NAME_CONTENT = "Content";
-		static final String EXCEL_SHEET_NAME_INSTANCE = "Instance";
-		static final String EXCEL_SHEET_NAME_TOKEN_DICTIONARY = "Token Dictionary";
-		
+		public static final String[] EXCEL_COLS_CONTENT = { EXCEL_COL_CONTENT_ID, EXCEL_COL_PARENT,
+				EXCEL_COL_CONTENT_CD, EXCEL_COL_NAME, EXCEL_COL_DESCRIPTION, EXCEL_COL_CONTENT_NBR, EXCEL_COL_BODY,
+				EXCEL_COL_CSS, EXCEL_COL_HELPER, EXCEL_COL_CATEGORY, EXCEL_COL_FLAGS, EXCEL_COL_ORDER,
+				EXCEL_COL_VALID_START, EXCEL_COL_VALID_END };
+
+		public static final String EXCEL_SHEET_NAME_CONTENT = "Content";
+		public static final String EXCEL_SHEET_NAME_INSTANCE = "Instance";
+		public static final String EXCEL_SHEET_NAME_TOKEN_DICTIONARY = "Token Dictionary";
+
 		static final String JPA_TBL_CONTENT = "CONTENT";
 		static final String JPA_TBL_INSTANCE = "INSTANCE";
 		static final String JPA_TBL_TOKEN_DICTIONARY = "TOKEN_DICTIONARY";
@@ -164,7 +168,7 @@ public abstract class AbstractJpaModel {
 		static final String JPA_COL_TOKEN_CD = "TOKEN_CD";
 		static final String JPA_COL_TOKEN_ID = JPA_TBL_TOKEN_DICTIONARY + "_ID";
 		static final String JPA_COL_UPDATED_BY = "UPDATED_BY";
-		static final String JPA_COL_UPDATED_DT = "UPDATED_DT";	
+		static final String JPA_COL_UPDATED_DT = "UPDATED_DT";
 		static final String JPA_COL_VALID_END = "VALID_END_DT";
 		static final String JPA_COL_VALID_START = "VALID_START_DT";
 		static final String JPA_COL_WHERE = "WHERE_TXT";
@@ -179,7 +183,7 @@ public abstract class AbstractJpaModel {
 		static final String JPA_DSCRMNTR_QUESTION = "Q";
 		static final String JPA_DSCRMNTR_SECTION = "S";
 		static final String JPA_DSCRMNTR_TOKEN = "T";
-		
+
 		static final String JPA_MAPPED_BY_CLAUSE = "clause";
 		static final String JPA_MAPPED_BY_CONTENT = JPA_TBL_CONTENT + "_ID";
 		static final String JPA_MAPPED_BY_DOCUMENT = "document";

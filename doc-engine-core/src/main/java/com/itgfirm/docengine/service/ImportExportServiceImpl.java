@@ -47,7 +47,7 @@ public class ImportExportServiceImpl implements ImportExportService {
 				objects = dictionary.findAll();
 			}
 			if (isNotNullOrEmpty(objects)) {
-				final File file = create(path, false);
+				final File file = create(path, true);
 				if (isNotNullAndExists(file)) {
 					return writer.write(clazz, file, objects, true);
 				} else {
@@ -62,11 +62,11 @@ public class ImportExportServiceImpl implements ImportExportService {
 	}
 
 	@Override
-	public Iterable<?> importFromFile(final Class<?> clazz, final String path) {
+	public <T extends ContentJpaImpl> Iterable<T> importFromFile(final Class<T> clazz, final String path) {
 		if (isNotNullOrEmpty(clazz)) {
-			final Iterable<?> objects = reader.read(clazz, get(path));
+			final Iterable<T> objects = (Iterable<T>) reader.read(clazz, get(path));
 			if (isNotNullOrEmpty(objects)) {
-				return objects;
+				return content.save(objects);
 			} else {
 				LOG.debug("No objects where created from the provided Class and File path!");
 			}

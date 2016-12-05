@@ -17,11 +17,11 @@ public class ExampleExcelTypeWithCustomLabelsOrdered {
 	@ExcelColumn("Description")
 	private String description;
 	@ExcelColumnOrder(4)
-	@ExcelColumn("Boolean Test")
+	@ExcelColumn("Positive")
 	private boolean positive;
 
 	public ExampleExcelTypeWithCustomLabelsOrdered() {
-
+		// Deafult constructor for Spring
 	}
 
 	public ExampleExcelTypeWithCustomLabelsOrdered(ExampleExcelTypeWithCustomLabelsOrdered ex) {

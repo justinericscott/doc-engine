@@ -10,9 +10,7 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -28,17 +26,15 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itgfirm.docengine.annotation.ExcelSheet;
 import com.itgfirm.docengine.types.jpa.ClauseJpaImpl;
 import com.itgfirm.docengine.types.jpa.ContentJpaImpl;
 import com.itgfirm.docengine.types.jpa.InstanceJpaImpl;
@@ -316,64 +312,40 @@ public class Utils {
 	 * 
 	 * @param clazz
 	 *            {@link Class} to search.
-	 * @param annotationClass
+	 * @param annotation
 	 *            Annotation {@link Class} to check value of.
 	 * @param value
 	 *            Value of the value property in the {@link Annotation}.
 	 * @return Name of the {@link Field}.
 	 * 
 	 */
-	public static <T extends Annotation> String getAnnotatedFieldNameWithValue(final Class<?> clazz,
-			Class<T> annotationClass, final String value) {
+	public static String getFieldNameFromAnnotationValue(final Class<?> clazz, Class<? extends Annotation> annotation,
+			final String value) {
 		if (isNotNullOrEmpty(clazz)) {
-			if (isNotNullOrEmpty(annotationClass)) {
+			if (isNotNullOrEmpty(annotation)) {
 				if (isNotNullOrEmpty(value)) {
 					for (final Field field : clazz.getDeclaredFields()) {
-						final T anno = field.getAnnotation(annotationClass);
+						final Annotation anno = field.getAnnotation(annotation);
 						if (isNotNullOrEmpty(anno)) {
-							if (anno.toString().contains("value=" + value)) {
+							final String string = anno.toString();
+							if (string.contains("value=".concat(value))) {
+								final String name = field.getName();
+								LOG.debug("Found annnotation {} with the value {} in the class {} for the field {}.",
+										anno.getClass().getName(), value, clazz.getName(), name);
 								return field.getName();
 							}
 						}
 					}
 				} else {
-					LOG.debug(String.format(
-							"A value is required to check the annotation in the associated field!\nANNOTATION CLASS: %s",
-							annotationClass.getName()));
+					LOG.debug(
+							"A value is required to check the annotation {} in the class {} for the associated field!",
+							annotation.getName(), clazz.getName());
 				}
 			} else {
-				LOG.debug("Annotation class cannot be null!");
+				LOG.debug("Excel annotation class in the provided class {} must not be null!", clazz.getName());
 			}
 		} else {
 			LOG.debug("Class cannot be null!");
-		}
-		return null;
-	}
-
-	/**
-	 * Used with {@link ExcelSheet} to determine the sheet name. If a value is
-	 * provided with the annotation {@link ExcelSheet}, that will be used as the
-	 * name, otherwise the classname will be used.<br>
-	 * <br>
-	 * If a {@link Class} is provided that does not have the annotation
-	 * {@link ExcelSheet}, a null will be returned.
-	 * 
-	 * @param clazz
-	 *            {@link Class} to inspect.
-	 * @return The resulting sheet name.
-	 */
-	public static String getSheetName(final Class<?> clazz) {
-		if (isNotNullOrEmpty(clazz)) {
-			final ExcelSheet sheet = (ExcelSheet) clazz.getAnnotation(ExcelSheet.class);
-			if (isNotNullOrEmpty(sheet)) {
-				final String name = sheet.value();
-				if (!isNotNullOrEmpty(name)) {
-					return clazz.getSimpleName();
-				}
-				return name;
-			}
-		} else {
-			LOG.debug("The class must not be null!");
 		}
 		return null;
 	}
@@ -400,32 +372,6 @@ public class Utils {
 			LOG.debug("The file you want the size of must not be null and must exists!");
 		}
 		return 0L;
-	}
-
-	/**
-	 * Creates a {@link Workbook} in the provided {@link File} if the
-	 * {@link File} is in the supported format (XLSX).
-	 * 
-	 * @param file
-	 *            {@link File} to read.
-	 * @return An Excel {@link Workbook}
-	 */
-	public static Workbook getWorkbook(final File file) {
-		if (isNotNullAndExists(file)) {
-			if (file.getName().endsWith(FILE_EXTENSION_EXCEL)) {
-				try (final InputStream in = new FileInputStream(file)) {
-					return new XSSFWorkbook(in);
-				} catch (final IOException e) {
-					LOG.error(String.format("Problem reading file: %s", file.getAbsolutePath()), e);
-				}
-			} else {
-				LOG.debug(String.format("The provided file does not have a .xlsx extension!\nFILE: %s",
-						file.getAbsolutePath()));
-			}
-		} else {
-			LOG.debug("The file must not be null and must exist!");
-		}
-		return null;
 	}
 
 	/**
@@ -495,8 +441,9 @@ public class Utils {
 						invoke(method, object, param);
 					} else {
 						LOG.debug(
-								"Param type from method and param type from value do not match! METHOD: {} | VALUE {}",
-								type.getName(), param.getClass().getName());
+								"Param type {} from method {} for the field {} and param type {} from value {} do not match for the object type {}!",
+								type.getName(), method.getName(), name, param.getClass().getName(), object.toString(),
+								object.getClass().getName());
 						invoke(method, object, cast(type, param));
 					}
 				}
@@ -786,12 +733,16 @@ public class Utils {
 						if (object instanceof Long) {
 							return new Date(Long.valueOf(String.valueOf(object)));
 						}
-					} else if (target.equals(String.class)) {
-						return String.valueOf(object);
 					} else if (target.equals(Double.class)) {
 						if (!(object instanceof Date)) {
 							return Double.valueOf(String.valueOf(object));
 						}
+					} else if (target.equals(Timestamp.class)) {
+						if (!(object instanceof Date)) {
+							return Timestamp.valueOf(object.toString());
+						}
+					} else if (target.equals(String.class)) {
+						return String.valueOf(object);
 					} else {
 						return object;
 					}
@@ -842,8 +793,16 @@ public class Utils {
 
 	private static Class<?> getParameterType(final Method method) {
 		if (isNotNullOrEmpty(method)) {
-			if (method.getParameterCount() == 1) {
-				return method.getParameters()[0].getType();
+			final int count = method.getParameterCount();
+			final String name = method.getName();
+			final Class<?> type = method.getParameters()[0].getType();
+			if (count == 1) {
+				LOG.debug("Found one parameter in the method {}, its class is {}.", name, type.getName());
+				return type;
+			} else if (count > 1) {
+				LOG.debug("Too many parameters found for method: {}!", name);
+			} else {
+				LOG.debug("No parameters found for method: {}!", name);
 			}
 		} else {
 			LOG.debug("Method cannot be null!");

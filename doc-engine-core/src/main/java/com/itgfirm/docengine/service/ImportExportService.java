@@ -5,6 +5,8 @@ package com.itgfirm.docengine.service;
 
 import java.io.File;
 
+import com.itgfirm.docengine.types.jpa.ContentJpaImpl;
+
 /**
  * @author Justin Scott
  * 
@@ -29,5 +31,5 @@ public interface ImportExportService {
 	 * 
 	 * @return
 	 */
-	Iterable<?> importFromFile(Class<?> clazz, String path);
+	<T extends ContentJpaImpl> Iterable<T> importFromFile(Class<T> clazz, String path);
 }

@@ -12,7 +12,7 @@ public class ExampleExcelTypeWithCustomLabels {
 	private String name;
 	@ExcelColumn("Description")
 	private String description;
-	@ExcelColumn("Boolean Test")
+	@ExcelColumn("Positive")
 	private boolean isTrue;
 
 	public ExampleExcelTypeWithCustomLabels() {

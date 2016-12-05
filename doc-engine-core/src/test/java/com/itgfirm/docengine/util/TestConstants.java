@@ -4,6 +4,7 @@ import static com.itgfirm.docengine.util.TestUtils.*;
 
 import java.util.Collection;
 
+import com.itgfirm.docengine.annotation.ExcelColumn;
 import com.itgfirm.docengine.types.ExampleExcelType;
 import com.itgfirm.docengine.types.ExampleExcelTypeWithCustomLabels;
 import com.itgfirm.docengine.types.ExampleExcelTypeWithCustomLabelsOrdered;
@@ -12,8 +13,12 @@ import com.itgfirm.docengine.types.ExampleExcelTypeWithCustomLabelsOrderedUnorde
 import com.itgfirm.docengine.types.NoAnnotationType;
 
 public class TestConstants {
-	public static final String TARGET_FILE_NAME_READ = "test-data-read.xlsx";
-	public static final String TARGET_FILE_NAME_WRITE = "target/test-data-write.xlsx";
+	public static final String TEST_ANNOTATION_VALUE_IDENTIFICATION = "Identification";
+	public static final String TEST_ANNOTATION_VALUE_NAME = "Name";
+	public static final String TEST_ANNOTATION_VALUE_DESCRIPTION = "Description";
+	public static final String TEST_ANNOTATION_VALUE_POSITIVE = "Positive";
+
+	public static final Class<ExcelColumn> TEST_ANNOTATION_CLASS = ExcelColumn.class;
 
 	public static final Class<?> TEST_CLASS_ANNOTATED = ExampleExcelType.class;
 	public static final Class<?> TEST_CLASS_CUSTOM_LABELS = ExampleExcelTypeWithCustomLabels.class;
@@ -37,8 +42,18 @@ public class TestConstants {
 	public static final String TEST_CODE_PROJECT_NBR_L201_PROPOSED = "projectNumber_L201_PROPOSED";
 	public static final String TEST_CODE_PROJECT_NBR_R101 = "projectNumber_R101";
 
+	public static final String TEST_FIELD_NAME_ID = "id";
+	public static final String TEST_FIELD_NAME_NAME = "name";
+	public static final String TEST_FIELD_NAME_DESCRIPTION = "description";
+	public static final String TEST_FIELD_NAME_POSITIVE = "positive";
+	public static final String[] TEST_FIELD_NAMES = { TEST_FIELD_NAME_ID, TEST_FIELD_NAME_NAME,
+			TEST_FIELD_NAME_DESCRIPTION, TEST_FIELD_NAME_POSITIVE };
+
+	public static final String TEST_FILE_NAME_READ = "test-data-read.xlsx";
+	public static final String TEST_FILE_NAME_WRITE = "target/test-data-write.xlsx";
+
 	public static final Collection<ExampleExcelTypeWithCustomLabelsOrdered> TEST_DATA = createTestData();
-	public static final String[] TEST_DATA_FIELD_LABELS = { "Identification", "Name", "Description", "Boolean Test" };
+	public static final String[] TEST_DATA_FIELD_LABELS = { "Identification", "Name", "Description", "Positive" };
 	public static final String[] TEST_DATA_FIELD_NAMES = { "id", "name", "description", "positive" };
 	public static final Object[] TEST_VALUES = { 111L, "Test Name", "Test Description", true };
 
@@ -53,6 +68,11 @@ public class TestConstants {
 	public static final String TEST_NAME_LEASE_NUMBER = "leaseNumber";
 	public static final String TEST_NAME_PROJECT_NUMBER = "projectNumber";
 	public static final String TEST_NAME_WHERE = "PROJECT_NBR = ?";
+
+	public static final String TEST_PATH_IMPORT = "content-export.xlsx";
+	public static final String TEST_PATH_EXPORT = "target/content-export.xlsx";
+
+	public static final String TEST_SHEET_NAME = "Excel Example Type";
 
 	private TestConstants() {
 		// Do not instantiate
