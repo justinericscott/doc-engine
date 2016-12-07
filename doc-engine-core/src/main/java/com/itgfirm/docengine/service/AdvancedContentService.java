@@ -19,6 +19,8 @@ import com.itgfirm.docengine.types.jpa.ContentJpaImpl;
 @Qualifier(AUTOWIRE_QUALIFIER_ADVANCED)
 public interface AdvancedContentService extends ContentService {
 	
+	void deleteAll();
+	
 	/**
 	 * Gets a single piece of Content based upon the provided content code.
 	 * 

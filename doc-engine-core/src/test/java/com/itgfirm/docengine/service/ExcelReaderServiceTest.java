@@ -167,7 +167,10 @@ public class ExcelReaderServiceTest extends AbstractTest {
 	}
 
 	private Cell getCell() {
-		return getRow().createCell(0);
+		final Cell cell = getRow().createCell(0);
+		cell.setCellType(Cell.CELL_TYPE_STRING);
+		cell.setCellValue((String) null); 
+		return cell;
 	}
 
 	private Row getRow() {

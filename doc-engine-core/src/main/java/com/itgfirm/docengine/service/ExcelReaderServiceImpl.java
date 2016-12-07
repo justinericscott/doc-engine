@@ -138,7 +138,7 @@ class ExcelReaderServiceImpl implements ExcelReaderService {
 				_LOG.debug("Found Number type {}, returning value {}.", value.getClass().getName(), value.toString());
 				return value;
 			} else if (type == CELL_TYPE_BLANK) {
-				return "";
+				return null;
 			} else {
 				_LOG.debug("Could not determine cell type: {}", type);
 			}

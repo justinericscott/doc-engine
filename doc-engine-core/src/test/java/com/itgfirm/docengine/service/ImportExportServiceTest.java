@@ -5,6 +5,7 @@ import static com.itgfirm.docengine.DocEngine.Constants.*;
 import static com.itgfirm.docengine.util.TestConstants.*;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.util.Collection;
 
 import org.junit.FixMethodOrder;
@@ -29,13 +30,22 @@ public class ImportExportServiceTest extends AbstractTest {
 	@Autowired
 	@Qualifier(AUTOWIRE_QUALIFIER_DEFAULT)
 	private ContentService content;
-	
+
 	private static int importSize = 0;
+	private static int preImportSize = 0;
 	private static int exportSize = 0;
 
 	@Test
-	public void a_ImportTest() {
-		Collection<? extends ContentJpaImpl> objects = (Collection<? extends ContentJpaImpl>) service.importFromFile(ContentJpaImpl.class, TEST_PATH_IMPORT);
+	public void a_ImportTest() throws SQLException {
+		Collection<? extends ContentJpaImpl> objects = (Collection<? extends ContentJpaImpl>) content.findAll();
+		assertNotNull(objects);
+		if (!objects.isEmpty()) {
+			assertFalse(objects.isEmpty());
+			preImportSize = objects.size();
+		} else {
+			assertTrue(objects.isEmpty());
+		}
+		objects = (Collection<? extends ContentJpaImpl>) service.importFromFile(ContentJpaImpl.class, TEST_PATH_IMPORT);
 		assertNotNull(objects);
 		assertFalse(objects.isEmpty());
 		for (final ContentJpaImpl o : objects) {
@@ -43,7 +53,6 @@ public class ImportExportServiceTest extends AbstractTest {
 		}
 		importSize = objects.size();
 		LOG.debug("Size of contents from import is {}.", importSize);
-
 	}
 
 	@Test
@@ -56,6 +65,6 @@ public class ImportExportServiceTest extends AbstractTest {
 		File file = service.exportToFile(ContentJpaImpl.class, TEST_PATH_EXPORT);
 		assertNotNull(file);
 		assertTrue(file.exists());
-		assertEquals(importSize, exportSize);
+		assertEquals(importSize + preImportSize, exportSize);
 	}
 }

@@ -30,6 +30,11 @@ class AdvancedContentServiceImpl extends ContentServiceImpl implements AdvancedC
 	@Autowired
 	@Qualifier(AUTOWIRE_QUALIFIER_ADVANCED)
 	private AdvancedContentRepository repo;
+	
+	@Override
+	public final void deleteAll() {
+		repo.deleteAll();
+	}
 
 	@Override
 	public final ContentJpaImpl findByContentCd(final String code, final boolean eagerKids) {

@@ -106,7 +106,7 @@ class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public final void deleteAll() {
+	public void deleteAll() {
 		repo.deleteAll();
 	}
 
