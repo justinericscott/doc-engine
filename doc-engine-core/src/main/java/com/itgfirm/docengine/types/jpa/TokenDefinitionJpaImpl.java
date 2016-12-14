@@ -27,8 +27,8 @@ import org.slf4j.LoggerFactory;
 @Entity
 @Table(name = JPA_TBL_TOKEN_DICTIONARY)
 @Inheritance(strategy = SINGLE_TABLE)
-@DiscriminatorColumn(name = JPA_DSCRMNTR_COL, discriminatorType = STRING)
 @DiscriminatorValue(JPA_DSCRMNTR_TOKEN)
+@DiscriminatorColumn(name = JPA_DSCRMNTR_COL, discriminatorType = STRING)
 public class TokenDefinitionJpaImpl extends AbstractJpaModel implements Comparable<TokenDefinitionJpaImpl> {
 	private static final Logger LOG = LoggerFactory.getLogger(TokenDefinitionJpaImpl.class);
 
@@ -37,8 +37,7 @@ public class TokenDefinitionJpaImpl extends AbstractJpaModel implements Comparab
 	@SequenceGenerator(name = JPA_SEQ_TOKEN, sequenceName = JPA_SEQ_TOKEN)
 	@Column(name = JPA_COL_TOKEN_ID)
 	private Long id;
-
-	@Column(name = JPA_COL_NAME, length = 100)
+	@Column(name = JPA_COL_NAME, length = 100, nullable = false)
 	private String name;
 	@Column(name = JPA_COL_TOKEN_CD, length = 100, nullable = false, unique = true)
 	private String tokenCd;
@@ -76,14 +75,19 @@ public class TokenDefinitionJpaImpl extends AbstractJpaModel implements Comparab
 	}
 
 	public TokenDefinitionJpaImpl(final String code, final String name) {
-		this.tokenCd = code;
-		this.name = name;
+		if (isNotNullOrEmpty(code)) {
+			this.tokenCd = code;
+			if (isNotNullOrEmpty(name)) {
+				this.name = name;	
+			}
+		}
 	}
 
 	public TokenDefinitionJpaImpl(final TokenDefinitionJpaImpl token) {
 		if (isNotNullOrEmpty(token)) {
+//			this.id = token.getId();
 			this.name = token.getName();
-			this.tokenCd = token.getTokenCd();
+//			this.tokenCd = token.getTokenCd();
 			this.documentCd = token.getDocumentCd();
 			this.phase = token.getPhase();
 			this.description = token.getDescription();
@@ -103,7 +107,9 @@ public class TokenDefinitionJpaImpl extends AbstractJpaModel implements Comparab
 
 	public TokenDefinitionJpaImpl(final TokenDefinitionJpaImpl token, final String code) {
 		this(token);
-		this.tokenCd = code;
+		if (!token.getTokenCd().equals(code)) {
+			this.tokenCd = code;	
+		}		
 	}
 
 	public final Long getId() {

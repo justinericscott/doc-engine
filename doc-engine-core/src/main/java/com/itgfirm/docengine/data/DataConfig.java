@@ -14,6 +14,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -107,11 +108,16 @@ public class DataConfig {
 	 * 
 	 * @return {@link DataSource}
 	 */
-	@Bean
+	@Bean(name = AUTOWIRE_QUALIFIER_JDBC)
 	@ConfigurationProperties(prefix = DATASTORE_SECONDARY)
 	public DataSource jdbcDataSource() {
 		LOG.debug("Creating Secondary Datasource.");
 		return DataSourceBuilder.create(getClass().getClassLoader()).build();
+	}
+	
+	@Bean
+	public JdbcTemplate jdbcTemplate() {
+		return new JdbcTemplate(jdbcDataSource());
 	}
 
 	/**
@@ -130,7 +136,7 @@ public class DataConfig {
 	 * 
 	 * @return {@link DataSource}
 	 */
-	@Bean
+	@Bean(name = AUTOWIRE_QUALIFIER_ORM)
 	@ConfigurationProperties(prefix = DATASTORE_PRIMARY)
 	public DataSource jpaDataSource() {
 		LOG.debug("Creating Primary Datasource.");

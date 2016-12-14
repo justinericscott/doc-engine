@@ -10,6 +10,8 @@ import java.util.Collection;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
+import com.itgfirm.docengine.annotation.ExcelColumn;
+
 /**
  * @author Justin Scott
  * 
@@ -22,6 +24,7 @@ public abstract class AbstractJpaModel {
 	private Long createdBy = -1L;
 	@Column(name = JPA_COL_CREATED_DT, nullable = false)
 	private Timestamp createdDt = now();
+	@ExcelColumn(EXCEL_COL_DESCRIMINATOR)
 	@Column(name = JPA_DSCRMNTR_COL, nullable = false, updatable = false, insertable = false)
 	private String discriminator;
 	@Column(name = JPA_COL_UPDATED_BY, nullable = false)
@@ -95,6 +98,7 @@ public abstract class AbstractJpaModel {
 		static final String EXCEL_COL_PARENT = "Parent ID";
 		static final String EXCEL_COL_CONTENT_CD = "Content Code";
 		static final String EXCEL_COL_NAME = "Name";
+		static final String EXCEL_COL_DESCRIMINATOR = "Descriminator";
 		static final String EXCEL_COL_DESCRIPTION = "Description";
 		static final String EXCEL_COL_CONTENT_NBR = "Content Number";
 		static final String EXCEL_COL_BODY = "Content Body";

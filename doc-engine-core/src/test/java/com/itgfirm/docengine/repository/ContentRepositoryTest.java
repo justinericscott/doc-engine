@@ -25,7 +25,7 @@ import com.itgfirm.docengine.util.TestUtils;
  *         Tests for the Content Repository
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ContentRepoTest extends AbstractTest {
+public class ContentRepositoryTest extends AbstractTest {
 	
 	@Autowired
 	@Qualifier(AUTOWIRE_QUALIFIER_DEFAULT)
@@ -101,7 +101,7 @@ public class ContentRepoTest extends AbstractTest {
 		assertNull(repo.findByContentCd("Snicklefritz"));
 
 		// Find by code like
-		createContents(4);
+		createContents(47);
 		Iterable<? extends ContentJpaImpl> contents = repo.findByContentCdLike("%TEST%");
 		assertNotNull(contents);
 		assertTrue(contents.iterator().hasNext());

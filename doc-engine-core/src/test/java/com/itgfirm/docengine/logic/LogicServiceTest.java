@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.itgfirm.docengine.pipeline.DefaultProjectImpl;
+import com.itgfirm.docengine.pipeline.Project;
 import com.itgfirm.docengine.util.AbstractTest;
 import com.itgfirm.docengine.util.TestUtils;
 
@@ -30,7 +30,7 @@ public class LogicServiceTest extends AbstractTest {
 
 	@Test
 	public void aa_SimpleDecisionTableTest() {
-		DefaultProjectImpl project = new DefaultProjectImpl();
+		Project project = new Project();
 		project.setProjectNumber(PROJECT_NUMBER);
 		logicService.addResource(TestUtils.getFileFromClasspath("DroolsTesting.xls"));
 		List<String> results = logicService.process(project);

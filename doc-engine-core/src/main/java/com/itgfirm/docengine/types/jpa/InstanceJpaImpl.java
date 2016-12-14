@@ -117,11 +117,11 @@ public class InstanceJpaImpl extends AbstractJpaModel implements Comparable<Inst
 	}
 
 	private final void setCustomBody(final String customBody) {
-		if (isNotNullOrEmpty(customBody) && !content.getBody().equals(customBody)) {
-			this.customBody = null;
-		} else if (isNotNullOrEmpty(customBody)) {
+		if (isNotNullOrEmpty(customBody) && !content.getBody().trim().equals(customBody.trim())) {
 			this.customBody = customBody;
-		} 
+		} else {
+			this.customBody = null;
+		}
 	}
 
 	public final String getBody() {

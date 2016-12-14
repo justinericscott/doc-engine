@@ -1,7 +1,7 @@
 package com.itgfirm.docengine.service;
 
 import static com.itgfirm.docengine.DocEngine.Constants.*;
-import static com.itgfirm.docengine.util.Utils.*;
+import static com.itgfirm.docengine.util.Utils.isNotNullOrEmpty;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

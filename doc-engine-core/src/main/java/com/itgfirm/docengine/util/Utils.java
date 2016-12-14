@@ -30,6 +30,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -501,6 +502,10 @@ public class Utils {
 		return (iterable != null && iterable.iterator().hasNext());
 	}
 
+	public static boolean isNotNullOrEmpty(final Map<?, ?> map) {
+		return (map != null && !map.isEmpty());
+	}
+	
 	public static boolean isNotNullOrEmpty(final Object object) {
 		return (object != null && !object.toString().trim().isEmpty());
 	}

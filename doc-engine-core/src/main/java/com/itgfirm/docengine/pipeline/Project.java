@@ -11,7 +11,7 @@ import java.util.Map;
  * 
  *         TODO: Description
  */
-public class DefaultProjectImpl {
+public class Project {
 
 	private String projectNumber;
 	private String leaseNumber;

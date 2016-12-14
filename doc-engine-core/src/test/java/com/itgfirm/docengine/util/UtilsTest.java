@@ -10,7 +10,7 @@ import org.junit.Test;
 public class UtilsTest extends AbstractTest {
 
 	@Test
-	public void c_getFieldNameFromAnnotationValueTest() {
+	public void a_getFieldNameFromAnnotationValueTest() {
 		String name = getFieldNameFromAnnotationValue(TEST_CLASS_CUSTOM_LABELS_ORDERED, TEST_ANNOTATION_CLASS,
 				TEST_ANNOTATION_VALUE_NAME);
 		assertNotNull(name);

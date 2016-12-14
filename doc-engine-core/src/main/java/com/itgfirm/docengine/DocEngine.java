@@ -94,6 +94,8 @@ public class DocEngine {
 		public static final String AUTOWIRE_QUALIFIER_INSTANCE = "instance";
 		public static final String AUTOWIRE_QUALIFIER_JDBC_TX = "jdbcTransactionManager";
 		public static final String AUTOWIRE_QUALIFIER_ORM_TX = "transactionManager";
+		public static final String AUTOWIRE_QUALIFIER_JDBC = "jdbc";
+		public static final String AUTOWIRE_QUALIFIER_ORM = "orm";
 		
 		public static final String CONTENT_TYPE_ADVANCED = "COMPLEX";
 		

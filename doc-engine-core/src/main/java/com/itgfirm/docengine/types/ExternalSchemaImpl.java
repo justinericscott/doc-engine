@@ -1,7 +1,7 @@
-package com.itgfirm.docengine.data;
+package com.itgfirm.docengine.types;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * @author Justin Scott
@@ -11,7 +11,8 @@ import java.util.List;
 public class ExternalSchemaImpl {
 
 	private String name;
-	private List<ExternalEntityImpl> tables;
+	private Collection<ExternalEntityImpl> tables;
+	private String url;
 
 	public ExternalSchemaImpl() {
 	}
@@ -28,7 +29,7 @@ public class ExternalSchemaImpl {
 		this.name = name;
 	}
 
-	public List<ExternalEntityImpl> getTables() {
+	public Iterable<ExternalEntityImpl> getTables() {
 		return tables;
 	}
 
@@ -39,7 +40,17 @@ public class ExternalSchemaImpl {
 		tables.add(table);
 	}
 
-	public void setTables(List<ExternalEntityImpl> tables) {
+	public void setTables(Collection<ExternalEntityImpl> tables) {
 		this.tables = tables;
+	}
+
+	
+	public final String getUrl() {
+		return url;
+	}
+
+	
+	public final void setUrl(final String url) {
+		this.url = url;
 	}
 }

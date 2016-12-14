@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import com.itgfirm.docengine.repository.ContentRepository;
+import com.itgfirm.docengine.repository.AdvancedContentRepository;
 import com.itgfirm.docengine.repository.TokenDictionaryRepository;
 import com.itgfirm.docengine.types.jpa.ContentJpaImpl;
 import com.itgfirm.docengine.types.jpa.TokenDefinitionJpaImpl;
@@ -26,7 +26,7 @@ public class ImportExportServiceImpl implements ImportExportService {
 
 	@Autowired
 	@Qualifier(AUTOWIRE_QUALIFIER_ADVANCED)
-	private ContentRepository content;
+	private AdvancedContentRepository content;
 
 	@Autowired
 	private TokenDictionaryRepository dictionary;

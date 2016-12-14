@@ -1,4 +1,4 @@
-package com.itgfirm.docengine.data;
+package com.itgfirm.docengine.types;
 
 /**
  * @author Justin Scott

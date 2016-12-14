@@ -27,7 +27,7 @@ import com.itgfirm.docengine.types.jpa.SectionJpaImpl;
  * @param <T>
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class AdvancedContentRepoTest extends ContentRepoTest {
+public class AdvancedContentRepositoryTest extends ContentRepositoryTest {
 
 	@Autowired
 	@Qualifier(AUTOWIRE_QUALIFIER_ADVANCED)

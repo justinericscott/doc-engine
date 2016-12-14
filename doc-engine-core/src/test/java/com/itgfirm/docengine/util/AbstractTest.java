@@ -44,75 +44,75 @@ public class AbstractTest {
 		return contents;
 	}
 
-	protected AdvancedDocumentJpaImpl makeTestDocument(final int seed) {
-		AdvancedDocumentJpaImpl document = new AdvancedDocumentJpaImpl("TEST_DOC_" + getRandomTestString(seed * 4),
+	protected final AdvancedDocumentJpaImpl makeTestDocument(final int seed) {
+		final AdvancedDocumentJpaImpl document = new AdvancedDocumentJpaImpl("TEST_DOC_" + getRandomTestString(seed * 4),
 				"TEST_BODY");
 
-		SectionJpaImpl section1 = new SectionJpaImpl("TEST_SECTION_" + getRandomTestString(seed * 1), "TEST_BODY");
+		final SectionJpaImpl section1 = new SectionJpaImpl("TEST_SECTION_" + getRandomTestString(seed * 1), "TEST_BODY");
 		document.addSection(section1);
 
-		ClauseJpaImpl clause11 = new ClauseJpaImpl("TEST_CLAUSE_" + getRandomTestString(seed * 11), "TEST_BODY");
+		final ClauseJpaImpl clause11 = new ClauseJpaImpl("TEST_CLAUSE_" + getRandomTestString(seed * 11), "TEST_BODY");
 		section1.addClause(clause11);
 
-		ParagraphJpaImpl paragraph111 = new ParagraphJpaImpl("TEST_PARA_" + getRandomTestString(seed * 111),
+		final ParagraphJpaImpl paragraph111 = new ParagraphJpaImpl("TEST_PARA_" + getRandomTestString(seed * 111),
 				"TEST_BODY");
 		clause11.addParagraph(paragraph111);
 
-		ParagraphJpaImpl paragraph112 = new ParagraphJpaImpl("TEST_PARA_" + getRandomTestString(seed * 112),
+		final ParagraphJpaImpl paragraph112 = new ParagraphJpaImpl("TEST_PARA_" + getRandomTestString(seed * 112),
 				"TEST_BODY");
 		clause11.addParagraph(paragraph112);
 
-		ParagraphJpaImpl paragraph113 = new ParagraphJpaImpl("TEST_PARA_" + getRandomTestString(seed * 113),
+		final ParagraphJpaImpl paragraph113 = new ParagraphJpaImpl("TEST_PARA_" + getRandomTestString(seed * 113),
 				"TEST_BODY");
 		clause11.addParagraph(paragraph113);
 
-		ClauseJpaImpl clause12 = new ClauseJpaImpl("TEST_CLAUSE_" + getRandomTestString(seed * 12), "TEST_BODY");
+		final ClauseJpaImpl clause12 = new ClauseJpaImpl("TEST_CLAUSE_" + getRandomTestString(seed * 12), "TEST_BODY");
 		section1.addClause(clause12);
 
-		ParagraphJpaImpl paragraph121 = new ParagraphJpaImpl("TEST_PARA_" + getRandomTestString(seed * 121),
+		final ParagraphJpaImpl paragraph121 = new ParagraphJpaImpl("TEST_PARA_" + getRandomTestString(seed * 121),
 				"TEST_BODY");
 		clause12.addParagraph(paragraph121);
 
-		ParagraphJpaImpl paragraph122 = new ParagraphJpaImpl("TEST_PARA_" + getRandomTestString(seed * 122),
+		final ParagraphJpaImpl paragraph122 = new ParagraphJpaImpl("TEST_PARA_" + getRandomTestString(seed * 122),
 				"TEST_BODY");
 		clause12.addParagraph(paragraph122);
 
-		ParagraphJpaImpl paragraph123 = new ParagraphJpaImpl("TEST_PARA_" + getRandomTestString(seed * 123),
+		final ParagraphJpaImpl paragraph123 = new ParagraphJpaImpl("TEST_PARA_" + getRandomTestString(seed * 123),
 				"TEST_BODY");
 		clause12.addParagraph(paragraph123);
 
-		ClauseJpaImpl clause13 = new ClauseJpaImpl("TEST_CLAUSE_" + getRandomTestString(seed * 13), "TEST_BODY");
+		final ClauseJpaImpl clause13 = new ClauseJpaImpl("TEST_CLAUSE_" + getRandomTestString(seed * 13), "TEST_BODY");
 		section1.addClause(clause13);
 
-		ParagraphJpaImpl paragraph131 = new ParagraphJpaImpl("TEST_PARA_" + getRandomTestString(seed * 131),
+		final ParagraphJpaImpl paragraph131 = new ParagraphJpaImpl("TEST_PARA_" + getRandomTestString(seed * 131),
 				"TEST_BODY");
 		clause13.addParagraph(paragraph131);
 
-		ParagraphJpaImpl paragraph132 = new ParagraphJpaImpl("TEST_PARA_" + getRandomTestString(seed * 132),
+		final ParagraphJpaImpl paragraph132 = new ParagraphJpaImpl("TEST_PARA_" + getRandomTestString(seed * 132),
 				"TEST_BODY");
 		clause13.addParagraph(paragraph132);
 
-		ParagraphJpaImpl paragraph133 = new ParagraphJpaImpl("TEST_PARA_" + getRandomTestString(seed * 133),
+		final ParagraphJpaImpl paragraph133 = new ParagraphJpaImpl("TEST_PARA_" + getRandomTestString(seed * 133),
 				"TEST_BODY");
 		clause13.addParagraph(paragraph133);
 
-		SectionJpaImpl section2 = new SectionJpaImpl("TEST_PARA_" + getRandomTestString(seed * 2), "TEST_BODY");
+		final SectionJpaImpl section2 = new SectionJpaImpl("TEST_PARA_" + getRandomTestString(seed * 2), "TEST_BODY");
 		document.addSection(section2);
 
-		ClauseJpaImpl clause21 = new ClauseJpaImpl("TEST_CLAUSE_" + getRandomTestString(seed * 21), "TEST_BODY");
+		final ClauseJpaImpl clause21 = new ClauseJpaImpl("TEST_CLAUSE_" + getRandomTestString(seed * 21), "TEST_BODY");
 		section2.addClause(clause21);
 
-		ParagraphJpaImpl paragraph211 = new ParagraphJpaImpl("TEST_PARA_" + getRandomTestString(seed * 211),
+		final ParagraphJpaImpl paragraph211 = new ParagraphJpaImpl("TEST_PARA_" + getRandomTestString(seed * 211),
 				"TEST_BODY");
 		clause21.addParagraph(paragraph211);
 
-		SectionJpaImpl section3 = new SectionJpaImpl("TEST_SECTION_" + getRandomTestString(seed * 3), "TEST_BODY");
+		final SectionJpaImpl section3 = new SectionJpaImpl("TEST_SECTION_" + getRandomTestString(seed * 3), "TEST_BODY");
 		document.addSection(section3);
 
-		ClauseJpaImpl clause31 = new ClauseJpaImpl("TEST_CLAUSE_" + getRandomTestString(seed * 31), "TEST_BODY");
+		final ClauseJpaImpl clause31 = new ClauseJpaImpl("TEST_CLAUSE_" + getRandomTestString(seed * 31), "TEST_BODY");
 		section3.addClause(clause31);
 
-		ParagraphJpaImpl paragraph311 = new ParagraphJpaImpl("TEST_PARA_" + getRandomTestString(seed * 311),
+		final ParagraphJpaImpl paragraph311 = new ParagraphJpaImpl("TEST_PARA_" + getRandomTestString(seed * 311),
 				"TEST_BODY");
 		clause31.addParagraph(paragraph311);
 
@@ -128,7 +128,7 @@ public class AbstractTest {
 		return token;
 	}
 
-//	protected final void validate(final TokenDefinitionJpaImpl token) {
-//		assertTrue(token.isValid(true));
-//	}
+	protected final void validate(final TokenDefinitionJpaImpl token) {
+		assertTrue(token.isValid(true));
+	}
 }

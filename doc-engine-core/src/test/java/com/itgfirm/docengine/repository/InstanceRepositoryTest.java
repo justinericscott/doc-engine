@@ -40,7 +40,7 @@ import com.itgfirm.docengine.util.AbstractTest;
  * @param <T>
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class InstanceRepoTest extends AbstractTest {
+public class InstanceRepositoryTest extends AbstractTest {
 	@Autowired
 	private InstanceRepository repo;
 	@Autowired

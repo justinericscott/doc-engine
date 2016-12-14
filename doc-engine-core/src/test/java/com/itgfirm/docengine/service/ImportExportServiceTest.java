@@ -50,6 +50,7 @@ public class ImportExportServiceTest extends AbstractTest {
 		assertFalse(objects.isEmpty());
 		for (final ContentJpaImpl o : objects) {
 			assertTrue(o.isValid(true));
+			LOG.debug("Type of Content is {}.", o.getClass().getSimpleName());
 		}
 		importSize = objects.size();
 		LOG.debug("Size of contents from import is {}.", importSize);
@@ -66,5 +67,11 @@ public class ImportExportServiceTest extends AbstractTest {
 		assertNotNull(file);
 		assertTrue(file.exists());
 		assertEquals(importSize + preImportSize, exportSize);
+		
+	}
+	
+	@Test
+	public void c_LiveContentTest() {
+		
 	}
 }

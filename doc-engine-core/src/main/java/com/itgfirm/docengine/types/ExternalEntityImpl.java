@@ -1,7 +1,7 @@
-package com.itgfirm.docengine.data;
+package com.itgfirm.docengine.types;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * @author Justin Scott
@@ -12,7 +12,7 @@ public class ExternalEntityImpl {
 
 	private String name;
 	private String description;
-	private List<ExternalAttributeImpl> columns;
+	private Collection<ExternalAttributeImpl> columns;
 
 	public ExternalEntityImpl() {
 	}
@@ -38,7 +38,7 @@ public class ExternalEntityImpl {
 		this.description = description;
 	}
 
-	public List<ExternalAttributeImpl> getColumns() {
+	public Iterable<ExternalAttributeImpl> getColumns() {
 		return columns;
 	}
 
@@ -49,7 +49,7 @@ public class ExternalEntityImpl {
 		columns.add(column);
 	}
 
-	public void setColumns(List<ExternalAttributeImpl> columns) {
+	public void setColumns(Collection<ExternalAttributeImpl> columns) {
 		this.columns = columns;
 	}
 }

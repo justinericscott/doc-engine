@@ -1,13 +1,14 @@
 /**
  * TODO: License
  */
-package com.itgfirm.docengine.token;
+package com.itgfirm.docengine.service;
 
 import java.util.Deque;
-import java.util.List;
 import java.util.Map;
 
-import com.itgfirm.docengine.pipeline.DefaultProjectImpl;
+import com.itgfirm.docengine.pipeline.Project;
+import com.itgfirm.docengine.types.TokenData;
+import com.itgfirm.docengine.types.TokenValue;
 import com.itgfirm.docengine.types.jpa.TokenDefinitionJpaImpl;
 
 /**
@@ -16,13 +17,8 @@ import com.itgfirm.docengine.types.jpa.TokenDefinitionJpaImpl;
  *         TODO: Description
  */
 interface TokenDictionaryService {
-
-	/**
-	 * TODO: Description
-	 * 
-	 * @return
-	 */
-	List<TokenDefinitionJpaImpl> get();
+	
+	void clear();
 
 	/**
 	 * TODO: Description
@@ -30,7 +26,7 @@ interface TokenDictionaryService {
 	 * @param id
 	 * @return
 	 */
-	TokenDefinitionJpaImpl get(Long id);
+	TokenDefinitionJpaImpl findOne(Long id);
 
 	/**
 	 * TODO: Description
@@ -38,7 +34,15 @@ interface TokenDictionaryService {
 	 * @param code
 	 * @return
 	 */
-	TokenDefinitionJpaImpl get(String code);
+	TokenDefinitionJpaImpl findByTokenCd(String code);
+	
+	/**
+	 * TODO: Description
+	 * 
+	 * @param like
+	 * @return
+	 */
+	Iterable<TokenDefinitionJpaImpl> findByTokenCdLike(String like);
 
 	/**
 	 * TODO: Description
@@ -46,6 +50,13 @@ interface TokenDictionaryService {
 	 * @return
 	 */
 	Map<String, Map<String, Map<String, Deque<TokenDefinitionJpaImpl>>>> getDefinitionMap();
+	
+	/**
+	 * TODO: Description
+	 * 
+	 * @return
+	 */
+	Iterable<TokenDefinitionJpaImpl> getDictionary();
 
 	/**
 	 * TODO: Description
@@ -60,7 +71,7 @@ interface TokenDictionaryService {
 	 * @param projectId
 	 * @return
 	 */
-	Map<String, DefaultTokenDataImpl> getTokenDataMap(String projectId);
+	Map<String, TokenData> getTokenDataMap(String projectId);
 
 	/**
 	 * TODO: Description
@@ -68,7 +79,7 @@ interface TokenDictionaryService {
 	 * @param project
 	 * @return
 	 */
-	Map<String, List<DefaultTokenValueImpl>> getTokenValueMap(DefaultProjectImpl project);
+	Map<String, Iterable<TokenValue>> getTokenValueMap(Project project);
 
 	/**
 	 * TODO: Description
@@ -76,7 +87,7 @@ interface TokenDictionaryService {
 	 * @param project
 	 * @return
 	 */
-	Map<String, ?> getDroolsSafeTokens(DefaultProjectImpl project);
+	Map<String, ?> getDroolsSafeTokens(Project project);
 
 	/**
 	 * TODO: Description
@@ -84,7 +95,7 @@ interface TokenDictionaryService {
 	 * @param project
 	 * @return
 	 */
-	Map<String, ?> getFreemarkerSafeTokens(DefaultProjectImpl project);
+	Map<String, ?> getFreemarkerSafeTokens(Project project);
 
 	/**
 	 * TODO: Description
@@ -92,7 +103,7 @@ interface TokenDictionaryService {
 	 * @param item
 	 * @return
 	 */
-	TokenDefinitionJpaImpl merge(TokenDefinitionJpaImpl token);
+	TokenDefinitionJpaImpl save(TokenDefinitionJpaImpl token);
 
 	/**
 	 * TODO: Description
@@ -100,7 +111,7 @@ interface TokenDictionaryService {
 	 * @param tokens
 	 * @return
 	 */
-	List<TokenDefinitionJpaImpl> merge(List<TokenDefinitionJpaImpl> tokens);
+	Iterable<TokenDefinitionJpaImpl> save(Iterable<TokenDefinitionJpaImpl> tokens);
 
 	/**
 	 * TODO: Description
@@ -112,23 +123,22 @@ interface TokenDictionaryService {
 	 * TODO: Description
 	 * 
 	 * @param id
-	 * @return
 	 */
-	boolean delete(Long id);
+	void delete(Long id);
 
 	/**
 	 * TODO: Description
 	 * 
 	 * @param code
-	 * @return
 	 */
-	boolean delete(String code);
+	void delete(String code);
 
 	/**
 	 * TODO: Description
 	 * 
 	 * @param token
-	 * @return
 	 */
-	boolean delete(TokenDefinitionJpaImpl token);
+	void delete(TokenDefinitionJpaImpl token);
+	
+	
 }

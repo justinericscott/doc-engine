@@ -1,4 +1,4 @@
-package com.itgfirm.docengine.token;
+package com.itgfirm.docengine.types;
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -10,15 +10,15 @@ import org.slf4j.LoggerFactory;
 import com.itextpdf.text.factories.RomanNumberFactory;
 import com.itgfirm.docengine.types.jpa.TokenDefinitionJpaImpl;
 
-public class DefaultTokenValueImpl {
-	private static final Logger LOG = LoggerFactory.getLogger(DefaultTokenValueImpl.class);
+public class TokenValue {
+	private static final Logger LOG = LoggerFactory.getLogger(TokenValue.class);
 	public static final String NOT_DEFINED_TXT = "No Alt Text";
 	public static final String XABLE_TXT = "XX";
 	private final TokenDefinitionJpaImpl definition;
 	private final Object value;
 	private String displayValue;
 
-	public DefaultTokenValueImpl(TokenDefinitionJpaImpl definition, Object value) {
+	public TokenValue(TokenDefinitionJpaImpl definition, Object value) {
 		if (definition == null)
 			throw new IllegalArgumentException("TokenDefinition Object Must Not Be Null!");
 		// FIXME
