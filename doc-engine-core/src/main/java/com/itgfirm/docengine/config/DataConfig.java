@@ -1,4 +1,4 @@
-package com.itgfirm.docengine.data;
+package com.itgfirm.docengine.config;
 
 import static com.itgfirm.docengine.DocEngine.Constants.*;
 

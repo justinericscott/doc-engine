@@ -4,7 +4,6 @@
 package com.itgfirm.docengine.logic;
 
 import java.io.File;
-import java.util.List;
 
 /**
  * 
@@ -17,16 +16,16 @@ public interface LogicService {
 	/**
 	 * TODO: Description
 	 * 
-	 * @param obj
-	 * @param table
-	 * @return
+	 * @param path
 	 */
-	List<String> process(Object obj);
+	void addResource(File path);
 
 	/**
 	 * TODO: Description
 	 * 
-	 * @param path
+	 * @param obj
+	 * @param table
+	 * @return
 	 */
-	void addResource(File path);
+	Iterable<String> process(Object obj);
 }
