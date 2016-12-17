@@ -13,12 +13,12 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.itgfirm.docengine.types.jpa.AdvancedDocumentJpaImpl;
-import com.itgfirm.docengine.types.jpa.ClauseJpaImpl;
-import com.itgfirm.docengine.types.jpa.ContentJpaImpl;
-import com.itgfirm.docengine.types.jpa.ParagraphJpaImpl;
-import com.itgfirm.docengine.types.jpa.SectionJpaImpl;
-import com.itgfirm.docengine.types.jpa.TokenDefinitionJpaImpl;
+import com.itgfirm.docengine.types.AdvancedDocumentJpaImpl;
+import com.itgfirm.docengine.types.ClauseJpaImpl;
+import com.itgfirm.docengine.types.ContentJpaImpl;
+import com.itgfirm.docengine.types.ParagraphJpaImpl;
+import com.itgfirm.docengine.types.SectionJpaImpl;
+import com.itgfirm.docengine.types.TokenDefinitionJpaImpl;
 
 /**
  * @author Justin Scott

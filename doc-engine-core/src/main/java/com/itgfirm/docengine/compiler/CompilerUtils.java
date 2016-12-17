@@ -14,7 +14,9 @@ public class CompilerUtils {
 	/**
 	 * TODO: Description
 	 */
-	private CompilerUtils() {}
+	private CompilerUtils() {
+		// Do not instantiate
+	}
 
 	/**
 	 * Creates a self-closing HTML tag.

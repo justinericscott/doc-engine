@@ -10,7 +10,7 @@ import java.util.Date;
 
 import org.springframework.core.io.ClassPathResource;
 
-import com.itgfirm.docengine.types.ExampleExcelTypeWithCustomLabelsOrdered;
+import com.itgfirm.docengine.service.ix.types.ExampleExcelTypeWithCustomLabelsOrdered;
 
 public class TestUtils {
 

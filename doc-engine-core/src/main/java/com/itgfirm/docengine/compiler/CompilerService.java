@@ -3,7 +3,7 @@
  */
 package com.itgfirm.docengine.compiler;
 
-import com.itgfirm.docengine.types.jpa.AdvancedDocumentInstanceJpaImpl;
+import com.itgfirm.docengine.types.AdvancedDocumentInstanceJpaImpl;
 
 /**
  * @author Justin Scott

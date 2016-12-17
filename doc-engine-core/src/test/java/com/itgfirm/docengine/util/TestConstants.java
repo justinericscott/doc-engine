@@ -5,12 +5,12 @@ import static com.itgfirm.docengine.util.TestUtils.*;
 import java.util.Collection;
 
 import com.itgfirm.docengine.annotation.ExcelColumn;
-import com.itgfirm.docengine.types.ExampleExcelType;
-import com.itgfirm.docengine.types.ExampleExcelTypeWithCustomLabels;
-import com.itgfirm.docengine.types.ExampleExcelTypeWithCustomLabelsOrdered;
-import com.itgfirm.docengine.types.ExampleExcelTypeWithCustomLabelsOrderedReversed;
-import com.itgfirm.docengine.types.ExampleExcelTypeWithCustomLabelsOrderedUnordered;
-import com.itgfirm.docengine.types.NoAnnotationType;
+import com.itgfirm.docengine.service.ix.types.ExampleExcelType;
+import com.itgfirm.docengine.service.ix.types.ExampleExcelTypeWithCustomLabels;
+import com.itgfirm.docengine.service.ix.types.ExampleExcelTypeWithCustomLabelsOrdered;
+import com.itgfirm.docengine.service.ix.types.ExampleExcelTypeWithCustomLabelsOrderedReversed;
+import com.itgfirm.docengine.service.ix.types.ExampleExcelTypeWithCustomLabelsOrderedUnordered;
+import com.itgfirm.docengine.service.ix.types.NoAnnotationType;
 
 public class TestConstants {
 	public static final String TEST_ANNOTATION_VALUE_IDENTIFICATION = "Identification";

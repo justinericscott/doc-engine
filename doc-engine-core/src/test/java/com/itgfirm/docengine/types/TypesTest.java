@@ -6,8 +6,6 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import com.itgfirm.docengine.types.jpa.ContentJpaImpl;
-import com.itgfirm.docengine.types.jpa.InstanceJpaImpl;
 import com.itgfirm.docengine.util.AbstractTest;
 
 /**

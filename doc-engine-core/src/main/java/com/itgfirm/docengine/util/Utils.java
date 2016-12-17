@@ -3,7 +3,7 @@
  */
 package com.itgfirm.docengine.util;
 
-import static com.itgfirm.docengine.DocEngine.Constants.*;
+import static com.itgfirm.docengine.util.Utils.UtilsConstants.*;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -36,12 +36,12 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itgfirm.docengine.types.jpa.ClauseJpaImpl;
-import com.itgfirm.docengine.types.jpa.ContentJpaImpl;
-import com.itgfirm.docengine.types.jpa.InstanceJpaImpl;
-import com.itgfirm.docengine.types.jpa.ParagraphJpaImpl;
-import com.itgfirm.docengine.types.jpa.SectionJpaImpl;
-import com.itgfirm.docengine.types.jpa.TokenDefinitionJpaImpl;
+import com.itgfirm.docengine.types.ClauseJpaImpl;
+import com.itgfirm.docengine.types.ContentJpaImpl;
+import com.itgfirm.docengine.types.InstanceJpaImpl;
+import com.itgfirm.docengine.types.ParagraphJpaImpl;
+import com.itgfirm.docengine.types.SectionJpaImpl;
+import com.itgfirm.docengine.types.TokenDefinitionJpaImpl;
 
 /**
  * @author Justin Scott
@@ -50,6 +50,10 @@ import com.itgfirm.docengine.types.jpa.TokenDefinitionJpaImpl;
  */
 public class Utils {
 	private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
+	
+	private Utils() {
+		// Do not instantiate
+	}
 
 	public static String[] breakSqlScriptIntoStatements(final File file) {
 		if (isNotNullAndExists(file)) {
@@ -935,7 +939,9 @@ public class Utils {
 		return null;
 	}
 
-	private Utils() {
-		// Do not instantiate
+	static class UtilsConstants {
+		static final String FILE_SYS_TEMP_DIR = "java.io.tmpdir";
+		static final String PREFIX_COPY_OF = "Copy of - ";
+		static final String REGEX_SPLIT_PATH = "\\.(?=[^\\.]+$)";
 	}
 }
