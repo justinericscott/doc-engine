@@ -278,7 +278,7 @@ public class Utils {
 	 */
 	public static File get(final String path) {
 		File file = null;
-		if (isNotNullOrEmpty(path)) {
+		if (path != null) {
 			file = new File(path);
 			try {
 				URL url = null;
@@ -305,7 +305,7 @@ public class Utils {
 				}
 			}
 		} else {
-			LOG.debug("File path must not be null or empty!");
+			LOG.debug("File path must not be null!");
 		}
 		return ((isNotNullAndExists(file)) ? file : null);
 	}

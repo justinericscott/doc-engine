@@ -26,6 +26,10 @@ class ContentServiceImpl implements ContentService {
 	@Qualifier(AUTOWIRE_QUALIFIER_DEFAULT)
 	private ContentRepository repo;
 
+	public ContentServiceImpl() {
+		// Default constructor for Spring
+	}
+	
 	@Override
 	public final ContentJpaImpl save(final ContentJpaImpl content) {
 		if (isNotNullOrEmpty(content)) {

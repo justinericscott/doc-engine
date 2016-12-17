@@ -71,16 +71,11 @@ To use:
 		<module>doc-engine-ui</module>
 	</modules>
 	<properties>
-		<antlr.version>4.5.3</antlr.version>
-		<c3p0.version>0.9.5.2</c3p0.version>
 		<collections.version>4.1</collections.version>
-		<freemarker.version>2.3.23</freemarker.version>
 		<htmltopdf.version>1.9-SNAPSHOT</htmltopdf.version>
 		<jackson.version>2.8.4</jackson.version>
 		<java.version>1.8</java.version>
 		<kie.version>6.5.0.Final-redhat-2</kie.version>
-		<maven-release-version>2.5.3</maven-release-version>
-		<maven-source-version>3.0.1</maven-source-version>
 		<poi.version>3.14</poi.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -132,7 +127,7 @@ To use:
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-release-plugin</artifactId>
-					<version>${maven-release-version}</version>
+					<version>2.5.3</version>
 					<configuration>
 						<goal>prepare</goal>
 						<autoVersionSubmodules>true</autoVersionSubmodules>
@@ -146,7 +141,7 @@ To use:
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
-					<version>${maven-source-version}</version>
+					<version>3.0.1</version>
 					<executions>
 						<execution>
 							<id>attach-sources</id>
@@ -235,16 +230,6 @@ To use:
 				<artifactId>htmltopdf</artifactId>
 				<version>${htmltopdf.version}</version>
 			</dependency>
-			<!-- <dependency> -->
-			<!-- <groupId>org.slf4j</groupId> -->
-			<!-- <artifactId>slf4j-log4j12</artifactId> -->
-			<!-- <version>${slf4j.version}</version> -->
-			<!-- </dependency> -->
-			<dependency>
-				<groupId>org.freemarker</groupId>
-				<artifactId>freemarker</artifactId>
-				<version>${freemarker.version}</version>
-			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-collections4</artifactId>
@@ -254,11 +239,6 @@ To use:
 				<groupId>org.apache.poi</groupId>
 				<artifactId>poi-ooxml</artifactId>
 				<version>${poi.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.mchange</groupId>
-				<artifactId>c3p0</artifactId>
-				<version>${c3p0.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.datatype</groupId>

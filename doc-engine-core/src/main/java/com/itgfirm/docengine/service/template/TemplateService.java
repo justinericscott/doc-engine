@@ -1,7 +1,7 @@
 /**
  * TODO: License
  */
-package com.itgfirm.docengine.template;
+package com.itgfirm.docengine.service.template;
 
 import java.util.Map;
 
@@ -13,6 +13,13 @@ import java.util.Map;
  */
 public interface TemplateService {
 
+	/**
+	 * 
+	 * @param name
+	 * @param template
+	 */
+	void loadTemplate(String name, String template);
+	
 	/**
 	 * TODO: Description
 	 * 

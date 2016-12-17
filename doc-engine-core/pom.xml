@@ -37,12 +37,12 @@
 		</dependency>
 		<!-- CORE UTILITIES -->
 		<dependency>
-			<groupId>org.kie</groupId>
-			<artifactId>kie-spring</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.kie</groupId>
+			<artifactId>kie-spring</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>

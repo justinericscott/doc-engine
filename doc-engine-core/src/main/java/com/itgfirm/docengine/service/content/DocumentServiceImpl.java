@@ -15,7 +15,7 @@ import com.itgfirm.docengine.types.ContentJpaImpl;
 import com.itgfirm.docengine.types.InstanceJpaImpl;
 
 @Service
-public class DocumentServiceImpl implements DocumentService {
+class DocumentServiceImpl implements DocumentService {
 	private static final Logger LOG = LoggerFactory.getLogger(DocumentServiceImpl.class);
 
 	@Autowired
@@ -26,6 +26,10 @@ public class DocumentServiceImpl implements DocumentService {
 	@Qualifier(AUTOWIRE_QUALIFIER_ADVANCED)
 	private AdvancedContentService advanced;
 
+	public DocumentServiceImpl() {
+		// Default constructor for Spring
+	} 
+	
 	@Override
 	public final InstanceJpaImpl create(final String projectId, final String code) {
 		if (isNotNullOrEmpty(projectId) && isNotNullOrEmpty(code)) {
