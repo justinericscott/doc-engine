@@ -15,43 +15,44 @@ import com.itgfirm.docengine.repository.token.BusinessDataRepository;
 import com.itgfirm.docengine.service.token.types.ExternalSchema;
 
 @Service
-@Transactional(transactionManager = AUTOWIRE_QUALIFIER_JDBC_TX)
-public class BusinessDataServiceImpl implements BusinessDataService {
-	@SuppressWarnings("unused")
+@Transactional(AUTOWIRE_QUALIFIER_JDBC_TX)
+final class BusinessDataServiceImpl implements BusinessDataService {
 	private static final Logger LOG = LoggerFactory.getLogger(BusinessDataServiceImpl.class);
 
 	@Autowired
-	private BusinessDataRepository repo;
+	private BusinessDataRepository _business;
+	
+	BusinessDataServiceImpl() {
+		LOG.info("Creating new Business Data Service.");
+	}
 
 	@Override
 	public final void execute(final String sql) {
-		repo.execute(sql);
+		_business.execute(sql);
 	}
 
 	@Override
 	public final void execute(final String[] script) {
-		repo.execute(script);
+		_business.execute(script);
 	}
 
 	@Override
 	public final ExternalSchema getExternalSchema() {
-		return repo.getExternalSchema();
+		return _business.getExternalSchema();
 	}
 
 	@Override
 	public final Map<String, Object> queryForMap(final String sql) {
-		return repo.queryForMap(sql);
+		return _business.queryForMap(sql);
 	}
-
 	
 	@Override
 	public final int update(final String sql) {
-		return repo.update(sql);
+		return _business.update(sql);
 	}
-
 	
 	@Override
 	public final Integer[] update(final String[] script) {
-		return repo.update(script);
+		return _business.update(script);
 	}
 }

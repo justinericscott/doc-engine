@@ -1,25 +1,26 @@
 package com.itgfirm.docengine.types;
 
 import static com.itgfirm.docengine.types.AbstractJpaModel.ModelConstants.*;
-import static javax.persistence.DiscriminatorType.STRING;
-import static javax.persistence.GenerationType.AUTO;
-import static javax.persistence.InheritanceType.SINGLE_TABLE;
+import static com.itgfirm.docengine.util.Utils.isNotNullOrEmpty;
+import static com.itgfirm.docengine.util.Utils.isNotNullOrZero;
 
-import java.sql.Timestamp;
+import static javax.persistence.GenerationType.AUTO;
+import static javax.persistence.TemporalType.DATE;
+
+import java.util.Date;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.itgfirm.docengine.annotation.ExcelColumn;
 import com.itgfirm.docengine.annotation.ExcelColumnOrder;
 import com.itgfirm.docengine.annotation.ExcelSheet;
@@ -30,76 +31,79 @@ import com.itgfirm.docengine.annotation.ExcelSheet;
  *         ContentJpaImpl Data Model
  */
 @Entity
-@Table(name = JPA_TBL_CONTENT)
 @ExcelSheet(EXCEL_SHEET_NAME_CONTENT)
-@Inheritance(strategy = SINGLE_TABLE)
-@DiscriminatorValue(JPA_DSCRMNTR_CONTENT)
-@DiscriminatorColumn(name = JPA_DSCRMNTR_COL, discriminatorType = STRING)
+@Table(name = JPA_TBL_CONTENT)
 public class ContentJpaImpl extends AbstractJpaModel implements Comparable<ContentJpaImpl> {
 	private static final Logger LOG = LoggerFactory.getLogger(ContentJpaImpl.class);
 
 	@Id
+	@GeneratedValue(strategy = AUTO, generator = JPA_SEQ_CONTENT)
+	@SequenceGenerator(name = JPA_SEQ_CONTENT, sequenceName = JPA_SEQ_CONTENT)
+	@Column(name = JPA_COL_CONTENT_ID, unique = true)
 	@ExcelColumn(EXCEL_COL_CONTENT_ID)
 	@ExcelColumnOrder(1)
-	@GeneratedValue(generator = JPA_SEQ_CONTENT, strategy = AUTO)
-	@SequenceGenerator(name = JPA_SEQ_CONTENT, sequenceName = JPA_SEQ_CONTENT)
-	@Column(name = JPA_COL_CONTENT_ID)
-	private Long id;
+	protected Long id;
+	@Column(name = JPA_COL_PARENT, length = 4000)
 	@ExcelColumn(EXCEL_COL_PARENT)
 	@ExcelColumnOrder(2)
-	@Column(name = JPA_COL_PARENT, insertable = false, updatable = false)
 	private Long parentId;
+	@Column(name = JPA_COL_CONTENT_CD, length = 100, nullable = false, unique = true)
 	@ExcelColumn(EXCEL_COL_CONTENT_CD)
 	@ExcelColumnOrder(3)
-	@Column(name = JPA_COL_CONTENT_CD, length = 100, nullable = false, unique = true)
-	private String contentCd;
+	protected String contentCd;
+	@Column(name = JPA_COL_NAME, length = 1000)
 	@ExcelColumn(EXCEL_COL_NAME)
 	@ExcelColumnOrder(4)
-	@Column(name = JPA_COL_NAME, length = 1000)
-	private String name;
+	protected String name;
+	@Column(name = JPA_COL_DESCRIPTION, length = 4000)
 	@ExcelColumn(EXCEL_COL_DESCRIPTION)
 	@ExcelColumnOrder(5)
-	@Column(name = JPA_COL_DESCRIPTION, length = 4000)
-	private String description;
+	protected String description;
+	@Column(name = JPA_COL_CONTENT_NBR, length = 10)
 	@ExcelColumn(EXCEL_COL_CONTENT_NBR)
 	@ExcelColumnOrder(6)
-	@Column(name = JPA_COL_CONTENT_NBR, length = 10)
-	private String contentNumber;
+	protected String contentNumber;
+	@Column(name = JPA_COL_BODY, length = 4000, nullable = false)
 	@ExcelColumn(EXCEL_COL_BODY)
 	@ExcelColumnOrder(7)
-	@Column(name = JPA_COL_BODY, length = 4000, nullable = false)
-	private String body;
+	protected String body;
+	@Column(name = JPA_COL_CSS, length = 4000)
 	@ExcelColumn(EXCEL_COL_CSS)
 	@ExcelColumnOrder(8)
-	@Column(name = JPA_COL_CSS, length = 4000)
-	private String css;
+	protected String css;
+	@Column(name = JPA_COL_HELPER, length = 4000)
 	@ExcelColumn(EXCEL_COL_HELPER)
 	@ExcelColumnOrder(9)
-	@Column(name = JPA_COL_HELPER, length = 4000)
-	private String helper;
+	protected String helper;
+	@Column(name = JPA_COL_CATEGORY, length = 100)
 	@ExcelColumn(EXCEL_COL_CATEGORY)
 	@ExcelColumnOrder(10)
-	@Column(name = JPA_COL_CATEGORY, length = 100)
-	private String category;
+	protected String category;
+	@Column(name = JPA_COL_FLAGS, length = 100)
 	@ExcelColumn(EXCEL_COL_FLAGS)
 	@ExcelColumnOrder(11)
-	@Column(name = JPA_COL_FLAGS, length = 100)
-	private String flags;
+	protected String flags;
+	@Column(name = JPA_COL_ORDER)
 	@ExcelColumn(EXCEL_COL_ORDER)
 	@ExcelColumnOrder(12)
-	@Column(name = JPA_COL_ORDER)
-	private Integer orderBy;
+	protected Integer orderBy;
+	@Temporal(DATE)
+	@Column(name = JPA_COL_VALID_START, nullable = false)
 	@ExcelColumn(EXCEL_COL_VALID_START)
 	@ExcelColumnOrder(13)
-	@Column(name = JPA_COL_VALID_START, nullable = false)
-	private Timestamp validStart = now();
+	protected Date validStart = now();
+	@Temporal(DATE)
+	@Column(name = JPA_COL_VALID_END, nullable = false)
 	@ExcelColumn(EXCEL_COL_VALID_END)
 	@ExcelColumnOrder(14)
-	@Column(name = JPA_COL_VALID_END, nullable = false)
-	private Timestamp validEnd = max();
-
+	protected Date validEnd = max();
+	
 	public ContentJpaImpl() {
 		// Default constructor for Spring
+	}
+
+	public ContentJpaImpl(Integer id) {
+		this.id = Long.valueOf(String.valueOf(id));
 	}
 
 	public ContentJpaImpl(final String body) {
@@ -130,7 +134,7 @@ public class ContentJpaImpl extends AbstractJpaModel implements Comparable<Conte
 
 	public ContentJpaImpl(final ContentJpaImpl content, final String contentCd) {
 		this(content);
-		if (isNotNullOrEmpty(contentCd)) {
+		if (isNotNullOrEmpty(contentCd) && isNotNullOrEmpty(content) && !contentCd.equals(content.getContentCd())) {
 			this.contentCd = contentCd;
 		}
 	}
@@ -143,11 +147,11 @@ public class ContentJpaImpl extends AbstractJpaModel implements Comparable<Conte
 		this.id = id;
 	}
 
-	public final Long getParentId() {
+	public Long getParentId() {
 		return parentId;
 	}
 
-	public final void setParentId(final Long parentId) {
+	public void setParentId(Long parentId) {
 		this.parentId = parentId;
 	}
 
@@ -231,26 +235,28 @@ public class ContentJpaImpl extends AbstractJpaModel implements Comparable<Conte
 		this.orderBy = orderBy;
 	}
 
-	public final Timestamp getValidStart() {
+	public final Date getValidStart() {
 		return validStart;
 	}
 
-	public final void setValidStart(final Timestamp validStart) {
+	public final void setValidStart(final Date validStart) {
 		this.validStart = validStart;
 	}
 
-	public final Timestamp getValidEnd() {
+	public final Date getValidEnd() {
 		return validEnd;
 	}
 
-	public final void setValidEnd(final Timestamp validEnd) {
+	public final void setValidEnd(final Date validEnd) {
 		this.validEnd = validEnd;
 	}
 
+	@JsonIgnore
 	public final boolean isValid() {
 		return isValid(false);
 	}
 
+	@JsonIgnore
 	public final boolean isValid(final boolean checkForId) {
 		if (checkForId && !isNotNullOrZero(id)) {
 			LOG.debug("ID must not be null or zero!");
@@ -267,6 +273,7 @@ public class ContentJpaImpl extends AbstractJpaModel implements Comparable<Conte
 		return true;
 	}
 
+	@JsonIgnore
 	@Override
 	public final int compareTo(final ContentJpaImpl o) {
 		return this.getContentCd().compareTo(o.getContentCd());

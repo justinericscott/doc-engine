@@ -2,8 +2,11 @@ package com.itgfirm.docengine.service.ix;
 
 import static org.junit.Assert.*;
 import static com.itgfirm.docengine.service.ix.ExcelUtils.*;
-import static com.itgfirm.docengine.util.TestConstants.*;
-import static com.itgfirm.docengine.util.Utils.*;
+import static com.itgfirm.docengine.util.AbstractTest.TestConstants.*;
+import static com.itgfirm.docengine.util.TestUtils.getSystemTempDirectory;
+import static com.itgfirm.docengine.util.Utils.delete;
+import static com.itgfirm.docengine.util.Utils.get;
+import static com.itgfirm.docengine.util.TestUtils.list;
 
 import java.io.File;
 import java.io.IOException;

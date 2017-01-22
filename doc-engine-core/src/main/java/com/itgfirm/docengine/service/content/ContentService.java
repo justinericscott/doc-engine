@@ -3,7 +3,12 @@
  */
 package com.itgfirm.docengine.service.content;
 
+import com.itgfirm.docengine.types.ClauseJpaImpl;
 import com.itgfirm.docengine.types.ContentJpaImpl;
+import com.itgfirm.docengine.types.Contents;
+import com.itgfirm.docengine.types.DocumentJpaImpl;
+import com.itgfirm.docengine.types.ParagraphJpaImpl;
+import com.itgfirm.docengine.types.SectionJpaImpl;
 
 /**
  * @author Justin Scott
@@ -15,101 +20,71 @@ import com.itgfirm.docengine.types.ContentJpaImpl;
  */
 public interface ContentService {
 
-	/**
-	 * Deletes a Content record based upon the provided ID.
-	 * 
-	 * @param id
-	 *            The ID of the Content record to delete.
-	 */
-	void delete(Long id);
-
-	/**
-	 * Deletes a Content record based upon the provided content code.
-	 * 
-	 * @param code
-	 *            The content code of the Content record to delete.
-	 * 
-	 * @return True or False based upon success of the operation.
-	 */
-	void delete(String code);
-
-	/**
-	 * Deletes a Content record based upon the provided Content.
-	 * 
-	 * @param content
-	 *            Content to delete.
-	 */
-	void delete(ContentJpaImpl content);
-
-	/**
-	 * Deletes many Content records for the provided {@link Iterable}.
-	 * 
-	 * @param contents
-	 *            {@link Iterable} group of Contents to delete.
-	 */
-	void delete(Iterable<? extends ContentJpaImpl> contents);
-
-	/**
-	 * Deletes all Content records.
-	 */
-	void deleteAll();
-
-	/**
-	 * Deletes any Content record based upon the provided content code search
-	 * string.
-	 * 
-	 * @param like
-	 * @return True or False based upon success of the operation.
-	 */
-	void deleteByContentCdLike(String like);
+	boolean delete(ContentJpaImpl content);
 	
-	/**
-	 * Gets all Content records.
-	 * 
-	 * @return All Content records.
-	 */
-	Iterable<? extends ContentJpaImpl> findAll();
+	boolean delete(Contents content);
+	
+	boolean delete(ContentJpaImpl[] content);
 
-	/**
-	 * Gets a single piece of Content based upon the provided content code.
-	 * 
-	 * @param code
-	 *            The content code to look for.
-	 * 
-	 * @return Content record related to the provided content code.
-	 */
-	ContentJpaImpl findByContentCd(String code);
+	boolean delete(Long id);
+	
+	boolean delete(Long id, Class<?> type);
 
-	/**
-	 * Gets a list of Content records based upon the provided content code
-	 * search string.
-	 * 
-	 * @param like
-	 * @return Content records related to the content code search string.
-	 */
-	Iterable<? extends ContentJpaImpl> findByContentCdLike(String like);
+	boolean delete(String code);
 
-	/**
-	 * Gets a single piece of Content based upon the provided ID.
-	 * 
-	 * @param id
-	 * @return Content record related to the provided ID.
-	 */
+	<T> boolean delete(String code, Class<T> type);
+	
+	<T> boolean delete(T object, Class<T> type);
+	
+	boolean deleteAll();
+
+	<T> boolean deleteByCodeLike(String like, Class<T> type);
+
+	Contents findAll();
+	
+	<T> T findAll(Class<T> type);
+	
+	<T> T findAll(Class<T> type, boolean eagerKids);
+
+	ContentJpaImpl findByCode(String code);
+	
+	<T> T findByCode(String code, Class<T> type);
+	
+	<T> T findByCode(String code, Class<T> type, boolean eagerKids);
+
+	Contents findByCodeLike(String like);
+	
+	<T> T findByCodeLike(String like, Class<T> type);
+	
+	<T> T findByCodeLike(String like, Class<T> type, boolean eagerKids);
+
 	ContentJpaImpl findOne(Long id);
+	
+	<T> T findOne(Long id, Class<T> type);
+	
+	<T> T findOne(Long id, Class<T> type, boolean eagerKids);
 
-	/**
-	 * Merges (adds or updates) a Content record.
-	 * 
-	 * @param content
-	 * @return The newly merged Content, with created ID if new.
-	 */
+	<T> T getChildren(Long id, Class<T> type);
+
+	<T> T getChildren(Long id, Class<T> type, boolean eagerKids);
+
+	<T, P> T getChildren(P content, Class<T> type);
+
+	<T, P> T getChildren(P content, Class<T> type, boolean eagerKids);
+
+	<T> T getChildren(String code, Class<T> type);
+
+	<T> T getChildren(String code, Class<T> type, boolean eagerKids);
+
 	ContentJpaImpl save(ContentJpaImpl content);
+	
+	Contents save(Contents contents);
+	
+	DocumentJpaImpl save(DocumentJpaImpl document);
+	
+	SectionJpaImpl save(SectionJpaImpl section);
 
-	/**
-	 * Merges (adds or updates) a list of Contents.
-	 * 
-	 * @param contents
-	 * @return The newly merged list of items.
-	 */
-	Iterable<? extends ContentJpaImpl> save(Iterable<? extends ContentJpaImpl> contents);
+	ClauseJpaImpl save(ClauseJpaImpl clause);
+
+	ParagraphJpaImpl save(ParagraphJpaImpl paragraph);
 }

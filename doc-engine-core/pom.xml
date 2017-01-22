@@ -11,6 +11,16 @@
 		<artifactId>doc-engine</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+			<resource>
+				<directory>src/main/webapp</directory>
+			</resource>
+		</resources>
+	</build>
 	<dependencies>
 		<!-- LOCATED IN ITG REPO -->
 		<dependency>
@@ -50,7 +60,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-hibernate4</artifactId>
+			<artifactId>jackson-datatype-hibernate5</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>

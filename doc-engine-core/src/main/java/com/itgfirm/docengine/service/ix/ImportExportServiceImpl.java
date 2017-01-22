@@ -1,18 +1,20 @@
 package com.itgfirm.docengine.service.ix;
 
-import static com.itgfirm.docengine.DocEngine.Constants.*;
 import static com.itgfirm.docengine.util.Utils.*;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import com.itgfirm.docengine.repository.content.AdvancedContentRepository;
-import com.itgfirm.docengine.repository.token.TokenDictionaryRepository;
+import com.itgfirm.docengine.service.content.ContentService;
+import com.itgfirm.docengine.service.token.TokenDictionaryService;
 import com.itgfirm.docengine.types.ContentJpaImpl;
+import com.itgfirm.docengine.types.Contents;
 import com.itgfirm.docengine.types.TokenDefinitionJpaImpl;
 
 /**
@@ -25,53 +27,55 @@ public class ImportExportServiceImpl implements ImportExportService {
 	private static final Logger LOG = LoggerFactory.getLogger(ImportExportServiceImpl.class);
 
 	@Autowired
-	@Qualifier(AUTOWIRE_QUALIFIER_ADVANCED)
-	private AdvancedContentRepository content;
+	private ContentService _contents;
 
 	@Autowired
-	private TokenDictionaryRepository dictionary;
+	private TokenDictionaryService _dictionary;
 
 	@Autowired
-	private ExcelReaderService reader;
+	private ExcelReaderService _reader;
 
 	@Autowired
-	private ExcelWriterService writer;
+	private ExcelWriterService _writer;
 
 	@Override
 	public final File exportToFile(final Class<?> clazz, final String path) {
 		if (isNotNullOrEmpty(clazz)) {
-			Iterable<?> objects = null;
+			Collection<?> objects = null;
 			if (clazz.equals(ContentJpaImpl.class)) {
-				objects = content.findAll();
+				objects = Arrays.asList(_contents.findAll().getContents());
 			} else if (clazz.equals(TokenDefinitionJpaImpl.class)) {
-				objects = dictionary.findAll();
+				objects = Arrays.asList(_dictionary.findAll().getDefinitionsList());
 			}
 			if (isNotNullOrEmpty(objects)) {
 				final File file = create(path, true);
 				if (isNotNullAndExists(file)) {
-					return writer.write(clazz, file, objects, true);
+					return _writer.write(clazz, file, objects, true);
 				} else {
-					LOG.debug("The for the provided path does not exist!");
+					LOG.warn("The for the provided path does not exist!");
 				}
 			}
 		} else {
-			LOG.debug("The class must not be null!");
+			LOG.warn("The class must not be null!");
 		}
 
 		return null;
 	}
 
 	@Override
-	public <T extends ContentJpaImpl> Iterable<T> importFromFile(final Class<T> clazz, final String path) {
+	public <T> T importFromFile(final Class<T> clazz, final String path) {
 		if (isNotNullOrEmpty(clazz)) {
-			final Iterable<T> objects = (Iterable<T>) reader.read(clazz, get(path));
-			if (isNotNullOrEmpty(objects)) {
-				return content.save(objects);
-			} else {
-				LOG.debug("No objects where created from the provided Class and File path!");
+			if (clazz.equals(Contents.class)) {
+				final Collection<ContentJpaImpl> objects = (Collection<ContentJpaImpl>) _reader.read(ContentJpaImpl.class, get(path));	
+				if (isNotNullOrEmpty(objects)) {
+					Contents contents = new Contents(objects.toArray(new ContentJpaImpl[objects.size()]));
+					return clazz.cast(_contents.save(contents));
+				} else {
+					LOG.warn("No objects where created from the provided Class and File path!");
+				}
 			}
 		} else {
-			LOG.debug("The class must not be null!");
+			LOG.warn("The class must not be null!");
 		}
 		return null;
 	}

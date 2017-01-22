@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import static com.itgfirm.docengine.DocEngine.Constants.*;
 import static com.itgfirm.docengine.util.TestUtils.getFileFromClasspath;
-import static com.itgfirm.docengine.util.TestUtils.getRandomTestString;
 import static com.itgfirm.docengine.util.Utils.breakSqlScriptIntoStatements;
 import static com.itgfirm.docengine.util.Utils.isNotNullOrEmpty;
 
@@ -41,21 +40,21 @@ public class BusinessDataRepositoryTest extends AbstractTest {
 
 	@Autowired
 	private BusinessDataRepository repo;
-	
+
 	@Autowired
 	@Qualifier(AUTOWIRE_QUALIFIER_JDBC)
 	private DataSource jdbc;
 
 	@Test
 	public void aa_InsertTest() {
-		String projectNumber = getRandomTestString(1);
+		String projectNumber = TEST_PROJECT_ID_PREFIX + uuid();
 		String sql = "insert into TR_PROJECT (PROJECT_NBR) values ('" + projectNumber + "')";
 		assertEquals(1, repo.update(sql));
 	}
 
 	@Test
 	public void ab_InsertInvalidSQLTest() {
-		String projectNumber = getRandomTestString(2);
+		String projectNumber = TEST_PROJECT_ID_PREFIX + uuid();
 		String sql = "insert into TR_DOESNT_EXIST (PROJECT_NBR) values ('" + projectNumber + "')";
 		assertEquals(0, repo.update(sql));
 		sql = "insert into TR_PROJECT (PROJECT_NBR) values ()";
@@ -66,7 +65,7 @@ public class BusinessDataRepositoryTest extends AbstractTest {
 
 	@Test
 	public void ba_UpdateTest() {
-		String projectNumber = getRandomTestString(3);
+		String projectNumber = TEST_PROJECT_ID_PREFIX + uuid();
 		String sql = "insert into TR_PROJECT (PROJECT_NBR) values ('" + projectNumber + "')";
 		assertEquals(1, repo.update(sql));
 		sql = "update TR_PROJECT set PROJECT_NBR = 'CHANGED' where PROJECT_NBR = '" + projectNumber + "'";
@@ -75,7 +74,7 @@ public class BusinessDataRepositoryTest extends AbstractTest {
 
 	@Test
 	public void bb_UpdateInvalidParamTest() {
-		String projectNumber = getRandomTestString(4);
+		String projectNumber = TEST_PROJECT_ID_PREFIX + uuid();
 		String sql = "insert into TR_PROJECT (PROJECT_NBR) values ('" + projectNumber + "')";
 		assertEquals(1, repo.update(sql));
 		sql = "update DOENT_EXIST set PROJECT_NBR = 'CHANGED' where PROJECT_NBR = '" + projectNumber + "'";
@@ -86,7 +85,7 @@ public class BusinessDataRepositoryTest extends AbstractTest {
 
 	@Test
 	public void ca_SelectTest() {
-		String projectNumber = getRandomTestString(5);
+		String projectNumber = TEST_PROJECT_ID_PREFIX + uuid();
 		String sql = "insert into TR_PROJECT (PROJECT_NBR) values ('" + projectNumber + "')";
 		assertEquals(1, repo.update(sql));
 		sql = "select PROJECT_NBR from TR_PROJECT where PROJECT_NBR = '" + projectNumber + "'";
@@ -95,7 +94,7 @@ public class BusinessDataRepositoryTest extends AbstractTest {
 
 	@Test
 	public void cb_SelectInvalidParamTest() {
-		String projectNumber = getRandomTestString(6);
+		String projectNumber = TEST_PROJECT_ID_PREFIX + uuid();
 		String sql = "insert into TR_PROJECT (PROJECT_NBR) values ('" + projectNumber + "')";
 		assertEquals(1, repo.update(sql));
 		sql = "select MY_COLUMN from TR_PROJECT where PROJECT_NBR = '" + projectNumber + "'";
@@ -110,7 +109,7 @@ public class BusinessDataRepositoryTest extends AbstractTest {
 
 	@Test
 	public void da_DeleteTest() {
-		String projectNumber = getRandomTestString(7);
+		String projectNumber = TEST_PROJECT_ID_PREFIX + uuid();
 		String sql = "insert into TR_PROJECT (PROJECT_NBR) values ('" + projectNumber + "')";
 		assertEquals(1, repo.update(sql));
 		sql = "delete from TR_PROJECT where PROJECT_NBR = '" + projectNumber + "'";
@@ -121,7 +120,7 @@ public class BusinessDataRepositoryTest extends AbstractTest {
 
 	@Test
 	public void db_DeleteInvalidParamTest() {
-		String projectNumber = getRandomTestString(8);
+		String projectNumber = TEST_PROJECT_ID_PREFIX + uuid();
 		String sql = "insert into TR_PROJECT (PROJECT_NBR) values ('" + projectNumber + "')";
 		assertEquals(1, repo.update(sql));
 		sql = "delete from DOESNT_EXIST where PROJECT_NBR = '" + projectNumber + "'";
@@ -180,33 +179,37 @@ public class BusinessDataRepositoryTest extends AbstractTest {
 				final Iterable<ExternalEntity> tables = schema.getTables();
 				if (!isNotNullOrEmpty(tables)) {
 					final String url = schema.getUrl();
+					File ddl = null;
 					if (isNotNullOrEmpty(url) && url.contains("hsqldb") && !isSetup) {
 						LOG.info("Setting Up External Schema Using HyperSQL Database.");
-						File ddl = getFileFromClasspath("grex.ddl");
-						File dml = getFileFromClasspath("grex.dml");
-						File testData = getFileFromClasspath("test-data.dml");
-						File logic1 = getFileFromClasspath("logic-scenario-1.dml");
-						File logic2 = getFileFromClasspath("logic-scenario-2.dml");
-						File logic3 = getFileFromClasspath("logic-scenario-3.dml");
-						if (ddl.exists()) {
-							repo.execute(breakSqlScriptIntoStatements(ddl));
-							if (dml.exists()) {
-								repo.execute(breakSqlScriptIntoStatements(dml));
-							}
-							if (testData.exists()) {
-								repo.execute(breakSqlScriptIntoStatements(testData));
-							}
-							if (logic1.exists()) {
-								repo.execute(breakSqlScriptIntoStatements(logic1));
-							}
-							if (logic2.exists()) {
-								repo.execute(breakSqlScriptIntoStatements(logic2));
-							}
-							if (logic3.exists()) {
-								repo.execute(breakSqlScriptIntoStatements(logic3));
-							}
+						ddl = getFileFromClasspath("grex-oracle.ddl");
+					} else if (isNotNullOrEmpty(url) && url.contains("mysql") && !isSetup) {
+						LOG.info("Setting Up External Schema Using MySQL Database.");
+						ddl = getFileFromClasspath("grex-mysql.ddl");
+					}
+					File dml = getFileFromClasspath("grex.dml");
+					File testData = getFileFromClasspath("test-data.dml");
+					File logic1 = getFileFromClasspath("logic-scenario-1.dml");
+					File logic2 = getFileFromClasspath("logic-scenario-2.dml");
+					File logic3 = getFileFromClasspath("logic-scenario-3.dml");
+					if (ddl.exists()) {
+						repo.execute(breakSqlScriptIntoStatements(ddl));
+						if (dml.exists()) {
+							repo.execute(breakSqlScriptIntoStatements(dml));
 						}
-					}					
+						if (testData.exists()) {
+							repo.execute(breakSqlScriptIntoStatements(testData));
+						}
+						if (logic1.exists()) {
+							repo.execute(breakSqlScriptIntoStatements(logic1));
+						}
+						if (logic2.exists()) {
+							repo.execute(breakSqlScriptIntoStatements(logic2));
+						}
+						if (logic3.exists()) {
+							repo.execute(breakSqlScriptIntoStatements(logic3));
+						}
+					}
 				}
 			}
 		}

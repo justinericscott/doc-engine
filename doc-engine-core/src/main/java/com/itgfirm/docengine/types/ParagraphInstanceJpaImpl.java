@@ -1,17 +1,12 @@
 package com.itgfirm.docengine.types;
 
-import static com.itgfirm.docengine.types.AbstractJpaModel.ModelConstants.*;
+import static javax.persistence.CascadeType.*;
+import static javax.persistence.FetchType.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 /**
  * @author Justin Scott
@@ -19,42 +14,49 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  *         ParagraphJpaImpl InstanceJpaImpl Data Model
  */
 @Entity
-@DiscriminatorValue(JPA_DSCRMNTR_PARAGRAPH)
-@JsonIdentityInfo(property = JSON_PROP_ID, generator = ObjectIdGenerators.IntSequenceGenerator.class)
 public class ParagraphInstanceJpaImpl extends InstanceJpaImpl {
-	private static final String JPA_COLUMN_PARENT = "PARENT_ID";
 
 	/** Parent Type **/
-	@JoinColumn(name = JPA_COLUMN_PARENT)
-	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, targetEntity = ClauseInstanceJpaImpl.class)
-	@JsonDeserialize(as = ClauseInstanceJpaImpl.class)
+	@JsonBackReference("paragraph-instance")
+	@ManyToOne(targetEntity = ClauseInstanceJpaImpl.class, fetch = LAZY, cascade = REFRESH)
 	private ClauseInstanceJpaImpl clause;
-
+	
 	public ParagraphInstanceJpaImpl() {
 		// Default constructor for Spring
 	}
-
-	public ParagraphInstanceJpaImpl(final ContentJpaImpl content, final String projectId) {
-		super(content);
-		this.setProjectId(projectId);
-		this.setContent(content);
+	
+	public ParagraphInstanceJpaImpl(final String projectId) {
+		super(projectId); 
 	}
 
-	public ParagraphInstanceJpaImpl(final ContentJpaImpl content, final String projectId, final String body) {
-		this(content, projectId);
-		this.setBody(body);
+	public ParagraphInstanceJpaImpl(final ParagraphJpaImpl paragraph, final String projectId) {
+		this(projectId);
+		super.setContent(paragraph);
 	}
 
-	public ParagraphInstanceJpaImpl(final ContentJpaImpl content, final String projectId, final String body, final boolean isAdHoc) {
-		this(content, projectId, body);
-		this.setAdHoc(isAdHoc);
+	public ParagraphInstanceJpaImpl(final ParagraphJpaImpl paragraph, final String projectId, final String body) {
+		this(paragraph, projectId);
+		this.customBody = body;
+	}
+
+	public ParagraphInstanceJpaImpl(final ParagraphJpaImpl paragraph, final String projectId, final String body, final boolean isAdHoc) {
+		this(paragraph, projectId, body);
+		this.isAdHoc = isAdHoc;
+	}
+
+	public final ParagraphJpaImpl getParagraph() {
+		return (ParagraphJpaImpl) content.getClass().cast(content);
+	}
+
+	public final void setParagraph(final ParagraphJpaImpl paragraph) {
+		super.setContent(paragraph);
 	}
 
 	public final ClauseInstanceJpaImpl getClause() {
 		return clause;
 	}
 
-	public final void setClause(final ClauseInstanceJpaImpl clause) {
-		this.clause = clause;
+	public final void setClause(final ClauseInstanceJpaImpl clauseInstance) {
+		this.clause = clauseInstance;
 	}
 }

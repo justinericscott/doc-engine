@@ -48,16 +48,16 @@ class ExcelReaderServiceImpl implements ExcelReaderService {
 							idx++;
 						}
 					} else {
-						_LOG.debug("The number sheets reported from the workbook is zero!");
+						_LOG.warn("The number sheets reported from the workbook is zero!");
 					}
 				} else {
-					_LOG.debug("Workbook must not be null or empty!");
+					_LOG.warn("Workbook must not be null or empty!");
 				}
 			} catch (final IOException e) {
 				_LOG.error(String.format("Problem reading file %s", file.getAbsolutePath()), e);
 			}
 		} else {
-			_LOG.debug("The class must not be null!");
+			_LOG.warn("The class must not be null!");
 		}
 		return null;
 	}
@@ -73,7 +73,7 @@ class ExcelReaderServiceImpl implements ExcelReaderService {
 				} else {
 					fields = (Collection<String>) getExcelColumnFieldNamesFromRow(clazz, rows.next());
 					if (!isNotNullOrEmpty(fields)) {
-						_LOG.debug(String.format("The header row must not be null while creating objects!\nCLASS: %s",
+						_LOG.warn(String.format("The header row must not be null while creating objects!\nCLASS: %s",
 								(clazz != null ? clazz.getName() : null)));
 						return null;
 					}
@@ -83,7 +83,7 @@ class ExcelReaderServiceImpl implements ExcelReaderService {
 				return list;
 			}
 		} else {
-			_LOG.debug("The sheet to read must not be null!");
+			_LOG.warn("The sheet to read must not be null!");
 		}
 		return null;
 	}
@@ -101,11 +101,11 @@ class ExcelReaderServiceImpl implements ExcelReaderService {
 					final Object value = getCellValue(cell);
 					if (isNotNullOrEmpty(value)) {
 						final String cellValueClass = value.getClass().getName();
-						_LOG.debug(
+						_LOG.trace(
 								"Searching for write method by the name {} whose cell value class is {}. Value of the cell {}.",
 								name, cellValueClass, value);						
 					} else {
-						_LOG.debug(
+						_LOG.trace(
 								"Searching for write method by the name {} whose cell value class is {}. Value of the cell {}.",
 								name, "NONE", "NULL");												
 					}
@@ -115,7 +115,7 @@ class ExcelReaderServiceImpl implements ExcelReaderService {
 				return clazz.cast(object);
 			}
 		} else {
-			_LOG.debug(String.format("The row must not be null!\nCLASS: %s", clazz.getName()));
+			_LOG.warn(String.format("The row must not be null!\nCLASS: %s", clazz.getName()));
 		}
 		return null;
 	}
@@ -125,22 +125,22 @@ class ExcelReaderServiceImpl implements ExcelReaderService {
 			final int type = cell.getCellType();
 			if (type == CELL_TYPE_STRING) {
 				final String string = cell.getStringCellValue();
-				_LOG.debug("Found cell type {}: String, returning value {}.", type, string);
+				_LOG.trace("Found cell type {}: String, returning value {}.", type, string);
 				return string;
 			} else if (type == CELL_TYPE_BOOLEAN) {
 				final Boolean bool = new Boolean(cell.getBooleanCellValue());
-				_LOG.debug("Found cell type {}: Boolean, returning value {}.", type, bool.toString());
+				_LOG.trace("Found cell type {}: Boolean, returning value {}.", type, bool.toString());
 				return bool;
 			} else if (type == CELL_TYPE_NUMERIC) {
-				_LOG.debug("Found cell type {}: Number, determining Number type.", type);
+				_LOG.trace("Found cell type {}: Number, determining Number type.", type);
 				final NumberImpl number = new NumberImpl(cell);
 				final Object value = number.getValue();
-				_LOG.debug("Found Number type {}, returning value {}.", value.getClass().getName(), value.toString());
+				_LOG.trace("Found Number type {}, returning value {}.", value.getClass().getName(), value.toString());
 				return value;
 			} else if (type == CELL_TYPE_BLANK) {
 				return null;
 			} else {
-				_LOG.debug("Could not determine cell type: {}", type);
+				_LOG.trace("Could not determine cell type: {}", type);
 			}
 		}
 		return null;
@@ -234,16 +234,16 @@ class ExcelReaderServiceImpl implements ExcelReaderService {
 		final Object getValue() {
 			switch (type) {
 			case TYPE_INT:
-				_LOG.debug("Found cell type {}, returning value {}.", type, i.toString());
+				_LOG.trace("Found cell type {}, returning value {}.", type, i.toString());
 				return i;
 			case TYPE_DOUBLE:
-				_LOG.debug("Found cell type {}, returning value {}.", type, dub.toString());
+				_LOG.trace("Found cell type {}, returning value {}.", type, dub.toString());
 				return dub;
 			case TYPE_FLOAT:
-				_LOG.debug("Found cell type {}, returning value {}.", type, f.toString());
+				_LOG.trace("Found cell type {}, returning value {}.", type, f.toString());
 				return f;
 			case TYPE_LONG:
-				_LOG.debug("Found cell type {}, returning value {}.", type, l.toString());
+				_LOG.trace("Found cell type {}, returning value {}.", type, l.toString());
 				return l;
 			}
 			return 0;

@@ -5,11 +5,16 @@ import static com.itgfirm.docengine.types.AbstractJpaModel.ModelConstants.*;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Calendar;
-import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.itgfirm.docengine.annotation.ExcelColumn;
 
 /**
@@ -18,45 +23,40 @@ import com.itgfirm.docengine.annotation.ExcelColumn;
  *         TODO: Description
  */
 @MappedSuperclass
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public abstract class AbstractJpaModel {
 
 	@Column(name = JPA_COL_CREATED_BY, nullable = false)
 	private Long createdBy = -1L;
+	@CreationTimestamp
 	@Column(name = JPA_COL_CREATED_DT, nullable = false)
-	private Timestamp createdDt = now();
+	private Timestamp createdDt;
 	@ExcelColumn(EXCEL_COL_DESCRIMINATOR)
-	@Column(name = JPA_DSCRMNTR_COL, nullable = false, updatable = false, insertable = false)
+	@Column(name = JPA_DSCRMNTR_COL, updatable = false, insertable = false)
 	private String discriminator;
 	@Column(name = JPA_COL_UPDATED_BY, nullable = false)
 	private Long updatedBy = -1L;
+	@UpdateTimestamp
 	@Column(name = JPA_COL_UPDATED_DT, nullable = false)
-	private Timestamp updatedDt = now();
+	private Timestamp updatedDt;
 
-	static boolean isNotNullOrEmpty(final Object object) {
-		return (object != null && !object.toString().trim().isEmpty());
+	static Date now() {
+		return new Date(Instant.now().toEpochMilli());
 	}
 
-	static boolean isNotNullOrEmpty(final Collection<?> collection) {
-		return (collection != null && !collection.isEmpty());
+	static Date max() {		
+		return new Calendar.Builder().setDate(2117, 1, 1).build().getTime();
 	}
-
-	static boolean isNotNullOrEmpty(final Iterable<?> iterable) {
-		return (iterable != null && iterable.iterator().hasNext());
+	
+	<T> List<T> toList() {
+		return null;
 	}
-
-	static boolean isNotNullOrZero(final Number number) {
-		return (number != null && (number.longValue() > 0 || number.intValue() > 0 || number.doubleValue() > 0
-				|| number.floatValue() > 0));
+	
+	<T> List<T> toList(Class<? extends T> type) {
+		
+		return null;
 	}
-
-	static Timestamp now() {
-		return Timestamp.from(Calendar.getInstance().toInstant());
-	}
-
-	static Timestamp max() {
-		return Timestamp.from(Instant.MAX);
-	}
-
+	
 	public AbstractJpaModel() {
 		// Default constructor for Spring
 	}
@@ -75,6 +75,14 @@ public abstract class AbstractJpaModel {
 
 	public final void setCreatedDt(final Timestamp createdDt) {
 		this.createdDt = createdDt;
+	}
+
+	public String getDiscriminator() {
+		return discriminator;
+	}
+
+	void setDiscriminator(String discriminator) {
+		this.discriminator = discriminator;
 	}
 
 	public final Long getUpdatedBy() {
@@ -177,7 +185,7 @@ public abstract class AbstractJpaModel {
 		static final String JPA_COL_VALID_START = "VALID_START_DT";
 		static final String JPA_COL_WHERE = "WHERE_TXT";
 
-		static final String JPA_DSCRMNTR_COL = "DSCRMNTR";
+		static final String JPA_DSCRMNTR_COL = "DTYPE";
 		static final String JPA_DSCRMNTR_ADV_DOCUMENT = "A";
 		static final String JPA_DSCRMNTR_CLAUSE = "C";
 		static final String JPA_DSCRMNTR_CONTENT = "B";
@@ -189,11 +197,14 @@ public abstract class AbstractJpaModel {
 		static final String JPA_DSCRMNTR_TOKEN = "T";
 
 		static final String JPA_MAPPED_BY_CLAUSE = "clause";
-		static final String JPA_MAPPED_BY_CONTENT = JPA_TBL_CONTENT + "_ID";
+		static final String JPA_MAPPED_BY_CLAUSE_INST = "clauseInstance";
+		static final String JPA_MAPPED_BY_CONTENT = "content";
 		static final String JPA_MAPPED_BY_DOCUMENT = "document";
+		static final String JPA_MAPPED_BY_DOCUMENT_INST = "documentInstance";
 		static final String JPA_MAPPED_BY_SECTION = "section";
+		static final String JPA_MAPPED_BY_SECTION_INST = "sectionInstance";
 
-		static final String JSON_PROP_ID = "@id";
+//		static final String JSON_PROP_ID = "@id";
 
 		static final String STATUS_AUTO_IN = "Automatically Included";
 	}

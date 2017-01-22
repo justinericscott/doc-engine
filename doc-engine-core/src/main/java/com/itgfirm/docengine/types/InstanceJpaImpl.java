@@ -1,20 +1,18 @@
 package com.itgfirm.docengine.types;
 
+import static com.itgfirm.docengine.util.Utils.isNotNullOrEmpty;
+import static com.itgfirm.docengine.util.Utils.isNotNullOrZero;
 import static com.itgfirm.docengine.types.AbstractJpaModel.ModelConstants.*;
-import static javax.persistence.DiscriminatorType.STRING;
-import static javax.persistence.GenerationType.AUTO;
 
-import javax.persistence.CascadeType;
+import static javax.persistence.GenerationType.AUTO;
+import static javax.persistence.CascadeType.REFRESH;
+
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -22,45 +20,39 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 
 @Entity
 @Table(name = JPA_TBL_INSTANCE)
-@DiscriminatorColumn(name = JPA_DSCRMNTR_COL, discriminatorType = STRING)
-@DiscriminatorValue(JPA_DSCRMNTR_INSTANCE)
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class InstanceJpaImpl extends AbstractJpaModel implements Comparable<InstanceJpaImpl> {
 	private static final Logger LOG = LoggerFactory.getLogger(InstanceJpaImpl.class);
 
 	@Id
-	@GeneratedValue(generator = JPA_SEQ_INSTANCE, strategy = AUTO)
+	@GeneratedValue(strategy = AUTO, generator = JPA_SEQ_INSTANCE)
 	@SequenceGenerator(name = JPA_SEQ_INSTANCE, sequenceName = JPA_SEQ_INSTANCE)
-	@Column(name = JPA_COL_INSTANCE_ID)
-	private Long id;
+	@Column(name = JPA_COL_INSTANCE_ID, unique = true)
+	protected Long id;
 	@Column(name = JPA_COL_PROJECT, length = 100, nullable = false)
-	private String projectId;
+	protected String projectId;
 	@Column(name = JPA_COL_CUSTOM_BODY, length = 4000)
-	private String customBody;
+	protected String customBody;
 	@Column(name = JPA_COL_FLAGS, length = 100)
-	private String flags;
+	protected String flags;
 	@Column(name = JPA_COL_STATUS, length = 100)
-	private String statusCd;
+	protected String statusCd;
 	@Column(name = JPA_COL_ORDER)
-	private Integer orderBy;
+	protected Integer orderBy;
 	@Column(name = JPA_COL_IS_AD_HOC)
-	private boolean isAdHoc = false;
+	protected boolean isAdHoc = false;
 	@Column(name = JPA_COL_IS_STRIKE_HEADER)
-	private boolean isStrikeHeader = false;
+	protected boolean isStrikeHeader = false;
 	@Column(name = JPA_COL_IS_MARKED_FOR_ACTION)
-	private boolean isMarkedForAction = false;
+	protected boolean isMarkedForAction = false;
 	@Column(name = JPA_COL_MARKED_COMMENT)
-	private String markedForActionComment;
+	protected String markedForActionComment;
 
-	@JoinColumn(name = JPA_MAPPED_BY_CONTENT, nullable = false)
-	@ManyToOne(cascade = CascadeType.REFRESH, targetEntity = ContentJpaImpl.class)
-	@JsonDeserialize(as = ContentJpaImpl.class)
-	private ContentJpaImpl content;
+	@OrderColumn(name = JPA_COL_ORDER)
+	@ManyToOne(targetEntity = ContentJpaImpl.class, cascade = REFRESH, optional = false)
+	protected ContentJpaImpl content;
 
 	public InstanceJpaImpl() {
 		// Default constructor for Spring
@@ -111,28 +103,34 @@ public class InstanceJpaImpl extends AbstractJpaModel implements Comparable<Inst
 	}
 
 	@JsonIgnore
-	public final String getCustomBody() {
-		return customBody;
+	public final String getBody() {
+		if (isNotNullOrEmpty(customBody)) {
+			return customBody;
+		} else {
+			if (isNotNullOrEmpty(content)) {
+				return content.getBody();
+			}
+		}
+		return "";
 	}
 
-	private final void setCustomBody(final String customBody) {
-		if (isNotNullOrEmpty(customBody) && !content.getBody().trim().equals(customBody.trim())) {
-			this.customBody = customBody;
+	@JsonIgnore
+	public final void setBody(final String customBody) {
+		if (isNotNullOrEmpty(customBody)) {
+			if (!content.getBody().equals(customBody)) {
+				this.customBody = customBody;
+			}
 		} else {
 			this.customBody = null;
 		}
 	}
 
-	public final String getBody() {
-		if (isNotNullOrEmpty(customBody)) {
-			return customBody;
-		} else {
-			return content.getBody();
-		}
+	public final String getCustomBody() {
+		return customBody;
 	}
 
-	public final void setBody(final String body) {
-		setCustomBody(body);
+	public final void setCustomBody(final String customBody) {
+		this.customBody = customBody;
 	}
 
 	public final String getFlags() {
@@ -191,25 +189,23 @@ public class InstanceJpaImpl extends AbstractJpaModel implements Comparable<Inst
 		this.markedForActionComment = markedForActionComment;
 	}
 
-	public final ContentJpaImpl getContent() {
+	public ContentJpaImpl getContent() {
 		return content;
 	}
 
-	public final void setContent(final ContentJpaImpl content) {
+	public void setContent(final ContentJpaImpl content) {
 		this.content = content;
 	}
 
+	@JsonIgnore
 	public final boolean isValid() {
 		return isValid(false);
 	}
 
+	@JsonIgnore
 	public final boolean isValid(final boolean checkForId) {
 		if (checkForId && !isNotNullOrZero(id)) {
 			LOG.debug("ID must not be null or zero!");
-			return false;
-		}
-		if (content != null && !content.isValid(true)) {
-			LOG.debug("Content must not be null or invalid!");
 			return false;
 		}
 		if (!isNotNullOrEmpty(projectId)) {

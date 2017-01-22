@@ -10,135 +10,46 @@ import com.itgfirm.docengine.pipeline.Project;
 import com.itgfirm.docengine.service.token.types.TokenData;
 import com.itgfirm.docengine.service.token.types.TokenValue;
 import com.itgfirm.docengine.types.TokenDefinitionJpaImpl;
+import com.itgfirm.docengine.types.TokenDefinitions;
 
 /**
  * @author Justin
  * 
  *         TODO: Description
  */
-interface TokenDictionaryService {
+public interface TokenDictionaryService {
 	
 	void clear();
+	
+	TokenDefinitions findAll();
 
-	/**
-	 * TODO: Description
-	 * 
-	 * @param id
-	 * @return
-	 */
-	TokenDefinitionJpaImpl findOne(Long id);
-
-	/**
-	 * TODO: Description
-	 * 
-	 * @param code
-	 * @return
-	 */
 	TokenDefinitionJpaImpl findByTokenCd(String code);
 	
-	/**
-	 * TODO: Description
-	 * 
-	 * @param like
-	 * @return
-	 */
-	Iterable<TokenDefinitionJpaImpl> findByTokenCdLike(String like);
+	TokenDefinitions findByTokenCdLike(String like);
 
-	/**
-	 * TODO: Description
-	 * 
-	 * @return
-	 */
+	TokenDefinitionJpaImpl findOne(Long id);
+
 	Map<String, Map<String, Map<String, Deque<TokenDefinitionJpaImpl>>>> getDefinitionMap();
-	
-	/**
-	 * TODO: Description
-	 * 
-	 * @return
-	 */
-	Iterable<TokenDefinitionJpaImpl> getDictionary();
 
-	/**
-	 * TODO: Description
-	 * 
-	 * @return
-	 */
-	Map<String, String> getSqlMap();
-
-	/**
-	 * TODO: Description
-	 * 
-	 * @param projectId
-	 * @return
-	 */
-	Map<String, TokenData> getTokenDataMap(String projectId);
-
-	/**
-	 * TODO: Description
-	 * 
-	 * @param project
-	 * @return
-	 */
-	Map<String, Iterable<TokenValue>> getTokenValueMap(Project project);
-
-	/**
-	 * TODO: Description
-	 * 
-	 * @param project
-	 * @return
-	 */
 	Map<String, ?> getDroolsSafeTokens(Project project);
 
-	/**
-	 * TODO: Description
-	 * 
-	 * @param project
-	 * @return
-	 */
 	Map<String, ?> getFreemarkerSafeTokens(Project project);
 
-	/**
-	 * TODO: Description
-	 * 
-	 * @param item
-	 * @return
-	 */
-	TokenDefinitionJpaImpl save(TokenDefinitionJpaImpl token);
+	Map<String, String> getSqlMap();
 
-	/**
-	 * TODO: Description
-	 * 
-	 * @param tokens
-	 * @return
-	 */
-	Iterable<TokenDefinitionJpaImpl> save(Iterable<TokenDefinitionJpaImpl> tokens);
+	Map<String, TokenData> getTokenDataMap(String projectId);
 
-	/**
-	 * TODO: Description
-	 *
-	 */
+	Map<String, Iterable<TokenValue>> getTokenValueMap(Project project);
+
+	TokenDefinitionJpaImpl save(TokenDefinitionJpaImpl definition);
+
+	TokenDefinitions save(TokenDefinitions definitions);
+
 	void refresh();
 
-	/**
-	 * TODO: Description
-	 * 
-	 * @param id
-	 */
-	void delete(Long id);
+	boolean delete(Long id);
 
-	/**
-	 * TODO: Description
-	 * 
-	 * @param code
-	 */
-	void delete(String code);
+	boolean delete(String code);
 
-	/**
-	 * TODO: Description
-	 * 
-	 * @param token
-	 */
-	void delete(TokenDefinitionJpaImpl token);
-	
-	
+	boolean delete(TokenDefinitionJpaImpl definition);	
 }

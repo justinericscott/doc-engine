@@ -27,8 +27,6 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
@@ -36,11 +34,8 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itgfirm.docengine.types.ClauseJpaImpl;
 import com.itgfirm.docengine.types.ContentJpaImpl;
 import com.itgfirm.docengine.types.InstanceJpaImpl;
-import com.itgfirm.docengine.types.ParagraphJpaImpl;
-import com.itgfirm.docengine.types.SectionJpaImpl;
 import com.itgfirm.docengine.types.TokenDefinitionJpaImpl;
 
 /**
@@ -89,7 +84,7 @@ public class Utils {
 					if (isNotNullAndExists(get(copy.getAbsolutePath()))) {
 						return copy;
 					} else {
-						LOG.debug(String.format("Copy Failed: Source: %s | Copy: %s!", file.getAbsolutePath(),
+						LOG.error(String.format("Copy Failed: Source: %s | Copy: %s!", file.getAbsolutePath(),
 								copy.getAbsolutePath()));
 					}
 				} else {
@@ -97,7 +92,7 @@ public class Utils {
 					if (isNotNullAndExists(copy)) {
 						return copy;
 					} else {
-						LOG.debug(String.format("Copy Failed: Source: %s | Copy: %s!", file.getAbsolutePath(),
+						LOG.error(String.format("Copy Failed: Source: %s | Copy: %s!", file.getAbsolutePath(),
 								copy.getAbsolutePath()));
 					}
 				}
@@ -105,7 +100,7 @@ public class Utils {
 				LOG.error(String.format("Problem copying file: Source: %s!", file.getAbsolutePath()), e);
 			}
 		} else {
-			LOG.debug("Problem creating copied File object!");
+			LOG.error("Problem creating copied File object!");
 		}
 		return null;
 	}
@@ -134,62 +129,7 @@ public class Utils {
 			}
 			return create(file, overwrite);
 		} else {
-			LOG.debug("Path must not be null or empty!");
-		}
-		return null;
-	}
-
-	/**
-	 * Creates an empty {@link File} on disk.<br>
-	 * <br>
-	 * If a file or directory exists with the same path and name, it will not be
-	 * overwritten.
-	 * 
-	 * @param file
-	 *            {@link File} to create.
-	 * @return {@link File} object representing the new file.
-	 * @see #create(File, String)
-	 * @see #create(String)
-	 */
-	public static File create(final File file) {
-		return create(file, true);
-	}
-
-	/**
-	 * Creates an empty {@link File} at the given path.<br>
-	 * <br>
-	 * If a file or directory exists with the same path and name, it will not be
-	 * overwritten.
-	 * 
-	 * @param parent
-	 *            {@link File} representing the target directory to create the
-	 *            new file in.
-	 * @param name
-	 *            Name of the {@link File} to create.
-	 * @return {@link File} object representing the new file.
-	 * @throws RuntimeException
-	 *             When an {@link IOException} is thrown.
-	 * @see #create(File)
-	 * @see #create(String)
-	 */
-	public static File create(final File parent, final String name) {
-		return create(parent, name, true);
-	}
-
-	private static File create(final File parent, final String name, final boolean overwrite) {
-		if (isNotNullAndExists(parent)) {
-			if (isNotNullOrEmpty(name)) {
-				if (parent.isDirectory()) {
-					return create(parent.getAbsolutePath().concat(File.separator.concat(name)), overwrite);
-				} else if (parent.isFile()) {
-					return create(parent.getParentFile().getAbsolutePath().concat(File.separator.concat(name)),
-							overwrite);
-				}
-			} else {
-				LOG.debug(String.format("Name cannot be null or empty!\nPARENT FILE: %s", parent.getAbsolutePath()));
-			}
-		} else {
-			LOG.debug("Parent File object cannot be null and must exist!");
+			LOG.warn("Path must not be null or empty!");
 		}
 		return null;
 	}
@@ -237,33 +177,7 @@ public class Utils {
 				LOG.error(String.format("Problem finding class: %s", name), e);
 			}
 		} else {
-			LOG.debug("Class name cannot be null or empty!");
-		}
-		return null;
-	}
-
-	/**
-	 * Returns the desired {@link Method} for the provided {@link Class}, name
-	 * and the parameter types.
-	 * 
-	 * @param clazz
-	 * @param name
-	 * @param params
-	 * @return
-	 */
-	public static Method find(final Class<?> clazz, final String name, final Class<?>... params) {
-		if (isNotNullOrEmpty(clazz)) {
-			if (isNotNullOrEmpty(name)) {
-				for (final Method m : clazz.getDeclaredMethods()) {
-					if (name.equals(m.getName()) && equals(params, m.getParameterTypes())) {
-						return m;
-					}
-				}
-			} else {
-				LOG.debug("Method name cannot be null or empty!");
-			}
-		} else {
-			LOG.debug("Class cannot be null!");
+			LOG.warn("Class name cannot be null or empty!");
 		}
 		return null;
 	}
@@ -305,7 +219,7 @@ public class Utils {
 				}
 			}
 		} else {
-			LOG.debug("File path must not be null!");
+			LOG.warn("File path must not be null!");
 		}
 		return ((isNotNullAndExists(file)) ? file : null);
 	}
@@ -335,22 +249,22 @@ public class Utils {
 							final String string = anno.toString();
 							if (string.contains("value=".concat(value))) {
 								final String name = field.getName();
-								LOG.debug("Found annnotation {} with the value {} in the class {} for the field {}.",
+								LOG.trace("Found annnotation {} with the value {} in the class {} for the field {}.",
 										anno.getClass().getName(), value, clazz.getName(), name);
 								return field.getName();
 							}
 						}
 					}
 				} else {
-					LOG.debug(
+					LOG.warn(
 							"A value is required to check the annotation {} in the class {} for the associated field!",
 							annotation.getName(), clazz.getName());
 				}
 			} else {
-				LOG.debug("Excel annotation class in the provided class {} must not be null!", clazz.getName());
+				LOG.warn("Excel annotation class in the provided class {} must not be null!", clazz.getName());
 			}
 		} else {
-			LOG.debug("Class cannot be null!");
+			LOG.warn("Class cannot be null!");
 		}
 		return null;
 	}
@@ -374,7 +288,7 @@ public class Utils {
 				LOG.error(String.format("Problem getting file size: %s", file.getAbsolutePath()), e);
 			}
 		} else {
-			LOG.debug("The file you want the size of must not be null and must exists!");
+			LOG.warn("The file you want the size of must not be null and must exists!");
 		}
 		return 0L;
 	}
@@ -398,24 +312,7 @@ public class Utils {
 		if (isNotNullOrEmpty(object)) {
 			return invoke(getReadMethod(object.getClass(), name), object);
 		} else {
-			LOG.debug("Object to read from cannot be null!");
-		}
-		return null;
-	}
-
-	/**
-	 * Obtains a {@link File} object for the host operating system's temporary
-	 * directory.
-	 * 
-	 * @return {@link File} representing the temporary directory.
-	 */
-	public static File getSystemTempDirectory() {
-		final String path = System.getProperty(FILE_SYS_TEMP_DIR);
-		if (isNotNullOrEmpty(path)) {
-			final File file = new File(path);
-			return (isNotNullAndExists(file) ? file : null);
-		} else {
-			LOG.debug("Could not determine system temporary directory!");
+			LOG.warn("Object to read from cannot be null!");
 		}
 		return null;
 	}
@@ -445,7 +342,7 @@ public class Utils {
 					if (type.equals(param.getClass())) {
 						invoke(method, object, param);
 					} else {
-						LOG.debug(
+						LOG.trace(
 								"Param type {} from method {} for the field {} and param type {} from value {} do not match for the object type {}!",
 								type.getName(), method.getName(), name, param.getClass().getName(), object.toString(),
 								object.getClass().getName());
@@ -453,45 +350,12 @@ public class Utils {
 					}
 				}
 			} else {
-				LOG.debug(String.format("Could not find write method using %s as the field name for class: %s", name,
+				LOG.warn(String.format("Could not find write method using %s as the field name for class: %s", name,
 						object.getClass().getName()));
 			}
 		} else {
-			LOG.debug("The object to write to cannot be null!");
+			LOG.warn("The object to write to cannot be null!");
 		}
-	}
-
-	public static boolean isAllSections(final Iterable<? extends ContentJpaImpl> contents) {
-		if (isNotNullOrEmpty(contents)) {
-			for (final Object content : contents) {
-				if (!(content instanceof SectionJpaImpl))
-					return false;
-			}
-			return true;
-		}
-		return false;
-	}
-
-	public static boolean isAllClauses(final Iterable<? extends ContentJpaImpl> contents) {
-		if (isNotNullOrEmpty(contents)) {
-			for (final Object content : contents) {
-				if (!(content instanceof ClauseJpaImpl))
-					return false;
-			}
-			return true;
-		}
-		return false;
-	}
-
-	public static boolean isAllParagraphs(final Iterable<? extends ParagraphJpaImpl> contents) {
-		if (isNotNullOrEmpty(contents)) {
-			for (final Object content : contents) {
-				if (!(content instanceof ParagraphJpaImpl))
-					return false;
-			}
-			return true;
-		}
-		return false;
 	}
 
 	public static boolean isNotNullAndExists(final File file) {
@@ -514,6 +378,10 @@ public class Utils {
 		return (object != null && !object.toString().trim().isEmpty());
 	}
 
+	public static boolean isNotNullOrEmpty(final Object[] object) {
+		return (object != null && object.length > 0);
+	}
+
 	public static boolean isNotNullOrEmpty(final ContentJpaImpl content) {
 		return (content != null && content.isValid());
 	}
@@ -528,21 +396,6 @@ public class Utils {
 
 	public static boolean isNotNullOrZero(final Number val) {
 		return (val != null && val.longValue() != 0);
-	}
-
-	/**
-	 * Finds and creates an instance of the provided {@link Class} matching the
-	 * provided name.
-	 * 
-	 * @param name
-	 *            Name of the {@link Class} to find and instantiate.
-	 * @return {@link Object} of the {@link Class} matching the provided name or
-	 *         null.
-	 * 
-	 * @see #instantiate(Class)
-	 */
-	public static Object instantiate(final String name) {
-		return instantiate(find(name));
 	}
 
 	/**
@@ -568,86 +421,19 @@ public class Utils {
 						LOG.error(String.format("Problem instantiating the class: %s", clazz.getName()), e);
 					}
 				} else {
-					LOG.debug(String.format("Class must have a default (no-parameter) constructor!\nCLASS: %s",
+					LOG.warn(String.format("Class must have a default (no-parameter) constructor!\nCLASS: %s",
 							clazz.getName()));
 				}
 			} else {
-				LOG.debug("Class cannot be an interface.");
+				LOG.warn("Class cannot be an interface.");
 			}
 		} else {
-			LOG.debug("Class cannot be null!");
+			LOG.warn("Class cannot be null!");
 		}
 		return null;
 	}
 
-	/**
-	 * Finds and invokes a {@link Method} in the provided {@link Class} matching
-	 * the provided method name. If an {@link Object} is provided and the
-	 * {@link Method} is not {@code static}, the {@link Method} will be invoked
-	 * on the {@link Object}. If the {@link Method} is {@code static}, it will
-	 * be invoked on the {@link Class} and the {@link Object} will be ignored.
-	 * 
-	 * @param clazz
-	 *            {@link Class} to search.
-	 * @param object
-	 *            {@link Object} to invoke {@link Method} on.
-	 * @param name
-	 *            Name of the {@link Method} to search for and invoke.
-	 * @param params
-	 *            {@link Class}es that match the provided {@link Method}
-	 *            parameters, in order.
-	 * @return Return value of the invoked {@link Method}. If the return type is
-	 *         void or if unsuccessful null is returned.
-	 * 
-	 * @see #invoke(Class, String)
-	 * @see #invoke(Method, Object, Object...)
-	 */
-	public static Object invoke(final Class<?> clazz, final Object object, final String name, final Object... params) {
-		return invoke(find(clazz, name, getTypes(params)), object, params);
-	}
-
-	/**
-	 * Finds and invokes a static {@link Method} in the provided {@link Class}
-	 * matching the provided method name without any parameters.
-	 * 
-	 * @param clazz
-	 *            {@link Class} to search.
-	 * @param name
-	 *            Name of the {@link Method} to search for and invoke. The
-	 *            {@link Method} must be {@code static} and must not have any
-	 *            parameters.
-	 * @return Return value of the invoked {@link Method}. If the return type is
-	 *         void, null is returned.
-	 * 
-	 * @see #invoke(Class, Object, String, Object...)
-	 */
-	public static Object invoke(final Class<?> clazz, final String name) {
-		return invoke(clazz, (Object) null, name);
-	}
-
-	/**
-	 * Invoke the provided {@link Method} with the given {@link Object} and
-	 * optional parameter values as {@link Object}s. If no {@link Object} is
-	 * given to invoke with, simply provide <code>null</code> and it will be
-	 * invoked statically. If the {@link Method} is not static, an
-	 * {@link Object} must be provided,
-	 * 
-	 * @param method
-	 *            {@link Method} to invoke.
-	 * @param object
-	 *            {@link Object} to invoke the {@link Method} on, if needed, it
-	 *            can be null if the {@link Method} is static.
-	 * @param params
-	 *            The values of the parameters of the {@link Method}. Optional
-	 * @return {@link Object} result of the invoked {@link Method} if
-	 *         successful, otherwise, null.
-	 * 
-	 * @see #invoke(Class, String)
-	 * @see #invoke(Class, Object, String, Object...)
-	 * @see #getReadMethodAndInvoke(Object, String)
-	 * @see #getWriteMethodAndInvoke(Object, String, Object)
-	 */
-	public static Object invoke(final Method method, final Object object, final Object... params) {
+	private static Object invoke(final Method method, final Object object, final Object... params) {
 		if (isNotNullOrEmpty(method)) {
 			method.setAccessible(true);
 			final boolean isStatic = Modifier.isStatic(method.getModifiers());
@@ -657,61 +443,14 @@ public class Utils {
 				} else if (!isStatic && isNotNullOrEmpty(object)) {
 					return method.invoke(object, params);
 				} else {
-					LOG.debug(
+					LOG.warn(
 							String.format("Object was null and method was not static!\nMETHOD: %s", method.getName()));
 				}
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				LOG.error(String.format("Problem invoking method: %s!", method.getName()), e);
 			}
 		} else {
-			LOG.debug("Method cannot be null!");
-		}
-		return null;
-	}
-
-	/**
-	 * Provides a {@link List} of all {@link File}s in the given directory or
-	 * directory structure.
-	 * 
-	 * If a file extension is provided, only those files matching the given
-	 * extension are returned.
-	 * 
-	 * @param directory
-	 *            Directory to list {@link File}s for.
-	 * @param extension
-	 *            File extension to filter on.
-	 * @param recursive
-	 *            Flag to recursively list all files in the directory
-	 *            structure..
-	 * @return {@link List} of {@link File} objects or null.
-	 */
-	public static Iterable<File> list(final File directory, final String extension, final boolean recursive) {
-		if (isNotNullAndExists(directory) && directory.isDirectory()) {
-			final File[] array = directory.listFiles();
-			if (array.length > 0) {
-				final Collection<File> files = new ArrayList<File>();
-				for (final File f : array) {
-					if (f.isFile()) {
-						if (!isNotNullOrEmpty(extension)) {
-							files.add(f);
-						} else if (f.getName().endsWith(extension)) {
-							files.add(f);
-						}
-					} else if (f.isDirectory()) {
-						if (recursive) {
-							final Collection<File> recurse = (Collection<File>) list(f, extension, recursive);
-							if (isNotNullOrEmpty(recurse)) {
-								files.addAll(recurse);
-							}
-						}
-					}
-				}
-				if (!files.isEmpty()) {
-					return files;
-				}
-			}
-		} else {
-			LOG.debug("Directory object must not be null, it must be a directory and exist!");
+			LOG.warn("Method cannot be null!");
 		}
 		return null;
 	}
@@ -735,10 +474,16 @@ public class Utils {
 							return l;
 						} else if (object instanceof Date) {
 							return Long.valueOf(((Date) object).getTime());
+						} else if (object instanceof java.util.Date) {
+							return Long.valueOf(((java.util.Date) object).getTime());
 						} else {
 							return Long.valueOf(String.valueOf(object));
 						}
 					} else if (target.equals(Date.class)) {
+						if (object instanceof Long) {
+							return new Date(Long.valueOf(String.valueOf(object)));
+						}
+					} else if (target.equals(java.util.Date.class)) {
 						if (object instanceof Long) {
 							return new Date(Long.valueOf(String.valueOf(object)));
 						}
@@ -760,10 +505,10 @@ public class Utils {
 							e);
 				}
 			} else {
-				LOG.debug("The object you are trying to cast must not be null or empty!");
+				LOG.warn("The object you are trying to cast must not be null or empty!");
 			}
 		} else {
-			LOG.debug("The class you are trying to cast to must not be null or empty!");
+			LOG.warn("The class you are trying to cast to must not be null or empty!");
 		}
 		return null;
 	}
@@ -773,12 +518,12 @@ public class Utils {
 			final boolean exists = file.exists();
 			if (exists && overwrite) {
 				if (!delete(file)) {
-					LOG.debug(String.format("Delete failed! File cannot be overwritten: Source: %s",
+					LOG.warn(String.format("Delete failed! File cannot be overwritten: Source: %s",
 							file.getAbsolutePath()));
 					return file;
 				}
 			} else if (exists && !overwrite) {
-				LOG.debug(String.format("File is marked to not be overwritten: Source: %s", file.getAbsolutePath()));
+				LOG.trace(String.format("File is marked to not be overwritten: Source: %s", file.getAbsolutePath()));
 				return file;
 			} else if (!exists) {
 				if (file.getParentFile() != null && !file.getParentFile().exists()) {
@@ -791,13 +536,9 @@ public class Utils {
 				LOG.error(String.format("Problem creating file %s", file.getAbsolutePath()), e);
 			}
 		} else {
-			LOG.debug("File object must not be null!");
+			LOG.warn("File object must not be null!");
 		}
 		return null;
-	}
-
-	private static boolean equals(final Class<?>[] search, final Class<?>[] method) {
-		return (!isNotNullOrEmpty(search) && !isNotNullOrEmpty(method)) || Arrays.equals(search, method);
 	}
 
 	private static Class<?> getParameterType(final Method method) {
@@ -806,15 +547,15 @@ public class Utils {
 			final String name = method.getName();
 			final Class<?> type = method.getParameters()[0].getType();
 			if (count == 1) {
-				LOG.debug("Found one parameter in the method {}, its class is {}.", name, type.getName());
+				LOG.trace("Found one parameter in the method {}, its class is {}.", name, type.getName());
 				return type;
 			} else if (count > 1) {
-				LOG.debug("Too many parameters found for method: {}!", name);
+				LOG.trace("Too many parameters found for method: {}!", name);
 			} else {
-				LOG.debug("No parameters found for method: {}!", name);
+				LOG.trace("No parameters found for method: {}!", name);
 			}
 		} else {
-			LOG.debug("Method cannot be null!");
+			LOG.warn("Method cannot be null!");
 		}
 		return null;
 	}
@@ -841,7 +582,7 @@ public class Utils {
 			}
 			return copy;
 		} else {
-			LOG.debug("File to make a copy of must not be null and must exist!");
+			LOG.warn("File to make a copy of must not be null and must exist!");
 		}
 		return null;
 	}
@@ -863,28 +604,10 @@ public class Utils {
 							clazz.getName()), e);
 				}
 			} else {
-				LOG.debug(String.format("Field name cannot be null or empty!\nCLASS: %s", clazz.getName()));
+				LOG.warn(String.format("Field name cannot be null or empty!\nCLASS: %s", clazz.getName()));
 			}
 		} else {
-			LOG.debug("Class and/or field name cannot be null!");
-		}
-		return null;
-	}
-
-	private static Class<?>[] getTypes(final Object... objects) {
-		if (isNotNullOrEmpty(objects)) {
-			Class<?>[] types = null;
-			int i = 0;
-			types = new Class<?>[objects.length];
-			for (final Object o : objects) {
-				types[i] = o.getClass();
-				i++;
-			}
-			if (types.length > 0) {
-				return types;
-			}
-		} else {
-			LOG.debug("Object(s) cannot be null!");
+			LOG.warn("Class and/or field name cannot be null!");
 		}
 		return null;
 	}
@@ -905,10 +628,10 @@ public class Utils {
 							e);
 				}
 			} else {
-				LOG.debug(String.format("Field name cannot be null or empty!\nCLASS: %s", clazz.getName()));
+				LOG.warn(String.format("Field name cannot be null or empty!\nCLASS: %s", clazz.getName()));
 			}
 		} else {
-			LOG.debug("Class cannot be null!");
+			LOG.warn("Class cannot be null!");
 		}
 		return null;
 	}
@@ -921,7 +644,7 @@ public class Utils {
 				}
 			}
 		} else {
-			LOG.debug("Class cannot be null!");
+			LOG.warn("Class cannot be null!");
 		}
 		return false;
 	}
@@ -940,7 +663,6 @@ public class Utils {
 	}
 
 	static class UtilsConstants {
-		static final String FILE_SYS_TEMP_DIR = "java.io.tmpdir";
 		static final String PREFIX_COPY_OF = "Copy of - ";
 		static final String REGEX_SPLIT_PATH = "\\.(?=[^\\.]+$)";
 	}

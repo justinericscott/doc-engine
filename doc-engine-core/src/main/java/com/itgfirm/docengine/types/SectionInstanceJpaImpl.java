@@ -1,21 +1,22 @@
 package com.itgfirm.docengine.types;
 
 import static com.itgfirm.docengine.types.AbstractJpaModel.ModelConstants.*;
+import static com.itgfirm.docengine.util.Utils.isNotNullOrEmpty;
+
+import static javax.persistence.CascadeType.*;
+import static javax.persistence.FetchType.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
 
-import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 /**
  * @author Justin Scott
@@ -23,87 +24,74 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  *         SectionJpaImpl InstanceJpaImpl Data Model
  */
 @Entity
-@DiscriminatorValue(JPA_DSCRMNTR_SECTION)
-@JsonIdentityInfo(property = JSON_PROP_ID, generator = ObjectIdGenerators.IntSequenceGenerator.class)
 public class SectionInstanceJpaImpl extends InstanceJpaImpl {
 
-	@JoinColumn(name = JPA_COL_PARENT)
-	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, targetEntity = AdvancedDocumentInstanceJpaImpl.class)
-	@JsonDeserialize(as = AdvancedDocumentInstanceJpaImpl.class)
-	private AdvancedDocumentInstanceJpaImpl document;
+	@JsonBackReference("section-instance")
+	@ManyToOne(targetEntity = DocumentInstanceJpaImpl.class, fetch = LAZY, cascade = REFRESH)
+	private DocumentInstanceJpaImpl document;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = JPA_MAPPED_BY_SECTION, targetEntity = ClauseInstanceJpaImpl.class)
-	@JsonDeserialize(contentAs = ClauseInstanceJpaImpl.class)
-	private Collection<ClauseInstanceJpaImpl> clauses;
-
+	@JsonManagedReference("clause-instance")
+	@OrderColumn(name = JPA_COL_ORDER)
+	@OneToMany(targetEntity = ClauseInstanceJpaImpl.class, cascade = ALL, mappedBy = JPA_MAPPED_BY_SECTION)
+	private Collection<ClauseInstanceJpaImpl> clauses = new TreeSet<ClauseInstanceJpaImpl>();
+	
 	public SectionInstanceJpaImpl() {
 		// Default constructor for Spring
 	}
 
+	public SectionInstanceJpaImpl(final String projectId) {
+		super(projectId);
+	}
+
 	public SectionInstanceJpaImpl(final SectionJpaImpl section, final String projectId) {
-		super(section);
-		this.setProjectId(projectId);
-		this.setContent(section);
+		this(projectId);
+		super.setContent(section);
 		final Collection<ClauseJpaImpl> clauses = section.getClauses();
 		if (isNotNullOrEmpty(clauses)) {
 			instantiateClauses(clauses);
-			section.getClauses().clear();
+			clauses.clear();
 		}
 	}
 
-	public SectionInstanceJpaImpl(final SectionJpaImpl section, final String projectId, final String body) {
-		this(section, projectId);
-		this.setBody(body);
+	public final SectionJpaImpl getSection() {
+		return (SectionJpaImpl) content.getClass().cast(content);
 	}
 
-	public SectionInstanceJpaImpl(final SectionJpaImpl section, final String projectId, final String body, final boolean isAdHoc) {
-		this(section, projectId, body);
-		this.setAdHoc(isAdHoc);
+	public final void setSection(final SectionJpaImpl section) {
+		super.setContent(section);
 	}
 
-	public final AdvancedDocumentInstanceJpaImpl getDocument() {
+	public final DocumentInstanceJpaImpl getDocument() {
 		return document;
 	}
 
-	public final void setDocument(final AdvancedDocumentInstanceJpaImpl document) {
-		this.document = document;
+	public final void setDocument(final DocumentInstanceJpaImpl documentInstance) {
+		this.document = documentInstance;
+	}
+
+	@JsonIgnore
+	public final void addClause(final ClauseInstanceJpaImpl clause) {
+		if (isNotNullOrEmpty(clause)) {
+			clause.setSection(this);
+			clauses.add(clause);
+		}
 	}
 
 	public final Collection<ClauseInstanceJpaImpl> getClauses() {
 		return clauses;
 	}
 
-	public final void instantiateClauses(final Collection<ClauseJpaImpl> clauses) {
-		if (isNotNullOrEmpty(clauses)) {
-			clauses.forEach(c -> {
-				this.addClause(new ClauseInstanceJpaImpl(c, this.getProjectId()));
-			});
-		}
-	}
-
-	public final void addClause(final ClauseInstanceJpaImpl clause) {
-		if (isNotNullOrEmpty(clause)) {
-			if (!isNotNullOrEmpty(this.clauses)) {
-				this.clauses = new TreeSet<ClauseInstanceJpaImpl>();
-			}
-			clause.setSection(this);
-			this.clauses.add(clause);
-		}
-	}
-
-	public final void addClauses(final Collection<ClauseInstanceJpaImpl> clauses) {
-		if (isNotNullOrEmpty(clauses)) {
-			if (!isNotNullOrEmpty(this.clauses)) {
-				this.clauses = new TreeSet<ClauseInstanceJpaImpl>();
-			}
-			clauses.forEach(c -> {
-				c.setSection(this);
-			});
-			this.clauses.addAll(clauses);
-		}
-	}
-
 	public final void setClauses(final Collection<ClauseInstanceJpaImpl> clauses) {
-		this.clauses = clauses;
+		if (isNotNullOrEmpty(clauses)) {
+			this.clauses = clauses;
+		}
+	}
+
+	final void instantiateClauses(final Collection<ClauseJpaImpl> clauses) {
+		if (isNotNullOrEmpty(clauses)) {
+			for (final ClauseJpaImpl clause : clauses) {
+				this.addClause(new ClauseInstanceJpaImpl(clause, this.getProjectId()));
+			}
+		}
 	}
 }

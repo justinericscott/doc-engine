@@ -3,11 +3,12 @@
  */
 package com.itgfirm.docengine.service.content;
 
-import static com.itgfirm.docengine.DocEngine.Constants.*;
-
-import org.springframework.beans.factory.annotation.Qualifier;
-
+import com.itgfirm.docengine.types.ClauseInstanceJpaImpl;
+import com.itgfirm.docengine.types.DocumentInstanceJpaImpl;
 import com.itgfirm.docengine.types.InstanceJpaImpl;
+import com.itgfirm.docengine.types.Instances;
+import com.itgfirm.docengine.types.ParagraphInstanceJpaImpl;
+import com.itgfirm.docengine.types.SectionInstanceJpaImpl;
 
 /**
  * @author Justin Scott
@@ -16,17 +17,20 @@ import com.itgfirm.docengine.types.InstanceJpaImpl;
  *         be a "base" service, it will only interact with its REST and Repo
  *         counterparts.
  */
-@Qualifier(AUTOWIRE_QUALIFIER_INSTANCE)
 public interface InstanceService {
 
+	boolean delete(Long id);
+	
 	/**
 	 * Deletes the Instance record for the provided ID.
 	 * 
 	 * @param id
 	 * @return True or False based upon success of the operation.
 	 */
-	void delete(Long id);
+	boolean delete(Long id, Class<?> type);
 
+	boolean delete(String projectId, String code);
+	
 	/**
 	 * Deletes the Instance record for the provided project ID and code.
 	 * 
@@ -34,22 +38,79 @@ public interface InstanceService {
 	 * @param code
 	 * @return True or False based upon success of the operation.
 	 */
-	void delete(String projectId, String code);
+	<T> boolean delete(String projectId, String code, Class<T> type);
 
+	boolean delete(InstanceJpaImpl instance);
+	
 	/**
 	 * Deletes the provided Instance object from the database.
 	 * 
 	 * @param instance
 	 * @return True if successfully deleted, False otherwise.
 	 */
-	void delete(InstanceJpaImpl instance);
+	<T> boolean delete(T instance, Class<T> type);
 	
 	/**
 	 * Gets all Instance records.
 	 * 
 	 * @return All Instance records.
 	 */
-	Iterable<? extends InstanceJpaImpl> findAll();
+	Instances findAll();
+
+	InstanceJpaImpl findByProjectIdAndCode(String projectId, String code);
+	
+	/**
+	 * Gets a single Instance based upon the provided project ID and code.
+	 * 
+	 * @param projectId
+	 * @param code
+	 * @return Instance record related to the provided code.
+	 */
+	<T> T findByProjectIdAndCode(String projectId, String code, Class<T> type);
+
+	/**
+	 * Gets a complex Instance type based upon the provided project ID, code and
+	 * Class with its children included.
+	 * 
+	 * @param projectId
+	 * @param code
+	 * @param type
+	 * @return The complex Instance type with its children included.
+	 */
+	<T> T findByProjectIdAndCode(String projectId, String code, Class<T> type, boolean eagerKids);
+
+	Instances findByProjectIdAndCodeLike(String projectId, String like);
+	
+	/**
+	 * Gets a list of Instance records based upon the provided project ID and
+	 * code.
+	 * 
+	 * @param projectId
+	 * @param like
+	 * @return List of Instance records.
+	 */
+	<T> T findByProjectIdAndCodeLike(String projectId, String like, Class<T> type);
+
+	InstanceJpaImpl findOne(Long id);
+	
+	/**
+	 * Obtains an {@link InstanceJpaImpl} for the provided ID.
+	 * 
+	 * @param id
+	 *            Identifier of the {@link InstanceJpaImpl} to return.
+	 * @return Requested {@link InstanceJpaImpl}.
+	 */
+	<T> T findOne(Long id, Class<T> type);
+
+	/**
+	 * Gets an Instance and its children, if any, based upon the provided ID.
+	 * 
+	 * @param id
+	 * @param eagerKids
+	 * @return Instance record and its children, if any, related to the provided
+	 *         ID.
+	 */
+	<T> T findOne(Long id, Class<T> type, boolean eagerKids);
 
 	/**
 	 * Gets the children, if any, for the provided ID.
@@ -57,7 +118,7 @@ public interface InstanceService {
 	 * @param id
 	 * @return A List of children instances for the provided ID
 	 */
-	Iterable<? extends InstanceJpaImpl> findByParent(Long id);
+	<T> T getChildren(Long id, Class<T> type);
 
 	/**
 	 * Gets the children (and nested children), if any, for the provided ID.
@@ -67,7 +128,7 @@ public interface InstanceService {
 	 * @return A List of children (and nested children) instances for the
 	 *         provided ID.
 	 */
-	Iterable<? extends InstanceJpaImpl> findByParent(Long id, boolean eagerKids);
+	<T> T getChildren(Long id, Class<T> type, boolean eagerKids);
 
 	/**
 	 * Gets the children, if any, for the provided project ID and code.
@@ -76,7 +137,7 @@ public interface InstanceService {
 	 * @param code
 	 * @return A List of children, if any, for the provided project ID and code.
 	 */
-	Iterable<? extends InstanceJpaImpl> findByParent(String projectId, String code);
+	<T> T getChildren(String projectId, String code, Class<T> type);
 
 	/**
 	 * Gets the children (and nested children), if any, for the provided project
@@ -88,7 +149,7 @@ public interface InstanceService {
 	 * @return A List of children (and nested children), if any, for the
 	 *         provided project ID and code.
 	 */
-	Iterable<? extends InstanceJpaImpl> findByParent(String projectId, String code, boolean eagerKids);
+	<T> T getChildren(String projectId, String code, Class<T> type, boolean eagerKids);
 
 	/**
 	 * Gets the children, if any, for the provided Instance object.
@@ -96,7 +157,7 @@ public interface InstanceService {
 	 * @param instance
 	 * @return A List of children, if any, for the provided Instance object.
 	 */
-	Iterable<? extends InstanceJpaImpl> findByParent(InstanceJpaImpl instance);
+	<T, P> T getChildren(P instance, Class<T> type);
 
 	/**
 	 * Gets the children (and nested children), if any, for the provided
@@ -107,56 +168,7 @@ public interface InstanceService {
 	 * @return A List of children (and nested children), if any, for the
 	 *         provided Instance object.
 	 */
-	Iterable<? extends InstanceJpaImpl> findByParent(InstanceJpaImpl instance, boolean eagerKids);
-
-	/**
-	 * Gets a single Instance based upon the provided project ID and code.
-	 * 
-	 * @param projectId
-	 * @param code
-	 * @return Instance record related to the provided code.
-	 */
-	InstanceJpaImpl findByProjectIdAndContentCd(String projectId, String code);
-
-	/**
-	 * Gets a complex Instance type based upon the provided project ID, code and
-	 * Class with its children included.
-	 * 
-	 * @param projectId
-	 * @param code
-	 * @param type
-	 * @return The complex Instance type with its children included.
-	 */
-	InstanceJpaImpl findByProjectIdAndContentCd(String projectId, String code, boolean eagerKids);
-
-	/**
-	 * Gets a list of Instance records based upon the provided project ID and
-	 * code.
-	 * 
-	 * @param projectId
-	 * @param like
-	 * @return List of Instance records.
-	 */
-	Iterable<? extends InstanceJpaImpl> findByProjectIdAndContentCdLike(String projectId, String like);
-
-	/**
-	 * Obtains an {@link InstanceJpaImpl} for the provided ID.
-	 * 
-	 * @param id
-	 *            Identifier of the {@link InstanceJpaImpl} to return.
-	 * @return Requested {@link InstanceJpaImpl}.
-	 */
-	InstanceJpaImpl findOne(Long id);
-
-	/**
-	 * Gets an Instance and its children, if any, based upon the provided ID.
-	 * 
-	 * @param id
-	 * @param eagerKids
-	 * @return Instance record and its children, if any, related to the provided
-	 *         ID.
-	 */
-	InstanceJpaImpl findOne(Long id, boolean eagerKids);
+	<T, P> T getChildren(P instance, Class<T> type, boolean eagerKids);
 
 	/**
 	 * Merges (add or updated) an Instance record.
@@ -165,6 +177,38 @@ public interface InstanceService {
 	 * @return The newly merged Instance, with created ID if new.
 	 */
 	InstanceJpaImpl save(InstanceJpaImpl instance);
+	
+	/**
+	 * TODO: Document
+	 * 
+	 * @param document
+	 * @return
+	 */
+	DocumentInstanceJpaImpl save(DocumentInstanceJpaImpl document);
+	
+	/**
+	 * TODO: Document
+	 * 
+	 * @param section
+	 * @return
+	 */
+	SectionInstanceJpaImpl save(SectionInstanceJpaImpl section);
+	
+	/**
+	 * TODO: Document
+	 * 
+	 * @param clause
+	 * @return
+	 */
+	ClauseInstanceJpaImpl save(ClauseInstanceJpaImpl clause);
+	
+	/**
+	 * TODO: Document
+	 * 
+	 * @param paragraph
+	 * @return
+	 */
+	ParagraphInstanceJpaImpl save(ParagraphInstanceJpaImpl paragraph);
 
 	/**
 	 * Merges (adds or updates) Instance records.
@@ -172,5 +216,5 @@ public interface InstanceService {
 	 * @param instances
 	 * @return The newly merged Instances, with created IDs if new.
 	 */
-	Iterable<? extends InstanceJpaImpl> save(Iterable<? extends InstanceJpaImpl> instances);
+	Instances save(Instances instances);
 }

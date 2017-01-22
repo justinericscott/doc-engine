@@ -13,7 +13,7 @@ import java.util.Iterator;
 
 import org.springframework.stereotype.Service;
 
-import com.itgfirm.docengine.types.AdvancedDocumentInstanceJpaImpl;
+import com.itgfirm.docengine.types.DocumentInstanceJpaImpl;
 import com.itgfirm.docengine.types.ClauseInstanceJpaImpl;
 import com.itgfirm.docengine.types.ParagraphInstanceJpaImpl;
 import com.itgfirm.docengine.types.ParagraphJpaImpl;
@@ -28,14 +28,14 @@ import com.itgfirm.docengine.types.SectionInstanceJpaImpl;
 class CompilerServiceImpl implements CompilerService {
 
 	@Override
-	public String compileDocument(AdvancedDocumentInstanceJpaImpl document) {
+	public String compileDocument(DocumentInstanceJpaImpl document) {
 		// TODO: Trace log entry
 		StringBuilder sb = new StringBuilder();
 		getAllSectionsForDocumentHTML(sb, document);
 		return sb.toString();
 	}
 
-	void getAllSectionsForDocumentHTML(StringBuilder sb, AdvancedDocumentInstanceJpaImpl doc) {
+	void getAllSectionsForDocumentHTML(StringBuilder sb, DocumentInstanceJpaImpl doc) {
 		// TODO: Trace log entry
 		boolean first = true;
 		for (SectionInstanceJpaImpl section : doc.getSections()) {
@@ -48,7 +48,7 @@ class CompilerServiceImpl implements CompilerService {
 	void appendSectionHTML(StringBuilder sb, SectionInstanceJpaImpl section, boolean first) {
 		// TODO: Trace log entry
 		String content = String.format("SECTION%s%s%s%s", htmlTab(3),
-				section.getContent().getContentNumber(), htmlTab(3), section.getContent().getBody());
+				section.getSection().getContentNumber(), htmlTab(3), section.getSection().getBody());
 		if (!first)
 			sb.append(htmlSelfCloseTag("br", "break"));
 		sb.append(htmlSelfCloseTag("hr"));
@@ -61,7 +61,7 @@ class CompilerServiceImpl implements CompilerService {
 		for (ClauseInstanceJpaImpl clause : section.getClauses()) {
 			appendClauseHTML(sb, clause);
 			if (STATUS_AUTO_IN.equals(clause.getStatusCd()) || STATUS_MAN_IN.equals(clause.getStatusCd())) {
-				if (clause.getContent() != null) {
+				if (clause.getClause() != null) {
 					getAllParagraphsForClauseHTML(sb, clause);
 				}
 			}
@@ -73,14 +73,14 @@ class CompilerServiceImpl implements CompilerService {
 		StringBuilder clauseStr = null;
 		if (STATUS_AUTO_OUT.equals(clause.getStatusCd()) || STATUS_MAN_OUT.equals(clause.getStatusCd())) {
 			clauseStr = new StringBuilder();
-			clauseStr.append(clause.getContent().getContentNumber());
+			clauseStr.append(clause.getClause().getContentNumber());
 			clauseStr.append(htmlTab(3));
 			if (clause.isStrikeHeader()) {
 				String clauseHeader = "";
 				if (isNotNullOrEmpty(clause.getBody())) {
 					clauseHeader = clause.getBody();
-				} else if (clause.getContent() != null) {
-					clauseHeader = clause.getBody();
+				} else if (clause.getClause() != null) {
+					clauseHeader = clause.getClause().getBody();
 				}
 				clauseStr.append(htmlTag("span", clauseHeader, "strike"));
 				clauseStr.append(htmlTab(3));
@@ -89,12 +89,12 @@ class CompilerServiceImpl implements CompilerService {
 			sb.append(htmlTag("h2", clauseStr.toString(), ""));
 		} else {
 			clauseStr = new StringBuilder();
-			clauseStr.append(clause.getContent().getContentNumber());
+			clauseStr.append(clause.getClause().getContentNumber());
 			clauseStr.append(htmlTab(3));
 			if (isNotNullOrEmpty(clause.getBody())) {
 				clauseStr.append(clause.getBody());
-			} else if (clause.getContent() != null) {
-				clauseStr.append(clause.getBody());
+			} else if (clause.getClause() != null) {
+				clauseStr.append(clause.getClause().getBody());
 			}
 			sb.append("<div class=\"group\">");
 			sb.append(htmlTag("h2", clauseStr.toString(), ""));
@@ -116,7 +116,7 @@ class CompilerServiceImpl implements CompilerService {
 		ParagraphInstanceJpaImpl currentInstance = null;
 		while (it.hasNext()) {
 			currentInstance = it.next();
-			ParagraphJpaImpl source = (ParagraphJpaImpl) currentInstance.getContent();
+			ParagraphJpaImpl source = (ParagraphJpaImpl) currentInstance.getParagraph();
 			if (source != null) {
 				// Initialize flags
 				boolean isFirst = source.isFirst();
@@ -181,9 +181,9 @@ class CompilerServiceImpl implements CompilerService {
 			boolean isParentIncluded) {
 		// TODO: Trace log entry
 		StringBuilder returnString = new StringBuilder();
-		ParagraphJpaImpl source = (ParagraphJpaImpl) instance.getContent();
+		ParagraphJpaImpl source = (ParagraphJpaImpl) instance.getParagraph();
 		if (source != null) {
-			boolean hasCustomBody = isNotNullOrEmpty(instance.getCustomBody());
+			boolean hasCustomBody = isNotNullOrEmpty(instance.getBody());
 			boolean isIncluded = (instance.getStatusCd().equals(STATUS_AUTO_IN)
 					|| instance.getStatusCd().equals(STATUS_MAN_IN));
 			boolean isParent = source.isParent();
@@ -208,9 +208,9 @@ class CompilerServiceImpl implements CompilerService {
 				templateBody = htmlTag(tag, "INTENTIONALLY DELETED");
 			} else if (isIncluded && hasCustomBody) {
 				if (isParent && tag.equalsIgnoreCase("p")) {
-					templateBody = htmlTag(tag, instance.getCustomBody()) + recursionString;
+					templateBody = htmlTag(tag, instance.getBody()) + recursionString;
 				} else {
-					templateBody = htmlTag(tag, instance.getCustomBody() + recursionString);
+					templateBody = htmlTag(tag, instance.getBody() + recursionString);
 				}
 			} else if (isIncluded) {
 				if (isParent && tag.equalsIgnoreCase("p")) {

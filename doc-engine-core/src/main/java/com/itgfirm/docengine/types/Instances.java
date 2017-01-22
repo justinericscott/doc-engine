@@ -2,27 +2,56 @@
  */
 package com.itgfirm.docengine.types;
 
-import java.util.List;
+import static com.itgfirm.docengine.util.Utils.isNotNullOrEmpty;
 
+import java.util.Arrays;
+import java.util.Collection;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
- * @author Justin Scott
- * TODO: Description
+ * @author Justin Scott TODO: Description
  */
 public class Instances {
 
-	@JsonDeserialize( contentAs = InstanceJpaImpl.class )
-	private List<InstanceJpaImpl> instances;
-	
+	@JsonDeserialize(contentAs = InstanceJpaImpl.class)
+	@JsonSerialize(contentAs = InstanceJpaImpl.class)
+	private InstanceJpaImpl[] instances = null;
+
 	public Instances() {
-		
-	}
-	
-	public Instances(List<InstanceJpaImpl> instances) {
-		this.setInstances(instances);
+		// Default constructor for Spring
 	}
 
-	public List<InstanceJpaImpl> getInstances() { return instances; }
-	public void setInstances(List<InstanceJpaImpl> instances) { this.instances = instances; }
+	public Instances(final InstanceJpaImpl[] instances) {
+		this.instances = instances;
+	}
+
+	public Instances(final Collection<InstanceJpaImpl> instances) {
+		setInstances(instances);
+	}
+
+	public final InstanceJpaImpl[] getInstances() {
+		return instances;
+	}
+
+	@JsonIgnore
+	public final Collection<InstanceJpaImpl> getInstancesList() {
+		if (isNotNullOrEmpty(instances)) {
+			return Arrays.asList(instances);
+		}
+		return null;
+	}
+
+	public final void setInstances(final InstanceJpaImpl[] instances) {
+		this.instances = instances;
+	}
+
+	@JsonIgnore
+	public final void setInstances(final Collection<InstanceJpaImpl> instances) {
+		if (isNotNullOrEmpty(instances)) {
+			this.instances = instances.toArray(new InstanceJpaImpl[instances.size()]);
+		}
+	}
 }

@@ -20,20 +20,20 @@ public class TypesTest extends AbstractTest {
 	@Test
 	public void aa_SaveCustomBodyTest() {
 		// Create initial objects
-		ContentJpaImpl contentJpaImpl = new ContentJpaImpl("CONTENT_TEST_CODE", "CONTENT_TEST_BODY");
-		InstanceJpaImpl instanceJpaImpl = new InstanceJpaImpl(contentJpaImpl, "TEST_PROJECT_ID");
+		ContentJpaImpl contentJpaImpl = new ContentJpaImpl("CONTENT_TEST_CODE_" + uuid(), "CONTENT_TEST_BODY");
+		InstanceJpaImpl instanceJpaImpl = new InstanceJpaImpl(contentJpaImpl, "TEST_PROJECT_ID_" + uuid());
 		
 		// Make sure the methods return the expected defaults
 		assertEquals("CONTENT_TEST_BODY", instanceJpaImpl.getBody());
-		assertNull(instanceJpaImpl.getCustomBody());
 		
 		// Try to set the template as the custom
-		instanceJpaImpl.setBody(contentJpaImpl.getBody());
+		final String body = contentJpaImpl.getBody();
+		instanceJpaImpl.setBody(body);
 		assertNull(instanceJpaImpl.getCustomBody());
 		
 		// Setting custom
 		instanceJpaImpl.setBody("INSTANCE_TEST_BODY");
-		assertEquals("INSTANCE_TEST_BODY", instanceJpaImpl.getCustomBody());
+		assertEquals("INSTANCE_TEST_BODY", instanceJpaImpl.getBody());
 		
 		// Clear the custom body with a null, reverting back to the template
 		instanceJpaImpl.setBody(null);
@@ -42,11 +42,10 @@ public class TypesTest extends AbstractTest {
 
 		// Setting custom
 		instanceJpaImpl.setBody("INSTANCE_TEST_BODY");
-		assertEquals("INSTANCE_TEST_BODY", instanceJpaImpl.getCustomBody());
+		assertEquals("INSTANCE_TEST_BODY", instanceJpaImpl.getBody());
 		
 		// Clear the custom body with a empty string, reverting back to the template
 		instanceJpaImpl.setBody("");
-		assertNull(instanceJpaImpl.getCustomBody());
 		assertEquals("CONTENT_TEST_BODY", instanceJpaImpl.getBody());
 	}
 }

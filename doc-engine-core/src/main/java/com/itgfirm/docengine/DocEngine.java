@@ -26,6 +26,7 @@ import org.springframework.context.annotation.PropertySources;
 @PropertySources({ @PropertySource(value = PROPERTY_DEFAULT),
 		@PropertySource(value = PROPERTY_CUSTOM, ignoreResourceNotFound = true) })
 public class DocEngine {
+	private static final Class<DocEngine> APPLICATION = DocEngine.class;
 	private static final Logger LOG = LoggerFactory.getLogger(APPLICATION);
 	private static volatile ConfigurableApplicationContext ctx;
 	private static volatile AtomicBoolean running = new AtomicBoolean(false);
@@ -56,7 +57,7 @@ public class DocEngine {
 			}
 			if (ctx.isActive()) {
 				running.set(true);
-				LOG.info("Document Engine Started.");
+				LOG.info("Document Engine started.");
 			}
 		} else {
 			LOG.info("Document Engine is already running!");
@@ -84,18 +85,21 @@ public class DocEngine {
 	}
 
 	public static final class Constants {
-		static final Class<DocEngine> APPLICATION = DocEngine.class;
+//		static final Class<DocEngine> APPLICATION = DocEngine.class;
 
-		public static final String AUTOWIRE_QUALIFIER_DEFAULT = "default";
-		public static final String AUTOWIRE_QUALIFIER_ADVANCED = "advanced";
+//		public static final String AUTOWIRE_QUALIFIER_BUSINESS = "business";
+//		public static final String AUTOWIRE_QUALIFIER_CONTENT = "content";
+		public static final String AUTOWIRE_QUALIFIER_DOCUMENT = "document";
 		public static final String AUTOWIRE_QUALIFIER_SECTION = "section";
 		public static final String AUTOWIRE_QUALIFIER_CLAUSE = "clause";
 		public static final String AUTOWIRE_QUALIFIER_PARAGRAPH = "paragraph";
-		public static final String AUTOWIRE_QUALIFIER_INSTANCE = "instance";
+//		public static final String AUTOWIRE_QUALIFIER_INSTANCE = "instance";
 		public static final String AUTOWIRE_QUALIFIER_JDBC_TX = "jdbcTransactionManager";
 		public static final String AUTOWIRE_QUALIFIER_ORM_TX = "transactionManager";
 		public static final String AUTOWIRE_QUALIFIER_JDBC = "jdbc";
 		public static final String AUTOWIRE_QUALIFIER_ORM = "orm";
+		public static final String AUTOWIRE_QUALIFIER_ENDPOINT = "endpoint";
+//		public static final String AUTOWIRE_QUALIFIER_TOKEN = "token";
 
 		public static final String ENGINE_CONTROL_STOP = "stop";
 

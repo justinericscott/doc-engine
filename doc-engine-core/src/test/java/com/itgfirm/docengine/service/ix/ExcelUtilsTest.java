@@ -2,7 +2,7 @@ package com.itgfirm.docengine.service.ix;
 
 import static com.itgfirm.docengine.util.Utils.*;
 import static com.itgfirm.docengine.service.ix.ExcelUtils.*;
-import static com.itgfirm.docengine.util.TestConstants.*;
+import static com.itgfirm.docengine.util.AbstractTest.TestConstants.*;
 import static org.junit.Assert.*;
 
 import java.io.File;

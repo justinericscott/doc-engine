@@ -3,7 +3,7 @@
  */
 package com.itgfirm.docengine.compiler;
 
-import com.itgfirm.docengine.types.AdvancedDocumentInstanceJpaImpl;
+import com.itgfirm.docengine.types.DocumentInstanceJpaImpl;
 
 /**
  * @author Justin Scott
@@ -18,7 +18,7 @@ public interface CompilerService {
 	 * @param doc
 	 * @return {@link String}
 	 */
-	String compileDocument(AdvancedDocumentInstanceJpaImpl document);
+	String compileDocument(DocumentInstanceJpaImpl document);
 
 	/**
 	 * TODO: Description

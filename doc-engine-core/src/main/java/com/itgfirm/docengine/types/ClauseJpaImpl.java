@@ -1,21 +1,22 @@
 package com.itgfirm.docengine.types;
 
 import static com.itgfirm.docengine.types.AbstractJpaModel.ModelConstants.*;
+import static com.itgfirm.docengine.util.Utils.isNotNullOrEmpty;
+
+import static javax.persistence.CascadeType.*;
+import static javax.persistence.FetchType.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
 
-import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 /**
  * @author Justin Scott
@@ -23,36 +24,29 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  *         ClauseJpaImpl Data Model
  */
 @Entity
-@DiscriminatorValue(value = JPA_DSCRMNTR_CLAUSE)
-@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = JSON_PROP_ID)
 public class ClauseJpaImpl extends ContentJpaImpl {
 
 	/** Parent Type **/
-	@JoinColumn(name = JPA_COL_PARENT)
-	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, targetEntity = SectionJpaImpl.class)
-	@JsonDeserialize(as = SectionJpaImpl.class)
+	@JsonBackReference("clauses")
+	@ManyToOne(targetEntity = SectionJpaImpl.class, fetch = LAZY, cascade = REFRESH)
 	private SectionJpaImpl section;
 
 	/** Child Type **/
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = JPA_MAPPED_BY_CLAUSE, targetEntity = ParagraphJpaImpl.class)
-	@JsonDeserialize(contentAs = ParagraphJpaImpl.class)
-	private Collection<ParagraphJpaImpl> paragraphs;
-	
+	@JsonManagedReference("paragraphs")
+	@OrderColumn(name = JPA_COL_ORDER)
+	@OneToMany(targetEntity = ParagraphJpaImpl.class, cascade = ALL, mappedBy = JPA_MAPPED_BY_CLAUSE)
+	private Collection<ParagraphJpaImpl> paragraphs = new TreeSet<ParagraphJpaImpl>();
+
 	public ClauseJpaImpl() {
 		// Default constructor for Spring/Hibernate
 	}
-	
+
 	public ClauseJpaImpl(final String code, final String body) {
 		super(code, body);
 	}
 
 	public ClauseJpaImpl(final ContentJpaImpl content, final String code) {
 		super(content, code);
-	}
-
-	public ClauseJpaImpl(final ClauseJpaImpl clause) {
-		super(clause);
-		this.section = clause.getSection();
 	}
 
 	public final SectionJpaImpl getSection() {
@@ -63,33 +57,19 @@ public class ClauseJpaImpl extends ContentJpaImpl {
 		this.section = section;
 	}
 
+	@JsonIgnore
+	public final void addParagraph(final ParagraphJpaImpl paragraph) {
+		if (isNotNullOrEmpty(paragraph)) {
+			paragraph.setClause(this);
+			paragraphs.add(paragraph);
+		}
+	}
+
 	public final Collection<ParagraphJpaImpl> getParagraphs() {
 		return paragraphs;
 	}
 
-	public final void addParagraph(final ParagraphJpaImpl paragraph) {
-		if (isNotNullOrEmpty(paragraph)) {
-			if (!isNotNullOrEmpty(this.paragraphs)) {
-				this.paragraphs = new TreeSet<ParagraphJpaImpl>();
-			}
-			paragraph.setClause(this);
-			this.paragraphs.add(paragraph);
-		}
-	}
-
-	public final void addParagraphs(final Collection<ParagraphJpaImpl> paragraphs) {
-		if (isNotNullOrEmpty(paragraphs)) {
-			if (!isNotNullOrEmpty(this.paragraphs)) {
-				this.paragraphs = new TreeSet<ParagraphJpaImpl>();
-			}
-			paragraphs.forEach(paragraph -> {
-				paragraph.setClause(this);
-			});
-			this.paragraphs.addAll(paragraphs);
-		}
-	}
-
-	public final void setParagraphs(final Collection<ParagraphJpaImpl> paragraph) {
-		this.paragraphs = paragraph;
+	public final void setParagraphs(final Collection<ParagraphJpaImpl> paragraphs) {
+		this.paragraphs = paragraphs;
 	}
 }

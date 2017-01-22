@@ -2,7 +2,6 @@ package com.itgfirm.docengine.repository.token;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.junit.FixMethodOrder;
@@ -15,7 +14,6 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import com.itgfirm.docengine.repository.token.TokenDictionaryRepository;
 import com.itgfirm.docengine.types.TokenDefinitionJpaImpl;
 import com.itgfirm.docengine.util.AbstractTest;
-import com.itgfirm.docengine.util.TestUtils;
 
 /**
  * @author Justin Scott TODO: Description
@@ -24,82 +22,93 @@ import com.itgfirm.docengine.util.TestUtils;
 public class TokenDictionaryRepositoryTest extends AbstractTest {
 
 	@Autowired
-	private TokenDictionaryRepository repo;
+	private TokenDictionaryRepository _tokens;
 
 	@Test
 	public void a_SaveTest() {
 		// Merge 1
-		TokenDefinitionJpaImpl definition = createTokenDefinition(11);
-		assertNotNull(definition);
-		assertTrue(definition.isValid(true));
+		TokenDefinitionJpaImpl token = makeTestToken();
+		token = _tokens.save(token);
+		assertNotNull(token);
+		assertTrue(token.isValid(true));
+
+		Collection<TokenDefinitionJpaImpl> tokens = makeTestTokens(5);
+		tokens = (Collection<TokenDefinitionJpaImpl>) _tokens.save(tokens);
+		assertNotNull(tokens);
+		assertFalse(tokens.isEmpty());
+
 		try {
-			repo.save((TokenDefinitionJpaImpl) null);
+			_tokens.save((TokenDefinitionJpaImpl) null);
 			fail();
 		} catch (Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
-		}		
+		}
 		try {
-			repo.save(new TokenDefinitionJpaImpl("", "TOKEN_TEST_NAME"));
+			_tokens.save(new TokenDefinitionJpaImpl("", "TOKEN_TEST_NAME"));
 			fail();
 		} catch (Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
-			repo.save(new TokenDefinitionJpaImpl(TestUtils.getRandomTestString(1), ""));
+			_tokens.save(new TokenDefinitionJpaImpl(TEST_TOKEN_CODE_PREFIX + uuid(), ""));
 			fail();
 		} catch (Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
-		definition = new TokenDefinitionJpaImpl(definition, definition.getTokenCd());
-		assertNotNull(definition);
-		assertFalse(definition.isValid());
 		try {
-			repo.save(definition);
+			_tokens.save(new TokenDefinitionJpaImpl(token, token.getTokenCd()));
 			fail();
 		} catch (Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
-		}		
+		}
 	}
 
 	@Test
 	public void b_FindTest() {
 		// Get All
-		TokenDefinitionJpaImpl definition = createTokenDefinition(6);
-		definition = repo.findOne(definition.getId());
-		assertNotNull(definition);
-		assertTrue(definition.isValid(true));
-		definition = repo.findByTokenCd(definition.getTokenCd());
-		assertNotNull(definition);
-		assertTrue(definition.isValid(true));
-		Collection<TokenDefinitionJpaImpl> list = new ArrayList<TokenDefinitionJpaImpl>();
-		list.add(createTokenDefinition(12));
-		list.add(createTokenDefinition(21));
-		list.add(createTokenDefinition(32));
-		list.add(createTokenDefinition(43));
-		list.add(createTokenDefinition(54));
-		Iterable<TokenDefinitionJpaImpl> definitions = repo.findAll();
-		definitions.forEach(def -> {
-			assertTrue(def.isValid(true));
+		TokenDefinitionJpaImpl token = makeTestToken();
+		token = _tokens.save(token);
+		assertNotNull(token);
+		assertTrue(token.isValid(true));
+		final Long id = token.getId();
+		final String tokenCd = token.getTokenCd();
+		
+		token = _tokens.findOne(id);
+		assertNotNull(token);
+		assertTrue(token.isValid(true));
+		
+		token = _tokens.findByTokenCd(tokenCd);
+		assertNotNull(token);
+		assertTrue(token.isValid(true));
+		
+		Collection<TokenDefinitionJpaImpl> tokens = (Collection<TokenDefinitionJpaImpl>) _tokens.findAll();
+		assertNotNull(tokens);
+		assertFalse(tokens.isEmpty());
+		tokens.forEach(t -> {
+			assertTrue(t.isValid(true));
 		});
-		// Get Token Definition
-		assertNull(repo.findByTokenCd((String) null));
-		assertNull(repo.findByTokenCd(""));
-		assertNull(repo.findOne(0L));
-		assertNull(repo.findByTokenCd("Snicklefritz"));
-		definitions = repo.findByTokenCdLike("%TEST%");
-		assertNotNull(definitions);
-		assertTrue(definitions.iterator().hasNext());
-		definitions.forEach(def -> {
-			assertTrue(def.isValid(true));
+
+		tokens = (Collection<TokenDefinitionJpaImpl>) _tokens.findByTokenCdLike("%TEST%");
+		assertNotNull(tokens);
+		assertFalse(tokens.isEmpty());
+		tokens.forEach(t -> {
+			assertTrue(t.isValid(true));
 		});
+
+		assertNull(_tokens.findByTokenCd((String) null));
+		assertNull(_tokens.findByTokenCd(""));
+		assertNull(_tokens.findOne(0L));
+		assertNull(_tokens.findByTokenCd("Snicklefritz"));
 		try {
-			repo.findByTokenCdLike(null);
+			_tokens.findByTokenCdLike(null);
 			fail();
 		} catch (Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
-		}		
-		assertFalse(repo.findByTokenCdLike("").iterator().hasNext());
-		assertFalse(repo.findByTokenCdLike("%Snicklefritz%").iterator().hasNext());
+		}
+		tokens = (Collection<TokenDefinitionJpaImpl>) _tokens.findByTokenCdLike("");
+		assertTrue(tokens.isEmpty());
+		tokens = (Collection<TokenDefinitionJpaImpl>) _tokens.findByTokenCdLike("%Snicklefritz%");
+		assertTrue(tokens.isEmpty());
 	}
 
 	// @Test
@@ -192,12 +201,5 @@ public class TokenDictionaryRepositoryTest extends AbstractTest {
 
 	public void xx_DeleteTest() {
 		// TODO: Delete Test For Token Repo
-	}
-
-	private TokenDefinitionJpaImpl createTokenDefinition(final int seed) {
-		final TokenDefinitionJpaImpl token = repo.save(makeTestTokenDefinition(seed));
-		assertNotNull(token);
-		assertTrue(token.isValid(true));
-		return token;
 	}
 }

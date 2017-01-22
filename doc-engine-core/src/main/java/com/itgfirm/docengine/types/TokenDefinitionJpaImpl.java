@@ -1,17 +1,14 @@
 package com.itgfirm.docengine.types;
 
 import static com.itgfirm.docengine.types.AbstractJpaModel.ModelConstants.*;
-import static javax.persistence.DiscriminatorType.STRING;
+import static com.itgfirm.docengine.util.Utils.isNotNullOrEmpty;
+import static com.itgfirm.docengine.util.Utils.isNotNullOrZero;
 import static javax.persistence.GenerationType.AUTO;
-import static javax.persistence.InheritanceType.SINGLE_TABLE;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -25,9 +22,6 @@ import org.slf4j.LoggerFactory;
  */
 @Entity
 @Table(name = JPA_TBL_TOKEN_DICTIONARY)
-@Inheritance(strategy = SINGLE_TABLE)
-@DiscriminatorValue(JPA_DSCRMNTR_TOKEN)
-@DiscriminatorColumn(name = JPA_DSCRMNTR_COL, discriminatorType = STRING)
 public class TokenDefinitionJpaImpl extends AbstractJpaModel implements Comparable<TokenDefinitionJpaImpl> {
 	private static final Logger LOG = LoggerFactory.getLogger(TokenDefinitionJpaImpl.class);
 
