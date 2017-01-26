@@ -1,4 +1,4 @@
-//package com.itgfirm.docengine.security;
+package com.itgfirm.docengine.config;
 //
 //import org.apache.log4j.LogManager;
 //import org.apache.log4j.Logger;

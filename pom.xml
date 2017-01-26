@@ -17,12 +17,11 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.4.2.RELEASE</version>
+		<version>1.4.3.RELEASE</version>
 	</parent>
 	<modules>
 		<module>doc-engine-appian-types</module>
 		<module>doc-engine-core</module>
-		<module>doc-engine-security</module>
 	</modules>
 	<properties>
 		<collections.version>4.1</collections.version>
@@ -155,11 +154,6 @@
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>com.docengine</groupId>
-				<artifactId>doc-engine-security</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
-			</dependency>
-			<dependency>
 				<groupId>org.kie</groupId>
 				<artifactId>kie-spring</artifactId>
 				<version>${kie.version}</version>
@@ -189,6 +183,14 @@
 				<artifactId>jackson-datatype-hibernate5</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.springframework.security</groupId> -->
+<!-- 			<artifactId>spring-security-web</artifactId> -->
+<!-- 		</dependency> -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.springframework.security</groupId> -->
+<!-- 			<artifactId>spring-security-config</artifactId> -->
+<!-- 		</dependency> -->			
 		</dependencies>
 	</dependencyManagement>
 	<reporting>

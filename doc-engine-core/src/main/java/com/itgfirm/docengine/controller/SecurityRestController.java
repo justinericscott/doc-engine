@@ -1,17 +1,18 @@
 /**
  * TODO: License
  */
-package com.itgfirm.docengine.security;
+package com.itgfirm.docengine.controller;
+
+import static com.itgfirm.docengine.controller.RestUtils.RestConstants.*;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.security.Principal;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.itgfirm.docengine.web.RestUrls;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author Justin Scott
@@ -20,7 +21,7 @@ import com.itgfirm.docengine.web.RestUrls;
  */
 @RestController
 public class SecurityRestController {
-	private static final Logger LOG = LogManager.getLogger(SecurityRestController.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SecurityRestController.class);
 
 	/**
 	 * TODO: Description
@@ -33,7 +34,7 @@ public class SecurityRestController {
 	 * @param user
 	 * @return {@link Principal}
 	 */
-	@RequestMapping(value = RestUrls.USER, method = RequestMethod.GET)
+	@RequestMapping(value = USER, method = GET)
 	public Principal user(Principal user) {
 		// TODO: Trace log entry
 		if (user != null && user.getName() != null) {

@@ -17,9 +17,9 @@ ctrlTemplateLibrary.controller('GetDocumentSourcesAllGridCtrl', [
 	'$scope', '$http', '$window', function($scope, $http, $window) {
 		
 		/** Get All Document Sources Via REST **/
-		$http.get("/contents").success(
+		$http.get("/doc-engine/content/contents").success(
 			function( response ) { 
-				$scope.gridOptions.data = response;	
+				$scope.gridOptions.data = response.contents;	
 			}
 		);
 
