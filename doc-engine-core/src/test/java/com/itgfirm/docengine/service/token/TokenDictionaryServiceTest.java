@@ -17,13 +17,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.junit.Before;
+import javax.annotation.PostConstruct;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import com.itgfirm.docengine.service.token.BusinessDataService;
 import com.itgfirm.docengine.service.token.TokenDictionaryService;
@@ -38,7 +40,6 @@ import com.itgfirm.docengine.util.AbstractTest;
  * 
  *         TODO: Description
  */
-//@Ignore
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TokenDictionaryServiceTest extends AbstractTest {
 	private static final Logger LOG = LoggerFactory.getLogger(TokenDictionaryServiceTest.class);
@@ -58,7 +59,7 @@ public class TokenDictionaryServiceTest extends AbstractTest {
 		TokenDefinitions definitions = new TokenDefinitions(new ArrayList<TokenDefinitionJpaImpl>(
 				Arrays.asList(makeTestToken(), makeTestToken(), makeTestToken(), makeTestToken(), makeTestToken())));
 		definitions = _dictionary.save(definitions);
-		definitions.getDefinitionsList().forEach(def -> {
+		Arrays.asList(definitions.getDefinitions()).forEach(def -> {
 			assertTrue(def.isValid(true));
 		});
 		assertNull(_dictionary.save((TokenDefinitionJpaImpl) null));
@@ -75,7 +76,7 @@ public class TokenDictionaryServiceTest extends AbstractTest {
 				Arrays.asList(createFakeTokenDefinition(), createFakeTokenDefinition(),
 						createFakeTokenDefinition(), createFakeTokenDefinition(),
 						createFakeTokenDefinition()));
-		definitions = _dictionary.findAll().getDefinitionsList();
+		definitions = Arrays.asList(_dictionary.findAll().getDefinitions());
 		definitions.forEach(t -> {
 			assertNotNull(t);
 			assertTrue(t.isValid(true));
@@ -94,7 +95,7 @@ public class TokenDictionaryServiceTest extends AbstractTest {
 		assertNull(_dictionary.findByTokenCd(""));
 		assertNull(_dictionary.findOne(0L));
 		assertNull(_dictionary.findByTokenCd("Snicklefritz"));
-		definitions = _dictionary.findByTokenCdLike("%TEST%").getDefinitionsList();
+		definitions = Arrays.asList(_dictionary.findByTokenCdLike("%TEST%").getDefinitions());
 		assertNotNull(definitions);
 		assertTrue(definitions.iterator().hasNext());
 		assertNull(_dictionary.findByTokenCdLike((String) null));
@@ -119,8 +120,8 @@ public class TokenDictionaryServiceTest extends AbstractTest {
 	@Test
 	public void e_RefreshWhereEntityMapTest() {
 		Collection<String> codes = new ArrayList<String>();
-		final Iterable<TokenDefinitionJpaImpl> tokens = _dictionary.findAll().getDefinitionsList();
-		for (TokenDefinitionJpaImpl t : _dictionary.findAll().getDefinitionsList()) {
+		final Iterable<TokenDefinitionJpaImpl> tokens = Arrays.asList(_dictionary.findAll().getDefinitions());
+		for (TokenDefinitionJpaImpl t : _dictionary.findAll().getDefinitions()) {
 			LOG.debug("Adding Token Code: " + t.getTokenCd());
 			codes.add(t.getTokenCd());
 		}
@@ -171,44 +172,61 @@ public class TokenDictionaryServiceTest extends AbstractTest {
 	public void xx_DeleteTest() {
 	}
 
-	@Before
-	public void setupBefore() {
-		if (!isSetup) {
-			createRealTokenDefinitions();
-			if (isNotNullOrEmpty(_business)) {
-				final ExternalSchema ext = _business.getExternalSchema();
-				if (isNotNullOrEmpty(ext)) {
-					final Iterable<ExternalEntity> tables = ext.getTables();
-					if (!isNotNullOrEmpty(tables)) {
-						final File ddl = getFileFromClasspath("grex.ddl");
-						if (isNotNullAndExists(ddl)) {
-							_business.execute(breakSqlScriptIntoStatements(ddl));
-							final File dml = getFileFromClasspath("grex.dml");
-							if (isNotNullAndExists(dml)) {
-								_business.execute(breakSqlScriptIntoStatements(dml));
-								final File testData = getFileFromClasspath("test-data.dml");
-								if (isNotNullAndExists(testData)) {
-									_business.execute(breakSqlScriptIntoStatements(testData));
-								}
-								final File logic1 = getFileFromClasspath("logic-scenario-1.dml");
-								if (isNotNullAndExists(logic1)) {
-									_business.execute(breakSqlScriptIntoStatements(logic1));
-								}
-								final File logic2 = getFileFromClasspath("logic-scenario-2.dml");
-								if (isNotNullAndExists(logic2)) {
-									_business.execute(breakSqlScriptIntoStatements(logic2));
-								}
-								final File logic3 = getFileFromClasspath("logic-scenario-3.dml");
-								if (isNotNullAndExists(logic3)) {
-									_business.execute(breakSqlScriptIntoStatements(logic3));
-								}
-							}
+	@PostConstruct
+	private void setup() {
+		if (isNotNullOrEmpty(_business)) {
+			final ExternalSchema schema = _business.getExternalSchema();
+			if (isNotNullOrEmpty(schema)) {
+				final Iterable<ExternalEntity> tables = schema.getTables();
+				if (!isNotNullOrEmpty(tables)) {
+					final String url = schema.getUrl();
+					File ddl = null;
+					File dml = null;
+					File logic1 = null;
+					File logic2 = null;
+					File logic3 = null;
+					File testData = getFileFromClasspath("sql/test-data.dml");
+					if (isNotNullOrEmpty(url) && (url.contains("hsqldb") || url.contains("oracle")) && !isSetup) {
+						ddl = getFileFromClasspath("sql/grex-oracle.ddl");
+						dml = getFileFromClasspath("sql/grex-oracle.dml");
+						logic1 = getFileFromClasspath("sql/logic-oracle-scenario-1.dml");
+						logic2 = getFileFromClasspath("sql/logic-oracle-scenario-2.dml");
+						logic3 = getFileFromClasspath("sql/logic-oracle-scenario-3.dml");
+						LOG.info("Setting Up External Schema Using {} Database.", (url.contains("hsqldb")
+								? "HyperSQL using Oracle syntax" : (url.contains("oracle") ? "Oracle" : "")));
+					} else if (isNotNullOrEmpty(url) && url.contains("mysql") && !isSetup) {
+						ddl = getFileFromClasspath("sql/grex-mysql.ddl");
+						dml = getFileFromClasspath("sql/grex-mysql.dml");
+						logic1 = getFileFromClasspath("sql/logic-mysql-scenario-1.dml");
+						logic2 = getFileFromClasspath("sql/logic-mysql-scenario-2.dml");
+						logic3 = getFileFromClasspath("sql/logic-mysql-scenario-3.dml");
+						LOG.info("Setting Up External Schema Using MySQL Database.");
+					}
+					if (isNotNullAndExists(ddl)) {
+						_business.execute(breakSqlScriptIntoStatements(ddl));
+						if (isNotNullAndExists(dml)) {
+							_business.execute(breakSqlScriptIntoStatements(dml));
 						}
+						if (isNotNullAndExists(testData)) {
+							_business.execute(breakSqlScriptIntoStatements(testData));
+						}
+						if (isNotNullAndExists(logic1)) {
+							_business.execute(breakSqlScriptIntoStatements(logic1));
+						}
+						if (isNotNullAndExists(logic2)) {
+							_business.execute(breakSqlScriptIntoStatements(logic2));
+						}
+						if (isNotNullAndExists(logic3)) {
+							_business.execute(breakSqlScriptIntoStatements(logic3));
+						}
+					}
+					if (!isSetup) {
+						createRealTokenDefinitions();
 					}
 				}
 			}
-			isSetup = true;
 		}
+		isSetup = true;
 	}
 
 	private TokenDefinitionJpaImpl createFakeTokenDefinition() {
@@ -218,7 +236,7 @@ public class TokenDictionaryServiceTest extends AbstractTest {
 		return token;
 	}
 
-	private Iterable<TokenDefinitionJpaImpl> createRealTokenDefinitions() {
+	private void createRealTokenDefinitions() {
 		// Project Number
 		final TokenDefinitionJpaImpl projectNumberRlp = new TokenDefinitionJpaImpl(TEST_CODE_PROJECT_NBR_R101,
 				TEST_NAME_PROJECT_NUMBER);
@@ -256,7 +274,12 @@ public class TokenDictionaryServiceTest extends AbstractTest {
 		Collection<TokenDefinitionJpaImpl> tokens = new ArrayList<TokenDefinitionJpaImpl>(
 				Arrays.asList(projectNumberRlp, projectNumberPropLease, projectNumberAwardLease, leaseNumberRlp,
 						leaseNumberPropLease, leaseNumberAwardLease));
-		return _dictionary.save(new TokenDefinitions(tokens)).getDefinitionsList();
+		TokenDefinitions defs = new TokenDefinitions(tokens);
+		try {
+			_dictionary.save(defs);
+		} catch (final DataIntegrityViolationException e) {
+			// Eat it ...
+		}
 	}
 
 	static class TokenDictionaryServiceTestConstants {

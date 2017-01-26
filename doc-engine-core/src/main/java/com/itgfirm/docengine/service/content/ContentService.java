@@ -78,6 +78,8 @@ public interface ContentService {
 
 	ContentJpaImpl save(ContentJpaImpl content);
 	
+	Iterable<ContentJpaImpl> save(Iterable<ContentJpaImpl> objects);
+	
 	Contents save(Contents contents);
 	
 	DocumentJpaImpl save(DocumentJpaImpl document);

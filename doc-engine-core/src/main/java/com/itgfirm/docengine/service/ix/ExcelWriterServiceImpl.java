@@ -110,6 +110,9 @@ class ExcelWriterServiceImpl implements ExcelWriterService {
 				if (isNotNullOrEmpty(obj)) {
 					int idx = 0;
 					for (String field : getExcelColumnFieldNamesFromClass(clazz)) {
+						if (field.equals("isPositive")) {
+							System.out.println("");
+						}
 						fillCell(row.createCell(idx), getReadMethodAndInvoke(obj, field));
 						idx++;
 					}

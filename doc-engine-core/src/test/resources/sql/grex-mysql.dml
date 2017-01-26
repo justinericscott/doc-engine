@@ -1,0 +1,62 @@
+insert into TR_LEASE_MODEL_R (
+	LEASE_MODEL_CD, 
+	LEASE_MODEL_DESC_TXT, 
+	ORDER_BY
+) values 
+	('Standard', 'Standard', 1),
+	('Simple', 'Simplified', 2),
+	('Succ/Super', 'Succeeding / Superseding', 3),
+	('SL Option 1', 'Streamlined Option 1 (Turnkey Pricing)', 4),
+	('SL Option 2', 'Streamlined Option 2 (TI Option)', 5),
+	('SL Option 3', 'Streamlined Option 3 (Turnkey Pricing with Pre-Award DIDs)', 6),
+	('OnAirport', 'On-Airport', 7);
+
+insert into TR_PERSON (
+	PERSON_ID, 
+	TITLE_TXT, 
+	PERSON_TYPE_CD, 
+	AGENCY_CD, 
+	OID_USER_NAME, 
+	FIRST_NAME, 
+	LAST_NAME, 
+	MIDDLE_NAME, 
+	PHONE_WORK_TXT, 
+	PHONE_MOBILE_TXT, 
+	PHONE_OTHER_TXT, 
+	FAX_NUMBER_TXT, 
+	EMAIL_TXT, 
+	BELONGS_REGION_CD, 
+	SALUTATION_TXT, 
+	CP_ID, 
+	DELEGATE_CO_STATUS_TXT, 
+	DELEGATE_CO_COMMENTS_TXT, 
+	DELEGATE_CO_APPROVED_BLN, 
+	DELEGATE_CO_WARRANT_DOC_ID, 
+	GREX_ACTIVE_FLAG_BLN
+) values 
+	(200000465, 'None', null, null, 'amanda.keith@gsa.gov', 'Amanda', 'Keith', null, null, null, null, null, 'amanda.keith@gsa.gov', '5', null, null, null, null, 0, null, 0);
+
+insert into TR_SPACE_TYPE_R (
+	SPACE_TYPE_CD, 
+	SPACE_TYPE_DESC_TXT, 
+	ORDER_BY
+) values 
+	('Ofc', 'Office', 1),
+	('Storage', 'Storage', 2),
+	('SupOfcArea', 'Support Office Areas', 3),
+	('CompRooms', 'Computer Rooms', 4),
+	('MissionRelArea', 'Mission-Related Areas', 5),
+	('Labs', 'Laboratories', 6),
+	('Whse', 'Warehouse Space', 7),
+	('MultiBldg', 'Multiple Building', 8),
+	('Bldg', 'Single Building', 9),
+	('MultiFloor', 'Multiple Floor', 10),
+	('Floor', 'Entire Floor', 11),
+	('Unit', 'Partial Floor', 12),
+	('Unique', 'Unique', 13),
+	('Parking', 'Parking', 14),
+	('Antenna', 'Antenna', 15),
+	('BoatDock', 'Boat Dock', 16),
+	('Bridge', 'Bridge', 17),
+	('RailroadCrossing', 'Railroad Crossing', 18),
+	('Other', 'Other', 19);

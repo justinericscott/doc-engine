@@ -103,7 +103,7 @@ public class ExcelReaderServiceTest extends AbstractTest {
 		assertEquals(TEST_VALUES[0], ex.getId());
 		assertEquals(TEST_VALUES[1], ex.getName());
 		assertEquals(TEST_VALUES[2], ex.getDescription());
-		assertEquals(TEST_VALUES[3], ex.isPositive());
+		assertEquals(TEST_VALUES[3], ex.getPositive());
 	}
 
 	@Test
@@ -204,11 +204,11 @@ public class ExcelReaderServiceTest extends AbstractTest {
 			} else if (o instanceof String) {
 				cell.setCellValue((String) o);
 			} else if (o instanceof Boolean) {
-				cell.setCellValue((boolean) o);
+				cell.setCellValue((Boolean) o);
 			} else if (o instanceof Long) {
 				cell.setCellValue(Double.valueOf(o.toString()));
 			} else {
-				cell.setCellValue(Double.class.cast(o));
+				cell.setCellValue((boolean) Boolean.getBoolean(o.toString()));
 			}
 			idx++;
 		}

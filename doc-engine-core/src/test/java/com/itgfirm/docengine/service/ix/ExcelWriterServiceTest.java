@@ -89,13 +89,13 @@ public class ExcelWriterServiceTest extends AbstractTest {
 	public void c_fillRowTest() {
 		final Row row = getRow();
 		final ExampleExcelTypeWithCustomLabelsOrdered example = new ExampleExcelTypeWithCustomLabelsOrdered(1, "name",
-				"description", true);
+				"description", new Boolean(true));
 		excel.fillRow(row, TEST_CLASS_CUSTOM_LABELS_ORDERED, example);
 		assertEquals(4, row.getPhysicalNumberOfCells());
-		assertEquals(1, row.getCell(0).getNumericCellValue(), 0);
+		assertEquals(1, (int) row.getCell(0).getNumericCellValue());
 		assertEquals("name", row.getCell(1).getStringCellValue());
 		assertEquals("description", row.getCell(2).getStringCellValue());
-		assertEquals(true, row.getCell(3).getBooleanCellValue());
+		assertEquals(new Boolean(true), row.getCell(3).getBooleanCellValue());
 		excel.fillRow(null, TEST_CLASS_CUSTOM_LABELS_ORDERED, example);
 		final Iterator<Cell> cells = row.iterator();
 		cells.forEachRemaining(cell -> {
@@ -122,7 +122,7 @@ public class ExcelWriterServiceTest extends AbstractTest {
 		assertEquals(TEST_DATA_FIELD_LABELS[2], row.getCell(2).getStringCellValue());
 		assertEquals(TEST_DATA_FIELD_LABELS[3], row.getCell(3).getStringCellValue());
 		final ExampleExcelTypeWithCustomLabelsOrdered example = new ExampleExcelTypeWithCustomLabelsOrdered(1, "name",
-				"description", true);
+				"description", new Boolean(true));
 		excel.insertRow(sheet, TEST_CLASS_CUSTOM_LABELS_ORDERED, example, 1, false);
 		row = sheet.getRow(1);
 		assertEquals(4, row.getPhysicalNumberOfCells());
@@ -157,7 +157,7 @@ public class ExcelWriterServiceTest extends AbstractTest {
 	@Test
 	public void e_fillSheetTest() {
 		final Sheet sheet = getSheet();
-		excel.fillSheet(sheet, TEST_CLASS_CUSTOM_LABELS_ORDERED, TEST_DATA, true);
+		excel.fillSheet(sheet, TEST_CLASS_CUSTOM_LABELS_ORDERED, TEST_DATA, new Boolean(true));
 		int idx = 1;
 		for (final ExampleExcelTypeWithCustomLabelsOrdered o : TEST_DATA) {
 			final Row row = sheet.getRow(idx);
@@ -165,7 +165,7 @@ public class ExcelWriterServiceTest extends AbstractTest {
 			assertEquals(o.getId(), row.getCell(0).getNumericCellValue(), 0);
 			assertEquals(o.getName(), row.getCell(1).getStringCellValue());
 			assertEquals(o.getDescription(), row.getCell(2).getStringCellValue());
-			assertEquals(o.isPositive(), row.getCell(3).getBooleanCellValue());
+			assertEquals(o.getPositive(), row.getCell(3).getBooleanCellValue());
 			idx++;
 		}
 		final Iterator<Row> rows = sheet.rowIterator();

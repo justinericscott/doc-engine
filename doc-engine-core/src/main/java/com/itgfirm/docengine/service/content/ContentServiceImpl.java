@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.Hibernate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -191,8 +192,14 @@ final class ContentServiceImpl implements ContentService {
 
 	@Override
 	public boolean deleteAll() {
+		_documents.deleteAll();
+		_sections.deleteAll();
+		_clauses.deleteAll();
+		_paragraphs.deleteAll();
 		_contents.deleteAll();
-		return (findAll() == null);
+		return (findAll(DocumentJpaImpl.class) == null && findAll(SectionJpaImpl.class) == null
+				&& findAll(ClauseJpaImpl.class) == null && findAll(ParagraphJpaImpl.class) == null
+				&& findAll() == null);
 	}
 
 	@Override
@@ -214,7 +221,7 @@ final class ContentServiceImpl implements ContentService {
 	public final <T> T findAll(final Class<T> type) {
 		return findAll(type, false);
 	}
-	
+
 	@Override
 	public final <T> T findAll(final Class<T> type, final boolean eagerKids) {
 		if (isNotNullOrEmpty(type)) {
@@ -515,10 +522,18 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
+	public final Iterable<ContentJpaImpl> save(final Iterable<ContentJpaImpl> objects) {
+		if (isNotNullOrEmpty(objects)) {
+			return _contents.save(objects);
+		}
+		return null;
+	}
+
+	@Override
 	public final Contents save(final Contents contents) {
 		if (isNotNullOrEmpty(contents)) {
-			Collection<? extends ContentJpaImpl> collection = Arrays.asList(contents.getContents());
-			collection = (Collection<? extends ContentJpaImpl>) _contents.save(collection);
+			Collection<ContentJpaImpl> collection = Arrays.asList(contents.getContents());
+			collection = (Collection<ContentJpaImpl>) _contents.save(collection);
 			if (isNotNullOrEmpty(collection)) {
 				return new Contents(collection.toArray(new ContentJpaImpl[collection.size()]));
 			}

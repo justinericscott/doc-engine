@@ -106,6 +106,18 @@ final class InstanceServiceImpl implements InstanceService {
 	}
 
 	@Override
+	public final boolean deleteAll() {
+		_documents.deleteAll();
+		_sections.deleteAll();
+		_clauses.deleteAll();
+		_paragraphs.deleteAll();
+		_instances.deleteAll();
+		return (!_documents.findAll().iterator().hasNext() && !_sections.findAll().iterator().hasNext()
+				&& !_clauses.findAll().iterator().hasNext() && !_paragraphs.findAll().iterator().hasNext()
+				&& !_instances.findAll().iterator().hasNext());
+	}
+
+	@Override
 	public final Instances findAll() {
 		final List<InstanceJpaImpl> temp = (List<InstanceJpaImpl>) _instances.findAll();
 		if (isNotNullOrEmpty(temp)) {
@@ -253,7 +265,7 @@ final class InstanceServiceImpl implements InstanceService {
 					LOG.debug("Eager fetch requested for {} instance object...", type.getSimpleName());
 					initialize(one, eagerKids);
 				}
-				return one;				
+				return one;
 			} else {
 				LOG.warn("Nothing to return!");
 			}

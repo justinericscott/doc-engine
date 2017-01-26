@@ -17,7 +17,7 @@ public class ExampleExcelTypeWithCustomLabelsOrderedReversed {
 	@ExcelColumn("Description")
 	private String description;
 	@ExcelColumnOrder(1)
-	@ExcelColumn("Boolean Test")
+	@ExcelColumn("Positive")
 	private boolean positive;
 
 	public ExampleExcelTypeWithCustomLabelsOrderedReversed() {
@@ -28,15 +28,15 @@ public class ExampleExcelTypeWithCustomLabelsOrderedReversed {
 		this.id = ex.getId();
 		this.name = ex.getName();
 		this.description = ex.getDescription();
-		this.positive = ex.isPositive();
+		this.positive = ex.getPositive();
 	}
 	
 	public ExampleExcelTypeWithCustomLabelsOrderedReversed(final long id, final String name, final String description,
-			final boolean isTrue) {
+			final boolean positive) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
-		this.positive = isTrue;
+		this.positive = positive;
 	}
 
 	public long getId() {
@@ -54,7 +54,7 @@ public class ExampleExcelTypeWithCustomLabelsOrderedReversed {
 		return description;
 	}
 	
-	public boolean isPositive() {
+	public boolean getPositive() {
 		return positive;
 	}
 

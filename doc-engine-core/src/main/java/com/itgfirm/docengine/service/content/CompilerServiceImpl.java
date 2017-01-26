@@ -1,15 +1,14 @@
 /**
  * TODO: License
  */
-package com.itgfirm.docengine.compiler;
+package com.itgfirm.docengine.service.content;
 
-import static com.itgfirm.docengine.compiler.CompilerServiceImpl.CompilerConstants.*;
-import static com.itgfirm.docengine.compiler.CompilerUtils.htmlTab;
-import static com.itgfirm.docengine.compiler.CompilerUtils.htmlTag;
-import static com.itgfirm.docengine.compiler.CompilerUtils.htmlSelfCloseTag;
+import static com.itgfirm.docengine.service.content.CompilerServiceImpl.CompilerConstants.*;
 import static com.itgfirm.docengine.util.Utils.isNotNullOrEmpty;
 
 import java.util.Iterator;
+
+import org.apache.commons.lang.StringUtils;
 
 import org.springframework.stereotype.Service;
 
@@ -35,40 +34,7 @@ class CompilerServiceImpl implements CompilerService {
 		return sb.toString();
 	}
 
-	void getAllSectionsForDocumentHTML(StringBuilder sb, DocumentInstanceJpaImpl doc) {
-		// TODO: Trace log entry
-		boolean first = true;
-		for (SectionInstanceJpaImpl section : doc.getSections()) {
-			appendSectionHTML(sb, section, first);
-			getAllClausesForSectionHTML(sb, section);
-			first = false;
-		}
-	}
-
-	void appendSectionHTML(StringBuilder sb, SectionInstanceJpaImpl section, boolean first) {
-		// TODO: Trace log entry
-		String content = String.format("SECTION%s%s%s%s", htmlTab(3),
-				section.getSection().getContentNumber(), htmlTab(3), section.getSection().getBody());
-		if (!first)
-			sb.append(htmlSelfCloseTag("br", "break"));
-		sb.append(htmlSelfCloseTag("hr"));
-		sb.append(htmlTag("h1", content, ""));
-		sb.append(htmlSelfCloseTag("hr"));
-	}
-
-	void getAllClausesForSectionHTML(StringBuilder sb, SectionInstanceJpaImpl section) {
-		// TODO: Trace log entry
-		for (ClauseInstanceJpaImpl clause : section.getClauses()) {
-			appendClauseHTML(sb, clause);
-			if (STATUS_AUTO_IN.equals(clause.getStatusCd()) || STATUS_MAN_IN.equals(clause.getStatusCd())) {
-				if (clause.getClause() != null) {
-					getAllParagraphsForClauseHTML(sb, clause);
-				}
-			}
-		}
-	}
-
-	void appendClauseHTML(StringBuilder sb, ClauseInstanceJpaImpl clause) {
+	private void appendClauseHTML(StringBuilder sb, ClauseInstanceJpaImpl clause) {
 		// TODO: Trace log entry
 		StringBuilder clauseStr = null;
 		if (STATUS_AUTO_OUT.equals(clause.getStatusCd()) || STATUS_MAN_OUT.equals(clause.getStatusCd())) {
@@ -101,7 +67,79 @@ class CompilerServiceImpl implements CompilerService {
 		}
 	}
 
-	void getAllParagraphsForClauseHTML(StringBuilder sb, ClauseInstanceJpaImpl clause) {
+	private String appendParagraphHTML(ParagraphInstanceJpaImpl instance, String recursionString,
+			boolean isParentIncluded) {
+		// TODO: Trace log entry
+		StringBuilder returnString = new StringBuilder();
+		ParagraphJpaImpl source = (ParagraphJpaImpl) instance.getParagraph();
+		if (source != null) {
+			boolean hasCustomBody = isNotNullOrEmpty(instance.getBody());
+			boolean isIncluded = (instance.getStatusCd().equals(STATUS_AUTO_IN)
+					|| instance.getStatusCd().equals(STATUS_MAN_IN));
+			boolean isParent = source.isParent();
+			boolean isOption = source.isOption();
+			boolean isSubPara = source.isSubPara();
+			boolean isTable = source.getContentCd().contains("table");
+			String tag;
+			if (isSubPara) {
+				tag = "li";
+			} else if (isTable) {
+				tag = null;
+			} else {
+				tag = "p";
+			}
+			String blueText = "";
+			if (recursionString == null)
+				recursionString = "";
+			String templateBody = null;
+			if (!isIncluded && !isOption && isParentIncluded) {
+				if (tag == null)
+					tag = "p";
+				templateBody = htmlTag(tag, "INTENTIONALLY DELETED");
+			} else if (isIncluded && hasCustomBody) {
+				if (isParent && tag.equalsIgnoreCase("p")) {
+					templateBody = htmlTag(tag, instance.getBody()) + recursionString;
+				} else {
+					templateBody = htmlTag(tag, instance.getBody() + recursionString);
+				}
+			} else if (isIncluded) {
+				if (isParent && tag.equalsIgnoreCase("p")) {
+					templateBody = htmlTag(tag, source.getBody()) + recursionString;
+				} else {
+					templateBody = htmlTag(tag, source.getBody() + recursionString);
+				}
+			}
+			if (templateBody != null) {
+				returnString.append(blueText + templateBody);
+			}
+		}
+		return returnString.toString();
+	}
+	
+	private void appendSectionHTML(StringBuilder sb, SectionInstanceJpaImpl section, boolean first) {
+		// TODO: Trace log entry
+		String content = String.format("SECTION%s%s%s%s", htmlTab(3),
+				section.getSection().getContentNumber(), htmlTab(3), section.getSection().getBody());
+		if (!first)
+			sb.append(htmlSelfCloseTag("br", "break"));
+		sb.append(htmlSelfCloseTag("hr"));
+		sb.append(htmlTag("h1", content, ""));
+		sb.append(htmlSelfCloseTag("hr"));
+	}
+
+	private void getAllClausesForSectionHTML(StringBuilder sb, SectionInstanceJpaImpl section) {
+		// TODO: Trace log entry
+		for (ClauseInstanceJpaImpl clause : section.getClauses()) {
+			appendClauseHTML(sb, clause);
+			if (STATUS_AUTO_IN.equals(clause.getStatusCd()) || STATUS_MAN_IN.equals(clause.getStatusCd())) {
+				if (clause.getClause() != null) {
+					getAllParagraphsForClauseHTML(sb, clause);
+				}
+			}
+		}
+	}
+
+	private void getAllParagraphsForClauseHTML(StringBuilder sb, ClauseInstanceJpaImpl clause) {
 		// TODO: Trace log entry
 		Iterator<ParagraphInstanceJpaImpl> it = clause.getParagraphs().iterator();
 		while (it.hasNext()) {
@@ -109,7 +147,7 @@ class CompilerServiceImpl implements CompilerService {
 		}
 	}
 
-	String getAllParagraphInstancesRecurse(Iterator<ParagraphInstanceJpaImpl> it, boolean isNestedList) {
+	private String getAllParagraphInstancesRecurse(Iterator<ParagraphInstanceJpaImpl> it, boolean isNestedList) {
 		// TODO: Trace log entry
 		StringBuilder returnString = new StringBuilder();
 		ParagraphInstanceJpaImpl parentInstance = null;
@@ -177,53 +215,55 @@ class CompilerServiceImpl implements CompilerService {
 		return returnString.toString();
 	}
 
-	String appendParagraphHTML(ParagraphInstanceJpaImpl instance, String recursionString,
-			boolean isParentIncluded) {
+	private void getAllSectionsForDocumentHTML(StringBuilder sb, DocumentInstanceJpaImpl doc) {
 		// TODO: Trace log entry
-		StringBuilder returnString = new StringBuilder();
-		ParagraphJpaImpl source = (ParagraphJpaImpl) instance.getParagraph();
-		if (source != null) {
-			boolean hasCustomBody = isNotNullOrEmpty(instance.getBody());
-			boolean isIncluded = (instance.getStatusCd().equals(STATUS_AUTO_IN)
-					|| instance.getStatusCd().equals(STATUS_MAN_IN));
-			boolean isParent = source.isParent();
-			boolean isOption = source.isOption();
-			boolean isSubPara = source.isSubPara();
-			boolean isTable = source.getContentCd().contains("table");
-			String tag;
-			if (isSubPara) {
-				tag = "li";
-			} else if (isTable) {
-				tag = null;
-			} else {
-				tag = "p";
-			}
-			String blueText = "";
-			if (recursionString == null)
-				recursionString = "";
-			String templateBody = null;
-			if (!isIncluded && !isOption && isParentIncluded) {
-				if (tag == null)
-					tag = "p";
-				templateBody = htmlTag(tag, "INTENTIONALLY DELETED");
-			} else if (isIncluded && hasCustomBody) {
-				if (isParent && tag.equalsIgnoreCase("p")) {
-					templateBody = htmlTag(tag, instance.getBody()) + recursionString;
-				} else {
-					templateBody = htmlTag(tag, instance.getBody() + recursionString);
-				}
-			} else if (isIncluded) {
-				if (isParent && tag.equalsIgnoreCase("p")) {
-					templateBody = htmlTag(tag, source.getBody()) + recursionString;
-				} else {
-					templateBody = htmlTag(tag, source.getBody() + recursionString);
-				}
-			}
-			if (templateBody != null) {
-				returnString.append(blueText + templateBody);
-			}
+		boolean first = true;
+		for (SectionInstanceJpaImpl section : doc.getSections()) {
+			appendSectionHTML(sb, section, first);
+			getAllClausesForSectionHTML(sb, section);
+			first = false;
 		}
-		return returnString.toString();
+	}
+
+	private String htmlSelfCloseTag(String htmlTag) {
+		if (htmlTag == null)
+			throw new IllegalArgumentException("HTML Tag Must Not Be Null");
+		return htmlSelfCloseTag(htmlTag, null);
+	}
+
+	private String htmlSelfCloseTag(String htmlTag, String cssClass) {
+		if (htmlTag == null)
+			throw new IllegalArgumentException("HTML Tag Must Not Be Null");
+		if (cssClass == null) {
+			return String.format("<%s />", htmlTag);
+		} else {
+			return String.format("<%s class=\"%s\"/>", htmlTag, cssClass);
+		}
+	}
+
+	private String htmlTab(int count) {
+		return StringUtils.repeat("&nbsp;", count);
+	}
+
+	private String htmlTag(String htmlTag, String content) {
+		if (content == null)
+			throw new IllegalArgumentException("ContentRepo Must Not Be Null!");
+		return htmlTag(htmlTag, content, null);
+	}
+
+	private String htmlTag(String htmlTag, String content, String cssClass) {
+		if (content == null)
+			throw new IllegalArgumentException("ContentRepo Must Not Be Null!");
+		if (cssClass == null && htmlTag == null) {
+			return content;
+		} else if (htmlTag == null) {
+			return content;
+		} else if (cssClass == null && htmlTag != null) {
+			return String.format("<%s>%s</%s>", htmlTag, content, htmlTag);
+		} else {
+			return String.format("<%s class=\"%s\">%s</%s>", htmlTag, cssClass, content,
+					htmlTag);
+		}
 	}
 
 	static class CompilerConstants {

@@ -92,7 +92,7 @@ public class ExcelUtilsTest extends AbstractTest {
 		}
 		fields.clear();
 		assertTrue(fields.isEmpty());
-		final String[] TEST_FIELD_NAMES_MIXED = { "name", "isTrue", "id", "description" };
+		final String[] TEST_FIELD_NAMES_MIXED = { "name", "positive", "id", "description" };
 		fields.clear();
 		assertTrue(fields.isEmpty());
 		fields = (Collection<String>) getExcelColumnFieldNamesFromClass(TEST_CLASS_CUSTOM_LABELS_ORDERED_UNORDERED);

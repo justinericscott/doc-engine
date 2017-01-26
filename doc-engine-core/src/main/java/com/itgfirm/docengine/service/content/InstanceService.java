@@ -50,6 +50,8 @@ public interface InstanceService {
 	 */
 	<T> boolean delete(T instance, Class<T> type);
 	
+	boolean deleteAll();
+	
 	/**
 	 * Gets all Instance records.
 	 * 

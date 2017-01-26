@@ -18,7 +18,7 @@ public class ExampleExcelTypeWithCustomLabelsOrdered {
 	private String description;
 	@ExcelColumnOrder(4)
 	@ExcelColumn("Positive")
-	private boolean positive;
+	private Boolean positive;
 
 	public ExampleExcelTypeWithCustomLabelsOrdered() {
 		// Deafult constructor for Spring
@@ -28,15 +28,15 @@ public class ExampleExcelTypeWithCustomLabelsOrdered {
 		this.id = ex.getId();
 		this.name = ex.getName();
 		this.description = ex.getDescription();
-		this.positive = ex.isPositive();
+		this.positive = ex.getPositive();
 	}
 
 	public ExampleExcelTypeWithCustomLabelsOrdered(final long id, final String name,
-			final String description, final boolean isTrue) {
+			final String description, final Boolean positive) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
-		this.positive = isTrue;
+		this.positive = positive;
 	}
 
 	public long getId() {
@@ -63,11 +63,11 @@ public class ExampleExcelTypeWithCustomLabelsOrdered {
 		this.description = description;
 	}
 
-	public boolean isPositive() {
+	public Boolean getPositive() {
 		return positive;
 	}
 
-	public void setPositive(boolean positive) {
+	public void setPositive(Boolean positive) {
 		this.positive = positive;
 	}
 

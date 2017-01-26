@@ -1,7 +1,7 @@
 /**
  * TODO: License
  */
-package com.itgfirm.docengine.compiler;
+package com.itgfirm.docengine.controller;
 
 import static com.itgfirm.docengine.controller.RestUtils.RestConstants.*;
 import static org.springframework.http.HttpStatus.*;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.itgfirm.docengine.service.content.CompilerService;
 import com.itgfirm.docengine.types.DocumentInstanceJpaImpl;
 
 /**

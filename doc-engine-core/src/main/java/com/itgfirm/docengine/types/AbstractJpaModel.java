@@ -30,7 +30,7 @@ public abstract class AbstractJpaModel {
 	private Long createdBy = -1L;
 	@CreationTimestamp
 	@Column(name = JPA_COL_CREATED_DT, nullable = false)
-	private Timestamp createdDt;
+	private Timestamp createdDt = new Timestamp(now().getTime());
 	@ExcelColumn(EXCEL_COL_DESCRIMINATOR)
 	@Column(name = JPA_DSCRMNTR_COL, updatable = false, insertable = false)
 	private String discriminator;
@@ -38,7 +38,7 @@ public abstract class AbstractJpaModel {
 	private Long updatedBy = -1L;
 	@UpdateTimestamp
 	@Column(name = JPA_COL_UPDATED_DT, nullable = false)
-	private Timestamp updatedDt;
+	private Timestamp updatedDt = new Timestamp(now().getTime());
 
 	static Date now() {
 		return new Date(Instant.now().toEpochMilli());

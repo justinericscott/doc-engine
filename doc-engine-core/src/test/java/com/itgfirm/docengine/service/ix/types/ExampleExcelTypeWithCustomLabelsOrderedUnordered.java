@@ -15,19 +15,19 @@ public class ExampleExcelTypeWithCustomLabelsOrderedUnordered {
 	@ExcelColumn("Description")
 	private String description;
 	@ExcelColumnOrder(2)
-	@ExcelColumn("Boolean Test")
-	private boolean isTrue;
+	@ExcelColumn("Positive")
+	private boolean positive;
 
 	public ExampleExcelTypeWithCustomLabelsOrderedUnordered() {
 		
 	}
 	
 	public ExampleExcelTypeWithCustomLabelsOrderedUnordered(final long id, final String name, final String description,
-			final boolean isTrue) {
+			final boolean isPositive) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
-		this.isTrue = isTrue;
+		this.positive = isPositive;
 	}
 
 	public long getId() {
@@ -42,8 +42,8 @@ public class ExampleExcelTypeWithCustomLabelsOrderedUnordered {
 		return description;
 	}
 	
-	public boolean isTrue() {
-		return isTrue;
+	public boolean getPositive() {
+		return positive;
 	}
 
 	@Override

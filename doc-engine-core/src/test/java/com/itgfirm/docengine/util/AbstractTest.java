@@ -287,7 +287,7 @@ public class AbstractTest {
 		public static final Collection<ExampleExcelTypeWithCustomLabelsOrdered> TEST_DATA = createTestData();
 		public static final String[] TEST_DATA_FIELD_LABELS = { "Identification", "Name", "Description", "Positive" };
 		public static final String[] TEST_DATA_FIELD_NAMES = { "id", "name", "description", "positive" };
-		public static final Object[] TEST_VALUES = { 111L, "Test Name", "Test Description", true };
+		public static final Object[] TEST_VALUES = { 111L, "Test Name", "Test Description", new Boolean(true) };
 
 		public static final long TEST_DATA_LIMIT = 100L;
 		public static final String TEST_DATA_PROJECT_ID = "SIMPH00501";

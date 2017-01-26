@@ -12,10 +12,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,10 +90,10 @@ class ExcelReaderServiceImpl implements ExcelReaderService {
 		return null;
 	}
 
-	final <T> T createObject(final Class<T> clazz, final Row row, final Iterable<String> fields) {
+	final <T> T createObject(final Class<T> type, final Row row, final Iterable<String> fields) {
 		if (row != null) {
-			final T object = instantiate(clazz);
-			if (isNotNullOrEmpty(object) && clazz.isInstance(object)) {
+			final T object = instantiate(type);
+			if (isNotNullOrEmpty(object) && type.isInstance(object)) {
 				final List<String> names = (List<String>) fields;
 				final int size = names.size();
 				int idx = 0;
@@ -99,23 +101,13 @@ class ExcelReaderServiceImpl implements ExcelReaderService {
 					final String name = names.get(idx);
 					final Cell cell = row.getCell(idx, MissingCellPolicy.RETURN_NULL_AND_BLANK);
 					final Object value = getCellValue(cell);
-					if (isNotNullOrEmpty(value)) {
-						final String cellValueClass = value.getClass().getName();
-						_LOG.trace(
-								"Searching for write method by the name {} whose cell value class is {}. Value of the cell {}.",
-								name, cellValueClass, value);						
-					} else {
-						_LOG.trace(
-								"Searching for write method by the name {} whose cell value class is {}. Value of the cell {}.",
-								name, "NONE", "NULL");												
-					}
 					getWriteMethodAndInvoke(object, name, value);
 					idx++;
 				}
-				return clazz.cast(object);
+				return type.cast(object);
 			}
 		} else {
-			_LOG.warn(String.format("The row must not be null!\nCLASS: %s", clazz.getName()));
+			_LOG.warn(String.format("The row must not be null!\nCLASS: %s", type.getName()));
 		}
 		return null;
 	}
@@ -140,44 +132,35 @@ class ExcelReaderServiceImpl implements ExcelReaderService {
 			} else if (type == CELL_TYPE_BLANK) {
 				return null;
 			} else {
-				_LOG.trace("Could not determine cell type: {}", type);
+				_LOG.warn("Could not determine cell type: {}", type);
 			}
 		}
 		return null;
 	}
 
 	private class NumberImpl extends Number {
-		private static final String TYPE_LONG = "long";
-		private static final String TYPE_INT = "int";
-		private static final String TYPE_FLOAT = "float";
+		private static final String TYPE_DATE = "date";
 		private static final String TYPE_DOUBLE = "double";
+		private static final String TYPE_FLOAT = "float";
+		private static final String TYPE_INT = "int";
+		private static final String TYPE_LONG = "long";
+		private static final String TYPE_UNKNOWN = "unknown";
 		private static final long serialVersionUID = 1L;
+		private final Cell cell;
+		private final java.util.Date date;
 		private final Double dub;
-		private final Float f;
-		private final Integer i;
-		private final Long l;
-		private final String[] check;
-		private final int length;
 		private String type;
 
 		NumberImpl(final Cell cell) {
 			if (cell != null) {
-				this.dub = cell.getNumericCellValue();
-				if (this.dub < 0.0 || this.dub > 0.0) {
-					final String string = String.valueOf(this.dub);
-					this.check = string.split("\\.");
-					this.length = this.check.length;
-					this.f = floatValue();
-					doubleValue();
-					this.l = longValue();
-					this.i = intValue();
+				this.cell = cell;
+				this.dub = doubleValue();
+				if (DateUtil.isCellDateFormatted(this.cell)) {
+					this.date = this.cell.getDateCellValue();
+					this.type = TYPE_DATE;
 				} else {
-					this.type = TYPE_INT;
-					this.check = null;
-					this.length = 0;
-					this.f = 0.0F;
-					this.l = 0L;
-					this.i = 0;
+					checkType();
+					this.date = null;
 				}
 			} else {
 				throw new IllegalArgumentException("Cell must not be null!");
@@ -186,67 +169,71 @@ class ExcelReaderServiceImpl implements ExcelReaderService {
 
 		@Override
 		public final double doubleValue() {
-			type = TYPE_DOUBLE;
+			if (dub == null) {
+				return this.cell.getNumericCellValue();	
+			}			
 			return dub;
 		}
 
 		@Override
 		public final float floatValue() {
-			if (dub < Float.MAX_VALUE && dub > Float.MIN_VALUE) {
-				type = TYPE_FLOAT;
-				return dub.floatValue();
-			}
-			return 0;
+			return (float) doubleValue();
 		}
 
 		@Override
 		public final int intValue() {
-			final long front = Long.parseLong(check[0]);
-			if (front < Integer.MAX_VALUE && front > Integer.MIN_VALUE) {
-				if (length == 2) {
-					final long end = Long.parseLong(check[1]);
-					if (end == 0) {
-						type = TYPE_INT;
-						return dub.intValue();
-					}
-				} else if (length == 1) {
-					type = TYPE_INT;
-					return dub.intValue();
-				}
-			}
-			return 0;
+			return (int) longValue();
 		}
 
 		@Override
 		public final long longValue() {
-			if (length == 2) {
-				if (Long.parseLong(check[1]) == 0) {
-					type = TYPE_LONG;
-					return dub.longValue();
-				}
-			} else if (length == 1) {
-				type = TYPE_LONG;
-				return dub.longValue();
-			}
-			return 0;
+			return (long) doubleValue();
 		}
 
 		final Object getValue() {
 			switch (type) {
 			case TYPE_INT:
-				_LOG.trace("Found cell type {}, returning value {}.", type, i.toString());
-				return i;
+				_LOG.trace("Found cell type {}, returning value {}.", type, intValue());
+				return intValue();
 			case TYPE_DOUBLE:
-				_LOG.trace("Found cell type {}, returning value {}.", type, dub.toString());
-				return dub;
+				_LOG.trace("Found cell type {}, returning value {}.", type, doubleValue());
+				return doubleValue();
 			case TYPE_FLOAT:
-				_LOG.trace("Found cell type {}, returning value {}.", type, f.toString());
-				return f;
+				_LOG.trace("Found cell type {}, returning value {}.", type, floatValue());
+				return floatValue();
 			case TYPE_LONG:
-				_LOG.trace("Found cell type {}, returning value {}.", type, l.toString());
-				return l;
+				_LOG.trace("Found cell type {}, returning value {}.", type, longValue());
+				return longValue();
+			case TYPE_DATE:
+				_LOG.trace("Found cell type {}, returning value {}.", type, date.toString());
+				return date;
 			}
-			return 0;
+			return null;
+		}
+
+		private void checkType() {
+			String[] check = String.valueOf(dub).split("\\.");
+			int length = check.length;
+			if (length > 1) {
+				if (Long.parseLong(check[1]) != 0) {
+					if (dub > Float.MAX_VALUE || dub < Float.MIN_VALUE) {
+						this.type = TYPE_DOUBLE;
+					} else {
+//						this.type = TYPE_FLOAT;
+						this.type = TYPE_DOUBLE;
+					}
+				} else {
+					final String val = check[0];
+					long l = Long.parseLong(val);
+					if (l > Integer.MAX_VALUE || l < Integer.MIN_VALUE) {
+						this.type = TYPE_LONG;
+					} else {
+						this.type = TYPE_INT;
+					}
+				}
+			} else {
+				this.type = TYPE_UNKNOWN;
+			}
 		}
 	}
 }

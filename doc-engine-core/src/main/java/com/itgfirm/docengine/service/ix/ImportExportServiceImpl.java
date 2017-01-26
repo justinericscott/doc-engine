@@ -39,18 +39,18 @@ public class ImportExportServiceImpl implements ImportExportService {
 	private ExcelWriterService _writer;
 
 	@Override
-	public final File exportToFile(final Class<?> clazz, final String path) {
-		if (isNotNullOrEmpty(clazz)) {
+	public final File exportToFile(final Class<?> type, final String path) {
+		if (isNotNullOrEmpty(type)) {
 			Collection<?> objects = null;
-			if (clazz.equals(ContentJpaImpl.class)) {
+			if (type.equals(ContentJpaImpl.class)) {
 				objects = Arrays.asList(_contents.findAll().getContents());
-			} else if (clazz.equals(TokenDefinitionJpaImpl.class)) {
-				objects = Arrays.asList(_dictionary.findAll().getDefinitionsList());
+			} else if (type.equals(TokenDefinitionJpaImpl.class)) {
+				objects = Arrays.asList(_dictionary.findAll().getDefinitions());
 			}
 			if (isNotNullOrEmpty(objects)) {
 				final File file = create(path, true);
 				if (isNotNullAndExists(file)) {
-					return _writer.write(clazz, file, objects, true);
+					return _writer.write(type, file, objects, true);
 				} else {
 					LOG.warn("The for the provided path does not exist!");
 				}
@@ -58,21 +58,29 @@ public class ImportExportServiceImpl implements ImportExportService {
 		} else {
 			LOG.warn("The class must not be null!");
 		}
-
 		return null;
 	}
 
 	@Override
-	public <T> T importFromFile(final Class<T> clazz, final String path) {
-		if (isNotNullOrEmpty(clazz)) {
-			if (clazz.equals(Contents.class)) {
-				final Collection<ContentJpaImpl> objects = (Collection<ContentJpaImpl>) _reader.read(ContentJpaImpl.class, get(path));	
-				if (isNotNullOrEmpty(objects)) {
-					Contents contents = new Contents(objects.toArray(new ContentJpaImpl[objects.size()]));
-					return clazz.cast(_contents.save(contents));
+	public <T> T importFromFile(final Class<T> type, final String path) {
+		if (isNotNullOrEmpty(type)) {
+			if (type.equals(Contents.class)) {
+				final Iterable<ContentJpaImpl> iter = _reader.read(ContentJpaImpl.class, get(path));
+				if (isNotNullOrEmpty(iter)) {
+					final Collection<ContentJpaImpl> saved = (Collection<ContentJpaImpl>) _contents.save(iter);
+					final Contents contents = new Contents(saved);
+					return type.cast(contents);
 				} else {
 					LOG.warn("No objects where created from the provided Class and File path!");
 				}
+//				final Collection<ContentJpaImpl> objects = (Collection<ContentJpaImpl>) _reader.read(ContentJpaImpl.class, get(path));	
+//				if (isNotNullOrEmpty(objects)) {
+//					Contents contents = new Contents(objects.toArray(new ContentJpaImpl[objects.size()]));
+//					contents = _contents.save(contents);
+//					return clazz.cast(contents);
+//				} else {
+//					LOG.warn("No objects where created from the provided Class and File path!");
+//				}
 			}
 		} else {
 			LOG.warn("The class must not be null!");

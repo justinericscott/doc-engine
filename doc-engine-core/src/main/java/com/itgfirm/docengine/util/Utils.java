@@ -27,6 +27,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Map;
 
@@ -402,7 +403,7 @@ public class Utils {
 	 * Creates an instance of the provided {@link Class}. The {@link Class} must
 	 * not be an interface and must have a default (no-parameter) constructor.
 	 * 
-	 * @param clazz
+	 * @param type
 	 *            {@link Class} to instantiate.
 	 * @param <T>
 	 *            Expected type to be returned.
@@ -411,18 +412,18 @@ public class Utils {
 	 * 
 	 * @see #instantiate(String)
 	 */
-	public static <T> T instantiate(final Class<T> clazz) {
-		if (isNotNullOrEmpty(clazz)) {
-			if (!clazz.isInterface()) {
-				if (hasDefaultConstructor(clazz)) {
+	public static <T> T instantiate(final Class<T> type) {
+		if (isNotNullOrEmpty(type)) {
+			if (!type.isInterface()) {
+				if (hasDefaultConstructor(type)) {
 					try {
-						return clazz.newInstance();
+						return type.newInstance();
 					} catch (final InstantiationException | IllegalAccessException e) {
-						LOG.error(String.format("Problem instantiating the class: %s", clazz.getName()), e);
+						LOG.error(String.format("Problem instantiating the class: %s", type.getName()), e);
 					}
 				} else {
 					LOG.warn(String.format("Class must have a default (no-parameter) constructor!\nCLASS: %s",
-							clazz.getName()));
+							type.getName()));
 				}
 			} else {
 				LOG.warn("Class cannot be an interface.");
@@ -455,11 +456,11 @@ public class Utils {
 		return null;
 	}
 
-	private static Object cast(final Class<?> target, final Object object) {
-		if (isNotNullOrEmpty(target)) {
+	private static Object cast(final Class<?> type, final Object object) {
+		if (isNotNullOrEmpty(type)) {
 			if (isNotNullOrEmpty(object)) {
 				try {
-					if (target.equals(Integer.class) || target.equals(Integer.TYPE)) {
+					if (type.equals(Integer.class) || type.equals(Integer.TYPE)) {
 						if (object instanceof Double) {
 							final Double dub = Double.valueOf((double) object);
 							final Integer i = dub != null ? Integer.valueOf(dub.intValue()) : null;
@@ -467,7 +468,7 @@ public class Utils {
 						} else if (!(object instanceof Date)) {
 							return Integer.valueOf(String.valueOf(object));
 						}
-					} else if (target.equals(Long.class) || target.equals(Long.TYPE)) {
+					} else if (type.equals(Long.class) || type.equals(Long.TYPE)) {
 						if (object instanceof Double) {
 							final Double dub = Double.valueOf((double) object);
 							final Long l = dub != null ? Long.valueOf(dub.intValue()) : null;
@@ -479,31 +480,34 @@ public class Utils {
 						} else {
 							return Long.valueOf(String.valueOf(object));
 						}
-					} else if (target.equals(Date.class)) {
+					} else if (type.equals(Date.class)) {
 						if (object instanceof Long) {
 							return new Date(Long.valueOf(String.valueOf(object)));
 						}
-					} else if (target.equals(java.util.Date.class)) {
+					} else if (type.equals(java.util.Date.class)) {
 						if (object instanceof Long) {
-							return new Date(Long.valueOf(String.valueOf(object)));
+							return new java.util.Date(Long.valueOf(String.valueOf(object)));
+						} else if (object instanceof String) {
+							Instant instant = Instant.parse(object.toString());
+							return new java.util.Date(instant.toEpochMilli());
+//							return java.util.Date.from(instant);
 						}
-					} else if (target.equals(Double.class)) {
+					} else if (type.equals(Double.class)) {
 						if (!(object instanceof Date)) {
 							return Double.valueOf(String.valueOf(object));
 						}
-					} else if (target.equals(Timestamp.class)) {
+					} else if (type.equals(Timestamp.class)) {
 						if (!(object instanceof Date)) {
 							return Timestamp.valueOf(object.toString());
 						}
-					} else if (target.equals(String.class)) {
+					} else if (type.equals(String.class)) {
 						return String.valueOf(object);
-					} else {
-						return object;
-					}
-				} catch (final ClassCastException | NumberFormatException e) {
-					LOG.error(String.format("Problem casting %s to %s!", object.getClass().getName(), target.getName()),
+					} 
+				} catch (final Exception e) {
+					LOG.error(String.format("Problem casting %s to %s!", object.getClass().getName(), type.getName()),
 							e);
 				}
+				return object;
 			} else {
 				LOG.warn("The object you are trying to cast must not be null or empty!");
 			}
@@ -612,11 +616,11 @@ public class Utils {
 		return null;
 	}
 
-	private static Method getWriteMethod(final Class<?> clazz, final String name) {
-		if (isNotNullOrEmpty(clazz)) {
+	private static <T> Method getWriteMethod(final Class<T> type, final String name) {
+		if (isNotNullOrEmpty(type)) {
 			if (isNotNullOrEmpty(name)) {
 				try {
-					final BeanInfo info = Introspector.getBeanInfo(clazz, Object.class);
+					final BeanInfo info = Introspector.getBeanInfo(type, Object.class);
 					final PropertyDescriptor[] properties = info.getPropertyDescriptors();
 					for (final PropertyDescriptor p : properties) {
 						if (p.getName().equals(name)) {
@@ -624,11 +628,11 @@ public class Utils {
 						}
 					}
 				} catch (final IntrospectionException e) {
-					LOG.error(String.format("Cannot get write method named %s from class: %s!", name, clazz.getName()),
+					LOG.error(String.format("Cannot get write method named %s from class: %s!", name, type.getName()),
 							e);
 				}
 			} else {
-				LOG.warn(String.format("Field name cannot be null or empty!\nCLASS: %s", clazz.getName()));
+				LOG.warn(String.format("Field name cannot be null or empty!\nCLASS: %s", type.getName()));
 			}
 		} else {
 			LOG.warn("Class cannot be null!");

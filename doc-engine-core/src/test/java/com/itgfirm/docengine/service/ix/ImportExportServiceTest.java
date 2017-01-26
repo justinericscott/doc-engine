@@ -4,19 +4,18 @@ import static org.junit.Assert.*;
 import static com.itgfirm.docengine.service.ix.ImportExportServiceTest.ImportExportServiceTestConstants.*;
 
 import java.io.File;
-import java.sql.SQLException;
-import java.util.Collection;
-import java.util.TreeSet;
 
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.itgfirm.docengine.service.content.ContentService;
+import com.itgfirm.docengine.service.content.InstanceService;
 import com.itgfirm.docengine.service.ix.ImportExportService;
 import com.itgfirm.docengine.types.ContentJpaImpl;
 import com.itgfirm.docengine.types.Contents;
@@ -31,18 +30,25 @@ public class ImportExportServiceTest extends AbstractTest {
 
 	@Autowired
 	private ContentService _contents;
+	
+	@Autowired
+	private InstanceService _instances;
 
 	@Test
-	@Ignore
-	public void a_ImportTest() throws SQLException {
-		createContents(10);
-		Contents contents = _contents.findAll();
-		assertNotNull(contents);
-		Contents objects = _service.importFromFile(Contents.class, TEST_PATH_IMPORT);
-		assertNotNull(objects);
-		for (final ContentJpaImpl o : objects.getContents()) {
-			assertTrue(o.isValid(true));
-			LOG.trace("Type of Content is {}.", o.getClass().getSimpleName());
+	public void a_ImportTest() {
+		if (_instances.deleteAll()) {
+			if (_contents.deleteAll()) {
+				Contents objects = _service.importFromFile(Contents.class, TEST_PATH_IMPORT);
+				assertNotNull(objects);
+				for (final ContentJpaImpl o : objects.getContents()) {
+					assertTrue(o.isValid(true));
+					LOG.trace("Type of Content is {}.", o.getClass().getSimpleName());
+				}			
+			} else {
+				throw new IllegalStateException("Contents have not been cleared!");
+			}
+		} else {
+			throw new IllegalStateException("Instances have not been cleared!");
 		}
 	}
 
@@ -58,22 +64,6 @@ public class ImportExportServiceTest extends AbstractTest {
 	@Test
 	public void c_LiveContentTest() {
 		
-	}
-
-	private ContentJpaImpl createContent() {
-		ContentJpaImpl content = makeTestContent();
-		content = _contents.save(content);
-		assertNotNull(content);
-		assertTrue(content.isValid(true));
-		return content;
-	}
-
-	private Contents createContents(int count) {
-		Collection<ContentJpaImpl> contents = new TreeSet<ContentJpaImpl>();
-		for (int i = 0; i < count; i++) {
-			contents.add(createContent());
-		}
-		return new Contents(contents);
 	}
 
 	static class ImportExportServiceTestConstants {

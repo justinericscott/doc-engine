@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import static com.itgfirm.docengine.DocEngine.Constants.*;
 import static com.itgfirm.docengine.util.TestUtils.getFileFromClasspath;
 import static com.itgfirm.docengine.util.Utils.breakSqlScriptIntoStatements;
+import static com.itgfirm.docengine.util.Utils.isNotNullAndExists;
 import static com.itgfirm.docengine.util.Utils.isNotNullOrEmpty;
 
 import java.io.File;
@@ -180,33 +181,42 @@ public class BusinessDataRepositoryTest extends AbstractTest {
 				if (!isNotNullOrEmpty(tables)) {
 					final String url = schema.getUrl();
 					File ddl = null;
-					if (isNotNullOrEmpty(url) && url.contains("hsqldb") && !isSetup) {
-						LOG.info("Setting Up External Schema Using HyperSQL Database.");
-						ddl = getFileFromClasspath("grex-oracle.ddl");
+					File dml = null;
+					File logic1 = null;
+					File logic2 = null;
+					File logic3 = null;
+					File testData = getFileFromClasspath("sql/test-data.dml");
+					if (isNotNullOrEmpty(url) && (url.contains("hsqldb") || url.contains("oracle")) && !isSetup) {
+						ddl = getFileFromClasspath("sql/grex-oracle.ddl");
+						dml = getFileFromClasspath("sql/grex-oracle.dml");
+						logic1 = getFileFromClasspath("sql/logic-oracle-scenario-1.dml");
+						logic2 = getFileFromClasspath("sql/logic-oracle-scenario-2.dml");
+						logic3 = getFileFromClasspath("sql/logic-oracle-scenario-3.dml");
+						LOG.info("Setting Up External Schema Using {} Database.", (url.contains("hsqldb")
+								? "HyperSQL using Oracle syntax" : (url.contains("oracle") ? "Oracle" : "")));
 					} else if (isNotNullOrEmpty(url) && url.contains("mysql") && !isSetup) {
+						ddl = getFileFromClasspath("sql/grex-mysql.ddl");
+						dml = getFileFromClasspath("sql/grex-mysql.dml");
+						logic1 = getFileFromClasspath("sql/logic-mysql-scenario-1.dml");
+						logic2 = getFileFromClasspath("sql/logic-mysql-scenario-2.dml");
+						logic3 = getFileFromClasspath("sql/logic-mysql-scenario-3.dml");
 						LOG.info("Setting Up External Schema Using MySQL Database.");
-						ddl = getFileFromClasspath("grex-mysql.ddl");
 					}
-					File dml = getFileFromClasspath("grex.dml");
-					File testData = getFileFromClasspath("test-data.dml");
-					File logic1 = getFileFromClasspath("logic-scenario-1.dml");
-					File logic2 = getFileFromClasspath("logic-scenario-2.dml");
-					File logic3 = getFileFromClasspath("logic-scenario-3.dml");
-					if (ddl.exists()) {
+					if (isNotNullAndExists(ddl)) {
 						repo.execute(breakSqlScriptIntoStatements(ddl));
-						if (dml.exists()) {
+						if (isNotNullAndExists(dml)) {
 							repo.execute(breakSqlScriptIntoStatements(dml));
 						}
-						if (testData.exists()) {
+						if (isNotNullAndExists(testData)) {
 							repo.execute(breakSqlScriptIntoStatements(testData));
 						}
-						if (logic1.exists()) {
+						if (isNotNullAndExists(logic1)) {
 							repo.execute(breakSqlScriptIntoStatements(logic1));
 						}
-						if (logic2.exists()) {
+						if (isNotNullAndExists(logic2)) {
 							repo.execute(breakSqlScriptIntoStatements(logic2));
 						}
-						if (logic3.exists()) {
+						if (isNotNullAndExists(logic3)) {
 							repo.execute(breakSqlScriptIntoStatements(logic3));
 						}
 					}

@@ -5,18 +5,18 @@ public class NoAnnotationType {
 	private long id;
 	private String name;
 	private String description;
-	private boolean isTrue;
+	private boolean positive;
 
 	public NoAnnotationType() {
 		
 	}
 	
 	public NoAnnotationType(final long id, final String name, final String description,
-			final boolean isTrue) {
+			final boolean positive) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
-		this.isTrue = isTrue;
+		this.positive = positive;
 	}
 
 	public long getId() {
@@ -31,8 +31,8 @@ public class NoAnnotationType {
 		return description;
 	}
 	
-	public boolean isTrue() {
-		return isTrue;
+	public boolean getPositive() {
+		return positive;
 	}
 
 	@Override

@@ -38,7 +38,7 @@ public class ExampleExcelType {
 		return description;
 	}
 
-	public boolean isPositive() {
+	public boolean getPositive() {
 		return positive;
 	}
 
