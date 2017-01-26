@@ -7,7 +7,7 @@
 		<start-class>com.itgfirm.docengine.DocEngine</start-class>
 	</properties>
 	<parent>
-		<groupId>com.docengine</groupId>
+		<groupId>com.github.justinericscott.docengine</groupId>
 		<artifactId>doc-engine</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
