@@ -2,14 +2,14 @@ package com.github.justinericscott.docengine.repository.content;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.github.justinericscott.docengine.types.ParagraphInstanceJpaImpl;
+import com.github.justinericscott.docengine.models.ParagraphInstance;
 
-public interface ParagraphInstanceRepository extends CrudRepository<ParagraphInstanceJpaImpl, Long> {
+public interface ParagraphInstanceRepository extends CrudRepository<ParagraphInstance, Long> {
 
 	@Override
-	Iterable<ParagraphInstanceJpaImpl> findAll();
+	Iterable<ParagraphInstance> findAll();
 
-	ParagraphInstanceJpaImpl findByProjectIdAndContentContentCd(String projectId, String contentCd);
+	ParagraphInstance findByProjectIdAndContentContentCd(String projectId, String contentCd);
 
-	Iterable<ParagraphInstanceJpaImpl> findByProjectIdAndContentContentCdLike(String projectId, String like);
+	Iterable<ParagraphInstance> findByProjectIdAndContentContentCdLike(String projectId, String like);
 }

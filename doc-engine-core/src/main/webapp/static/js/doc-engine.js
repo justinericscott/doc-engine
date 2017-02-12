@@ -33,10 +33,10 @@ docEngine.config(['$routeProvider',
     	/** Content Repository Routing **/
     	.when('/content-repository', {
     		templateUrl: 'html/content-repo/content-repository-home.html'})
-    	.when('/import-export', {
-    		templateUrl: 'html/content-repo/ix/import-export.html'})
-    	.when('/inclusion-logic', {
-    		templateUrl: 'html/content-repo/logic/inclusion-logic.html'})
+/*    	.when('/import-export', {
+    		templateUrl: 'html/content-repo/ix/import-export.html'})*/
+/*    	.when('/inclusion-logic', {
+    		templateUrl: 'html/content-repo/logic/inclusion-logic.html'})*/
     	.when('/template-library', {
     		templateUrl: 'html/content-repo/library/template-library.html',
     		controller: 'DocumentSourceModalServiceCtrl'})
@@ -45,20 +45,20 @@ docEngine.config(['$routeProvider',
     		controller: 'TokenDictionaryItemModalServiceCtrl'})
     		
     	/** Create A Document Routing **/
-    	.when('/create-a-document', {
-    		templateUrl: 'html/doc-central/create-a-doc/create-a-document.html'})
+/*    	.when('/create-a-document', {
+    		templateUrl: 'html/doc-central/create-a-doc/create-a-document.html'})*/
     		
     	/** Existing Documents Routing **/
     	.when('/document-central', {
     		templateUrl: 'html/doc-central/doc-central-home.html'})
-    	.when('/edit-document', {
-    		templateUrl: 'html/doc-central/editor/edit-document.html'})
-    	.when('/enter-document-data', {
-    		templateUrl: 'html/doc-central/data-entry/enter-document-data.html'})
-    	.when('/revision-history', {
-    		templateUrl: 'html/doc-central/history/revision-history.html'})
-    	.when('/share-print-download', {
-    		templateUrl: 'html/doc-central/comms/share-print-download.html'})
+/*    	.when('/edit-document', {
+    		templateUrl: 'html/doc-central/editor/edit-document.html'})*/
+/*    	.when('/enter-document-data', {
+    		templateUrl: 'html/doc-central/data-entry/enter-document-data.html'})*/
+/*    	.when('/revision-history', {
+    		templateUrl: 'html/doc-central/history/revision-history.html'})*/
+/*    	.when('/share-print-download', {
+    		templateUrl: 'html/doc-central/comms/share-print-download.html'})*/
 			
 		/** Default Behavior, Points Back To Welcome Page **/
 		.otherwise({ redirectTo: '/' });

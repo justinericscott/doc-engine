@@ -2,6 +2,7 @@ package com.github.justinericscott.docengine.repository.token;
 
 import static org.junit.Assert.*;
 import static com.github.justinericscott.docengine.DocEngine.Constants.*;
+import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
 import static com.github.justinericscott.docengine.util.TestUtils.getFileFromClasspath;
 import static com.github.justinericscott.docengine.util.Utils.breakSqlScriptIntoStatements;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullAndExists;
@@ -135,12 +136,12 @@ public class BusinessDataRepositoryTest extends AbstractTest {
 	public void ea_GetExternalSchemaTest() {
 		ExternalSchema schema = repo.getExternalSchema();
 		assertNotNull(schema);
-		LOG.debug("SCHEMA: " + schema.getName());
+		LOG.trace("SCHEMA: " + schema.getName());
 		assertNotNull(schema.getTables());
 		for (ExternalEntity e : schema.getTables()) {
 			if (e.getName().startsWith("TR_") || e.getName().startsWith("tr_")) {
 				assertNotNull(e.getColumns());
-				LOG.debug("ENTITY: " + e.getName());
+				LOG.trace("ENTITY: " + e.getName());
 				for (ExternalAttribute a : e.getColumns()) {
 					assertNotNull(a.getName());
 					LOG.trace("ATTRIBUTE: " + a.getName());

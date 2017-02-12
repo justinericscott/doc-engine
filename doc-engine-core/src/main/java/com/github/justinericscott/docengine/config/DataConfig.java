@@ -147,10 +147,8 @@ class DataConfig {
 	@Bean
 	public JpaVendorAdapter getJpaVendorAdaptor() {
 		final HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
-		jpaVendorAdapter.setShowSql(true);
+//		jpaVendorAdapter.setShowSql(true);
 		jpaVendorAdapter.setGenerateDdl(true);
-//		jpaVendorAdapter.getJpaPropertyMap().put(HIBERNATE_TO_DDL_AUTO, HIBERNATE_TO_DDL_AUTO_CREATE_DROP);
-//		jpaVendorAdapter.getJpaPropertyMap().put(HIBERNATE_TO_DDL_AUTO, HIBERNATE_TO_DDL_AUTO_UPDATE);
 		return jpaVendorAdapter;
 	}
 	
@@ -173,7 +171,7 @@ class DataConfig {
 		static final String HIBERNATE_TO_DDL_AUTO_UPDATE = "update";
 		static final String HIBERNATE_TO_DDL_AUTO_CREATE_DROP = "create-drop";
 		
-		static final String JPA_PACKAGE = "com.github.justinericscott.docengine.types";
+		static final String JPA_PACKAGE = "com.github.justinericscott.docengine.models";
 		static final String JPA_DATETIME_PACKAGE = "org.springframework.data.jpa.convert.threeten";
 
 		static final String REPO_CONTENT = "com.github.justinericscott.docengine.repository.content";

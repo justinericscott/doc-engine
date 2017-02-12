@@ -66,7 +66,6 @@ class WebConfig extends WebMvcConfigurerAdapter {
 	@Bean
 	public ObjectMapper objectMapper() {
 		final Hibernate5Module module = new Hibernate5Module();
-//		module.enable(FORCE_LAZY_LOADING);
 		module.enable(SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS);
 		return Jackson2ObjectMapperBuilder.json().failOnEmptyBeans(false).indentOutput(true).modulesToInstall(module)
 				.build();

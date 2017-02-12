@@ -17,17 +17,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.github.justinericscott.docengine.models.Clause;
+import com.github.justinericscott.docengine.models.Clauses;
+import com.github.justinericscott.docengine.models.Content;
+import com.github.justinericscott.docengine.models.Contents;
+import com.github.justinericscott.docengine.models.Document;
+import com.github.justinericscott.docengine.models.Documents;
+import com.github.justinericscott.docengine.models.Paragraph;
+import com.github.justinericscott.docengine.models.Paragraphs;
+import com.github.justinericscott.docengine.models.Section;
+import com.github.justinericscott.docengine.models.Sections;
 import com.github.justinericscott.docengine.service.content.ContentService;
-import com.github.justinericscott.docengine.types.ClauseJpaImpl;
-import com.github.justinericscott.docengine.types.Clauses;
-import com.github.justinericscott.docengine.types.ContentJpaImpl;
-import com.github.justinericscott.docengine.types.Contents;
-import com.github.justinericscott.docengine.types.DocumentJpaImpl;
-import com.github.justinericscott.docengine.types.Documents;
-import com.github.justinericscott.docengine.types.ParagraphJpaImpl;
-import com.github.justinericscott.docengine.types.Paragraphs;
-import com.github.justinericscott.docengine.types.SectionJpaImpl;
-import com.github.justinericscott.docengine.types.Sections;
 
 /**
  * @author Justin Scott
@@ -49,7 +49,7 @@ final class ContentRestController {
 	private RestUtils _utils;
 
 	ContentRestController() {
-		LOG.info("Creating new Content REST Controller.");
+		LOG.debug("Creating new Content REST Controller.");
 	}
 
 	@RestController
@@ -57,24 +57,34 @@ final class ContentRestController {
 	final class DocumentRestController {
 
 		DocumentRestController() {
-			LOG.info("Creating new Document REST Controller.");
+			LOG.debug("Creating new Document REST Controller.");
 		}
 
 		@RequestMapping(method = DELETE, value = BY_ID)
 		final ResponseEntity<?> delete(@PathVariable(PARAM_ID) final Long id) {
-			final boolean pass = _contents.delete(id, DocumentJpaImpl.class);
+			final boolean pass = _contents.delete(id, Document.class);
 			return new ResponseEntity<>(pass ? OK : BAD_REQUEST);
 		}
 
 		@RequestMapping(method = DELETE, value = BY_CODE)
 		final ResponseEntity<?> delete(@PathVariable(PARAM_CODE) final String code) {
-			final boolean pass = _contents.delete(code, DocumentJpaImpl.class);
+			final boolean pass = _contents.delete(code, Document.class);
 			return new ResponseEntity<>(pass ? OK : BAD_REQUEST);
 		}
 
+		@RequestMapping(method = GET, path = DOCUMENTS)
+		final ResponseEntity<Documents> findAll() {
+			final Documents contents = _contents.findAll(Documents.class);
+			if (isNotNullOrEmpty(contents)) {
+				return createResponseForSuccess(contents);
+			} else {
+				return createResponseForNoContent(_utils.getURI(_utils.getDestination(CONTENTS)), contents);
+			}
+		}
+
 		@RequestMapping(method = GET, value = BY_CODE)
-		final ResponseEntity<DocumentJpaImpl> findByCode(@PathVariable(PARAM_CODE) final String code) {
-			final DocumentJpaImpl document = _contents.findByCode(code, DocumentJpaImpl.class);
+		final ResponseEntity<Document> findByCode(@PathVariable(PARAM_CODE) final String code) {
+			final Document document = _contents.findByCode(code, Document.class);
 			if (isNotNullOrEmpty(document)) {
 				return createResponseForSuccess(document);
 			} else {
@@ -83,9 +93,9 @@ final class ContentRestController {
 		}
 
 		@RequestMapping(method = GET, value = BY_CODE + IS_EAGER_KIDS)
-		final ResponseEntity<DocumentJpaImpl> findByCode(@PathVariable(PARAM_CODE) final String code,
+		final ResponseEntity<Document> findByCode(@PathVariable(PARAM_CODE) final String code,
 				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			final DocumentJpaImpl document = _contents.findByCode(code, DocumentJpaImpl.class, eagerKids);
+			final Document document = _contents.findByCode(code, Document.class, eagerKids);
 			if (isNotNullOrEmpty(document)) {
 				return createResponseForSuccess(document);
 			} else {
@@ -104,8 +114,8 @@ final class ContentRestController {
 		}
 
 		@RequestMapping(method = GET, value = BY_ID)
-		final ResponseEntity<DocumentJpaImpl> findOne(@PathVariable(PARAM_ID) final Long id) {
-			final DocumentJpaImpl document = _contents.findOne(id, DocumentJpaImpl.class);
+		final ResponseEntity<Document> findOne(@PathVariable(PARAM_ID) final Long id) {
+			final Document document = _contents.findOne(id, Document.class);
 			if (isNotNullOrEmpty(document)) {
 				return createResponseForSuccess(document);
 			} else {
@@ -114,9 +124,9 @@ final class ContentRestController {
 		}
 
 		@RequestMapping(method = GET, value = BY_ID + IS_EAGER_KIDS)
-		final ResponseEntity<DocumentJpaImpl> findOne(@PathVariable(PARAM_ID) final Long id,
+		final ResponseEntity<Document> findOne(@PathVariable(PARAM_ID) final Long id,
 				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			final DocumentJpaImpl document = _contents.findOne(id, DocumentJpaImpl.class, eagerKids);
+			final Document document = _contents.findOne(id, Document.class, eagerKids);
 			if (isNotNullOrEmpty(document)) {
 				return createResponseForSuccess(document);
 			} else {
@@ -169,8 +179,8 @@ final class ContentRestController {
 		}
 
 		@RequestMapping(method = PUT)
-		final ResponseEntity<DocumentJpaImpl> save(@RequestBody final DocumentJpaImpl document) {
-			final DocumentJpaImpl saved = _contents.save(document);
+		final ResponseEntity<Document> save(@RequestBody final Document document) {
+			final Document saved = _contents.save(document);
 			if (isNotNullOrEmpty(saved)) {
 				return createResponseForSuccess(saved);
 			} else {
@@ -184,12 +194,12 @@ final class ContentRestController {
 	final class SectionRestController {
 
 		SectionRestController() {
-			LOG.info("Creating new Section REST Controller.");
+			LOG.debug("Creating new Section REST Controller.");
 		}
 
 		@RequestMapping(method = GET, value = BY_CODE)
-		final ResponseEntity<SectionJpaImpl> findByCode(@PathVariable(PARAM_CODE) final String code) {
-			final SectionJpaImpl section = _contents.findByCode(code, SectionJpaImpl.class);
+		final ResponseEntity<Section> findByCode(@PathVariable(PARAM_CODE) final String code) {
+			final Section section = _contents.findByCode(code, Section.class);
 			if (isNotNullOrEmpty(section)) {
 				return createResponseForSuccess(section);
 			} else {
@@ -198,9 +208,9 @@ final class ContentRestController {
 		}
 
 		@RequestMapping(method = GET, value = BY_CODE + IS_EAGER_KIDS)
-		final ResponseEntity<SectionJpaImpl> findByCode(@PathVariable(PARAM_CODE) final String code,
+		final ResponseEntity<Section> findByCode(@PathVariable(PARAM_CODE) final String code,
 				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			final SectionJpaImpl section = _contents.findByCode(code, SectionJpaImpl.class, eagerKids);
+			final Section section = _contents.findByCode(code, Section.class, eagerKids);
 			if (isNotNullOrEmpty(section)) {
 				return createResponseForSuccess(section);
 			} else {
@@ -219,8 +229,8 @@ final class ContentRestController {
 		}
 
 		@RequestMapping(method = GET, value = BY_ID)
-		final ResponseEntity<SectionJpaImpl> findOne(@PathVariable(PARAM_ID) final Long id) {
-			final SectionJpaImpl section = _contents.findOne(id, SectionJpaImpl.class);
+		final ResponseEntity<Section> findOne(@PathVariable(PARAM_ID) final Long id) {
+			final Section section = _contents.findOne(id, Section.class);
 			if (isNotNullOrEmpty(section)) {
 				return createResponseForSuccess(section);
 			} else {
@@ -229,9 +239,9 @@ final class ContentRestController {
 		}
 
 		@RequestMapping(method = GET, value = BY_ID + IS_EAGER_KIDS)
-		final ResponseEntity<SectionJpaImpl> findOne(@PathVariable(PARAM_ID) final Long id,
+		final ResponseEntity<Section> findOne(@PathVariable(PARAM_ID) final Long id,
 				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			final SectionJpaImpl section = _contents.findOne(id, SectionJpaImpl.class, eagerKids);
+			final Section section = _contents.findOne(id, Section.class, eagerKids);
 			if (isNotNullOrEmpty(section)) {
 				return createResponseForSuccess(section);
 			} else {
@@ -284,8 +294,8 @@ final class ContentRestController {
 		}
 
 		@RequestMapping(method = PUT)
-		final ResponseEntity<SectionJpaImpl> save(@RequestBody final SectionJpaImpl section) {
-			final SectionJpaImpl saved = _contents.save(section);
+		final ResponseEntity<Section> save(@RequestBody final Section section) {
+			final Section saved = _contents.save(section);
 			if (isNotNullOrEmpty(saved)) {
 				return createResponseForSuccess(saved);
 			} else {
@@ -299,12 +309,12 @@ final class ContentRestController {
 	final class ClauseRestController {
 
 		ClauseRestController() {
-			LOG.info("Creating new Clause REST Controller.");
+			LOG.debug("Creating new Clause REST Controller.");
 		}
 
 		@RequestMapping(method = GET, value = BY_CODE)
-		final ResponseEntity<ClauseJpaImpl> findByCode(@PathVariable(PARAM_CODE) final String code) {
-			final ClauseJpaImpl clause = _contents.findByCode(code, ClauseJpaImpl.class);
+		final ResponseEntity<Clause> findByCode(@PathVariable(PARAM_CODE) final String code) {
+			final Clause clause = _contents.findByCode(code, Clause.class);
 			if (isNotNullOrEmpty(clause)) {
 				return createResponseForSuccess(clause);
 			} else {
@@ -313,9 +323,9 @@ final class ContentRestController {
 		}
 
 		@RequestMapping(method = GET, value = BY_CODE + IS_EAGER_KIDS)
-		final ResponseEntity<ClauseJpaImpl> findByCode(@PathVariable(PARAM_CODE) final String code,
+		final ResponseEntity<Clause> findByCode(@PathVariable(PARAM_CODE) final String code,
 				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			final ClauseJpaImpl clause = _contents.findByCode(code, ClauseJpaImpl.class, eagerKids);
+			final Clause clause = _contents.findByCode(code, Clause.class, eagerKids);
 			if (isNotNullOrEmpty(clause)) {
 				return createResponseForSuccess(clause);
 			} else {
@@ -334,8 +344,8 @@ final class ContentRestController {
 		}
 
 		@RequestMapping(method = GET, value = BY_ID)
-		final ResponseEntity<ClauseJpaImpl> findOne(@PathVariable(PARAM_ID) final Long id) {
-			final ClauseJpaImpl clause = _contents.findOne(id, ClauseJpaImpl.class);
+		final ResponseEntity<Clause> findOne(@PathVariable(PARAM_ID) final Long id) {
+			final Clause clause = _contents.findOne(id, Clause.class);
 			if (isNotNullOrEmpty(clause)) {
 				return createResponseForSuccess(clause);
 			} else {
@@ -344,9 +354,9 @@ final class ContentRestController {
 		}
 
 		@RequestMapping(method = GET, value = BY_ID + IS_EAGER_KIDS)
-		final ResponseEntity<ClauseJpaImpl> findOne(@PathVariable(PARAM_ID) final Long id,
+		final ResponseEntity<Clause> findOne(@PathVariable(PARAM_ID) final Long id,
 				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			final ClauseJpaImpl clause = _contents.findOne(id, ClauseJpaImpl.class, eagerKids);
+			final Clause clause = _contents.findOne(id, Clause.class, eagerKids);
 			if (isNotNullOrEmpty(clause)) {
 				return createResponseForSuccess(clause);
 			} else {
@@ -399,8 +409,8 @@ final class ContentRestController {
 		}
 
 		@RequestMapping(method = PUT)
-		final ResponseEntity<ClauseJpaImpl> save(@RequestBody final ClauseJpaImpl clause) {
-			final ClauseJpaImpl saved = _contents.save(clause);
+		final ResponseEntity<Clause> save(@RequestBody final Clause clause) {
+			final Clause saved = _contents.save(clause);
 			if (isNotNullOrEmpty(saved)) {
 				return createResponseForSuccess(saved);
 			} else {
@@ -414,12 +424,12 @@ final class ContentRestController {
 	final class ParagraphRestController {
 
 		ParagraphRestController() {
-			LOG.info("Creating new Paragraph REST Controller.");
+			LOG.debug("Creating new Paragraph REST Controller.");
 		}
 
 		@RequestMapping(method = GET, value = BY_CODE)
-		final ResponseEntity<ParagraphJpaImpl> findByCode(@PathVariable(PARAM_CODE) final String code) {
-			final ParagraphJpaImpl paragraph = _contents.findByCode(code, ParagraphJpaImpl.class);
+		final ResponseEntity<Paragraph> findByCode(@PathVariable(PARAM_CODE) final String code) {
+			final Paragraph paragraph = _contents.findByCode(code, Paragraph.class);
 			if (isNotNullOrEmpty(paragraph)) {
 				return createResponseForSuccess(paragraph);
 			} else {
@@ -438,8 +448,8 @@ final class ContentRestController {
 		}
 
 		@RequestMapping(method = GET, value = BY_ID)
-		final ResponseEntity<ParagraphJpaImpl> findOne(@PathVariable(PARAM_ID) final Long id) {
-			final ParagraphJpaImpl paragraph = _contents.findOne(id, ParagraphJpaImpl.class);
+		final ResponseEntity<Paragraph> findOne(@PathVariable(PARAM_ID) final Long id) {
+			final Paragraph paragraph = _contents.findOne(id, Paragraph.class);
 			if (isNotNullOrEmpty(paragraph)) {
 				return createResponseForSuccess(paragraph);
 			} else {
@@ -448,8 +458,8 @@ final class ContentRestController {
 		}
 
 		@RequestMapping(method = PUT)
-		final ResponseEntity<ParagraphJpaImpl> save(@RequestBody final ParagraphJpaImpl paragraph) {
-			final ParagraphJpaImpl saved = _contents.save(paragraph);
+		final ResponseEntity<Paragraph> save(@RequestBody final Paragraph paragraph) {
+			final Paragraph saved = _contents.save(paragraph);
 			if (isNotNullOrEmpty(saved)) {
 				return createResponseForSuccess(saved);
 			} else {
@@ -460,13 +470,13 @@ final class ContentRestController {
 
 	@RequestMapping(method = DELETE, value = BY_ID)
 	final ResponseEntity<?> delete(@PathVariable(PARAM_ID) final Long id) {
-		final boolean pass = _contents.delete(id, ContentJpaImpl.class);
+		final boolean pass = _contents.delete(id, Content.class);
 		return new ResponseEntity<>(pass ? OK : BAD_REQUEST);
 	}
 
 	@RequestMapping(method = DELETE, value = BY_CODE)
 	final ResponseEntity<?> delete(@PathVariable(PARAM_CODE) final String code) {
-		final boolean pass = _contents.delete(code, ContentJpaImpl.class);
+		final boolean pass = _contents.delete(code, Content.class);
 		return new ResponseEntity<>(pass ? OK : BAD_REQUEST);
 	}
 
@@ -480,19 +490,9 @@ final class ContentRestController {
 		}
 	}
 
-	@RequestMapping(method = GET, path = CONTENTS + BY_TYPE)
-	final <T> ResponseEntity<T> findAll(@PathVariable(PARAM_TYPE) final Class<T> type) {
-		final T contents = _contents.findAll(type);
-		if (isNotNullOrEmpty(contents)) {
-			return createResponseForSuccess(contents);
-		} else {
-			return createResponseForNoContent(_utils.getURI(_utils.getDestination(CONTENTS)), contents);
-		}
-	}
-
 	@RequestMapping(method = GET, value = BY_CODE)
 	final ResponseEntity<?> findByCode(@PathVariable(PARAM_CODE) final String code) {
-		final ContentJpaImpl content = _contents.findByCode(code);
+		final Content content = _contents.findByCode(code);
 		if (isNotNullOrEmpty(content)) {
 			return createResponseForSuccess(content);
 		} else {
@@ -511,8 +511,8 @@ final class ContentRestController {
 	}
 
 	@RequestMapping(method = GET, value = BY_ID)
-	final ResponseEntity<ContentJpaImpl> findOne(@PathVariable(PARAM_ID) final Long id) {
-		final ContentJpaImpl content = _contents.findOne(id);
+	final ResponseEntity<Content> findOne(@PathVariable(PARAM_ID) final Long id) {
+		final Content content = _contents.findOne(id);
 		if (isNotNullOrEmpty(content)) {
 			return createResponseForSuccess(content);
 		} else {
@@ -521,8 +521,8 @@ final class ContentRestController {
 	}
 
 	@RequestMapping(method = PUT)
-	final ResponseEntity<ContentJpaImpl> save(@RequestBody final ContentJpaImpl content) {
-		final ContentJpaImpl saved = _contents.save(content);
+	final ResponseEntity<Content> save(@RequestBody final Content content) {
+		final Content saved = _contents.save(content);
 		if (isNotNullOrEmpty(saved)) {
 			return createResponseForSuccess(saved);
 		} else {

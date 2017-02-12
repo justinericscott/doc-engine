@@ -48,15 +48,14 @@ class ExcelWriterServiceImpl implements ExcelWriterService {
 						}
 					}
 				} else {
-					LOG.debug(String.format("The file to be used must not be null and must exist!\nCLASS: %s",
-							clazz.getName()));
+					LOG.warn("The file to be used must not be null and must exist!\nCLASS: {}",
+							clazz.getName());
 				}
 			} else {
-				LOG.debug(String.format("The data collection must not be null or empty!\nCLASS: %s",
-						clazz.getSimpleName()));
+				LOG.warn("The data collection must not be null or empty!\nCLASS: {}", clazz.getSimpleName());
 			}
 		} else {
-			LOG.debug("The class must not be null!");
+			LOG.warn("The class must not be null!");
 		}
 		return null;
 	}
@@ -83,7 +82,7 @@ class ExcelWriterServiceImpl implements ExcelWriterService {
 				cell.setCellType(Cell.CELL_TYPE_BLANK);
 			}
 		} else {
-			LOG.debug("The cell must not be null!");
+			LOG.warn("The cell must not be null!");
 		}
 	}
 
@@ -97,10 +96,10 @@ class ExcelWriterServiceImpl implements ExcelWriterService {
 					idx++;
 				}
 			} else {
-				LOG.debug("The class must not be null!");
+				LOG.warn("The class must not be null!");
 			}
 		} else {
-			LOG.debug("The header row must not be null!");
+			LOG.warn("The header row must not be null!");
 		}
 	}
 
@@ -111,20 +110,20 @@ class ExcelWriterServiceImpl implements ExcelWriterService {
 					int idx = 0;
 					for (String field : getExcelColumnFieldNamesFromClass(clazz)) {
 						if (field.equals("isPositive")) {
-							System.out.println("");
+
 						}
 						fillCell(row.createCell(idx), getReadMethodAndInvoke(obj, field));
 						idx++;
 					}
 				} else {
-					LOG.debug(String.format("The object to read from must not be null or empty!\nCLASS: %s - ROW: %s",
-							clazz.getName(), row.getRowNum()));
+					LOG.warn("The object to read from must not be null or empty!\nCLASS: {} - ROW: {}", clazz.getName(),
+							row.getRowNum());
 				}
 			} else {
-				LOG.debug("The class must not be null!");
+				LOG.warn("The class must not be null!");
 			}
 		} else {
-			LOG.debug("The row must not be null!");
+			LOG.warn("The row must not be null!");
 		}
 	}
 
@@ -138,13 +137,13 @@ class ExcelWriterServiceImpl implements ExcelWriterService {
 					fillRow(sheet.createRow(idx), clazz, data);
 				}
 			} else {
-				LOG.debug(String.format("The sheet must not be null!\nCLASS: %s", clazz.getName()));
+				LOG.warn("The sheet must not be null!\nCLASS: {}", clazz.getName());
 			}
 		} else {
-			LOG.debug("The class must not be null or empty!");
+			LOG.warn("The class must not be null or empty!");
 		}
 	}
-	
+
 	final void fillSheet(final Sheet sheet, final Class<?> clazz, final Iterable<?> data, final boolean header) {
 		if (sheet != null) {
 			if (isNotNullOrEmpty(clazz)) {
@@ -160,14 +159,13 @@ class ExcelWriterServiceImpl implements ExcelWriterService {
 						idx++;
 					}
 				} else {
-					LOG.debug(String.format("The collection of data must not be null or empty!\nCLASS: %s",
-							clazz.getName()));
+					LOG.warn("The collection of data must not be null or empty!\nCLASS: {}", clazz.getName());
 				}
 			} else {
-				LOG.debug("The class must not be null!");
+				LOG.warn("The class must not be null!");
 			}
 		} else {
-			LOG.debug("The sheet must not be null!");
+			LOG.warn("The sheet must not be null!");
 		}
 	}
 }

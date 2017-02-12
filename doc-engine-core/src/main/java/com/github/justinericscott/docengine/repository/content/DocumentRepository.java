@@ -2,14 +2,14 @@ package com.github.justinericscott.docengine.repository.content;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.github.justinericscott.docengine.types.DocumentJpaImpl;
+import com.github.justinericscott.docengine.models.Document;
 
-public interface DocumentRepository extends CrudRepository<DocumentJpaImpl, Long> {
+public interface DocumentRepository extends CrudRepository<Document, Long> {
 	
 	@Override
-	Iterable<DocumentJpaImpl> findAll();
+	Iterable<Document> findAll();
 	
-	DocumentJpaImpl findByContentCd(String code);
+	Document findByContentCd(String code);
 	
-	Iterable<DocumentJpaImpl> findByContentCdLike(String like);
+	Iterable<Document> findByContentCdLike(String like);
 }

@@ -2,13 +2,13 @@ package com.github.justinericscott.docengine.repository.content;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.github.justinericscott.docengine.types.ClauseInstanceJpaImpl;
+import com.github.justinericscott.docengine.models.ClauseInstance;
 
-public interface ClauseInstanceRepository extends CrudRepository<ClauseInstanceJpaImpl, Long> {
+public interface ClauseInstanceRepository extends CrudRepository<ClauseInstance, Long> {
 
-	Iterable<ClauseInstanceJpaImpl> findAll();
+	Iterable<ClauseInstance> findAll();
 
-	ClauseInstanceJpaImpl findByProjectIdAndContentContentCd(String projectId, String contentCd);
+	ClauseInstance findByProjectIdAndContentContentCd(String projectId, String contentCd);
 
-	Iterable<ClauseInstanceJpaImpl> findByProjectIdAndContentContentCdLike(String projectId, String like);
+	Iterable<ClauseInstance> findByProjectIdAndContentContentCdLike(String projectId, String like);
 }

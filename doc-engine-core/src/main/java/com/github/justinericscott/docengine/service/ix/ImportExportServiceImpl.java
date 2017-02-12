@@ -1,6 +1,9 @@
 package com.github.justinericscott.docengine.service.ix;
 
-import static com.github.justinericscott.docengine.util.Utils.*;
+import static com.github.justinericscott.docengine.util.Utils.create;
+import static com.github.justinericscott.docengine.util.Utils.get;
+import static com.github.justinericscott.docengine.util.Utils.isNotNullAndExists;
+import static com.github.justinericscott.docengine.util.Utils.isNotNullOrEmpty;
 
 import java.io.File;
 import java.util.Arrays;
@@ -11,11 +14,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.github.justinericscott.docengine.models.Content;
+import com.github.justinericscott.docengine.models.TokenDefinition;
 import com.github.justinericscott.docengine.service.content.ContentService;
 import com.github.justinericscott.docengine.service.token.TokenDictionaryService;
-import com.github.justinericscott.docengine.types.ContentJpaImpl;
-import com.github.justinericscott.docengine.types.Contents;
-import com.github.justinericscott.docengine.types.TokenDefinitionJpaImpl;
 
 /**
  * @author Justin Scott
@@ -42,10 +44,10 @@ public class ImportExportServiceImpl implements ImportExportService {
 	public final File exportToFile(final Class<?> type, final String path) {
 		if (isNotNullOrEmpty(type)) {
 			Collection<?> objects = null;
-			if (type.equals(ContentJpaImpl.class)) {
+			if (type.equals(Content.class)) {
 				objects = Arrays.asList(_contents.findAll().getContents());
-			} else if (type.equals(TokenDefinitionJpaImpl.class)) {
-				objects = Arrays.asList(_dictionary.findAll().getDefinitions());
+			} else if (type.equals(TokenDefinition.class)) {
+				objects = Arrays.asList(_dictionary.findAll().getTokens());
 			}
 			if (isNotNullOrEmpty(objects)) {
 				final File file = create(path, true);
@@ -62,25 +64,30 @@ public class ImportExportServiceImpl implements ImportExportService {
 	}
 
 	@Override
-	public <T> T importFromFile(final Class<T> type, final String path) {
+	public <T> Iterable<T> importFromFile(final Class<T> type, final String path) {
 		if (isNotNullOrEmpty(type)) {
-			if (type.equals(Contents.class)) {
-				final Iterable<ContentJpaImpl> iter = _reader.read(ContentJpaImpl.class, get(path));
-				if (isNotNullOrEmpty(iter)) {
-					final Collection<ContentJpaImpl> saved = (Collection<ContentJpaImpl>) _contents.save(iter);
-					final Contents contents = new Contents(saved);
-					return type.cast(contents);
-				} else {
-					LOG.warn("No objects where created from the provided Class and File path!");
-				}
-//				final Collection<ContentJpaImpl> objects = (Collection<ContentJpaImpl>) _reader.read(ContentJpaImpl.class, get(path));	
-//				if (isNotNullOrEmpty(objects)) {
-//					Contents contents = new Contents(objects.toArray(new ContentJpaImpl[objects.size()]));
-//					contents = _contents.save(contents);
-//					return clazz.cast(contents);
-//				} else {
-//					LOG.warn("No objects where created from the provided Class and File path!");
-//				}
+			final Collection<T> objects = (Collection<T>) _reader.read(type, get(path));
+			if (isNotNullOrEmpty(objects)) {
+				final Iterable<T> contents = _contents.save(objects, type);
+				return contents;
+			} else {
+				LOG.warn("No objects where created from the provided Class and File path!");
+			}
+		} else {
+			LOG.warn("The class must not be null!");
+		}
+		return null;
+	}
+
+	@Override
+	public Iterable<? extends Content> importFromFile(final Class<? extends Content>[] types, final String path) {
+		if (isNotNullOrEmpty(types)) {
+			final Iterable<? extends Content> iter = _reader.read(types, get(path));
+			if (isNotNullOrEmpty(iter)) {
+				final Iterable<? extends Content> saved = _contents.save(iter, null);
+				return saved;
+			} else {
+				LOG.warn("No objects where created from the provided Class and File path!");
 			}
 		} else {
 			LOG.warn("The class must not be null!");

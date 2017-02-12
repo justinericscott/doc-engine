@@ -5,6 +5,8 @@ package com.github.justinericscott.docengine.service.ix;
 
 import java.io.File;
 
+import com.github.justinericscott.docengine.models.Content;
+
 /**
  * @author Justin Scott
  * 
@@ -29,5 +31,7 @@ public interface ImportExportService {
 	 * 
 	 * @return
 	 */
-	<T> T importFromFile(Class<T> clazz, String path);
+	Iterable<? extends Content> importFromFile(final Class<? extends Content>[] types, final String path);
+	
+	<T> Iterable<T> importFromFile(final Class<T> type, final String path);
 }

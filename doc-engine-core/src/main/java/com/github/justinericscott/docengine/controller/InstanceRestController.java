@@ -18,16 +18,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.github.justinericscott.docengine.models.ClauseInstance;
+import com.github.justinericscott.docengine.models.ClauseInstances;
+import com.github.justinericscott.docengine.models.DocumentInstance;
+import com.github.justinericscott.docengine.models.DocumentInstances;
+import com.github.justinericscott.docengine.models.Instance;
+import com.github.justinericscott.docengine.models.Instances;
+import com.github.justinericscott.docengine.models.ParagraphInstance;
+import com.github.justinericscott.docengine.models.ParagraphInstances;
+import com.github.justinericscott.docengine.models.SectionInstance;
+import com.github.justinericscott.docengine.models.SectionInstances;
 import com.github.justinericscott.docengine.service.content.InstanceService;
-import com.github.justinericscott.docengine.types.ClauseInstanceJpaImpl;
-import com.github.justinericscott.docengine.types.ClauseInstances;
-import com.github.justinericscott.docengine.types.DocumentInstanceJpaImpl;
-import com.github.justinericscott.docengine.types.InstanceJpaImpl;
-import com.github.justinericscott.docengine.types.Instances;
-import com.github.justinericscott.docengine.types.ParagraphInstanceJpaImpl;
-import com.github.justinericscott.docengine.types.ParagraphInstances;
-import com.github.justinericscott.docengine.types.SectionInstanceJpaImpl;
-import com.github.justinericscott.docengine.types.SectionInstances;
 
 /**
  * @author Justin Scott
@@ -49,7 +50,7 @@ final class InstanceRestController<T, L> {
 	private RestUtils _utils;
 
 	InstanceRestController() {
-		LOG.info("Creating new Instance REST Controller.");
+		LOG.debug("Creating new Instance REST Controller.");
 	}
 
 	@RestController
@@ -57,14 +58,19 @@ final class InstanceRestController<T, L> {
 	final class DocumentInstanceRestController {
 
 		DocumentInstanceRestController() {
-			LOG.info("Creating new Document Instance REST Controller.");
+			LOG.debug("Creating new Document Instance REST Controller.");
+		}
+
+		@RequestMapping(method = GET, value = DOCUMENTS)
+		final ResponseEntity<DocumentInstances> findAll() {
+			return new ResponseEntity<DocumentInstances>(_instances.findAll(DocumentInstances.class), OK);
 		}
 
 		@RequestMapping(method = GET, value = BY_PROJECT_ID + BY_CODE)
-		final ResponseEntity<DocumentInstanceJpaImpl> findByProjectIdAndCode(
+		final ResponseEntity<DocumentInstance> findByProjectIdAndCode(
 				@PathVariable(PARAM_PROJECT_ID) final String projectId, @PathVariable(PARAM_CODE) final String code) {
-			final DocumentInstanceJpaImpl document = _instances.findByProjectIdAndCode(projectId, code,
-					DocumentInstanceJpaImpl.class);
+			final DocumentInstance document = _instances.findByProjectIdAndCode(projectId, code,
+					DocumentInstance.class);
 			if (isNotNullOrEmpty(document)) {
 				return createResponseForSuccess(document);
 			} else {
@@ -73,11 +79,11 @@ final class InstanceRestController<T, L> {
 		}
 
 		@RequestMapping(method = GET, value = BY_PROJECT_ID + BY_CODE + IS_EAGER_KIDS)
-		final ResponseEntity<DocumentInstanceJpaImpl> findByProjectIdAndCode(
+		final ResponseEntity<DocumentInstance> findByProjectIdAndCode(
 				@PathVariable(PARAM_PROJECT_ID) final String projectId, @PathVariable(PARAM_CODE) final String code,
 				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			final DocumentInstanceJpaImpl document = _instances.findByProjectIdAndCode(projectId, code,
-					DocumentInstanceJpaImpl.class, eagerKids);
+			final DocumentInstance document = _instances.findByProjectIdAndCode(projectId, code,
+					DocumentInstance.class, eagerKids);
 			if (isNotNullOrEmpty(document)) {
 				return createResponseForSuccess(document);
 			} else {
@@ -87,8 +93,8 @@ final class InstanceRestController<T, L> {
 		}
 
 		@RequestMapping(method = GET, value = BY_ID)
-		final ResponseEntity<DocumentInstanceJpaImpl> findOne(@PathVariable(PARAM_ID) final Long id) {
-			final DocumentInstanceJpaImpl document = _instances.findOne(id, DocumentInstanceJpaImpl.class);
+		final ResponseEntity<DocumentInstance> findOne(@PathVariable(PARAM_ID) final Long id) {
+			final DocumentInstance document = _instances.findOne(id, DocumentInstance.class);
 			if (isNotNullOrEmpty(document)) {
 				return createResponseForSuccess(document);
 			} else {
@@ -97,10 +103,9 @@ final class InstanceRestController<T, L> {
 		}
 
 		@RequestMapping(method = GET, value = BY_ID + IS_EAGER_KIDS)
-		final ResponseEntity<DocumentInstanceJpaImpl> findOne(@PathVariable(PARAM_ID) final Long id,
+		final ResponseEntity<DocumentInstance> findOne(@PathVariable(PARAM_ID) final Long id,
 				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			LOG.debug("Received request for {} with children.", DocumentInstanceJpaImpl.class.getSimpleName());
-			final DocumentInstanceJpaImpl document = _instances.findOne(id, DocumentInstanceJpaImpl.class, eagerKids);
+			final DocumentInstance document = _instances.findOne(id, DocumentInstance.class, eagerKids);
 			if (isNotNullOrEmpty(document)) {
 				return createResponseForSuccess(document);
 			} else {
@@ -157,8 +162,8 @@ final class InstanceRestController<T, L> {
 		}
 
 		@RequestMapping(method = PUT)
-		final ResponseEntity<DocumentInstanceJpaImpl> save(@RequestBody final DocumentInstanceJpaImpl document) {
-			final DocumentInstanceJpaImpl saved = _instances.save(document);
+		final ResponseEntity<DocumentInstance> save(@RequestBody final DocumentInstance document) {
+			final DocumentInstance saved = _instances.save(document);
 			if (isNotNullOrEmpty(saved)) {
 				return createResponseForSuccess(saved);
 			} else {
@@ -172,14 +177,14 @@ final class InstanceRestController<T, L> {
 	final class SectionInstanceRestController {
 
 		SectionInstanceRestController() {
-			LOG.info("Creating new Section Instance REST Controller.");
+			LOG.debug("Creating new Section Instance REST Controller.");
 		}
 
 		@RequestMapping(method = GET, value = BY_PROJECT_ID + BY_CODE)
-		final ResponseEntity<SectionInstanceJpaImpl> findByProjectIdAndCode(
+		final ResponseEntity<SectionInstance> findByProjectIdAndCode(
 				@PathVariable(PARAM_PROJECT_ID) final String projectId, @PathVariable(PARAM_CODE) final String code) {
-			final SectionInstanceJpaImpl section = _instances.findByProjectIdAndCode(projectId, code,
-					SectionInstanceJpaImpl.class);
+			final SectionInstance section = _instances.findByProjectIdAndCode(projectId, code,
+					SectionInstance.class);
 			if (isNotNullOrEmpty(section)) {
 				return createResponseForSuccess(section);
 			} else {
@@ -188,11 +193,11 @@ final class InstanceRestController<T, L> {
 		}
 
 		@RequestMapping(method = GET, value = BY_PROJECT_ID + BY_CODE + IS_EAGER_KIDS)
-		final ResponseEntity<SectionInstanceJpaImpl> findByProjectIdAndCode(
+		final ResponseEntity<SectionInstance> findByProjectIdAndCode(
 				@PathVariable(PARAM_PROJECT_ID) final String projectId, @PathVariable(PARAM_CODE) final String code,
 				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			final SectionInstanceJpaImpl section = _instances.findByProjectIdAndCode(projectId, code,
-					SectionInstanceJpaImpl.class, eagerKids);
+			final SectionInstance section = _instances.findByProjectIdAndCode(projectId, code,
+					SectionInstance.class, eagerKids);
 			if (isNotNullOrEmpty(section)) {
 				return createResponseForSuccess(section);
 			} else {
@@ -202,8 +207,8 @@ final class InstanceRestController<T, L> {
 		}
 
 		@RequestMapping(method = GET, value = BY_ID)
-		final ResponseEntity<SectionInstanceJpaImpl> findOne(@PathVariable(PARAM_ID) final Long id) {
-			final SectionInstanceJpaImpl section = _instances.findOne(id, SectionInstanceJpaImpl.class);
+		final ResponseEntity<SectionInstance> findOne(@PathVariable(PARAM_ID) final Long id) {
+			final SectionInstance section = _instances.findOne(id, SectionInstance.class);
 			if (isNotNullOrEmpty(section)) {
 				return createResponseForSuccess(section);
 			} else {
@@ -212,9 +217,9 @@ final class InstanceRestController<T, L> {
 		}
 
 		@RequestMapping(method = GET, value = BY_ID + IS_EAGER_KIDS)
-		final ResponseEntity<SectionInstanceJpaImpl> findOne(@PathVariable(PARAM_ID) final Long id,
+		final ResponseEntity<SectionInstance> findOne(@PathVariable(PARAM_ID) final Long id,
 				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			final SectionInstanceJpaImpl section = _instances.findOne(id, SectionInstanceJpaImpl.class, eagerKids);
+			final SectionInstance section = _instances.findOne(id, SectionInstance.class, eagerKids);
 			if (isNotNullOrEmpty(section)) {
 				return createResponseForSuccess(section);
 			} else {
@@ -269,8 +274,8 @@ final class InstanceRestController<T, L> {
 		}
 
 		@RequestMapping(method = PUT)
-		final ResponseEntity<SectionInstanceJpaImpl> save(@RequestBody final SectionInstanceJpaImpl section) {
-			final SectionInstanceJpaImpl saved = _instances.save(section);
+		final ResponseEntity<SectionInstance> save(@RequestBody final SectionInstance section) {
+			final SectionInstance saved = _instances.save(section);
 			if (isNotNullOrEmpty(saved)) {
 				return createResponseForSuccess(saved);
 			} else {
@@ -284,14 +289,14 @@ final class InstanceRestController<T, L> {
 	final class ClauseInstanceRestController {
 
 		ClauseInstanceRestController() {
-			LOG.info("Creating new Clause Instance REST Controller.");
+			LOG.debug("Creating new Clause Instance REST Controller.");
 		}
 
 		@RequestMapping(method = GET, value = BY_PROJECT_ID + BY_CODE)
-		final ResponseEntity<ClauseInstanceJpaImpl> findByProjectIdAndCode(
+		final ResponseEntity<ClauseInstance> findByProjectIdAndCode(
 				@PathVariable(PARAM_PROJECT_ID) final String projectId, @PathVariable(PARAM_CODE) final String code) {
-			final ClauseInstanceJpaImpl clause = _instances.findByProjectIdAndCode(projectId, code,
-					ClauseInstanceJpaImpl.class);
+			final ClauseInstance clause = _instances.findByProjectIdAndCode(projectId, code,
+					ClauseInstance.class);
 			if (isNotNullOrEmpty(clause)) {
 				return createResponseForSuccess(clause);
 			} else {
@@ -300,11 +305,11 @@ final class InstanceRestController<T, L> {
 		}
 
 		@RequestMapping(method = GET, value = BY_PROJECT_ID + BY_CODE + IS_EAGER_KIDS)
-		final ResponseEntity<ClauseInstanceJpaImpl> findByProjectIdAndCode(
+		final ResponseEntity<ClauseInstance> findByProjectIdAndCode(
 				@PathVariable(PARAM_PROJECT_ID) final String projectId, @PathVariable(PARAM_CODE) final String code,
 				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			final ClauseInstanceJpaImpl clause = _instances.findByProjectIdAndCode(projectId, code,
-					ClauseInstanceJpaImpl.class, eagerKids);
+			final ClauseInstance clause = _instances.findByProjectIdAndCode(projectId, code,
+					ClauseInstance.class, eagerKids);
 			if (isNotNullOrEmpty(clause)) {
 				return createResponseForSuccess(clause);
 			} else {
@@ -314,8 +319,8 @@ final class InstanceRestController<T, L> {
 		}
 
 		@RequestMapping(method = GET, value = BY_ID)
-		final ResponseEntity<ClauseInstanceJpaImpl> findOne(@PathVariable(PARAM_ID) final Long id) {
-			final ClauseInstanceJpaImpl clause = _instances.findOne(id, ClauseInstanceJpaImpl.class);
+		final ResponseEntity<ClauseInstance> findOne(@PathVariable(PARAM_ID) final Long id) {
+			final ClauseInstance clause = _instances.findOne(id, ClauseInstance.class);
 			if (isNotNullOrEmpty(clause)) {
 				return createResponseForSuccess(clause);
 			} else {
@@ -324,9 +329,9 @@ final class InstanceRestController<T, L> {
 		}
 
 		@RequestMapping(method = GET, value = BY_ID + IS_EAGER_KIDS)
-		final ResponseEntity<ClauseInstanceJpaImpl> findOne(@PathVariable(PARAM_ID) final Long id,
+		final ResponseEntity<ClauseInstance> findOne(@PathVariable(PARAM_ID) final Long id,
 				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			final ClauseInstanceJpaImpl clause = _instances.findOne(id, ClauseInstanceJpaImpl.class, eagerKids);
+			final ClauseInstance clause = _instances.findOne(id, ClauseInstance.class, eagerKids);
 			if (isNotNullOrEmpty(clause)) {
 				return createResponseForSuccess(clause);
 			} else {
@@ -383,8 +388,8 @@ final class InstanceRestController<T, L> {
 		}
 
 		@RequestMapping(method = PUT)
-		final ResponseEntity<ClauseInstanceJpaImpl> save(@RequestBody final ClauseInstanceJpaImpl clause) {
-			final ClauseInstanceJpaImpl saved = _instances.save(clause);
+		final ResponseEntity<ClauseInstance> save(@RequestBody final ClauseInstance clause) {
+			final ClauseInstance saved = _instances.save(clause);
 			if (isNotNullOrEmpty(saved)) {
 				return createResponseForSuccess(saved);
 			} else {
@@ -399,14 +404,14 @@ final class InstanceRestController<T, L> {
 	final class ParagraphInstanceRestController {
 
 		ParagraphInstanceRestController() {
-			LOG.info("Creating new Paragraph Instance REST Controller.");
+			LOG.debug("Creating new Paragraph Instance REST Controller.");
 		}
 
 		@RequestMapping(method = GET, value = BY_PROJECT_ID + BY_CODE)
-		final ResponseEntity<ParagraphInstanceJpaImpl> findByProjectIdAndCode(
+		final ResponseEntity<ParagraphInstance> findByProjectIdAndCode(
 				@PathVariable(PARAM_PROJECT_ID) final String projectId, @PathVariable(PARAM_CODE) final String code) {
-			final ParagraphInstanceJpaImpl paragraph = _instances.findByProjectIdAndCode(projectId, code,
-					ParagraphInstanceJpaImpl.class);
+			final ParagraphInstance paragraph = _instances.findByProjectIdAndCode(projectId, code,
+					ParagraphInstance.class);
 			if (isNotNullOrEmpty(paragraph)) {
 				return createResponseForSuccess(paragraph);
 			} else {
@@ -416,8 +421,8 @@ final class InstanceRestController<T, L> {
 		}
 
 		@RequestMapping(method = GET, value = BY_ID)
-		final ResponseEntity<ParagraphInstanceJpaImpl> findOne(@PathVariable(PARAM_ID) final Long id) {
-			final ParagraphInstanceJpaImpl paragraph = _instances.findOne(id, ParagraphInstanceJpaImpl.class);
+		final ResponseEntity<ParagraphInstance> findOne(@PathVariable(PARAM_ID) final Long id) {
+			final ParagraphInstance paragraph = _instances.findOne(id, ParagraphInstance.class);
 			if (isNotNullOrEmpty(paragraph)) {
 				return createResponseForSuccess(paragraph);
 			} else {
@@ -426,8 +431,8 @@ final class InstanceRestController<T, L> {
 		}
 
 		@RequestMapping(method = PUT)
-		final ResponseEntity<ParagraphInstanceJpaImpl> save(@RequestBody final ParagraphInstanceJpaImpl paragraph) {
-			final ParagraphInstanceJpaImpl saved = _instances.save(paragraph);
+		final ResponseEntity<ParagraphInstance> save(@RequestBody final ParagraphInstance paragraph) {
+			final ParagraphInstance saved = _instances.save(paragraph);
 			if (isNotNullOrEmpty(saved)) {
 				return createResponseForSuccess(saved);
 			} else {
@@ -437,7 +442,7 @@ final class InstanceRestController<T, L> {
 	}
 
 	@RequestMapping(method = DELETE, value = BY_ID)
-	final ResponseEntity<?> delete(@PathVariable(PARAM_ID) final Long id) {
+	final ResponseEntity<Instance> delete(@PathVariable(PARAM_ID) final Long id) {
 		final boolean pass = _instances.delete(id);
 		return ResponseEntity.status(pass ? OK : BAD_REQUEST).build();
 	}
@@ -455,9 +460,9 @@ final class InstanceRestController<T, L> {
 	}
 
 	@RequestMapping(method = GET, value = BY_PROJECT_ID + BY_CODE)
-	final ResponseEntity<InstanceJpaImpl> findByProjectIdAndCode(@PathVariable(PARAM_PROJECT_ID) final String projectId,
+	final ResponseEntity<Instance> findByProjectIdAndCode(@PathVariable(PARAM_PROJECT_ID) final String projectId,
 			@PathVariable(PARAM_CODE) final String code) {
-		final InstanceJpaImpl instance = _instances.findByProjectIdAndCode(projectId, code);
+		final Instance instance = _instances.findByProjectIdAndCode(projectId, code);
 		if (isNotNullOrEmpty(instance)) {
 			return createResponseForSuccess(instance);
 		} else {
@@ -477,8 +482,8 @@ final class InstanceRestController<T, L> {
 	}
 
 	@RequestMapping(method = GET, value = BY_ID)
-	final ResponseEntity<InstanceJpaImpl> findOne(@PathVariable(PARAM_ID) final Long id) {
-		final InstanceJpaImpl instance = _instances.findOne(id);
+	final ResponseEntity<Instance> findOne(@PathVariable(PARAM_ID) final Long id) {
+		final Instance instance = _instances.findOne(id);
 		if (isNotNullOrEmpty(instance)) {
 			return createResponseForSuccess(instance);
 		} else {
@@ -487,8 +492,8 @@ final class InstanceRestController<T, L> {
 	}
 
 	@RequestMapping(method = PUT)
-	final ResponseEntity<InstanceJpaImpl> save(@RequestBody final InstanceJpaImpl instance) {
-		final InstanceJpaImpl saved = _instances.save(instance);
+	final ResponseEntity<Instance> save(@RequestBody final Instance instance) {
+		final Instance saved = _instances.save(instance);
 		if (isNotNullOrEmpty(saved)) {
 			return createResponseForSuccess(saved);
 		} else {

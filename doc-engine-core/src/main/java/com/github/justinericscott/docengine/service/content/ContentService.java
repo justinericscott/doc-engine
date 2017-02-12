@@ -3,12 +3,12 @@
  */
 package com.github.justinericscott.docengine.service.content;
 
-import com.github.justinericscott.docengine.types.ClauseJpaImpl;
-import com.github.justinericscott.docengine.types.ContentJpaImpl;
-import com.github.justinericscott.docengine.types.Contents;
-import com.github.justinericscott.docengine.types.DocumentJpaImpl;
-import com.github.justinericscott.docengine.types.ParagraphJpaImpl;
-import com.github.justinericscott.docengine.types.SectionJpaImpl;
+import com.github.justinericscott.docengine.models.Clause;
+import com.github.justinericscott.docengine.models.Content;
+import com.github.justinericscott.docengine.models.Contents;
+import com.github.justinericscott.docengine.models.Document;
+import com.github.justinericscott.docengine.models.Paragraph;
+import com.github.justinericscott.docengine.models.Section;
 
 /**
  * @author Justin Scott
@@ -20,11 +20,11 @@ import com.github.justinericscott.docengine.types.SectionJpaImpl;
  */
 public interface ContentService {
 
-	boolean delete(ContentJpaImpl content);
+	boolean delete(Content content);
 	
 	boolean delete(Contents content);
 	
-	boolean delete(ContentJpaImpl[] content);
+	boolean delete(Content[] content);
 
 	boolean delete(Long id);
 	
@@ -46,7 +46,7 @@ public interface ContentService {
 	
 	<T> T findAll(Class<T> type, boolean eagerKids);
 
-	ContentJpaImpl findByCode(String code);
+	Content findByCode(String code);
 	
 	<T> T findByCode(String code, Class<T> type);
 	
@@ -58,7 +58,7 @@ public interface ContentService {
 	
 	<T> T findByCodeLike(String like, Class<T> type, boolean eagerKids);
 
-	ContentJpaImpl findOne(Long id);
+	Content findOne(Long id);
 	
 	<T> T findOne(Long id, Class<T> type);
 	
@@ -76,17 +76,17 @@ public interface ContentService {
 
 	<T> T getChildren(String code, Class<T> type, boolean eagerKids);
 
-	ContentJpaImpl save(ContentJpaImpl content);
+	Content save(Content content);
 	
-	Iterable<ContentJpaImpl> save(Iterable<ContentJpaImpl> objects);
+	<T> Iterable<T> save(final Iterable<T> objects, Class<T> type);
 	
 	Contents save(Contents contents);
 	
-	DocumentJpaImpl save(DocumentJpaImpl document);
+	Document save(Document document);
 	
-	SectionJpaImpl save(SectionJpaImpl section);
+	Section save(Section section);
 
-	ClauseJpaImpl save(ClauseJpaImpl clause);
+	Clause save(Clause clause);
 
-	ParagraphJpaImpl save(ParagraphJpaImpl paragraph);
+	Paragraph save(Paragraph paragraph);
 }

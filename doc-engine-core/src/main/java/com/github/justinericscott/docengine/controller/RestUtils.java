@@ -95,6 +95,7 @@ public class RestUtils {
 		public static final String CONTENT = "/content";
 		public static final String CONTENTS = "/contents";
 		public static final String DOCUMENT = "/document";
+		public static final String DOCUMENTS = "/documents";
 		public static final String SECTION = "/section";
 		public static final String CLAUSE = "/clause";
 		public static final String PARAGRAPH = "/paragraph";
@@ -102,6 +103,7 @@ public class RestUtils {
 		public static final String INSTANCES = "/instances";
 
 		public static final String TOKEN = "/token";
+		public static final String TOKENS = "/tokens";
 
 		/** METHODS **/
 		public static final String CREATE = "/create";

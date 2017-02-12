@@ -1,6 +1,7 @@
 package com.github.justinericscott.docengine.repository.content.template;
 
 import static org.junit.Assert.*;
+import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
@@ -13,10 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
+import com.github.justinericscott.docengine.models.Clause;
+import com.github.justinericscott.docengine.models.Paragraph;
+import com.github.justinericscott.docengine.models.Section;
 import com.github.justinericscott.docengine.repository.content.SectionRepository;
-import com.github.justinericscott.docengine.types.ClauseJpaImpl;
-import com.github.justinericscott.docengine.types.ParagraphJpaImpl;
-import com.github.justinericscott.docengine.types.SectionJpaImpl;
 import com.github.justinericscott.docengine.util.AbstractTest;
 
 /**
@@ -34,13 +35,13 @@ public class SectionRepositoryTest extends AbstractTest {
 
 	@Test
 	public void a_SaveTest() {
-		SectionJpaImpl section = makeTestSection();
+		Section section = makeTestSection();
 		section = _sections.save(section);
 		assertNotNull(section);
 		assertTrue(section.isValid(true));
 
-		Collection<SectionJpaImpl> sections = makeTestSections(7);
-		sections = (Collection<SectionJpaImpl>) _sections.save(sections);
+		Collection<Section> sections = makeTestSections(7);
+		sections = (Collection<Section>) _sections.save(sections);
 		assertNotNull(sections);
 		assertFalse(sections.isEmpty());
 		sections.forEach(s -> {
@@ -48,38 +49,38 @@ public class SectionRepositoryTest extends AbstractTest {
 		});
 
 		try {
-			_sections.save((SectionJpaImpl) null);
+			_sections.save((Section) null);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
 		}
 		try {
-			_sections.save(new SectionJpaImpl("", "TEST BODY"));
+			_sections.save(new Section("", "TEST BODY"));
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
-			_sections.save(new SectionJpaImpl(TEST_SECTION_CODE_PREFIX + uuid(), ""));
+			_sections.save(new Section(TEST_SECTION_CODE_PREFIX + uuid(), ""));
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
 			section = _sections.save(makeTestSection());
-			SectionJpaImpl copy = new SectionJpaImpl(section, section.getContentCd());
+			Section copy = new Section(section, section.getContentCd());
 			_sections.save(copy);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
-			Collection<SectionJpaImpl> copies = new TreeSet<SectionJpaImpl>();
+			Collection<Section> copies = new TreeSet<Section>();
 			copies.addAll(sections);
 			copies.forEach(s -> {
 				s.setId(null);
 			});
-			copies = (Collection<SectionJpaImpl>) _sections.save(copies);
+			copies = (Collection<Section>) _sections.save(copies);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
@@ -89,7 +90,7 @@ public class SectionRepositoryTest extends AbstractTest {
 	@Test
 	public void b_FindTest() {
 		// Happy path...
-		SectionJpaImpl section = _sections.save(makeTestSection());
+		Section section = _sections.save(makeTestSection());
 		final Long id = section.getId();
 		final String contentCd = section.getContentCd();
 		section = _sections.findOne(id);
@@ -99,7 +100,7 @@ public class SectionRepositoryTest extends AbstractTest {
 		assertTrue(section.isValid(true));
 		assertEquals(contentCd, section.getContentCd());
 
-		Collection<SectionJpaImpl> sections = (Collection<SectionJpaImpl>) _sections
+		Collection<Section> sections = (Collection<Section>) _sections
 				.findByContentCdLike("%TEST%");
 		assertNotNull(sections);
 		assertFalse(sections.isEmpty());
@@ -107,7 +108,7 @@ public class SectionRepositoryTest extends AbstractTest {
 			assertTrue(s.isValid(true));
 		});
 
-		sections = (Collection<SectionJpaImpl>) _sections.findAll();
+		sections = (Collection<Section>) _sections.findAll();
 		assertNotNull(sections);
 		assertFalse(sections.isEmpty());
 		sections.forEach(s -> {
@@ -118,9 +119,9 @@ public class SectionRepositoryTest extends AbstractTest {
 		assertNull(_sections.findOne(Long.MIN_VALUE));
 		assertNull(_sections.findOne(Long.MAX_VALUE));
 		assertNull(_sections.findByContentCd("Snicklefritz"));
-		sections = (Collection<SectionJpaImpl>) _sections.findByContentCdLike("%Snicklefritz%");
+		sections = (Collection<Section>) _sections.findByContentCdLike("%Snicklefritz%");
 		assertTrue(sections.isEmpty());
-		sections = (Collection<SectionJpaImpl>) _sections.findByContentCdLike("");
+		sections = (Collection<Section>) _sections.findByContentCdLike("");
 		assertTrue(sections.isEmpty());
 		try {
 			_sections.findOne((Long) null);
@@ -139,19 +140,19 @@ public class SectionRepositoryTest extends AbstractTest {
 	@Test
 	public void c_DiscriminatorTest() {
 		final String contentCd = "SECTION_DISCRIMINATOR_TEST_" + uuid();
-		final SectionJpaImpl x = new SectionJpaImpl(contentCd, "BLAH BLAH BLAH");
-		final SectionJpaImpl y = _sections.save(x);
+		final Section x = new Section(contentCd, "BLAH BLAH BLAH");
+		final Section y = _sections.save(x);
 		assertNull(y.getDiscriminator());
-		final SectionJpaImpl z = _sections.findByContentCd(contentCd);
-		assertEquals(SectionJpaImpl.class.getSimpleName(), z.getDiscriminator());
+		final Section z = _sections.findByContentCd(contentCd);
+		assertEquals(Section.class.getSimpleName(), z.getDiscriminator());
 	}
 
 	@Test
 	public void d_ChildrenTest() {
-		SectionJpaImpl section = makeTestSection();
-		ClauseJpaImpl clause = makeTestClause();
+		Section section = makeTestSection();
+		Clause clause = makeTestClause();
 		section.addClause(clause);
-		ParagraphJpaImpl paragraph = makeTestParagraph();
+		Paragraph paragraph = makeTestParagraph();
 		clause.addParagraph(paragraph);
 		section = _sections.save(section);
 		assertNotNull(section);
@@ -185,7 +186,7 @@ public class SectionRepositoryTest extends AbstractTest {
 	@Test
 	public void x_DeleteTest() {
 		// Happy path...
-		SectionJpaImpl section = _sections.save(makeTestSection());
+		Section section = _sections.save(makeTestSection());
 		final Long id = section.getId();
 		_sections.delete(id);
 		assertNull(_sections.findOne(id));
@@ -194,8 +195,8 @@ public class SectionRepositoryTest extends AbstractTest {
 		_sections.delete(section);
 		assertNull(_sections.findOne(section.getId()));
 
-		Collection<SectionJpaImpl> sections = makeTestSections(7);
-		sections = (Collection<SectionJpaImpl>) _sections.save(sections);
+		Collection<Section> sections = makeTestSections(7);
+		sections = (Collection<Section>) _sections.save(sections);
 		assertNotNull(sections);
 		assertFalse(sections.isEmpty());
 		sections.forEach(s -> {
@@ -212,7 +213,7 @@ public class SectionRepositoryTest extends AbstractTest {
 		
 		// Break it...
 		try {
-			_sections.delete(new SectionJpaImpl());
+			_sections.delete(new Section());
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());

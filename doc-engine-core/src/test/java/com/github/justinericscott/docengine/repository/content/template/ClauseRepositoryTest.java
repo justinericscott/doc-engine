@@ -1,6 +1,7 @@
 package com.github.justinericscott.docengine.repository.content.template;
 
 import static org.junit.Assert.*;
+import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
@@ -13,9 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
+import com.github.justinericscott.docengine.models.Clause;
+import com.github.justinericscott.docengine.models.Paragraph;
 import com.github.justinericscott.docengine.repository.content.ClauseRepository;
-import com.github.justinericscott.docengine.types.ClauseJpaImpl;
-import com.github.justinericscott.docengine.types.ParagraphJpaImpl;
 import com.github.justinericscott.docengine.util.AbstractTest;
 
 /**
@@ -33,13 +34,13 @@ public class ClauseRepositoryTest extends AbstractTest {
 
 	@Test
 	public void a_SaveTest() {
-		ClauseJpaImpl clause = makeTestClause();
+		Clause clause = makeTestClause();
 		clause = _clauses.save(clause);
 		assertNotNull(clause);
 		assertTrue(clause.isValid(true));
 
-		Collection<ClauseJpaImpl> clauses = makeTestClauses(7);
-		clauses = (Collection<ClauseJpaImpl>) _clauses.save(clauses);
+		Collection<Clause> clauses = makeTestClauses(7);
+		clauses = (Collection<Clause>) _clauses.save(clauses);
 		assertNotNull(clauses);
 		assertFalse(clauses.isEmpty());
 		clauses.forEach(c -> {
@@ -47,38 +48,38 @@ public class ClauseRepositoryTest extends AbstractTest {
 		});
 
 		try {
-			_clauses.save((ClauseJpaImpl) null);
+			_clauses.save((Clause) null);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
 		}
 		try {
-			_clauses.save(new ClauseJpaImpl("", "TEST BODY"));
+			_clauses.save(new Clause("", "TEST BODY"));
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
-			_clauses.save(new ClauseJpaImpl(TEST_CLAUSE_CODE_PREFIX + uuid(), ""));
+			_clauses.save(new Clause(TEST_CLAUSE_CODE_PREFIX + uuid(), ""));
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
 			clause = _clauses.save(makeTestClause());
-			ClauseJpaImpl copy = new ClauseJpaImpl(clause, clause.getContentCd());
+			Clause copy = new Clause(clause, clause.getContentCd());
 			_clauses.save(copy);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
-			Collection<ClauseJpaImpl> copies = new TreeSet<ClauseJpaImpl>();
+			Collection<Clause> copies = new TreeSet<Clause>();
 			copies.addAll(clauses);
 			copies.forEach(c -> {
 				c.setId(null);
 			});
-			copies = (Collection<ClauseJpaImpl>) _clauses.save(copies);
+			copies = (Collection<Clause>) _clauses.save(copies);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
@@ -88,7 +89,7 @@ public class ClauseRepositoryTest extends AbstractTest {
 	@Test
 	public void b_FindTest() {
 		// Happy path...
-		ClauseJpaImpl clause = _clauses.save(makeTestClause());
+		Clause clause = _clauses.save(makeTestClause());
 		final Long id = clause.getId();
 		final String contentCd = clause.getContentCd();
 		clause = _clauses.findOne(id);
@@ -98,14 +99,14 @@ public class ClauseRepositoryTest extends AbstractTest {
 		assertTrue(clause.isValid(true));
 		assertEquals(contentCd, clause.getContentCd());
 
-		Collection<ClauseJpaImpl> clauses = (Collection<ClauseJpaImpl>) _clauses.findByContentCdLike("%TEST%");
+		Collection<Clause> clauses = (Collection<Clause>) _clauses.findByContentCdLike("%TEST%");
 		assertNotNull(clauses);
 		assertFalse(clauses.isEmpty());
 		clauses.forEach(c -> {
 			assertTrue(c.isValid(true));
 		});
 
-		clauses = (Collection<ClauseJpaImpl>) _clauses.findAll();
+		clauses = (Collection<Clause>) _clauses.findAll();
 		assertNotNull(clauses);
 		assertFalse(clauses.isEmpty());
 		clauses.forEach(c -> {
@@ -116,9 +117,9 @@ public class ClauseRepositoryTest extends AbstractTest {
 		assertNull(_clauses.findOne(Long.MIN_VALUE));
 		assertNull(_clauses.findOne(Long.MAX_VALUE));
 		assertNull(_clauses.findByContentCd("Snicklefritz"));
-		clauses = (Collection<ClauseJpaImpl>) _clauses.findByContentCdLike("%Snicklefritz%");
+		clauses = (Collection<Clause>) _clauses.findByContentCdLike("%Snicklefritz%");
 		assertTrue(clauses.isEmpty());
-		clauses = (Collection<ClauseJpaImpl>) _clauses.findByContentCdLike("");
+		clauses = (Collection<Clause>) _clauses.findByContentCdLike("");
 		assertTrue(clauses.isEmpty());
 		try {
 			_clauses.findOne((Long) null);
@@ -137,17 +138,17 @@ public class ClauseRepositoryTest extends AbstractTest {
 	@Test
 	public void c_DiscriminatorTest() {
 		final String contentCd = "CLAUSE_DISCRIMINATOR_TEST_" + uuid();
-		final ClauseJpaImpl x = new ClauseJpaImpl(contentCd, "BLAH BLAH BLAH");
-		final ClauseJpaImpl y = _clauses.save(x);
+		final Clause x = new Clause(contentCd, "BLAH BLAH BLAH");
+		final Clause y = _clauses.save(x);
 		assertNull(y.getDiscriminator());
-		final ClauseJpaImpl z = _clauses.findByContentCd(contentCd);
-		assertEquals(ClauseJpaImpl.class.getSimpleName(), z.getDiscriminator());
+		final Clause z = _clauses.findByContentCd(contentCd);
+		assertEquals(Clause.class.getSimpleName(), z.getDiscriminator());
 	}
 
 	@Test
 	public void d_ChildrenTest() {
-		ClauseJpaImpl clause = makeTestClause();
-		ParagraphJpaImpl paragraph = makeTestParagraph();
+		Clause clause = makeTestClause();
+		Paragraph paragraph = makeTestParagraph();
 		clause.addParagraph(paragraph);
 		clause = _clauses.save(clause);
 		assertNotNull(clause);
@@ -175,7 +176,7 @@ public class ClauseRepositoryTest extends AbstractTest {
 	@Test
 	public void x_DeleteTest() {
 		// Happy path...
-		ClauseJpaImpl clause = _clauses.save(makeTestClause());
+		Clause clause = _clauses.save(makeTestClause());
 		final Long id = clause.getId();
 		_clauses.delete(id);
 		assertNull(_clauses.findOne(id));
@@ -184,8 +185,8 @@ public class ClauseRepositoryTest extends AbstractTest {
 		_clauses.delete(clause);
 		assertNull(_clauses.findOne(clause.getId()));
 
-		Collection<ClauseJpaImpl> clauses = makeTestClauses(7);
-		clauses = (Collection<ClauseJpaImpl>) _clauses.save(clauses);
+		Collection<Clause> clauses = makeTestClauses(7);
+		clauses = (Collection<Clause>) _clauses.save(clauses);
 		assertNotNull(clauses);
 		assertFalse(clauses.isEmpty());
 		clauses.forEach(c -> {
@@ -202,7 +203,7 @@ public class ClauseRepositoryTest extends AbstractTest {
 
 		// Break it...
 		try {
-			_clauses.delete(new ClauseJpaImpl());
+			_clauses.delete(new Clause());
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());

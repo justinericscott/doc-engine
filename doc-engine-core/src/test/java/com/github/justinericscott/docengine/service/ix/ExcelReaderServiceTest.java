@@ -128,7 +128,7 @@ public class ExcelReaderServiceTest extends AbstractTest {
 		assertNotNull(objects);
 		assertEquals(100, objects.size());
 		assertNull(service.read(TEST_CLASS_CUSTOM_LABELS_ORDERED, null));
-		assertNull(service.read(null, get(TEST_FILE_NAME_READ)));
+		assertNull(service.read((Class<?>) null, get(TEST_FILE_NAME_READ)));
 	}
 
 	@Test

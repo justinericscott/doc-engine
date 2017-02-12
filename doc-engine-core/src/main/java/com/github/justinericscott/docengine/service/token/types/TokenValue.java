@@ -1,5 +1,7 @@
 package com.github.justinericscott.docengine.service.token.types;
 
+import static com.github.justinericscott.docengine.util.Utils.RomanNumber.toRoman;
+
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -7,18 +9,17 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.justinericscott.docengine.types.TokenDefinitionJpaImpl;
-import com.itextpdf.text.factories.RomanNumberFactory;
+import com.github.justinericscott.docengine.models.TokenDefinition;
 
 public class TokenValue {
 	private static final Logger LOG = LoggerFactory.getLogger(TokenValue.class);
 	public static final String NOT_DEFINED_TXT = "No Alt Text";
 	public static final String XABLE_TXT = "XX";
-	private final TokenDefinitionJpaImpl definition;
+	private final TokenDefinition definition;
 	private final Object value;
 	private String displayValue;
 
-	public TokenValue(TokenDefinitionJpaImpl definition, Object value) {
+	public TokenValue(TokenDefinition definition, Object value) {
 		if (definition == null)
 			throw new IllegalArgumentException("TokenDefinition Object Must Not Be Null!");
 		// FIXME
@@ -32,7 +33,7 @@ public class TokenValue {
 		this.value = value;
 	}
 
-	public TokenDefinitionJpaImpl getDefinition() {
+	public TokenDefinition getDefinition() {
 		return definition;
 	}
 
@@ -47,10 +48,10 @@ public class TokenValue {
 				displayValue = getAlternativeText();
 			} else if (isRoman) {
 				if (value instanceof String) {
-					displayValue = RomanNumberFactory.getUpperCaseString(Integer.parseInt((String) value));
+					displayValue = toRoman(Integer.parseInt((String) value));
 				} else if (value instanceof Number) {
 					Number num = (Number) value;
-					displayValue = RomanNumberFactory.getUpperCaseString(num.intValue());
+					displayValue = toRoman(num.intValue());
 				}
 			} else if (value instanceof String) {
 				displayValue = (String) value;

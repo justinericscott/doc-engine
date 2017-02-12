@@ -3,13 +3,15 @@
  */
 package com.github.justinericscott.docengine.service.content;
 
-import com.github.justinericscott.docengine.types.DocumentInstanceJpaImpl;
+import com.github.justinericscott.docengine.models.DocumentInstance;
 
 /**
  * @author Justin Scott
  * 
  *         TODO: Description
  */
+@Deprecated
+//@SuppressWarnings("unused")
 public interface CompilerService {
 
 	/**
@@ -18,7 +20,7 @@ public interface CompilerService {
 	 * @param doc
 	 * @return {@link String}
 	 */
-	String compileDocument(DocumentInstanceJpaImpl document);
+	String compileDocument(DocumentInstance document);
 
 	/**
 	 * TODO: Description

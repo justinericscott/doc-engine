@@ -1,6 +1,7 @@
 package com.github.justinericscott.docengine.repository.content.instance;
 
 import static org.junit.Assert.*;
+import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
@@ -13,10 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
+import com.github.justinericscott.docengine.models.Content;
+import com.github.justinericscott.docengine.models.Instance;
 import com.github.justinericscott.docengine.repository.content.ContentRepository;
 import com.github.justinericscott.docengine.repository.content.InstanceRepository;
-import com.github.justinericscott.docengine.types.ContentJpaImpl;
-import com.github.justinericscott.docengine.types.InstanceJpaImpl;
 import com.github.justinericscott.docengine.util.AbstractTest;
 
 /**
@@ -38,11 +39,11 @@ public class InstanceRepositoryTest extends AbstractTest {
 	public void a_SaveTest() {
 		
 		// Happy path...
-		ContentJpaImpl content = makeTestContent();
+		Content content = makeTestContent();
 		content = _contents.save(content);
 		assertNotNull(content);
 		assertTrue(content.isValid(true));
-		InstanceJpaImpl instance = new InstanceJpaImpl(content, TEST_PROJECT_ID_VALUE);
+		Instance instance = new Instance(content, TEST_PROJECT_ID_VALUE);
 		instance = _instances.save(instance);
 		assertNotNull(instance);
 		assertTrue(instance.isValid(true));
@@ -50,46 +51,46 @@ public class InstanceRepositoryTest extends AbstractTest {
 		assertNotNull(content);
 		assertTrue(content.isValid(true));
 
-		Collection<ContentJpaImpl> contents = makeTestContents(7);
-		contents = (Collection<ContentJpaImpl>) _contents.save(contents);
+		Collection<Content> contents = makeTestContents(7);
+		contents = (Collection<Content>) _contents.save(contents);
 		assertNotNull(contents);
 		assertFalse(contents.isEmpty());
-		final Collection<InstanceJpaImpl> list = new TreeSet<InstanceJpaImpl>();
+		final Collection<Instance> list = new TreeSet<Instance>();
 		contents.forEach(c -> {
 			assertTrue(c.isValid(true));
-			list.add(new InstanceJpaImpl(c, TEST_PROJECT_ID_VALUE));
+			list.add(new Instance(c, TEST_PROJECT_ID_VALUE));
 		});
-		Collection<InstanceJpaImpl> instances = new TreeSet<InstanceJpaImpl>();
-		instances = (Collection<InstanceJpaImpl>) _instances.save(list);
+		Collection<Instance> instances = new TreeSet<Instance>();
+		instances = (Collection<Instance>) _instances.save(list);
 		assertNotNull(instances);
 		assertFalse(instances.isEmpty());
 		instances.forEach(i -> {
 			assertTrue(i.isValid(true));
-			ContentJpaImpl c = i.getContent();
+			Content c = i.getContent();
 			assertNotNull(c);
 			assertTrue(c.isValid(true));
 		});
 
 		try {
-			_instances.save((InstanceJpaImpl) null);
+			_instances.save((Instance) null);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
 		}
 		try {
-			_instances.save(new InstanceJpaImpl(content));
+			_instances.save(new Instance(content));
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
-			_instances.save(new InstanceJpaImpl(TEST_PROJECT_ID_VALUE));
+			_instances.save(new Instance(TEST_PROJECT_ID_VALUE));
 //			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
-			_instances.save(new InstanceJpaImpl(makeTestContent(), TEST_PROJECT_ID_VALUE));
+			_instances.save(new Instance(makeTestContent(), TEST_PROJECT_ID_VALUE));
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
@@ -100,11 +101,11 @@ public class InstanceRepositoryTest extends AbstractTest {
 	public void b_FindTest() {
 		
 		// Happy path...
-		ContentJpaImpl content = _contents.save(makeTestContent());
+		Content content = _contents.save(makeTestContent());
 		assertNotNull(content);
 		assertTrue(content.isValid(true));
 		final String contentCd = content.getContentCd();
-		InstanceJpaImpl instance = new InstanceJpaImpl(content, TEST_PROJECT_ID_VALUE);
+		Instance instance = new Instance(content, TEST_PROJECT_ID_VALUE);
 		instance = _instances.save(instance);
 		assertNotNull(instance);
 		assertTrue(instance.isValid(true));
@@ -123,22 +124,22 @@ public class InstanceRepositoryTest extends AbstractTest {
 		assertNotNull(content);
 		assertTrue(content.isValid(true));
 
-		Collection<InstanceJpaImpl> instances = (Collection<InstanceJpaImpl>) _instances.findAll(); 
+		Collection<Instance> instances = (Collection<Instance>) _instances.findAll(); 
 		assertNotNull(instances);
 		assertFalse(instances.isEmpty());
 		instances.forEach(i -> {
 			assertTrue(i.isValid(true));
-			ContentJpaImpl c = i.getContent();
+			Content c = i.getContent();
 			assertNotNull(c);
 			assertTrue(c.isValid(true));
 		});
 
-		instances = (Collection<InstanceJpaImpl>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "%TEST%");
+		instances = (Collection<Instance>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "%TEST%");
 		assertNotNull(instances);
 		assertFalse(instances.isEmpty());
 		instances.forEach(i -> {
 			assertTrue(i.isValid(true));
-			ContentJpaImpl c = i.getContent();
+			Content c = i.getContent();
 			assertNotNull(c);
 			assertTrue(c.isValid(true));
 		});
@@ -153,15 +154,15 @@ public class InstanceRepositoryTest extends AbstractTest {
 		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, ""));
 		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, "Snicklefritz"));
 
-		instances = (Collection<InstanceJpaImpl>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_CONTENT_CODE_PREFIX);
+		instances = (Collection<Instance>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_CONTENT_CODE_PREFIX);
 		assertTrue(instances.isEmpty());
-		instances = (Collection<InstanceJpaImpl>) _instances.findByProjectIdAndContentContentCdLike("", TEST_CONTENT_CODE_PREFIX);
+		instances = (Collection<Instance>) _instances.findByProjectIdAndContentContentCdLike("", TEST_CONTENT_CODE_PREFIX);
 		assertTrue(instances.isEmpty());
-		instances = (Collection<InstanceJpaImpl>) _instances.findByProjectIdAndContentContentCdLike("Snicklefritz", TEST_CONTENT_CODE_PREFIX);
+		instances = (Collection<Instance>) _instances.findByProjectIdAndContentContentCdLike("Snicklefritz", TEST_CONTENT_CODE_PREFIX);
 		assertTrue(instances.isEmpty());
-		instances = (Collection<InstanceJpaImpl>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "");
+		instances = (Collection<Instance>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "");
 		assertTrue(instances.isEmpty());
-		instances = (Collection<InstanceJpaImpl>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "Snicklefritz");
+		instances = (Collection<Instance>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "Snicklefritz");
 		assertTrue(instances.isEmpty());
 		try {
 			_instances.findOne((Long) null);
@@ -180,22 +181,22 @@ public class InstanceRepositoryTest extends AbstractTest {
 	@Test
 	public void c_DiscriminatorTest() {
 		final String contentCd = "INSTANCE_DISCRIMINATOR_TEST_" + uuid();
-		ContentJpaImpl cx = new ContentJpaImpl(contentCd, "BLAH BLAH BLAH");
+		Content cx = new Content(contentCd, "BLAH BLAH BLAH");
 		cx = _contents.save(cx);
-		final InstanceJpaImpl x = new InstanceJpaImpl(cx, TEST_PROJECT_ID_VALUE);
-		final InstanceJpaImpl y = _instances.save(x);
+		final Instance x = new Instance(cx, TEST_PROJECT_ID_VALUE);
+		final Instance y = _instances.save(x);
 		assertNull(y.getDiscriminator());
-		final InstanceJpaImpl z = _instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, contentCd);
-		assertEquals(InstanceJpaImpl.class.getSimpleName(), z.getDiscriminator());
+		final Instance z = _instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, contentCd);
+		assertEquals(Instance.class.getSimpleName(), z.getDiscriminator());
 	}
 
 	@Test
 	public void x_DeleteTest() {
 		final String projectId = TEST_PROJECT_ID_VALUE;
-		ContentJpaImpl content = _contents.save(makeTestContent());
+		Content content = _contents.save(makeTestContent());
 		assertNotNull(content);
 		assertTrue(content.isValid(true));
-		InstanceJpaImpl instance = new InstanceJpaImpl(content, projectId);
+		Instance instance = new Instance(content, projectId);
 		instance = _instances.save(instance);
 		assertNotNull(instance);
 		assertTrue(instance.isValid(true));
@@ -203,7 +204,7 @@ public class InstanceRepositoryTest extends AbstractTest {
 
 		_instances.delete(id);
 		assertNull(_instances.findOne(instance.getId()));
-		instance = new InstanceJpaImpl(content, projectId);
+		instance = new Instance(content, projectId);
 		instance = _instances.save(instance);
 		assertNotNull(instance);
 		assertTrue(instance.isValid(true));
@@ -211,21 +212,21 @@ public class InstanceRepositoryTest extends AbstractTest {
 		_instances.delete(instance);
 		assertNull(_instances.findOne(instance.getId()));
 		
-		Collection<ContentJpaImpl> contents = makeTestContents(7);
-		contents = (Collection<ContentJpaImpl>) _contents.save(contents);
+		Collection<Content> contents = makeTestContents(7);
+		contents = (Collection<Content>) _contents.save(contents);
 		assertNotNull(contents);
 		assertFalse(contents.isEmpty());
-		final Collection<InstanceJpaImpl> list = new TreeSet<InstanceJpaImpl>();
+		final Collection<Instance> list = new TreeSet<Instance>();
 		contents.forEach(c -> {
 			assertTrue(c.isValid(true));
-			list.add(new InstanceJpaImpl(c, projectId));
+			list.add(new Instance(c, projectId));
 		});
-		Collection<InstanceJpaImpl> instances = (Collection<InstanceJpaImpl>) _instances.save(list);
+		Collection<Instance> instances = (Collection<Instance>) _instances.save(list);
 		assertNotNull(instances);
 		assertFalse(instances.isEmpty());
 		instances.forEach(i -> {
 			assertTrue(i.isValid(true));
-			ContentJpaImpl c = i.getContent();
+			Content c = i.getContent();
 			assertNotNull(c);
 			assertTrue(c.isValid(true));
 		});		

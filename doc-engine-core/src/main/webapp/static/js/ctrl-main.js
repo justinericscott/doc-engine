@@ -7,7 +7,7 @@ ctrlMain.controller('CommonFunctionsCtrl', [
     '$scope', '$window', '$location', function($scope, $window, $location) {
     	
     	$scope.cancel = function() {
-    		$location.path("/doc-engine/");
+    		$location.path("/");
     	};
     	
 		$scope.clear = function() {

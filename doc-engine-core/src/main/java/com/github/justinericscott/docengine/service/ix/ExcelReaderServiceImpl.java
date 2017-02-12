@@ -23,6 +23,8 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.stereotype.Service;
 
+import com.github.justinericscott.docengine.models.Content;
+
 @Service
 class ExcelReaderServiceImpl implements ExcelReaderService {
 	private static final Logger _LOG = LoggerFactory.getLogger(ExcelReaderServiceImpl.class);
@@ -64,6 +66,12 @@ class ExcelReaderServiceImpl implements ExcelReaderService {
 		return null;
 	}
 
+	@Override
+	public final Iterable<? extends Content> read(final Class<? extends Content>[] types, final File file) {
+
+		return null;
+	}
+
 	final <T> Iterable<T> createObjects(final Class<T> clazz, final Sheet sheet) {
 		if (sheet != null) {
 			final Collection<T> list = new ArrayList<T>(sheet.getPhysicalNumberOfRows());
@@ -75,8 +83,8 @@ class ExcelReaderServiceImpl implements ExcelReaderService {
 				} else {
 					fields = (Collection<String>) getExcelColumnFieldNamesFromRow(clazz, rows.next());
 					if (!isNotNullOrEmpty(fields)) {
-						_LOG.warn(String.format("The header row must not be null while creating objects!\nCLASS: %s",
-								(clazz != null ? clazz.getName() : null)));
+						_LOG.warn("The header row must not be null while creating objects!\nCLASS: {}",
+								(clazz != null ? clazz.getName() : null));
 						return null;
 					}
 				}
@@ -107,7 +115,7 @@ class ExcelReaderServiceImpl implements ExcelReaderService {
 				return type.cast(object);
 			}
 		} else {
-			_LOG.warn(String.format("The row must not be null!\nCLASS: %s", type.getName()));
+			_LOG.warn("The row must not be null!\nCLASS: {}", type.getName());
 		}
 		return null;
 	}
@@ -170,8 +178,8 @@ class ExcelReaderServiceImpl implements ExcelReaderService {
 		@Override
 		public final double doubleValue() {
 			if (dub == null) {
-				return this.cell.getNumericCellValue();	
-			}			
+				return this.cell.getNumericCellValue();
+			}
 			return dub;
 		}
 
@@ -219,7 +227,7 @@ class ExcelReaderServiceImpl implements ExcelReaderService {
 					if (dub > Float.MAX_VALUE || dub < Float.MIN_VALUE) {
 						this.type = TYPE_DOUBLE;
 					} else {
-//						this.type = TYPE_FLOAT;
+						// this.type = TYPE_FLOAT;
 						this.type = TYPE_DOUBLE;
 					}
 				} else {

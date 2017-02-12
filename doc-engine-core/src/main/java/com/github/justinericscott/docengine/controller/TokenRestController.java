@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.github.justinericscott.docengine.models.TokenDefinition;
+import com.github.justinericscott.docengine.models.TokenDefinitions;
 import com.github.justinericscott.docengine.service.token.TokenDictionaryService;
-import com.github.justinericscott.docengine.types.TokenDefinitionJpaImpl;
-import com.github.justinericscott.docengine.types.TokenDefinitions;
 
 /**
  * @author Justin Scott
@@ -35,21 +35,21 @@ final class TokenRestController {
 	private TokenDictionaryService _dictionary;
 
 	TokenRestController() {
-		LOG.info("Creating new Token REST Controller.");
+		LOG.debug("Creating new Token REST Controller.");
 	}
 	
-	@RequestMapping(method = GET)
+	@RequestMapping(method = GET, value = TOKENS)
 	final ResponseEntity<TokenDefinitions> findAll() {
 		return new ResponseEntity<TokenDefinitions>(_dictionary.findAll(), OK);
 	}
 
 	@RequestMapping(method = GET, value = BY_ID)
-	final ResponseEntity<TokenDefinitionJpaImpl> findOne(@PathVariable(PARAM_ID) final Long id) {
-		return new ResponseEntity<TokenDefinitionJpaImpl>(_dictionary.findOne(id), OK);
+	final ResponseEntity<TokenDefinition> findOne(@PathVariable(PARAM_ID) final Long id) {
+		return new ResponseEntity<TokenDefinition>(_dictionary.findOne(id), OK);
 	}
 
 	@RequestMapping(method = PUT)
-	final ResponseEntity<TokenDefinitionJpaImpl> save(@RequestBody final TokenDefinitionJpaImpl item) {
-		return new ResponseEntity<TokenDefinitionJpaImpl>(_dictionary.save(item), OK);
+	final ResponseEntity<TokenDefinition> save(@RequestBody final TokenDefinition item) {
+		return new ResponseEntity<TokenDefinition>(_dictionary.save(item), OK);
 	}
 }

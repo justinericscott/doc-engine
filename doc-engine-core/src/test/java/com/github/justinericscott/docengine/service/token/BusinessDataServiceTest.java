@@ -2,6 +2,7 @@ package com.github.justinericscott.docengine.service.token;
 
 import static org.junit.Assert.*;
 import static com.github.justinericscott.docengine.DocEngine.Constants.*;
+import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
 import static com.github.justinericscott.docengine.util.TestUtils.getFileFromClasspath;
 import static com.github.justinericscott.docengine.util.Utils.breakSqlScriptIntoStatements;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullAndExists;

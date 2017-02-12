@@ -113,7 +113,7 @@ where
 	select 
 		LEASE_NBR 
 	from 
-		PROJECT_NBR 
+		TR_PROJECT 
 	where 
 		PROJECT_NBR 
 	in (

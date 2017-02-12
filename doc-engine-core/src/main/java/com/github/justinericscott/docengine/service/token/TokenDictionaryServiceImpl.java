@@ -30,13 +30,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.github.justinericscott.docengine.models.TokenDefinition;
+import com.github.justinericscott.docengine.models.TokenDefinitions;
 import com.github.justinericscott.docengine.pipeline.ExhibitImpl;
 import com.github.justinericscott.docengine.pipeline.Project;
 import com.github.justinericscott.docengine.repository.token.TokenDictionaryRepository;
 import com.github.justinericscott.docengine.service.token.types.TokenData;
 import com.github.justinericscott.docengine.service.token.types.TokenValue;
-import com.github.justinericscott.docengine.types.TokenDefinitionJpaImpl;
-import com.github.justinericscott.docengine.types.TokenDefinitions;
 
 /**
  * @author Justin Scott
@@ -51,8 +51,8 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	private static final String _FROM_ = " FROM ";
 	private static final String _WHERE_ = " WHERE ";
 	private static volatile AtomicBoolean _debugMode = new AtomicBoolean();
-	private static volatile List<TokenDefinitionJpaImpl> _dictionary;
-	private static volatile Map<String, Map<String, Map<String, Deque<TokenDefinitionJpaImpl>>>> _definitionMap;
+	private static volatile List<TokenDefinition> _dictionary;
+	private static volatile Map<String, Map<String, Map<String, Deque<TokenDefinition>>>> _definitionMap;
 	private static volatile Map<String, String> _sqlMap;
 
 	@Autowired
@@ -62,7 +62,7 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	private BusinessDataService _business;
 
 	TokenDictionaryServiceImpl() {
-		LOG.info("Creating new Token Dictionary Service.");
+		LOG.debug("Creating new Token Dictionary Service.");
 	}
 	
 	public final void clear() {
@@ -87,69 +87,69 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	public final TokenDefinitions findAll() {
 		if (isNotNullOrEmpty(_dictionary)) {
 			synchronized (_dictionary) {
-				LOG.debug("Found Existing Tokens.");
+				LOG.trace("Found Existing Tokens.");
 				return new TokenDefinitions(_dictionary);
 			}
 		} else {
 			refreshDictionary();
 			if (isNotNullOrEmpty(_dictionary)) {
 				synchronized (_dictionary) {
-					LOG.debug("Found Refreshed Tokens.");
+					LOG.trace("Found Refreshed Tokens.");
 					return new TokenDefinitions(_dictionary);
 				}
 			}
 		}
-		LOG.debug("Found No Tokens.");
+		LOG.warn("Found No Tokens.");
 		return null;
 	}
 
 	@Override
-	public final TokenDefinitionJpaImpl findByTokenCd(final String code) {
+	public final TokenDefinition findByTokenCd(final String code) {
 		if (isNotNullOrEmpty(code)) {
 			return _definitions.findByTokenCd(code);
 		}
-		LOG.debug("The token code must not be null or empty!");
+		LOG.warn("The token code must not be null or empty!");
 		return null;
 	}
 
 	@Override
 	public final TokenDefinitions findByTokenCdLike(final String like) {
 		if (isNotNullOrEmpty(like)) {
-			final Collection<TokenDefinitionJpaImpl> definitions = (Collection<TokenDefinitionJpaImpl>) _definitions.findByTokenCdLike(like);
+			final Collection<TokenDefinition> definitions = (Collection<TokenDefinition>) _definitions.findByTokenCdLike(like);
 			if (isNotNullOrEmpty(definitions)) {
 				return new TokenDefinitions(definitions);
 			}
 		}
-		LOG.debug("The search string must not be null or empty!");
+		LOG.warn("The search string must not be null or empty!");
 		return null;
 	}
 
 	@Override
-	public final TokenDefinitionJpaImpl findOne(final Long id) {
+	public final TokenDefinition findOne(final Long id) {
 		if (isNotNullOrZero(id)) {
 			return _definitions.findOne(id);
 		}
-		LOG.debug("The token ID must not be null or zero!");
+		LOG.warn("The token ID must not be null or zero!");
 		return null;
 	}
 
 	@Override
-	public final Map<String, Map<String, Map<String, Deque<TokenDefinitionJpaImpl>>>> getDefinitionMap() {
+	public final Map<String, Map<String, Map<String, Deque<TokenDefinition>>>> getDefinitionMap() {
 		if (isNotNullOrEmpty(_definitionMap)) {
 			synchronized (_definitionMap) {
-				LOG.debug("Found Existing 'Where.Entity' To Entity/Attribute/Definitions Map.");
+				LOG.trace("Found Existing 'Where.Entity' To Entity/Attribute/Definitions Map.");
 				return _definitionMap;
 			}
 		} else {
 			refreshDefinitions();
 			if (isNotNullOrEmpty(_definitionMap)) {
 				synchronized (_definitionMap) {
-					LOG.debug("Found Refreshed 'Where.Entity' To Entity/Attribute/Definitions Map.");
+					LOG.trace("Found Refreshed 'Where.Entity' To Entity/Attribute/Definitions Map.");
 					return _definitionMap;
 				}
 			}
 		}
-		LOG.debug("Found No 'Where.Entity' To Entity/Attribute/Definitions Map.");
+		LOG.trace("Found No 'Where.Entity' To Entity/Attribute/Definitions Map.");
 		return null;
 	}
 
@@ -157,19 +157,19 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	public final Map<String, String> getSqlMap() {
 		if (isNotNullOrEmpty(_sqlMap)) {
 			synchronized (_sqlMap) {
-				LOG.debug("Found Existing 'Where.Entity' To SQL Map.");
+				LOG.trace("Found Existing 'Where.Entity' To SQL Map.");
 				return _sqlMap;
 			}
 		} else {
 			refreshSqlMap();
 			if (isNotNullOrEmpty(_sqlMap)) {
 				synchronized (_sqlMap) {
-					LOG.debug("Found Refreshed 'Where.Entity' To SQL Map.");
+					LOG.trace("Found Refreshed 'Where.Entity' To SQL Map.");
 					return _sqlMap;
 				}
 			}
 		}
-		LOG.debug("Found No 'Where.Entity' To SQL Map.");
+		LOG.trace("Found No 'Where.Entity' To SQL Map.");
 		return null;
 	}
 
@@ -271,7 +271,7 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 		final Map<String, TokenData> tokens = new HashMap<String, TokenData>();
 		getSqlMap().forEach((definitionKey, sql) -> {
 			sql = sql.replace("?", "'" + projectId + "'");
-			LOG.debug("Attempting to query for map using:\n{}", sql);
+			LOG.trace("Attempting to query for map using:\n{}", sql);
 			final Map<String, Object> response = _business.queryForMap(sql);
 			if (isNotNullOrEmpty(response)) {
 				response.forEach((resultKey, result) -> {
@@ -283,9 +283,9 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 								attributeKey = attributeKey.substring(attributeKey.indexOf(" AS ") + 4,
 										attributeKey.length());
 							}
-							final Iterator<TokenDefinitionJpaImpl> definitions = entity.get(attributeKey).iterator();
+							final Iterator<TokenDefinition> definitions = entity.get(attributeKey).iterator();
 							while (definitions.hasNext()) {
-								final TokenDefinitionJpaImpl definition = definitions.next();
+								final TokenDefinition definition = definitions.next();
 								final String attr = definition.getAttribute();
 								final String name = definition.getName();
 								if (isNotNullOrEmpty(attr) && attr.equals(attributeKey)) {
@@ -322,27 +322,27 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	}
 
 	@Override
-	public final TokenDefinitionJpaImpl save(final TokenDefinitionJpaImpl definition) {
+	public final TokenDefinition save(final TokenDefinition definition) {
 		if (isNotNullOrEmpty(definition)) {
-			final TokenDefinitionJpaImpl result = _definitions.save(definition);
+			final TokenDefinition result = _definitions.save(definition);
 			refresh();
 			return result;
 		}
-		LOG.debug("Token Definition Must Not Be Null!");
+		LOG.warn("Token Definition Must Not Be Null!");
 		return null;
 	}
 
 	@Override
 	public final TokenDefinitions save(final TokenDefinitions definitions) {
 		if (isNotNullOrEmpty(definitions)) {
-			LOG.debug("Attempting To Save Collection Of Token Definitions.");
-			final Collection<TokenDefinitionJpaImpl> result = (Collection<TokenDefinitionJpaImpl>) _definitions.save(Arrays.asList(definitions.getDefinitions()));
+			LOG.trace("Attempting To Save Collection Of Token Definitions.");
+			final Collection<TokenDefinition> result = (Collection<TokenDefinition>) _definitions.save(Arrays.asList(definitions.getTokens()));
 			if (isNotNullOrEmpty(result)) {
 				refresh();
 				return new TokenDefinitions(result);
 			}
 		}
-		LOG.debug("Collection Of Token Definitions Must Not Be Null!");
+		LOG.warn("Collection Of Token Definitions Must Not Be Null!");
 		return null;
 	}
 
@@ -363,11 +363,11 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	}
 
 	@Override
-	public final boolean delete(final TokenDefinitionJpaImpl definition) {
+	public final boolean delete(final TokenDefinition definition) {
 		if (isNotNullOrEmpty(definition)) {
 			final Long id = definition.getId();
 			_definitions.delete(definition);
-			final TokenDefinitionJpaImpl def = findOne(id);
+			final TokenDefinition def = findOne(id);
 			if (def == null) {
 				refresh();
 				return true;
@@ -379,7 +379,7 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	@PostConstruct
 	@Override
 	public final void refresh() {
-		LOG.debug("Refreshing Token Service.");
+		LOG.info("Refreshing Token Dictionary Service...");
 		refreshDictionary();
 		refreshDefinitions();
 		refreshSqlMap();
@@ -387,7 +387,7 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 
 	private void mergeDataMapWithEmptyData(final Map<String, TokenData> tokens) {
 		if (isNotNullOrEmpty(tokens)) {
-			for (final TokenDefinitionJpaImpl definition : findAll().getDefinitions()) {
+			for (final TokenDefinition definition : findAll().getTokens()) {
 				if (tokens.containsKey(definition.getName())) {
 					final TokenData data = tokens.get(definition.getName());
 					if (!isNotNullOrEmpty(data.getValues())) {
@@ -406,7 +406,7 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 
 	private void mergeValueMapWithEmptyValues(final Map<String, Iterable<TokenValue>> tokens, final String phase) {
 		if (isNotNullOrEmpty(tokens)) {
-			for (final TokenDefinitionJpaImpl definition : findAll().getDefinitions()) {
+			for (final TokenDefinition definition : findAll().getTokens()) {
 				if (phase.equals(definition.getPhase())) {
 					final String tokenCd = definition.getTokenCd();
 					final Iterable<TokenValue> values = tokens.get(tokenCd);
@@ -420,20 +420,20 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	
 	private void refreshDefinitions() {
 		if (_dictionary != null) {
-			final Map<String, Map<String, Map<String, Deque<TokenDefinitionJpaImpl>>>> definitions = new HashMap<String, Map<String, Map<String, Deque<TokenDefinitionJpaImpl>>>>();
-			for (final TokenDefinitionJpaImpl def : findAll().getDefinitions()) {
+			final Map<String, Map<String, Map<String, Deque<TokenDefinition>>>> definitions = new HashMap<String, Map<String, Map<String, Deque<TokenDefinition>>>>();
+			for (final TokenDefinition def : findAll().getTokens()) {
 				final String entityKey = def.getEntity();
 				final String attributeKey = def.getAttribute();
 				final String where = def.getWhere();
 				if (isNotNullOrEmpty(entityKey) && isNotNullOrEmpty(attributeKey) && isNotNullOrEmpty(where)) {
 					final String definitionKey = String.format("%s.%s", where, entityKey);
 					if (definitions.containsKey(definitionKey)) {
-						final Map<String, Map<String, Deque<TokenDefinitionJpaImpl>>> definition = definitions
+						final Map<String, Map<String, Deque<TokenDefinition>>> definition = definitions
 								.get(definitionKey);
 						if (definition.containsKey(entityKey)) {
-							final Map<String, Deque<TokenDefinitionJpaImpl>> entity = definition.get(entityKey);
+							final Map<String, Deque<TokenDefinition>> entity = definition.get(entityKey);
 							if (entity.containsKey(attributeKey)) {
-								final Deque<TokenDefinitionJpaImpl> attribute = entity.get(attributeKey);
+								final Deque<TokenDefinition> attribute = entity.get(attributeKey);
 								if (attribute.contains(def)) {
 									attribute.remove(def);
 									attribute.push(def);
@@ -441,23 +441,23 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 									attribute.push(def);
 								}
 							} else {
-								final Deque<TokenDefinitionJpaImpl> attribute = new ArrayDeque<TokenDefinitionJpaImpl>();
+								final Deque<TokenDefinition> attribute = new ArrayDeque<TokenDefinition>();
 								attribute.push(def);
 								entity.put(attributeKey, attribute);
 							}
 						} else {
-							final Deque<TokenDefinitionJpaImpl> attribute = new ArrayDeque<TokenDefinitionJpaImpl>();
+							final Deque<TokenDefinition> attribute = new ArrayDeque<TokenDefinition>();
 							attribute.push(def);
-							final Map<String, Deque<TokenDefinitionJpaImpl>> entity = new HashMap<String, Deque<TokenDefinitionJpaImpl>>();
+							final Map<String, Deque<TokenDefinition>> entity = new HashMap<String, Deque<TokenDefinition>>();
 							entity.put(attributeKey, attribute);
 							definition.put(entityKey, entity);
 						}
 					} else {
-						final Deque<TokenDefinitionJpaImpl> attribute = new ArrayDeque<TokenDefinitionJpaImpl>();
+						final Deque<TokenDefinition> attribute = new ArrayDeque<TokenDefinition>();
 						attribute.push(def);
-						final Map<String, Deque<TokenDefinitionJpaImpl>> entity = new HashMap<String, Deque<TokenDefinitionJpaImpl>>();
+						final Map<String, Deque<TokenDefinition>> entity = new HashMap<String, Deque<TokenDefinition>>();
 						entity.put(attributeKey, attribute);
-						final Map<String, Map<String, Deque<TokenDefinitionJpaImpl>>> definition = new HashMap<String, Map<String, Deque<TokenDefinitionJpaImpl>>>();
+						final Map<String, Map<String, Deque<TokenDefinition>>> definition = new HashMap<String, Map<String, Deque<TokenDefinition>>>();
 						definition.put(entityKey, entity);
 						definitions.put(definitionKey, definition);
 					}
@@ -482,9 +482,9 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	}
 	
 	private void refreshDictionary() {
-		final Iterable<TokenDefinitionJpaImpl> definitions = _definitions.findAll();
+		final Iterable<TokenDefinition> definitions = _definitions.findAll();
 		if (isNotNullOrEmpty(definitions)) {
-			final List<TokenDefinitionJpaImpl> list = (List<TokenDefinitionJpaImpl>) definitions;
+			final List<TokenDefinition> list = (List<TokenDefinition>) definitions;
 			if (_dictionary != null) {
 				synchronized (_dictionary) {
 					_dictionary = synchronizedList(unmodifiableList(list));

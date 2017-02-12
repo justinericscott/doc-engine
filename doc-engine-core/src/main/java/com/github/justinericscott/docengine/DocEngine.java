@@ -14,6 +14,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
@@ -22,7 +25,8 @@ import org.springframework.context.annotation.PropertySources;
  * @author Justin Scott<br>
  *         TODO: Description
  */
-@SpringBootApplication
+@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class,
+		DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class })
 @PropertySources({ @PropertySource(value = PROPERTY_DEFAULT),
 		@PropertySource(value = PROPERTY_CUSTOM, ignoreResourceNotFound = true) })
 public class DocEngine {
@@ -85,21 +89,15 @@ public class DocEngine {
 	}
 
 	public static final class Constants {
-//		static final Class<DocEngine> APPLICATION = DocEngine.class;
-
-//		public static final String AUTOWIRE_QUALIFIER_BUSINESS = "business";
-//		public static final String AUTOWIRE_QUALIFIER_CONTENT = "content";
 		public static final String AUTOWIRE_QUALIFIER_DOCUMENT = "document";
 		public static final String AUTOWIRE_QUALIFIER_SECTION = "section";
 		public static final String AUTOWIRE_QUALIFIER_CLAUSE = "clause";
 		public static final String AUTOWIRE_QUALIFIER_PARAGRAPH = "paragraph";
-//		public static final String AUTOWIRE_QUALIFIER_INSTANCE = "instance";
 		public static final String AUTOWIRE_QUALIFIER_JDBC_TX = "jdbcTransactionManager";
 		public static final String AUTOWIRE_QUALIFIER_ORM_TX = "transactionManager";
 		public static final String AUTOWIRE_QUALIFIER_JDBC = "jdbc";
 		public static final String AUTOWIRE_QUALIFIER_ORM = "orm";
 		public static final String AUTOWIRE_QUALIFIER_ENDPOINT = "endpoint";
-//		public static final String AUTOWIRE_QUALIFIER_TOKEN = "token";
 
 		public static final String ENGINE_CONTROL_STOP = "stop";
 

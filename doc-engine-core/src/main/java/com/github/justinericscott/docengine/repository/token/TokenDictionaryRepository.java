@@ -2,11 +2,11 @@ package com.github.justinericscott.docengine.repository.token;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.github.justinericscott.docengine.types.TokenDefinitionJpaImpl;
+import com.github.justinericscott.docengine.models.TokenDefinition;
 
-public interface TokenDictionaryRepository extends CrudRepository<TokenDefinitionJpaImpl, Long> {
+public interface TokenDictionaryRepository extends CrudRepository<TokenDefinition, Long> {
 	
-	TokenDefinitionJpaImpl findByTokenCd(String code);
+	TokenDefinition findByTokenCd(String code);
 	
-	Iterable<TokenDefinitionJpaImpl> findByTokenCdLike(String like);
+	Iterable<TokenDefinition> findByTokenCdLike(String like);
 }

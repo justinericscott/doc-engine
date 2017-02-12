@@ -2,14 +2,14 @@ package com.github.justinericscott.docengine.repository.content;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.github.justinericscott.docengine.types.ClauseJpaImpl;
+import com.github.justinericscott.docengine.models.Clause;
 
-public interface ClauseRepository extends CrudRepository<ClauseJpaImpl, Long> {
+public interface ClauseRepository extends CrudRepository<Clause, Long> {
 
 	@Override
-	Iterable<ClauseJpaImpl> findAll();
+	Iterable<Clause> findAll();
 	
-	ClauseJpaImpl findByContentCd(String code);
+	Clause findByContentCd(String code);
 	
-	Iterable<ClauseJpaImpl> findByContentCdLike(String like);	
+	Iterable<Clause> findByContentCdLike(String like);	
 }

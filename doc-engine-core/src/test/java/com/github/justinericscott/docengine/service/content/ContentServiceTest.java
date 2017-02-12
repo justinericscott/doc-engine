@@ -1,6 +1,7 @@
 package com.github.justinericscott.docengine.service.content;
 
 import static org.junit.Assert.*;
+import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
@@ -11,16 +12,17 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.github.justinericscott.docengine.models.Clause;
+import com.github.justinericscott.docengine.models.Clauses;
+import com.github.justinericscott.docengine.models.Content;
+import com.github.justinericscott.docengine.models.Contents;
+import com.github.justinericscott.docengine.models.Document;
+import com.github.justinericscott.docengine.models.Documents;
+import com.github.justinericscott.docengine.models.Paragraph;
+import com.github.justinericscott.docengine.models.Paragraphs;
+import com.github.justinericscott.docengine.models.Section;
+import com.github.justinericscott.docengine.models.Sections;
 import com.github.justinericscott.docengine.service.content.ContentService;
-import com.github.justinericscott.docengine.types.ClauseJpaImpl;
-import com.github.justinericscott.docengine.types.Clauses;
-import com.github.justinericscott.docengine.types.ContentJpaImpl;
-import com.github.justinericscott.docengine.types.Contents;
-import com.github.justinericscott.docengine.types.DocumentJpaImpl;
-import com.github.justinericscott.docengine.types.ParagraphJpaImpl;
-import com.github.justinericscott.docengine.types.Paragraphs;
-import com.github.justinericscott.docengine.types.SectionJpaImpl;
-import com.github.justinericscott.docengine.types.Sections;
 import com.github.justinericscott.docengine.util.AbstractTest;
 
 /**
@@ -37,18 +39,18 @@ public class ContentServiceTest extends AbstractTest {
 	@Test
 	public void aa_SaveTest() {
 		// One
-		ContentJpaImpl content = makeTestContent();
+		Content content = makeTestContent();
 		content = _contents.save(content);
 		assertNotNull(content);
 		assertTrue(content.isValid(true));
-		assertNull(_contents.save((ContentJpaImpl) null));
-		assertNull(_contents.save(new ContentJpaImpl("", "TEST BODY")));
-		assertNull(_contents.save(new ContentJpaImpl(TEST_CONTENT_CODE_PREFIX + uuid(), "")));
-		assertNull(_contents.save(new ContentJpaImpl(content, content.getContentCd())));
+		assertNull(_contents.save((Content) null));
+		assertNull(_contents.save(new Content("", "TEST BODY")));
+		assertNull(_contents.save(new Content(TEST_CONTENT_CODE_PREFIX + uuid(), "")));
+		assertNull(_contents.save(new Content(content, content.getContentCd())));
 
 		// Many
 		Contents result = _contents.save(new Contents(makeTestContents(9)));
-		for (final ContentJpaImpl c : result.getContents()) {
+		for (final Content c : result.getContents()) {
 			assertTrue(c.isValid(true));
 		}
 	}
@@ -56,30 +58,30 @@ public class ContentServiceTest extends AbstractTest {
 	@Test
 	public void ab_SaveDocumentTest() {
 		// Merge 1
-		ContentJpaImpl content = createContent();
+		Content content = createContent();
 
 		// Merge complex one at a time
-		DocumentJpaImpl document = (DocumentJpaImpl) _contents
-				.save(new DocumentJpaImpl(content, TEST_DOCUMENT_CODE_PREFIX + uuid()));
+		Document document = (Document) _contents
+				.save(new Document(content, TEST_DOCUMENT_CODE_PREFIX + uuid()));
 		assertNotNull(document.getId());
 
-		SectionJpaImpl section = new SectionJpaImpl(content, TEST_SECTION_CODE_PREFIX + uuid());
+		Section section = new Section(content, TEST_SECTION_CODE_PREFIX + uuid());
 		document.addSection(section);
-		section = (SectionJpaImpl) _contents.save(section);
+		section = (Section) _contents.save(section);
 		assertNotNull(section.getId());
 
-		ClauseJpaImpl clause = new ClauseJpaImpl(content, TEST_CLAUSE_CODE_PREFIX + uuid());
+		Clause clause = new Clause(content, TEST_CLAUSE_CODE_PREFIX + uuid());
 		section.addClause(clause);
-		clause = (ClauseJpaImpl) _contents.save(clause);
+		clause = (Clause) _contents.save(clause);
 		assertNotNull(clause.getId());
 
-		ParagraphJpaImpl paragraph = new ParagraphJpaImpl(content, TEST_PARAGRAPH_CODE_PREFIX + uuid());
+		Paragraph paragraph = new Paragraph(content, TEST_PARAGRAPH_CODE_PREFIX + uuid());
 		clause.addParagraph(paragraph);
-		paragraph = (ParagraphJpaImpl) _contents.save(paragraph);
+		paragraph = (Paragraph) _contents.save(paragraph);
 		assertNotNull(paragraph.getId());
 
 		// Need to re-get after assembly to delete.
-		document = (DocumentJpaImpl) _contents.findOne(document.getId(), DocumentJpaImpl.class);
+		document = (Document) _contents.findOne(document.getId(), Document.class);
 		assertNotNull(document);
 		assertTrue(document.isValid(true));
 
@@ -87,29 +89,29 @@ public class ContentServiceTest extends AbstractTest {
 		document = createDocument();
 
 		// Merge a list
-		Collection<ContentJpaImpl> list = new TreeSet<ContentJpaImpl>();
+		Collection<Content> list = new TreeSet<Content>();
 		list.add(createContent());
 		list.add(createContent());
 		list.add(createContent());
-		Collection<ContentJpaImpl> iter = list;
-		Contents contents = new Contents(iter.toArray(new ContentJpaImpl[list.size()]));
+		Collection<Content> iter = list;
+		Contents contents = new Contents(iter.toArray(new Content[list.size()]));
 		contents = _contents.save(contents);
-		for (ContentJpaImpl c : contents.getContents()) {
+		for (Content c : contents.getContents()) {
 			assertNotNull(c.getId());
 		}
-		assertNull(_contents.save((ContentJpaImpl) null));
-		assertNull(_contents.save((ContentJpaImpl) new ContentJpaImpl("", "TEST BODY")));
-		assertNull(_contents.save((ContentJpaImpl) new ContentJpaImpl(TEST_CONTENT_CODE_PREFIX + uuid(), "")));
+		assertNull(_contents.save((Content) null));
+		assertNull(_contents.save((Content) new Content("", "TEST BODY")));
+		assertNull(_contents.save((Content) new Content(TEST_CONTENT_CODE_PREFIX + uuid(), "")));
 		assertNull(_contents
-				.save((ContentJpaImpl) new ContentJpaImpl(new ContentJpaImpl(""), TEST_CONTENT_CODE_PREFIX + uuid())));
+				.save((Content) new Content(new Content(""), TEST_CONTENT_CODE_PREFIX + uuid())));
 		content = createContent();
-		assertNull(_contents.save((ContentJpaImpl) new ContentJpaImpl(content, content.getContentCd())));
+		assertNull(_contents.save((Content) new Content(content, content.getContentCd())));
 	}
 
 	@Test
 	public void ba_FindTest() {
 		// Find one
-		ContentJpaImpl content = createContent();
+		Content content = createContent();
 		content = _contents.findOne(content.getId());
 		assertNotNull(content);
 		assertTrue(content.isValid(true));
@@ -137,7 +139,7 @@ public class ContentServiceTest extends AbstractTest {
 		// Find all
 		createContents(5);
 		contents = _contents.findAll();
-		for (final ContentJpaImpl c : contents.getContents()) {
+		for (final Content c : contents.getContents()) {
 			assertTrue(c.isValid(true));
 		}
 	}
@@ -145,111 +147,111 @@ public class ContentServiceTest extends AbstractTest {
 	@Test
 	public void bb_FindDocumentTest() {
 		// Get sub-classes, no eagerKids
-		DocumentJpaImpl document = createDocument();
+		Document document = createDocument();
 		Long id = document.getId();
 		String code = document.getContentCd();
-		document = _contents.findOne(id, DocumentJpaImpl.class);
+		document = _contents.findOne(id, Document.class);
 		assertNotNull(document);
 		assertTrue(document.isValid(true));
-		assertTrue(DocumentJpaImpl.class.equals(document.getClass()));
-		document = _contents.findByCode(code, DocumentJpaImpl.class);
+		assertTrue(Document.class.equals(document.getClass()));
+		document = _contents.findByCode(code, Document.class);
 		assertNotNull(document);
 		assertTrue(document.isValid(true));
-		assertTrue(DocumentJpaImpl.class.equals(document.getClass()));
+		assertTrue(Document.class.equals(document.getClass()));
 
 		try {
-			_contents.findOne(id, DocumentJpaImpl.class).getSections().iterator().next().getId();
+			_contents.findOne(id, Document.class).getSections().iterator().next().getId();
 			fail();
 		} catch (final Exception e) {
 			assertTrue(e.getClass().equals(LazyInitializationException.class));
 		}
 		
-		document = _contents.findOne(id, DocumentJpaImpl.class, true);
+		document = _contents.findOne(id, Document.class, true);
 		assertNotNull(document);
 		assertTrue(document.isValid(true));
-		assertTrue(DocumentJpaImpl.class.equals(document.getClass()));
+		assertTrue(Document.class.equals(document.getClass()));
 		assertFalse(document.getSections().isEmpty());
 		
-		assertTrue(SectionJpaImpl.class
+		assertTrue(Section.class
 				.equals(_contents.findOne(document.getSections().iterator().next().getId()).getClass()));
-		assertTrue(SectionJpaImpl.class
+		assertTrue(Section.class
 				.equals(_contents.findByCode(document.getSections().iterator().next().getContentCd()).getClass()));
 		try {
-			((SectionJpaImpl) _contents.findOne(document.getSections().iterator().next().getId())).getClauses()
+			((Section) _contents.findOne(document.getSections().iterator().next().getId())).getClauses()
 					.iterator().next();
 			fail();
 		} catch (final Exception e) {
 			assertTrue(e.getClass().equals(LazyInitializationException.class));
 		}
-		assertTrue(ClauseJpaImpl.class.equals(_contents
-				.findOne(document.getSections().iterator().next().getClauses().iterator().next().getId(), ClauseJpaImpl.class).getClass()));
-		assertTrue(ClauseJpaImpl.class.equals(_contents
+		assertTrue(Clause.class.equals(_contents
+				.findOne(document.getSections().iterator().next().getClauses().iterator().next().getId(), Clause.class).getClass()));
+		assertTrue(Clause.class.equals(_contents
 				.findByCode(document.getSections().iterator().next().getClauses().iterator().next().getContentCd())
 				.getClass()));
 		try {
-			((ClauseJpaImpl) _contents
-					.findOne(document.getSections().iterator().next().getClauses().iterator().next().getId(), ClauseJpaImpl.class))
+			((Clause) _contents
+					.findOne(document.getSections().iterator().next().getClauses().iterator().next().getId(), Clause.class))
 							.getParagraphs().iterator().next();
 			fail();
 		} catch (final Exception e) {
 			assertTrue(e.getClass().equals(LazyInitializationException.class));
 		}
-		assertTrue(ParagraphJpaImpl.class.equals(_contents.findOne(document.getSections().iterator().next().getClauses()
-				.iterator().next().getParagraphs().iterator().next().getId(), ParagraphJpaImpl.class).getClass()));
-		assertTrue(ParagraphJpaImpl.class.equals(_contents.findByCode(document.getSections().iterator().next()
+		assertTrue(Paragraph.class.equals(_contents.findOne(document.getSections().iterator().next().getClauses()
+				.iterator().next().getParagraphs().iterator().next().getId(), Paragraph.class).getClass()));
+		assertTrue(Paragraph.class.equals(_contents.findByCode(document.getSections().iterator().next()
 				.getClauses().iterator().next().getParagraphs().iterator().next().getContentCd()).getClass()));
 
 		// Get Children by ID
-		for (final SectionJpaImpl s : _contents.getChildren(id, Sections.class).getSections()) {
+		for (final Section s : _contents.getChildren(id, Sections.class).getSections()) {
 			try {
 				s.getClauses().iterator().hasNext();
 				fail();
 			} catch (final Exception e) {
 				assertTrue(e.getClass().equals(LazyInitializationException.class));
 			}
-			for (final ClauseJpaImpl c : _contents.getChildren(s.getId(), Clauses.class).getClauses()) {
+			for (final Clause c : _contents.getChildren(s.getId(), Clauses.class).getClauses()) {
 				try {
 					c.getParagraphs().iterator().hasNext();
 					fail();
 				} catch (final Exception e) {
 					assertTrue(e.getClass().equals(LazyInitializationException.class));
 				}
-				for (final ContentJpaImpl p : _contents.getChildren(c.getId(), Paragraphs.class).getParagraphs()) {
+				for (final Content p : _contents.getChildren(c.getId(), Paragraphs.class).getParagraphs()) {
 					assertTrue(p.isValid(true));
 				}
 			}
 		}
 
 		// Get Children by ID with kids
-		for (SectionJpaImpl s : _contents.getChildren(document.getId(), Sections.class, true).getSections()) {
+		for (Section s : _contents.getChildren(document.getId(), Sections.class, true).getSections()) {
 			assertTrue(s.isValid(true));
-			for (ClauseJpaImpl c : _contents.getChildren(s.getId(), Clauses.class, true).getClauses()) {
+			for (Clause c : _contents.getChildren(s.getId(), Clauses.class, true).getClauses()) {
 				assertTrue(c.isValid(true));
-				for (ParagraphJpaImpl p : _contents.getChildren(c.getId(), Paragraphs.class, true).getParagraphs()) {
+				for (Paragraph p : _contents.getChildren(c.getId(), Paragraphs.class, true).getParagraphs()) {
 					assertTrue(p.isValid(true));
 				}
 			}
 		}
 
 		// Get Children by code
-		for (SectionJpaImpl s : _contents.getChildren(document.getContentCd(), Sections.class).getSections()) {
-			for (ClauseJpaImpl c : _contents.getChildren(s.getContentCd(), Clauses.class).getClauses()) {
-				for (ParagraphJpaImpl p : _contents.getChildren(c.getContentCd(), Paragraphs.class).getParagraphs()) {
+		for (Section s : _contents.getChildren(document.getContentCd(), Sections.class).getSections()) {
+			for (Clause c : _contents.getChildren(s.getContentCd(), Clauses.class).getClauses()) {
+				for (Paragraph p : _contents.getChildren(c.getContentCd(), Paragraphs.class).getParagraphs()) {
 					assertNotNull(p.getContentCd());
 				}
 			}
 		}
 
 		// Get Children by code with kids
-		for (SectionJpaImpl s : _contents.getChildren(document.getContentCd(), Sections.class, true).getSections()) {
+		for (Section s : _contents.getChildren(document.getContentCd(), Sections.class, true).getSections()) {
 			assertTrue(s.isValid(true));
 			assertTrue(s.getClauses().iterator().hasNext());
 			assertNotNull(s.getClauses().iterator().next().getId());
-			for (ClauseJpaImpl c : _contents.getChildren(s.getContentCd(), Clauses.class, true).getClauses()) {
+			for (Clause c : _contents.getChildren(s.getContentCd(), Clauses.class, true).getClauses()) {
 				assertTrue(c.isValid(true));
 				assertTrue(c.getParagraphs().iterator().hasNext());
 				assertNotNull(c.getParagraphs().iterator().next().getId());
-				for (ParagraphJpaImpl p : _contents.getChildren(c.getContentCd(), Paragraphs.class, true)
+				for (Paragraph p : _contents.getChildren(c.getContentCd(), Paragraphs.class, true)
 						.getParagraphs()) {
 					assertTrue(p.isValid(true));
 				}
@@ -260,11 +262,13 @@ public class ContentServiceTest extends AbstractTest {
 		assertNull(_contents.findOne(0L));
 		assertNull(_contents.findOne(99999999999999999L));
 		assertNull(_contents.findByCode("Snicklefritz"));
+		
+		assertNotNull(_contents.findAll(Documents.class));
 	}
 
 	@Test
 	public void x_DeleteTest() {
-		ContentJpaImpl content = createContent();
+		Content content = createContent();
 		_contents.delete(content);
 		assertNull(_contents.findOne(content.getId()));
 		content = createContent();
@@ -272,7 +276,7 @@ public class ContentServiceTest extends AbstractTest {
 		assertNull(_contents.findByCode(content.getContentCd()));
 		Contents contents = createContents(3);
 		_contents.delete(contents);
-		for (final ContentJpaImpl c : contents.getContents()) {
+		for (final Content c : contents.getContents()) {
 			assertNull(_contents.findOne(c.getId()));
 		}
 		createContents(5);
@@ -285,23 +289,23 @@ public class ContentServiceTest extends AbstractTest {
 	}
 	
 	private Contents createContents(int count) {
-		Collection<ContentJpaImpl> contents = new TreeSet<ContentJpaImpl>();
+		Collection<Content> contents = new TreeSet<Content>();
 		for (int i = 0; i < count; i++) {
 			contents.add(createContent());
 		}
 		return new Contents(contents);
 	}
 	
-	private ContentJpaImpl createContent() {
-		ContentJpaImpl content = makeTestContent();
+	private Content createContent() {
+		Content content = makeTestContent();
 		content = _contents.save(content);
 		assertNotNull(content);
 		assertTrue(content.isValid(true));
 		return content;
 	}
 	
-	private DocumentJpaImpl createDocument() {
-		DocumentJpaImpl document = makeTestDocumentComplete();
+	private Document createDocument() {
+		Document document = makeTestDocumentComplete();
 		document = _contents.save(document);
 		assertNotNull(document);
 		assertTrue(document.isValid(true));

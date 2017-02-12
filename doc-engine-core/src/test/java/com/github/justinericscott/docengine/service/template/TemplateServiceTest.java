@@ -41,8 +41,8 @@ public class TemplateServiceTest extends AbstractTest {
 	public void a_ProcessTest() {
 		Map<String, Object> tokens = new HashMap<String, Object>(1);
 		tokens.put(TOKEN_NAME, TOKEN_VALUE);
-		service.loadTemplate(TEMPLATE_NAME, TEMPLATE_BODY);
-		String actual = service.process(TEMPLATE_NAME, tokens);
+		service.load(TEMPLATE_NAME, TEMPLATE_BODY);
+		String actual = service.run(TEMPLATE_NAME, tokens);
 		assertEquals(EXPECTED_RESULT, actual);
 	}
 
@@ -50,15 +50,15 @@ public class TemplateServiceTest extends AbstractTest {
 	public void b_ProcessNullToken() {
 		Map<String, Object> tokens = new HashMap<String, Object>(1);
 		tokens.put(TOKEN_NAME, null);
-		service.loadTemplate(TEMPLATE_NAME, TEMPLATE_BODY);
-		String actual = service.process(TEMPLATE_NAME, tokens);
+		service.load(TEMPLATE_NAME, TEMPLATE_BODY);
+		String actual = service.run(TEMPLATE_NAME, tokens);
 		assertEquals(EXPECTED_RESULT_NULL_TOKEN, actual);
 	}
 
 	@Test
 	public void c_ProcessNullTokens() {
-		service.loadTemplate(TEMPLATE_NAME, TEMPLATE_BODY);
-		String actual = service.process(TEMPLATE_NAME, null);
+		service.load(TEMPLATE_NAME, TEMPLATE_BODY);
+		String actual = service.run(TEMPLATE_NAME, null);
 		assertEquals(EXPECTED_RESULT_NULL_TOKENS, actual);
 	}
 
@@ -66,7 +66,7 @@ public class TemplateServiceTest extends AbstractTest {
 	public void d_ProcessNullTemplate() {
 		Map<String, Object> tokens = new HashMap<String, Object>(1);
 		tokens.put(TOKEN_NAME, TOKEN_VALUE);
-		String actual = service.process(null, tokens);
+		String actual = service.run(null, tokens);
 		assertEquals(EXPECTED_RESULT_NULL_TEMPLATE_NAME, actual);
 	}
 
@@ -74,8 +74,8 @@ public class TemplateServiceTest extends AbstractTest {
 	public void e_ProcessBrokenTemplate() {
 		Map<String, Object> tokens = new HashMap<String, Object>(1);
 		tokens.put(TOKEN_NAME, TOKEN_VALUE);
-		service.loadTemplate(TEMPLATE_NAME_BROKEN, TEMPLATE_BODY_BROKEN);
-		String actual = service.process(TEMPLATE_NAME_BROKEN, tokens);
+		service.load(TEMPLATE_NAME_BROKEN, TEMPLATE_BODY_BROKEN);
+		String actual = service.run(TEMPLATE_NAME_BROKEN, tokens);
 		assertEquals(TEMPLATE_BODY_BROKEN, actual);
 	}
 }

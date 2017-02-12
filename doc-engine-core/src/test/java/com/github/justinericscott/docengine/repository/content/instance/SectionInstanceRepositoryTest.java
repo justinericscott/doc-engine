@@ -1,6 +1,7 @@
 package com.github.justinericscott.docengine.repository.content.instance;
 
 import static org.junit.Assert.*;
+import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
@@ -13,14 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
+import com.github.justinericscott.docengine.models.Clause;
+import com.github.justinericscott.docengine.models.ClauseInstance;
+import com.github.justinericscott.docengine.models.Paragraph;
+import com.github.justinericscott.docengine.models.ParagraphInstance;
+import com.github.justinericscott.docengine.models.Section;
+import com.github.justinericscott.docengine.models.SectionInstance;
 import com.github.justinericscott.docengine.repository.content.SectionInstanceRepository;
 import com.github.justinericscott.docengine.repository.content.SectionRepository;
-import com.github.justinericscott.docengine.types.ClauseInstanceJpaImpl;
-import com.github.justinericscott.docengine.types.ClauseJpaImpl;
-import com.github.justinericscott.docengine.types.ParagraphInstanceJpaImpl;
-import com.github.justinericscott.docengine.types.ParagraphJpaImpl;
-import com.github.justinericscott.docengine.types.SectionInstanceJpaImpl;
-import com.github.justinericscott.docengine.types.SectionJpaImpl;
 import com.github.justinericscott.docengine.util.AbstractTest;
 
 /**
@@ -42,11 +43,11 @@ public class SectionInstanceRepositoryTest extends AbstractTest {
 	public void a_SaveTest() {
 		
 		// Happy path...
-		SectionJpaImpl section = makeTestSection();
+		Section section = makeTestSection();
 		section = _sections.save(section);
 		assertNotNull(section);
 		assertTrue(section.isValid(true));
-		SectionInstanceJpaImpl sectionInstance = new SectionInstanceJpaImpl(section, TEST_PROJECT_ID_VALUE);
+		SectionInstance sectionInstance = new SectionInstance(section, TEST_PROJECT_ID_VALUE);
 		sectionInstance = _instances.save(sectionInstance);
 		assertNotNull(sectionInstance);
 		assertTrue(sectionInstance.isValid(true));
@@ -54,46 +55,46 @@ public class SectionInstanceRepositoryTest extends AbstractTest {
 		assertNotNull(section);
 		assertTrue(section.isValid(true));
 
-		Collection<SectionJpaImpl> sections = makeTestSections(7);
-		sections = (Collection<SectionJpaImpl>) _sections.save(sections);
+		Collection<Section> sections = makeTestSections(7);
+		sections = (Collection<Section>) _sections.save(sections);
 		assertNotNull(sections);
 		assertFalse(sections.isEmpty());
-		final Collection<SectionInstanceJpaImpl> list = new TreeSet<SectionInstanceJpaImpl>();
+		final Collection<SectionInstance> list = new TreeSet<SectionInstance>();
 		sections.forEach(s -> {
 			assertTrue(s.isValid(true));
-			list.add(new SectionInstanceJpaImpl(s, TEST_PROJECT_ID_VALUE));
+			list.add(new SectionInstance(s, TEST_PROJECT_ID_VALUE));
 		});
-		Collection<SectionInstanceJpaImpl> sectionInstances = new TreeSet<SectionInstanceJpaImpl>();
-		sectionInstances = (Collection<SectionInstanceJpaImpl>) _instances.save(list);
+		Collection<SectionInstance> sectionInstances = new TreeSet<SectionInstance>();
+		sectionInstances = (Collection<SectionInstance>) _instances.save(list);
 		assertNotNull(sectionInstances);
 		assertFalse(sectionInstances.isEmpty());
 		sectionInstances.forEach(i -> {
 			assertTrue(i.isValid(true));
-			SectionJpaImpl s = i.getSection();
+			Section s = i.getSection();
 			assertNotNull(s);
 			assertTrue(s.isValid(true));
 		});
 
 		try {
-			_instances.save((SectionInstanceJpaImpl) null);
+			_instances.save((SectionInstance) null);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
 		}
 		try {
-			_instances.save(new SectionInstanceJpaImpl(section, null));
+			_instances.save(new SectionInstance(section, null));
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
-			_instances.save(new SectionInstanceJpaImpl(TEST_PROJECT_ID_VALUE));
+			_instances.save(new SectionInstance(TEST_PROJECT_ID_VALUE));
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
-			_instances.save(new SectionInstanceJpaImpl(makeTestSection(), TEST_PROJECT_ID_VALUE));
+			_instances.save(new SectionInstance(makeTestSection(), TEST_PROJECT_ID_VALUE));
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
@@ -104,11 +105,11 @@ public class SectionInstanceRepositoryTest extends AbstractTest {
 	public void b_FindTest() {
 		
 		// Happy path...
-		SectionJpaImpl section = _sections.save(makeTestSection());
+		Section section = _sections.save(makeTestSection());
 		assertNotNull(section);
 		assertTrue(section.isValid(true));
 		final String contentCd = section.getContentCd();
-		SectionInstanceJpaImpl sectionInstance = new SectionInstanceJpaImpl(section, TEST_PROJECT_ID_VALUE);
+		SectionInstance sectionInstance = new SectionInstance(section, TEST_PROJECT_ID_VALUE);
 		sectionInstance = _instances.save(sectionInstance);
 		assertNotNull(sectionInstance);
 		assertTrue(sectionInstance.isValid(true));
@@ -127,22 +128,22 @@ public class SectionInstanceRepositoryTest extends AbstractTest {
 		assertNotNull(section);
 		assertTrue(section.isValid(true));
 
-		Collection<SectionInstanceJpaImpl> sectionInstances = (Collection<SectionInstanceJpaImpl>) _instances.findAll(); 
+		Collection<SectionInstance> sectionInstances = (Collection<SectionInstance>) _instances.findAll(); 
 		assertNotNull(sectionInstances);
 		assertFalse(sectionInstances.isEmpty());
 		sectionInstances.forEach(i -> {
 			assertTrue(i.isValid(true));
-			SectionJpaImpl s = i.getSection();
+			Section s = i.getSection();
 			assertNotNull(s);
 			assertTrue(s.isValid(true));
 		});
 
-		sectionInstances = (Collection<SectionInstanceJpaImpl>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "%TEST%");
+		sectionInstances = (Collection<SectionInstance>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "%TEST%");
 		assertNotNull(sectionInstances);
 		assertFalse(sectionInstances.isEmpty());
 		sectionInstances.forEach(i -> {
 			assertTrue(i.isValid(true));
-			SectionJpaImpl s = i.getSection();
+			Section s = i.getSection();
 			assertNotNull(s);
 			assertTrue(s.isValid(true));
 		});
@@ -157,15 +158,15 @@ public class SectionInstanceRepositoryTest extends AbstractTest {
 		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, ""));
 		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, "Snicklefritz"));
 
-		sectionInstances = (Collection<SectionInstanceJpaImpl>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_SECTION_CODE_PREFIX);
+		sectionInstances = (Collection<SectionInstance>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_SECTION_CODE_PREFIX);
 		assertTrue(sectionInstances.isEmpty());
-		sectionInstances = (Collection<SectionInstanceJpaImpl>) _instances.findByProjectIdAndContentContentCdLike("", TEST_SECTION_CODE_PREFIX);
+		sectionInstances = (Collection<SectionInstance>) _instances.findByProjectIdAndContentContentCdLike("", TEST_SECTION_CODE_PREFIX);
 		assertTrue(sectionInstances.isEmpty());
-		sectionInstances = (Collection<SectionInstanceJpaImpl>) _instances.findByProjectIdAndContentContentCdLike("Snicklefritz", TEST_SECTION_CODE_PREFIX);
+		sectionInstances = (Collection<SectionInstance>) _instances.findByProjectIdAndContentContentCdLike("Snicklefritz", TEST_SECTION_CODE_PREFIX);
 		assertTrue(sectionInstances.isEmpty());
-		sectionInstances = (Collection<SectionInstanceJpaImpl>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "");
+		sectionInstances = (Collection<SectionInstance>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "");
 		assertTrue(sectionInstances.isEmpty());
-		sectionInstances = (Collection<SectionInstanceJpaImpl>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "Snicklefritz");
+		sectionInstances = (Collection<SectionInstance>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "Snicklefritz");
 		assertTrue(sectionInstances.isEmpty());
 		try {
 			_instances.findOne((Long) null);
@@ -184,21 +185,21 @@ public class SectionInstanceRepositoryTest extends AbstractTest {
 	@Test
 	public void c_DiscriminatorTest() {
 		final String contentCd = "SECTION_INSTANCE_DISCRIMINATOR_TEST_" + uuid();
-		SectionJpaImpl cx = new SectionJpaImpl(contentCd, "BLAH BLAH BLAH");
+		Section cx = new Section(contentCd, "BLAH BLAH BLAH");
 		cx = _sections.save(cx);
-		final SectionInstanceJpaImpl x = new SectionInstanceJpaImpl(cx, TEST_PROJECT_ID_VALUE);
-		final SectionInstanceJpaImpl y = _instances.save(x);
+		final SectionInstance x = new SectionInstance(cx, TEST_PROJECT_ID_VALUE);
+		final SectionInstance y = _instances.save(x);
 		assertNull(y.getDiscriminator());
-		final SectionInstanceJpaImpl z = _instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, contentCd);
-		assertEquals(SectionInstanceJpaImpl.class.getSimpleName(), z.getDiscriminator());
+		final SectionInstance z = _instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, contentCd);
+		assertEquals(SectionInstance.class.getSimpleName(), z.getDiscriminator());
 	}
 
 	@Test
 	public void d_ChildrenTest() {
-		SectionJpaImpl section = makeTestSection();
-		ClauseJpaImpl clause = makeTestClause();
+		Section section = makeTestSection();
+		Clause clause = makeTestClause();
 		section.addClause(clause);
-		ParagraphJpaImpl paragraph = makeTestParagraph();
+		Paragraph paragraph = makeTestParagraph();
 		clause.addParagraph(paragraph);
 		
 		section = _sections.save(section);
@@ -217,19 +218,19 @@ public class SectionInstanceRepositoryTest extends AbstractTest {
 		assertNotNull(paragraph.getClause());
 		assertTrue(paragraph.getClause().isValid(true));
 		
-		SectionInstanceJpaImpl sectionInstance = new SectionInstanceJpaImpl(section, TEST_PROJECT_ID_VALUE);		
+		SectionInstance sectionInstance = new SectionInstance(section, TEST_PROJECT_ID_VALUE);		
 		sectionInstance = _instances.save(sectionInstance);
 		assertNotNull(sectionInstance);
 		assertTrue(sectionInstance.isValid(true));
 		Long id = sectionInstance.getId();
 		assertFalse(sectionInstance.getClauses().isEmpty());
 		
-		ClauseInstanceJpaImpl clauseInstance = sectionInstance.getClauses().iterator().next();		
+		ClauseInstance clauseInstance = sectionInstance.getClauses().iterator().next();		
 		assertNotNull(clauseInstance);
 		assertTrue(clauseInstance.isValid(true));
 		assertFalse(clauseInstance.getParagraphs().isEmpty());
 		
-		ParagraphInstanceJpaImpl paragraphInstance = clauseInstance.getParagraphs().iterator().next();
+		ParagraphInstance paragraphInstance = clauseInstance.getParagraphs().iterator().next();
 		assertNotNull(paragraphInstance);
 		assertTrue(paragraphInstance.isValid(true));
 		assertNotNull(paragraphInstance.getClause());
@@ -246,10 +247,10 @@ public class SectionInstanceRepositoryTest extends AbstractTest {
 	@Test
 	public void x_DeleteTest() {
 		final String projectId = TEST_PROJECT_ID_VALUE;
-		SectionJpaImpl section = _sections.save(makeTestSection());
+		Section section = _sections.save(makeTestSection());
 		assertNotNull(section);
 		assertTrue(section.isValid(true));
-		SectionInstanceJpaImpl sectionInstance = new SectionInstanceJpaImpl(section, projectId);
+		SectionInstance sectionInstance = new SectionInstance(section, projectId);
 		sectionInstance = _instances.save(sectionInstance);
 		assertNotNull(sectionInstance);
 		assertTrue(sectionInstance.isValid(true));
@@ -257,7 +258,7 @@ public class SectionInstanceRepositoryTest extends AbstractTest {
 
 		_instances.delete(id);
 		assertNull(_instances.findOne(sectionInstance.getId()));
-		sectionInstance = new SectionInstanceJpaImpl(section, projectId);
+		sectionInstance = new SectionInstance(section, projectId);
 		sectionInstance = _instances.save(sectionInstance);
 		assertNotNull(sectionInstance);
 		assertTrue(sectionInstance.isValid(true));
@@ -265,21 +266,21 @@ public class SectionInstanceRepositoryTest extends AbstractTest {
 		_instances.delete(sectionInstance);
 		assertNull(_instances.findOne(sectionInstance.getId()));
 		
-		Collection<SectionJpaImpl> sections = makeTestSections(7);
-		sections = (Collection<SectionJpaImpl>) _sections.save(sections);
+		Collection<Section> sections = makeTestSections(7);
+		sections = (Collection<Section>) _sections.save(sections);
 		assertNotNull(sections);
 		assertFalse(sections.isEmpty());
-		final Collection<SectionInstanceJpaImpl> list = new TreeSet<SectionInstanceJpaImpl>();
+		final Collection<SectionInstance> list = new TreeSet<SectionInstance>();
 		sections.forEach(s -> {
 			assertTrue(s.isValid(true));
-			list.add(new SectionInstanceJpaImpl(s, projectId));
+			list.add(new SectionInstance(s, projectId));
 		});
-		Collection<SectionInstanceJpaImpl> sectionInstances = (Collection<SectionInstanceJpaImpl>) _instances.save(list);
+		Collection<SectionInstance> sectionInstances = (Collection<SectionInstance>) _instances.save(list);
 		assertNotNull(sectionInstances);
 		assertFalse(sectionInstances.isEmpty());
 		sectionInstances.forEach(i -> {
 			assertTrue(i.isValid(true));
-			SectionJpaImpl s = i.getSection();
+			Section s = i.getSection();
 			assertNotNull(s);
 			assertTrue(s.isValid(true));
 		});		
@@ -289,7 +290,7 @@ public class SectionInstanceRepositoryTest extends AbstractTest {
 		});
 		
 		_instances.deleteAll();
-		sectionInstances = (Collection<SectionInstanceJpaImpl>) _instances.findAll();
+		sectionInstances = (Collection<SectionInstance>) _instances.findAll();
 		assertTrue(sectionInstances.isEmpty());
 	}
 }

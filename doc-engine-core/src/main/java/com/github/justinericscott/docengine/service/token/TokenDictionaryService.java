@@ -6,11 +6,11 @@ package com.github.justinericscott.docengine.service.token;
 import java.util.Deque;
 import java.util.Map;
 
+import com.github.justinericscott.docengine.models.TokenDefinition;
+import com.github.justinericscott.docengine.models.TokenDefinitions;
 import com.github.justinericscott.docengine.pipeline.Project;
 import com.github.justinericscott.docengine.service.token.types.TokenData;
 import com.github.justinericscott.docengine.service.token.types.TokenValue;
-import com.github.justinericscott.docengine.types.TokenDefinitionJpaImpl;
-import com.github.justinericscott.docengine.types.TokenDefinitions;
 
 /**
  * @author Justin
@@ -23,13 +23,13 @@ public interface TokenDictionaryService {
 	
 	TokenDefinitions findAll();
 
-	TokenDefinitionJpaImpl findByTokenCd(String code);
+	TokenDefinition findByTokenCd(String code);
 	
 	TokenDefinitions findByTokenCdLike(String like);
 
-	TokenDefinitionJpaImpl findOne(Long id);
+	TokenDefinition findOne(Long id);
 
-	Map<String, Map<String, Map<String, Deque<TokenDefinitionJpaImpl>>>> getDefinitionMap();
+	Map<String, Map<String, Map<String, Deque<TokenDefinition>>>> getDefinitionMap();
 
 	Map<String, ?> getDroolsSafeTokens(Project project);
 
@@ -41,7 +41,7 @@ public interface TokenDictionaryService {
 
 	Map<String, Iterable<TokenValue>> getTokenValueMap(Project project);
 
-	TokenDefinitionJpaImpl save(TokenDefinitionJpaImpl definition);
+	TokenDefinition save(TokenDefinition definition);
 
 	TokenDefinitions save(TokenDefinitions definitions);
 
@@ -51,5 +51,5 @@ public interface TokenDictionaryService {
 
 	boolean delete(String code);
 
-	boolean delete(TokenDefinitionJpaImpl definition);	
+	boolean delete(TokenDefinition definition);	
 }

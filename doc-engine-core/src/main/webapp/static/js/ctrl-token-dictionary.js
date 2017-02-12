@@ -17,23 +17,19 @@ ctrlTokenDictionary.controller('GetTokenDictionaryItemAllGridCtrl', [
 	'$scope', '$http', '$window', function($scope, $http, $window) {
 		
 		/** Get All Dictionary Items Via REST **/
-		$http.get("/dictionary/items").success(
+		$http.get("/doc-engine/token/tokens").success(
 			function( response ) { 
-				if (response.data != null) {
-					$scope.gridOptions.data = response;	
-				} else {
-					$scope.isEmpty = true;
-				}				
+				$scope.gridOptions.data = response.tokens;	
 			}
 		);
 
 		/** Grid Options To Display The HTTP Response **/
 		$scope.gridOptions = {
 			columnDefs: [
-	             { name: 'Name', 			field: 'tokenName' },
+	             { name: 'Name', 			field: 'name' },
 	             { name: 'Alternate Value', field: 'altText' },
-	             { name: 'Description', 	field: 'tokenDescription' },
-	             { name: 'Task Captured', 	field: 'taskName' }
+	             { name: 'Description', 	field: 'description' },
+	             { name: 'Task Captured', 	field: 'task' }
 			],
 			enableFiltering: true,
 			enableRowHeaderSelection: false,
@@ -180,7 +176,7 @@ ctrlTokenDictionary.controller('TokenDictionaryItemModalEditCtrl', [
 		
 		/** Saves The Form **/
 		$scope.save = function () {
-			$http.post('/dictionary/items', $scope.tokenToEdit);
+			$http.post('/doc-engine/token', $scope.tokenToEdit);
 			selectedToken = $scope.tokenToEdit;
 			isSaved = true;
 			$modalInstance.close('ok');

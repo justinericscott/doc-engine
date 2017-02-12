@@ -67,9 +67,9 @@ ctrlDocument.controller('GetDocumentInstancesAllGridCtrl', [
  		$scope.isSelected = false;
  		
  		/** Get All Document Instances Via REST **/
- 		$http.get("/doc-engine/instance/instances").success(
+ 		$http.get("/doc-engine/instance/document/documents").success(
  			function( response ) { 
- 				$scope.gridOptions.data = response.instances;	
+ 				$scope.gridOptions.data = response.documents;	
  			}
  		);
 

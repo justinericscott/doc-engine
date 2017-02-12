@@ -2,14 +2,14 @@ package com.github.justinericscott.docengine.repository.content;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.github.justinericscott.docengine.types.SectionInstanceJpaImpl;
+import com.github.justinericscott.docengine.models.SectionInstance;
 
-public interface SectionInstanceRepository extends CrudRepository<SectionInstanceJpaImpl, Long> {
+public interface SectionInstanceRepository extends CrudRepository<SectionInstance, Long> {
 
 	@Override
-	Iterable<SectionInstanceJpaImpl> findAll();
+	Iterable<SectionInstance> findAll();
 
-	SectionInstanceJpaImpl findByProjectIdAndContentContentCd(String projectId, String contentCd);
+	SectionInstance findByProjectIdAndContentContentCd(String projectId, String contentCd);
 
-	Iterable<SectionInstanceJpaImpl> findByProjectIdAndContentContentCdLike(String projectId, String like);
+	Iterable<SectionInstance> findByProjectIdAndContentContentCdLike(String projectId, String like);
 }

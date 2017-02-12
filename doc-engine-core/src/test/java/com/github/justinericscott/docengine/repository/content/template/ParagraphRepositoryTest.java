@@ -1,6 +1,7 @@
 package com.github.justinericscott.docengine.repository.content.template;
 
 import static org.junit.Assert.*;
+import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
@@ -12,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
+import com.github.justinericscott.docengine.models.Paragraph;
 import com.github.justinericscott.docengine.repository.content.ParagraphRepository;
-import com.github.justinericscott.docengine.types.ParagraphJpaImpl;
 import com.github.justinericscott.docengine.util.AbstractTest;
 
 /**
@@ -32,13 +33,13 @@ public class ParagraphRepositoryTest extends AbstractTest {
 	@Test
 	public void a_SaveTest() {
 		// Happy path...
-		ParagraphJpaImpl paragraph = makeTestParagraph();
+		Paragraph paragraph = makeTestParagraph();
 		paragraph = _paragraphs.save(paragraph);
 		assertNotNull(paragraph);
 		assertTrue(paragraph.isValid(true));
 
-		Collection<ParagraphJpaImpl> paragraphs = makeTestParagraphs(7);
-		paragraphs = (Collection<ParagraphJpaImpl>) _paragraphs.save(paragraphs);
+		Collection<Paragraph> paragraphs = makeTestParagraphs(7);
+		paragraphs = (Collection<Paragraph>) _paragraphs.save(paragraphs);
 		assertNotNull(paragraphs);
 		assertFalse(paragraphs.isEmpty());
 		paragraphs.forEach(p -> {
@@ -46,38 +47,38 @@ public class ParagraphRepositoryTest extends AbstractTest {
 		});
 
 		try {
-			_paragraphs.save((ParagraphJpaImpl) null);
+			_paragraphs.save((Paragraph) null);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
 		}
 		try {
-			_paragraphs.save(new ParagraphJpaImpl("", "TEST BODY"));
+			_paragraphs.save(new Paragraph("", "TEST BODY"));
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
-			_paragraphs.save(new ParagraphJpaImpl(TEST_PARAGRAPH_CODE_PREFIX + uuid(), ""));
+			_paragraphs.save(new Paragraph(TEST_PARAGRAPH_CODE_PREFIX + uuid(), ""));
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
 			paragraph = _paragraphs.save(makeTestParagraph());
-			ParagraphJpaImpl copy = new ParagraphJpaImpl(paragraph, paragraph.getContentCd());
+			Paragraph copy = new Paragraph(paragraph, paragraph.getContentCd());
 			_paragraphs.save(copy);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
-			Collection<ParagraphJpaImpl> copies = new TreeSet<ParagraphJpaImpl>();
+			Collection<Paragraph> copies = new TreeSet<Paragraph>();
 			copies.addAll(paragraphs);
 			copies.forEach(p -> {
 				p.setId(null);
 			});
-			copies = (Collection<ParagraphJpaImpl>) _paragraphs.save(copies);
+			copies = (Collection<Paragraph>) _paragraphs.save(copies);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
@@ -87,7 +88,7 @@ public class ParagraphRepositoryTest extends AbstractTest {
 	@Test
 	public void b_FindTest() {
 		// Happy path...
-		ParagraphJpaImpl paragraph = _paragraphs.save(makeTestParagraph());
+		Paragraph paragraph = _paragraphs.save(makeTestParagraph());
 		final Long id = paragraph.getId();
 		final String contentCd = paragraph.getContentCd();
 		paragraph = _paragraphs.findOne(id);
@@ -97,7 +98,7 @@ public class ParagraphRepositoryTest extends AbstractTest {
 		assertTrue(paragraph.isValid(true));
 		assertEquals(contentCd, paragraph.getContentCd());
 
-		Collection<ParagraphJpaImpl> paragraphs = (Collection<ParagraphJpaImpl>) _paragraphs
+		Collection<Paragraph> paragraphs = (Collection<Paragraph>) _paragraphs
 				.findByContentCdLike("%TEST%");
 		assertNotNull(paragraphs);
 		assertFalse(paragraphs.isEmpty());
@@ -105,7 +106,7 @@ public class ParagraphRepositoryTest extends AbstractTest {
 			assertTrue(p.isValid(true));
 		});
 
-		paragraphs = (Collection<ParagraphJpaImpl>) _paragraphs.findAll();
+		paragraphs = (Collection<Paragraph>) _paragraphs.findAll();
 		assertNotNull(paragraphs);
 		assertFalse(paragraphs.isEmpty());
 		paragraphs.forEach(p -> {
@@ -116,9 +117,9 @@ public class ParagraphRepositoryTest extends AbstractTest {
 		assertNull(_paragraphs.findOne(Long.MIN_VALUE));
 		assertNull(_paragraphs.findOne(Long.MAX_VALUE));
 		assertNull(_paragraphs.findByContentCd("Snicklefritz"));
-		paragraphs = (Collection<ParagraphJpaImpl>) _paragraphs.findByContentCdLike("%Snicklefritz%");
+		paragraphs = (Collection<Paragraph>) _paragraphs.findByContentCdLike("%Snicklefritz%");
 		assertTrue(paragraphs.isEmpty());
-		paragraphs = (Collection<ParagraphJpaImpl>) _paragraphs.findByContentCdLike("");
+		paragraphs = (Collection<Paragraph>) _paragraphs.findByContentCdLike("");
 		assertTrue(paragraphs.isEmpty());
 		try {
 			_paragraphs.findOne((Long) null);
@@ -137,17 +138,17 @@ public class ParagraphRepositoryTest extends AbstractTest {
 	@Test
 	public void c_DiscriminatorTest() {
 		final String contentCd = "PARAGRAPH_DISCRIMINATOR_TEST_" + uuid();
-		final ParagraphJpaImpl x = new ParagraphJpaImpl(contentCd, "BLAH BLAH BLAH");
-		final ParagraphJpaImpl y = _paragraphs.save(x);
+		final Paragraph x = new Paragraph(contentCd, "BLAH BLAH BLAH");
+		final Paragraph y = _paragraphs.save(x);
 		assertNull(y.getDiscriminator());
-		final ParagraphJpaImpl z = _paragraphs.findByContentCd(contentCd);
-		assertEquals(ParagraphJpaImpl.class.getSimpleName(), z.getDiscriminator());
+		final Paragraph z = _paragraphs.findByContentCd(contentCd);
+		assertEquals(Paragraph.class.getSimpleName(), z.getDiscriminator());
 	}
 
 	@Test
 	public void x_DeleteTest() {
 		// Happy path...
-		ParagraphJpaImpl paragraph = _paragraphs.save(makeTestParagraph());
+		Paragraph paragraph = _paragraphs.save(makeTestParagraph());
 		final Long id = paragraph.getId();
 		_paragraphs.delete(id);
 		assertNull(_paragraphs.findOne(id));
@@ -156,8 +157,8 @@ public class ParagraphRepositoryTest extends AbstractTest {
 		_paragraphs.delete(paragraph);
 		assertNull(_paragraphs.findOne(paragraph.getId()));
 
-		Collection<ParagraphJpaImpl> paragraphs = makeTestParagraphs(7);
-		paragraphs = (Collection<ParagraphJpaImpl>) _paragraphs.save(paragraphs);
+		Collection<Paragraph> paragraphs = makeTestParagraphs(7);
+		paragraphs = (Collection<Paragraph>) _paragraphs.save(paragraphs);
 		assertNotNull(paragraphs);
 		assertFalse(paragraphs.isEmpty());
 		paragraphs.forEach(p -> {
@@ -174,7 +175,7 @@ public class ParagraphRepositoryTest extends AbstractTest {
 		
 		// Break it...
 		try {
-			_paragraphs.delete(new ParagraphJpaImpl());
+			_paragraphs.delete(new Paragraph());
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());

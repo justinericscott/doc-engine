@@ -7,6 +7,7 @@ import static com.github.justinericscott.docengine.util.Utils.isNotNullOrZero;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.hibernate.Hibernate;
 
@@ -17,21 +18,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.github.justinericscott.docengine.models.Clause;
+import com.github.justinericscott.docengine.models.Clauses;
+import com.github.justinericscott.docengine.models.Content;
+import com.github.justinericscott.docengine.models.Contents;
+import com.github.justinericscott.docengine.models.Document;
+import com.github.justinericscott.docengine.models.Documents;
+import com.github.justinericscott.docengine.models.Paragraph;
+import com.github.justinericscott.docengine.models.Paragraphs;
+import com.github.justinericscott.docengine.models.Section;
+import com.github.justinericscott.docengine.models.Sections;
 import com.github.justinericscott.docengine.repository.content.ClauseRepository;
 import com.github.justinericscott.docengine.repository.content.ContentRepository;
 import com.github.justinericscott.docengine.repository.content.DocumentRepository;
 import com.github.justinericscott.docengine.repository.content.ParagraphRepository;
 import com.github.justinericscott.docengine.repository.content.SectionRepository;
-import com.github.justinericscott.docengine.types.ClauseJpaImpl;
-import com.github.justinericscott.docengine.types.Clauses;
-import com.github.justinericscott.docengine.types.ContentJpaImpl;
-import com.github.justinericscott.docengine.types.Contents;
-import com.github.justinericscott.docengine.types.DocumentJpaImpl;
-import com.github.justinericscott.docengine.types.Documents;
-import com.github.justinericscott.docengine.types.ParagraphJpaImpl;
-import com.github.justinericscott.docengine.types.Paragraphs;
-import com.github.justinericscott.docengine.types.SectionJpaImpl;
-import com.github.justinericscott.docengine.types.Sections;
 
 /**
  * @author Justin Scott
@@ -59,7 +60,7 @@ final class ContentServiceImpl implements ContentService {
 	private ParagraphRepository _paragraphs;
 
 	ContentServiceImpl() {
-		LOG.info("Creating new Content Service.");
+		LOG.debug("Creating new Content Service.");
 	}
 
 	@Override
@@ -75,15 +76,15 @@ final class ContentServiceImpl implements ContentService {
 	public final boolean delete(final Long id, final Class<?> type) {
 		if (isNotNullOrEmpty(type)) {
 			if (isNotNullOrZero(id)) {
-				if (type.equals(DocumentJpaImpl.class)) {
+				if (type.equals(Document.class)) {
 					_documents.delete(id);
-				} else if (type.equals(SectionJpaImpl.class)) {
+				} else if (type.equals(Section.class)) {
 					_sections.delete(id);
-				} else if (type.equals(ClauseJpaImpl.class)) {
+				} else if (type.equals(Clause.class)) {
 					_clauses.delete(id);
-				} else if (type.equals(ParagraphJpaImpl.class)) {
+				} else if (type.equals(Paragraph.class)) {
 					_paragraphs.delete(id);
-				} else if (type.equals(ContentJpaImpl.class)) {
+				} else if (type.equals(Content.class)) {
 					_contents.delete(id);
 				} else {
 					LOG.error("Could not determine which repository to use for this type: {}", type.getName());
@@ -117,7 +118,7 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public final boolean delete(final ContentJpaImpl content) {
+	public final boolean delete(final Content content) {
 		if (isNotNullOrEmpty(content)) {
 			_contents.delete(content);
 			return (isNotNullOrEmpty(findOne(content.getId())));
@@ -134,11 +135,11 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public final boolean delete(final ContentJpaImpl[] contents) {
+	public final boolean delete(final Content[] contents) {
 		if (isNotNullOrEmpty(contents)) {
-			List<ContentJpaImpl> list = Arrays.asList(contents);
+			List<Content> list = Arrays.asList(contents);
 			_contents.delete(list);
-			for (final ContentJpaImpl content : contents) {
+			for (final Content content : contents) {
 				if (isNotNullOrEmpty(findOne(content.getId()))) {
 					return false;
 				}
@@ -151,36 +152,36 @@ final class ContentServiceImpl implements ContentService {
 	@Override
 	public final <T> boolean delete(final T object, final Class<T> type) {
 		Long id = null;
-		if (type.equals(DocumentJpaImpl.class)) {
-			final DocumentJpaImpl document = DocumentJpaImpl.class.cast(object);
+		if (type.equals(Document.class)) {
+			final Document document = Document.class.cast(object);
 			id = document.getId();
 			_documents.delete(document);
 		} else if (type.equals(Documents.class)) {
 			final Documents documents = Documents.class.cast(object);
-			_documents.delete(documents.getDocumentsList());
-		} else if (type.equals(SectionJpaImpl.class)) {
-			final SectionJpaImpl section = SectionJpaImpl.class.cast(object);
+			_documents.delete(Arrays.asList(documents.getDocuments()));
+		} else if (type.equals(Section.class)) {
+			final Section section = Section.class.cast(object);
 			id = section.getId();
 			_sections.delete(section);
 		} else if (type.equals(Sections.class)) {
 			final Sections sections = Sections.class.cast(object);
 			_sections.delete(sections.getSectionsList());
-		} else if (type.equals(ClauseJpaImpl.class)) {
-			final ClauseJpaImpl clause = ClauseJpaImpl.class.cast(object);
+		} else if (type.equals(Clause.class)) {
+			final Clause clause = Clause.class.cast(object);
 			id = clause.getId();
 			_clauses.delete(clause);
 		} else if (type.equals(Clauses.class)) {
 			final Clauses clauses = Clauses.class.cast(object);
 			_clauses.delete(clauses.getClausesList());
-		} else if (type.equals(ParagraphJpaImpl.class)) {
-			final ParagraphJpaImpl paragraph = ParagraphJpaImpl.class.cast(object);
+		} else if (type.equals(Paragraph.class)) {
+			final Paragraph paragraph = Paragraph.class.cast(object);
 			id = paragraph.getId();
 			_paragraphs.delete(paragraph);
 		} else if (type.equals(Paragraphs.class)) {
 			final Paragraphs paragraphs = Paragraphs.class.cast(object);
 			_paragraphs.delete(paragraphs.getParagraphsList());
-		} else if (type.equals(ContentJpaImpl.class)) {
-			return delete(ContentJpaImpl.class.cast(object));
+		} else if (type.equals(Content.class)) {
+			return delete(Content.class.cast(object));
 		} else {
 			LOG.error("Could not determine which repository to use for this type: {}", type.getName());
 		}
@@ -197,8 +198,8 @@ final class ContentServiceImpl implements ContentService {
 		_clauses.deleteAll();
 		_paragraphs.deleteAll();
 		_contents.deleteAll();
-		return (findAll(DocumentJpaImpl.class) == null && findAll(SectionJpaImpl.class) == null
-				&& findAll(ClauseJpaImpl.class) == null && findAll(ParagraphJpaImpl.class) == null
+		return (findAll(Document.class) == null && findAll(Section.class) == null
+				&& findAll(Clause.class) == null && findAll(Paragraph.class) == null
 				&& findAll() == null);
 	}
 
@@ -227,31 +228,31 @@ final class ContentServiceImpl implements ContentService {
 		if (isNotNullOrEmpty(type)) {
 			T one = null;
 			if (type.equals(Documents.class)) {
-				final Collection<DocumentJpaImpl> documents = (Collection<DocumentJpaImpl>) _documents.findAll();
+				final Collection<Document> documents = (Collection<Document>) _documents.findAll();
 				if (isNotNullOrEmpty(documents)) {
 					LOG.trace("Found {} template object...", type.getSimpleName());
 					one = type.cast(new Documents(documents));
 				}
 			} else if (type.equals(Sections.class)) {
-				final Collection<SectionJpaImpl> sections = (Collection<SectionJpaImpl>) _sections.findAll();
+				final Collection<Section> sections = (Collection<Section>) _sections.findAll();
 				if (isNotNullOrEmpty(sections)) {
 					LOG.trace("Found {} template object...", type.getSimpleName());
 					one = type.cast(new Sections(sections));
 				}
 			} else if (type.equals(Clauses.class)) {
-				final Collection<ClauseJpaImpl> clauses = (Collection<ClauseJpaImpl>) _clauses.findAll();
+				final Collection<Clause> clauses = (Collection<Clause>) _clauses.findAll();
 				if (isNotNullOrEmpty(clauses)) {
 					LOG.trace("Found {} template object...", type.getSimpleName());
 					one = type.cast(new Clauses(clauses));
 				}
 			} else if (type.equals(Paragraphs.class)) {
-				final Collection<ParagraphJpaImpl> paragraphs = (Collection<ParagraphJpaImpl>) _paragraphs.findAll();
+				final Collection<Paragraph> paragraphs = (Collection<Paragraph>) _paragraphs.findAll();
 				if (isNotNullOrEmpty(paragraphs)) {
 					LOG.trace("Found {} template object...", type.getSimpleName());
 					one = type.cast(new Paragraphs(paragraphs));
 				}
 			} else if (type.equals(Contents.class)) {
-				final Collection<ContentJpaImpl> contents = (Collection<ContentJpaImpl>) _contents.findAll();
+				final Collection<Content> contents = (Collection<Content>) _contents.findAll();
 				if (isNotNullOrEmpty(contents)) {
 					LOG.trace("Found {} template object...", type.getSimpleName());
 					one = type.cast(new Contents(contents));
@@ -264,12 +265,14 @@ final class ContentServiceImpl implements ContentService {
 				}
 				return one;
 			}
+		} else {
+			LOG.warn("Type must not be null!");
 		}
 		return null;
 	}
 
 	@Override
-	public final ContentJpaImpl findByCode(final String code) {
+	public final Content findByCode(final String code) {
 		if (isNotNullOrEmpty(code)) {
 			return _contents.findByContentCd(code);
 		}
@@ -283,37 +286,37 @@ final class ContentServiceImpl implements ContentService {
 
 	@Override
 	public final <T> T findByCode(final String code, Class<T> type, final boolean eagerKids) {
-		if (type.equals(DocumentJpaImpl.class)) {
-			final DocumentJpaImpl content = _documents.findByContentCd(code);
+		if (type.equals(Document.class)) {
+			final Document content = _documents.findByContentCd(code);
 			if (isNotNullOrEmpty(content)) {
 				if (eagerKids) {
 					initialize(content, eagerKids);
 				}
 				return type.cast(content);
 			}
-		} else if (type.equals(SectionJpaImpl.class)) {
-			final SectionJpaImpl content = _sections.findByContentCd(code);
+		} else if (type.equals(Section.class)) {
+			final Section content = _sections.findByContentCd(code);
 			if (isNotNullOrEmpty(content)) {
 				if (eagerKids) {
 					initialize(content, eagerKids);
 				}
 				return type.cast(content);
 			}
-		} else if (type.equals(ClauseJpaImpl.class)) {
-			final ClauseJpaImpl content = _clauses.findByContentCd(code);
+		} else if (type.equals(Clause.class)) {
+			final Clause content = _clauses.findByContentCd(code);
 			if (isNotNullOrEmpty(content)) {
 				if (eagerKids) {
 					initialize(content, eagerKids);
 				}
 				return type.cast(content);
 			}
-		} else if (type.equals(ParagraphJpaImpl.class)) {
-			final ParagraphJpaImpl content = _paragraphs.findByContentCd(code);
+		} else if (type.equals(Paragraph.class)) {
+			final Paragraph content = _paragraphs.findByContentCd(code);
 			if (isNotNullOrEmpty(content)) {
 				return type.cast(content);
 			}
 		} else {
-			final ContentJpaImpl content = findByCode(code);
+			final Content content = findByCode(code);
 			if (isNotNullOrEmpty(content)) {
 				return type.cast(content);
 			}
@@ -325,9 +328,9 @@ final class ContentServiceImpl implements ContentService {
 	public final Contents findByCodeLike(final String like) {
 		if (isNotNullOrEmpty(like)) {
 			final String term = ((like.startsWith("%") || like.endsWith("%")) ? like : "%".concat(like).concat("%"));
-			final Collection<ContentJpaImpl> list = (Collection<ContentJpaImpl>) _contents.findByContentCdLike(term);
+			final Collection<Content> list = (Collection<Content>) _contents.findByContentCdLike(term);
 			if (isNotNullOrEmpty(list)) {
-				return new Contents(list.toArray(new ContentJpaImpl[list.size()]));
+				return new Contents(list.toArray(new Content[list.size()]));
 			}
 		}
 		return null;
@@ -344,7 +347,7 @@ final class ContentServiceImpl implements ContentService {
 			final String term = ((like.startsWith("%") || like.endsWith("%")) ? like : "%".concat(like).concat("%"));
 			T result = null;
 			if (type.equals(Documents.class)) {
-				final List<DocumentJpaImpl> list = (List<DocumentJpaImpl>) _documents.findByContentCdLike(term);
+				final List<Document> list = (List<Document>) _documents.findByContentCdLike(term);
 				final Documents content = new Documents(list);
 				if (isNotNullOrEmpty(content)) {
 					result = type.cast(content);
@@ -354,7 +357,7 @@ final class ContentServiceImpl implements ContentService {
 					return result;
 				}
 			} else if (type.equals(Sections.class)) {
-				final List<SectionJpaImpl> list = (List<SectionJpaImpl>) _sections.findByContentCdLike(term);
+				final List<Section> list = (List<Section>) _sections.findByContentCdLike(term);
 				final Sections content = new Sections(list);
 				if (isNotNullOrEmpty(content)) {
 					result = type.cast(content);
@@ -364,7 +367,7 @@ final class ContentServiceImpl implements ContentService {
 					return result;
 				}
 			} else if (type.equals(Clauses.class)) {
-				final List<ClauseJpaImpl> list = (List<ClauseJpaImpl>) _clauses.findByContentCdLike(term);
+				final List<Clause> list = (List<Clause>) _clauses.findByContentCdLike(term);
 				final Clauses content = new Clauses(list);
 				if (isNotNullOrEmpty(content)) {
 					result = type.cast(content);
@@ -374,14 +377,14 @@ final class ContentServiceImpl implements ContentService {
 					return result;
 				}
 			} else if (type.equals(Paragraphs.class)) {
-				final List<ParagraphJpaImpl> list = (List<ParagraphJpaImpl>) _paragraphs.findByContentCdLike(term);
+				final List<Paragraph> list = (List<Paragraph>) _paragraphs.findByContentCdLike(term);
 				final Paragraphs content = new Paragraphs(list);
 				if (isNotNullOrEmpty(content)) {
 					return type.cast(content);
 				}
 			} else if (type.equals(Contents.class)) {
-				Collection<ContentJpaImpl> list = (Collection<ContentJpaImpl>) _contents.findByContentCdLike(term);
-				final Contents contents = new Contents(list.toArray(new ContentJpaImpl[list.size()]));
+				Collection<Content> list = (Collection<Content>) _contents.findByContentCdLike(term);
+				final Contents contents = new Contents(list.toArray(new Content[list.size()]));
 				if (isNotNullOrEmpty(contents)) {
 					return type.cast(contents);
 				}
@@ -391,7 +394,7 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public final ContentJpaImpl findOne(final Long id) {
+	public final Content findOne(final Long id) {
 		if (isNotNullOrZero(id)) {
 			return _contents.findOne(id);
 		}
@@ -407,32 +410,32 @@ final class ContentServiceImpl implements ContentService {
 	public final <T> T findOne(final Long id, final Class<T> type, final boolean eagerKids) {
 		if (isNotNullOrZero(id)) {
 			T one = null;
-			if (type.equals(DocumentJpaImpl.class)) {
-				final DocumentJpaImpl document = _documents.findOne(id);
+			if (type.equals(Document.class)) {
+				final Document document = _documents.findOne(id);
 				if (isNotNullOrEmpty(document)) {
 					LOG.trace("Found {} template object...", type.getSimpleName());
 					one = type.cast(document);
 				}
-			} else if (type.equals(SectionJpaImpl.class)) {
-				final SectionJpaImpl section = _sections.findOne(id);
+			} else if (type.equals(Section.class)) {
+				final Section section = _sections.findOne(id);
 				if (isNotNullOrEmpty(section)) {
 					LOG.trace("Found {} template object...", type.getSimpleName());
 					one = type.cast(section);
 				}
-			} else if (type.equals(ClauseJpaImpl.class)) {
-				final ClauseJpaImpl clause = _clauses.findOne(id);
+			} else if (type.equals(Clause.class)) {
+				final Clause clause = _clauses.findOne(id);
 				if (isNotNullOrEmpty(clause)) {
 					LOG.trace("Found {} template object...", type.getSimpleName());
 					one = type.cast(clause);
 				}
-			} else if (type.equals(ParagraphJpaImpl.class)) {
-				final ParagraphJpaImpl paragraph = _paragraphs.findOne(id);
+			} else if (type.equals(Paragraph.class)) {
+				final Paragraph paragraph = _paragraphs.findOne(id);
 				if (isNotNullOrEmpty(paragraph)) {
 					LOG.trace("Found {} template object...", type.getSimpleName());
 					one = type.cast(paragraph);
 				}
-			} else if (type.equals(ContentJpaImpl.class)) {
-				final ContentJpaImpl content = findOne(id);
+			} else if (type.equals(Content.class)) {
+				final Content content = findOne(id);
 				if (isNotNullOrEmpty(content)) {
 					LOG.trace("Found {} template object...", type.getSimpleName());
 					one = type.cast(content);
@@ -461,11 +464,11 @@ final class ContentServiceImpl implements ContentService {
 		if (isNotNullOrZero(id)) {
 			if (isNotNullOrEmpty(type)) {
 				if (type.equals(Sections.class)) {
-					return getChildren(findOne(id, DocumentJpaImpl.class), type, eagerKids);
+					return getChildren(findOne(id, Document.class), type, eagerKids);
 				} else if (type.equals(Clauses.class)) {
-					return getChildren(findOne(id, SectionJpaImpl.class), type, eagerKids);
+					return getChildren(findOne(id, Section.class), type, eagerKids);
 				} else if (type.equals(Paragraphs.class)) {
-					return getChildren(findOne(id, ClauseJpaImpl.class), type, eagerKids);
+					return getChildren(findOne(id, Clause.class), type, eagerKids);
 				} else if (type.equals(Contents.class)) {
 					return getChildren(findOne(id), type, eagerKids);
 				}
@@ -493,16 +496,16 @@ final class ContentServiceImpl implements ContentService {
 	public final <T, P> T getChildren(final P content, final Class<T> type, boolean eagerKids) {
 		if (isNotNullOrEmpty(content)) {
 			Object children = null;
-			if (content.getClass().equals(DocumentJpaImpl.class)) {
-				final DocumentJpaImpl parent = (DocumentJpaImpl) content;
+			if (content.getClass().equals(Document.class)) {
+				final Document parent = (Document) content;
 				initialize(parent, eagerKids);
 				children = new Sections(parent.getSections());
-			} else if (content.getClass().equals(SectionJpaImpl.class)) {
-				final SectionJpaImpl parent = (SectionJpaImpl) content;
+			} else if (content.getClass().equals(Section.class)) {
+				final Section parent = (Section) content;
 				initialize(parent, eagerKids);
 				children = new Clauses(parent.getClauses());
-			} else if (content.getClass().equals(ClauseJpaImpl.class)) {
-				final ClauseJpaImpl parent = (ClauseJpaImpl) content;
+			} else if (content.getClass().equals(Clause.class)) {
+				final Clause parent = (Clause) content;
 				initialize(parent, eagerKids);
 				children = new Paragraphs(parent.getParagraphs());
 			}
@@ -514,7 +517,7 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public ContentJpaImpl save(final ContentJpaImpl content) {
+	public Content save(final Content content) {
 		if (isNotNullOrEmpty(content)) {
 			return _contents.save(content);
 		}
@@ -522,9 +525,28 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public final Iterable<ContentJpaImpl> save(final Iterable<ContentJpaImpl> objects) {
+	public final <T> Iterable<T> save(final Iterable<T> objects, final Class<T> type) {
 		if (isNotNullOrEmpty(objects)) {
-			return _contents.save(objects);
+			final Collection<T> saved = new TreeSet<T>();
+			objects.forEach(o -> {
+				if (type.equals(Document.class)) {
+					final Document d = _documents.save((Document) o);
+					saved.add(type.cast(d));
+				} else if (type.equals(Section.class)) {
+					final Section s = _sections.save((Section) o);
+					saved.add(type.cast(s));
+				} else if (type.equals(Clause.class)) {
+					final Clause c = _clauses.save((Clause) o);
+					saved.add(type.cast(c));
+				} else if (type.equals(Paragraph.class)) {
+					final Paragraph p = _paragraphs.save((Paragraph) o);
+					saved.add(type.cast(p));
+				} else if (type.equals(Content.class)) {
+					final Content c = _contents.save((Content) o);
+					saved.add(type.cast(c));					
+				}
+			});
+			return saved;
 		}
 		return null;
 	}
@@ -532,17 +554,17 @@ final class ContentServiceImpl implements ContentService {
 	@Override
 	public final Contents save(final Contents contents) {
 		if (isNotNullOrEmpty(contents)) {
-			Collection<ContentJpaImpl> collection = Arrays.asList(contents.getContents());
-			collection = (Collection<ContentJpaImpl>) _contents.save(collection);
+			Collection<Content> collection = Arrays.asList(contents.getContents());
+			collection = (Collection<Content>) _contents.save(collection);
 			if (isNotNullOrEmpty(collection)) {
-				return new Contents(collection.toArray(new ContentJpaImpl[collection.size()]));
+				return new Contents(collection.toArray(new Content[collection.size()]));
 			}
 		}
 		return null;
 	}
 
 	@Override
-	public final DocumentJpaImpl save(final DocumentJpaImpl document) {
+	public final Document save(final Document document) {
 		if (isNotNullOrEmpty(document)) {
 			return _documents.save(document);
 		}
@@ -550,7 +572,7 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public final SectionJpaImpl save(final SectionJpaImpl document) {
+	public final Section save(final Section document) {
 		if (isNotNullOrEmpty(document)) {
 			return _sections.save(document);
 		}
@@ -558,7 +580,7 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public final ClauseJpaImpl save(final ClauseJpaImpl document) {
+	public final Clause save(final Clause document) {
 		if (isNotNullOrEmpty(document)) {
 			return _clauses.save(document);
 		}
@@ -566,7 +588,7 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public final ParagraphJpaImpl save(final ParagraphJpaImpl document) {
+	public final Paragraph save(final Paragraph document) {
 		if (isNotNullOrEmpty(document)) {
 			return _paragraphs.save(document);
 		}
@@ -576,39 +598,39 @@ final class ContentServiceImpl implements ContentService {
 	final void initialize(Object content, boolean recursive) {
 		if (isNotNullOrEmpty(content)) {
 			final Class<?> type = content.getClass();
-			if (type.equals(DocumentJpaImpl.class)) {
+			if (type.equals(Document.class)) {
 				LOG.trace("Initializing {} template object...", type.getSimpleName());
-				final DocumentJpaImpl d = (DocumentJpaImpl) content;
+				final Document d = (Document) content;
 				Hibernate.initialize(d);
 				if (recursive) {
 					LOG.trace("Resurively initializing {} template object...", type.getSimpleName());
-					for (final SectionJpaImpl s : d.getSections()) {
+					for (final Section s : d.getSections()) {
 						initialize(s, recursive);
 					}
 				}
-			} else if (type.equals(SectionJpaImpl.class)) {
+			} else if (type.equals(Section.class)) {
 				LOG.trace("Initializing Section template object...");
-				final SectionJpaImpl s = (SectionJpaImpl) content;
+				final Section s = (Section) content;
 				Hibernate.initialize(s);
 				if (recursive) {
 					LOG.trace("Resurively initializing {} template object...", type.getSimpleName());
-					for (final ClauseJpaImpl c : s.getClauses()) {
+					for (final Clause c : s.getClauses()) {
 						initialize(c, recursive);
 					}
 				}
-			} else if (type.equals(ClauseJpaImpl.class)) {
+			} else if (type.equals(Clause.class)) {
 				LOG.trace("Initializing Clause template object...");
-				final ClauseJpaImpl c = (ClauseJpaImpl) content;
+				final Clause c = (Clause) content;
 				Hibernate.initialize(c);
 				if (recursive) {
 					LOG.trace("Resurively initializing {} template object...", type.getSimpleName());
-					for (final ParagraphJpaImpl p : c.getParagraphs()) {
+					for (final Paragraph p : c.getParagraphs()) {
 						initialize(p, recursive);
 					}
 				}
-			} else if (type.equals(ParagraphJpaImpl.class)) {
+			} else if (type.equals(Paragraph.class)) {
 				LOG.trace("Initializing Paragraph template object...");
-				final ParagraphJpaImpl p = (ParagraphJpaImpl) content;
+				final Paragraph p = (Paragraph) content;
 				Hibernate.initialize(p);
 			} else {
 				LOG.error("Attempting to initialize, cannot determine type! Class: {}", type.getName());

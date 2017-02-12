@@ -5,6 +5,7 @@ import java.io.File;
 import com.github.justinericscott.docengine.annotation.ExcelColumn;
 import com.github.justinericscott.docengine.annotation.ExcelColumnOrder;
 import com.github.justinericscott.docengine.annotation.ExcelSheet;
+import com.github.justinericscott.docengine.models.Content;
 
 /**
  * <b>Excel Reader</b><br>
@@ -64,5 +65,7 @@ public interface ExcelReaderService {
 	 *            Expected return array type.
 	 * @return Array of {@link Object}s molded from the provided {@link Class}.
 	 */
-	<T> Iterable<T> read(Class<T> clazz, File file);
+	<T> Iterable<T> read(Class<T> type, File file);
+	
+	Iterable<? extends Content> read(Class<? extends Content>[] types, File file);
 }

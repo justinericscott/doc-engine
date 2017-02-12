@@ -3,13 +3,13 @@ package com.github.justinericscott.docengine.service.token.types;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.github.justinericscott.docengine.types.TokenDefinitionJpaImpl;
+import com.github.justinericscott.docengine.models.TokenDefinition;
 
 public class TokenData {
 	private final String name;
 	private final Collection<TokenValue> values = new ArrayList<TokenValue>();
 
-	public TokenData(final TokenDefinitionJpaImpl def) {
+	public TokenData(final TokenDefinition def) {
 		this.name = def.getName();
 	}
 

@@ -12,16 +12,16 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import com.github.justinericscott.docengine.types.ClauseJpaImpl;
-import com.github.justinericscott.docengine.types.Clauses;
-import com.github.justinericscott.docengine.types.ContentJpaImpl;
-import com.github.justinericscott.docengine.types.Contents;
-import com.github.justinericscott.docengine.types.DocumentJpaImpl;
-import com.github.justinericscott.docengine.types.Documents;
-import com.github.justinericscott.docengine.types.ParagraphJpaImpl;
-import com.github.justinericscott.docengine.types.Paragraphs;
-import com.github.justinericscott.docengine.types.SectionJpaImpl;
-import com.github.justinericscott.docengine.types.Sections;
+import com.github.justinericscott.docengine.models.Clause;
+import com.github.justinericscott.docengine.models.Clauses;
+import com.github.justinericscott.docengine.models.Content;
+import com.github.justinericscott.docengine.models.Contents;
+import com.github.justinericscott.docengine.models.Document;
+import com.github.justinericscott.docengine.models.Documents;
+import com.github.justinericscott.docengine.models.Paragraph;
+import com.github.justinericscott.docengine.models.Paragraphs;
+import com.github.justinericscott.docengine.models.Section;
+import com.github.justinericscott.docengine.models.Sections;
 
 /**
  * @author Justin Scott REST Client for the Content Service, to be used
@@ -39,20 +39,20 @@ class ContentRestClientImpl extends AbstractRestClient implements RestClient {
 	@Override
 	public final void delete(final Object object) {
 		if (isNotNullOrEmpty(object)) {
-			if (object instanceof DocumentJpaImpl) {
-				final DocumentJpaImpl document = (DocumentJpaImpl) object;
+			if (object instanceof Document) {
+				final Document document = (Document) object;
 				delete(DOCUMENT + BY_ID, document.getId());
-			} else if (object instanceof SectionJpaImpl) {
-				final SectionJpaImpl section = (SectionJpaImpl) object;
+			} else if (object instanceof Section) {
+				final Section section = (Section) object;
 				delete(SECTION + BY_ID, section.getId());
-			} else if (object instanceof ClauseJpaImpl) {
-				final ClauseJpaImpl clause = (ClauseJpaImpl) object;
+			} else if (object instanceof Clause) {
+				final Clause clause = (Clause) object;
 				delete(CLAUSE + BY_ID, clause.getId());
-			} else if (object instanceof ParagraphJpaImpl) {
-				final ParagraphJpaImpl paragraph = (ParagraphJpaImpl) object;
+			} else if (object instanceof Paragraph) {
+				final Paragraph paragraph = (Paragraph) object;
 				delete(PARAGRAPH + BY_ID, paragraph.getId());
-			} else if (object instanceof ContentJpaImpl) {
-				final ContentJpaImpl content = (ContentJpaImpl) object;
+			} else if (object instanceof Content) {
+				final Content content = (Content) object;
 				delete(BY_ID, content.getId());
 			}
 		}
@@ -65,15 +65,7 @@ class ContentRestClientImpl extends AbstractRestClient implements RestClient {
 
 	@Override
 	public final <T> T findAll(final Class<T> type) {
-		if (isNotNullOrEmpty(type)) {
-			final ResponseEntity<T> response = adhocGet(type);
-			if (isNotNullOrEmpty(response)) {
-				return type.cast(response.getBody());
-			}
-		} else {
-			LOG.warn(LOG_NULL_TYPE);
-		}
-		return null;
+		return findAll(type, false);
 	}
 
 	@Override
@@ -90,8 +82,8 @@ class ContentRestClientImpl extends AbstractRestClient implements RestClient {
 	}
 
 	@Override
-	public final ContentJpaImpl findByCode(final String code) {
-		return findByCode(code, ContentJpaImpl.class);
+	public final Content findByCode(final String code) {
+		return findByCode(code, Content.class);
 	}
 
 	@Override
@@ -104,13 +96,13 @@ class ContentRestClientImpl extends AbstractRestClient implements RestClient {
 		if (isNotNullOrEmpty(type)) {
 			if (isNotNullOrEmpty(code)) {
 				String dest = "";
-				if (type.equals(DocumentJpaImpl.class)) {
+				if (type.equals(Document.class)) {
 					dest = DOCUMENT;
-				} else if (type.equals(SectionJpaImpl.class)) {
+				} else if (type.equals(Section.class)) {
 					dest = SECTION;
-				} else if (type.equals(ClauseJpaImpl.class)) {
+				} else if (type.equals(Clause.class)) {
 					dest = CLAUSE;
-				} else if (type.equals(ParagraphJpaImpl.class)) {
+				} else if (type.equals(Paragraph.class)) {
 					dest = PARAGRAPH;
 				}
 				dest = dest + BY_CODE;
@@ -171,8 +163,8 @@ class ContentRestClientImpl extends AbstractRestClient implements RestClient {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public final ContentJpaImpl findOne(final Long id) {
-		return findOne(id, ContentJpaImpl.class);
+	public final Content findOne(final Long id) {
+		return findOne(id, Content.class);
 	}
 
 	public final <T> T findOne(final Long id, final Class<T> type) {
@@ -184,17 +176,17 @@ class ContentRestClientImpl extends AbstractRestClient implements RestClient {
 		if (isNotNullOrEmpty(type)) {
 			if (isNotNullOrZero(id)) {
 				String dest = "";
-				if (type.equals(DocumentJpaImpl.class)) {
+				if (type.equals(Document.class)) {
 					dest = DOCUMENT;
-				} else if (type.equals(SectionJpaImpl.class)) {
+				} else if (type.equals(Section.class)) {
 					dest = SECTION;
-				} else if (type.equals(ClauseJpaImpl.class)) {
+				} else if (type.equals(Clause.class)) {
 					dest = CLAUSE;
-				} else if (type.equals(ParagraphJpaImpl.class)) {
+				} else if (type.equals(Paragraph.class)) {
 					dest = PARAGRAPH;
 				}
 				dest = dest + BY_ID;
-				if (eagerKids && !type.equals(ParagraphJpaImpl.class) && !type.equals(ContentJpaImpl.class)) {
+				if (eagerKids && !type.equals(Paragraph.class) && !type.equals(Content.class)) {
 					dest = dest + IS_EAGER_KIDS;
 				}
 				final ResponseEntity<T> response = adhocGet(dest, type, id, eagerKids);
@@ -290,17 +282,17 @@ class ContentRestClientImpl extends AbstractRestClient implements RestClient {
 					final HttpEntity<T> entity = new HttpEntity<T>(object);
 					ResponseEntity<?> response = null;
 					try {
-						if (type.equals(DocumentJpaImpl.class)) {
+						if (type.equals(Document.class)) {
 							response = put(DOCUMENT, entity, type);
-						} else if (type.equals(SectionJpaImpl.class)) {
+						} else if (type.equals(Section.class)) {
 							response = put(SECTION, entity, type);
-						} else if (type.equals(ClauseJpaImpl.class)) {
+						} else if (type.equals(Clause.class)) {
 							response = put(CLAUSE, entity, type);
-						} else if (type.equals(ParagraphJpaImpl.class)) {
+						} else if (type.equals(Paragraph.class)) {
 							response = put(PARAGRAPH, entity, type);
 						} else if (type.equals(Contents.class)) {
 							response = put(CONTENTS, entity, type);
-						} else if (type.equals(ContentJpaImpl.class)) {
+						} else if (type.equals(Content.class)) {
 							response = put(entity, type);
 						}
 					} catch (final Exception e) {

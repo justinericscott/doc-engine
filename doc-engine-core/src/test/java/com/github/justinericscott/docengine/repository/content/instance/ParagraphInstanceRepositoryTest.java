@@ -1,6 +1,7 @@
 package com.github.justinericscott.docengine.repository.content.instance;
 
 import static org.junit.Assert.*;
+import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
@@ -13,10 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
+import com.github.justinericscott.docengine.models.Paragraph;
+import com.github.justinericscott.docengine.models.ParagraphInstance;
 import com.github.justinericscott.docengine.repository.content.ParagraphInstanceRepository;
 import com.github.justinericscott.docengine.repository.content.ParagraphRepository;
-import com.github.justinericscott.docengine.types.ParagraphInstanceJpaImpl;
-import com.github.justinericscott.docengine.types.ParagraphJpaImpl;
 import com.github.justinericscott.docengine.util.AbstractTest;
 
 /**
@@ -38,11 +39,11 @@ public class ParagraphInstanceRepositoryTest extends AbstractTest {
 	public void a_SaveTest() {
 		
 		// Happy path...
-		ParagraphJpaImpl paragraph = makeTestParagraph();
+		Paragraph paragraph = makeTestParagraph();
 		paragraph = _paragraphs.save(paragraph);
 		assertNotNull(paragraph);
 		assertTrue(paragraph.isValid(true));
-		ParagraphInstanceJpaImpl paragraphInstance = new ParagraphInstanceJpaImpl(paragraph, TEST_PROJECT_ID_VALUE);
+		ParagraphInstance paragraphInstance = new ParagraphInstance(paragraph, TEST_PROJECT_ID_VALUE);
 		paragraphInstance = _instances.save(paragraphInstance);
 		assertNotNull(paragraphInstance);
 		assertTrue(paragraphInstance.isValid(true));
@@ -50,46 +51,46 @@ public class ParagraphInstanceRepositoryTest extends AbstractTest {
 		assertNotNull(paragraph);
 		assertTrue(paragraph.isValid(true));
 
-		Collection<ParagraphJpaImpl> paragraphs = makeTestParagraphs(7);
-		paragraphs = (Collection<ParagraphJpaImpl>) _paragraphs.save(paragraphs);
+		Collection<Paragraph> paragraphs = makeTestParagraphs(7);
+		paragraphs = (Collection<Paragraph>) _paragraphs.save(paragraphs);
 		assertNotNull(paragraphs);
 		assertFalse(paragraphs.isEmpty());
-		final Collection<ParagraphInstanceJpaImpl> list = new TreeSet<ParagraphInstanceJpaImpl>();
+		final Collection<ParagraphInstance> list = new TreeSet<ParagraphInstance>();
 		paragraphs.forEach(p -> {
 			assertTrue(p.isValid(true));
-			list.add(new ParagraphInstanceJpaImpl(p, TEST_PROJECT_ID_VALUE));
+			list.add(new ParagraphInstance(p, TEST_PROJECT_ID_VALUE));
 		});
-		Collection<ParagraphInstanceJpaImpl> paragraphInstances = new TreeSet<ParagraphInstanceJpaImpl>();
-		paragraphInstances = (Collection<ParagraphInstanceJpaImpl>) _instances.save(list);
+		Collection<ParagraphInstance> paragraphInstances = new TreeSet<ParagraphInstance>();
+		paragraphInstances = (Collection<ParagraphInstance>) _instances.save(list);
 		assertNotNull(paragraphInstances);
 		assertFalse(paragraphInstances.isEmpty());
 		paragraphInstances.forEach(i -> {
 			assertTrue(i.isValid(true));
-			ParagraphJpaImpl p = i.getParagraph();
+			Paragraph p = i.getParagraph();
 			assertNotNull(p);
 			assertTrue(p.isValid(true));
 		});
 
 		try {
-			_instances.save((ParagraphInstanceJpaImpl) null);
+			_instances.save((ParagraphInstance) null);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
 		}
 		try {
-			_instances.save(new ParagraphInstanceJpaImpl(paragraph, null));
+			_instances.save(new ParagraphInstance(paragraph, null));
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
-			_instances.save(new ParagraphInstanceJpaImpl(TEST_PROJECT_ID_VALUE));
+			_instances.save(new ParagraphInstance(TEST_PROJECT_ID_VALUE));
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
-			_instances.save(new ParagraphInstanceJpaImpl(makeTestParagraph(), TEST_PROJECT_ID_VALUE));
+			_instances.save(new ParagraphInstance(makeTestParagraph(), TEST_PROJECT_ID_VALUE));
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
@@ -100,11 +101,11 @@ public class ParagraphInstanceRepositoryTest extends AbstractTest {
 	public void b_FindTest() {
 		
 		// Happy path...
-		ParagraphJpaImpl paragraph = _paragraphs.save(makeTestParagraph());
+		Paragraph paragraph = _paragraphs.save(makeTestParagraph());
 		assertNotNull(paragraph);
 		assertTrue(paragraph.isValid(true));
 		final String contentCd = paragraph.getContentCd();
-		ParagraphInstanceJpaImpl paragraphInstance = new ParagraphInstanceJpaImpl(paragraph, TEST_PROJECT_ID_VALUE);
+		ParagraphInstance paragraphInstance = new ParagraphInstance(paragraph, TEST_PROJECT_ID_VALUE);
 		paragraphInstance = _instances.save(paragraphInstance);
 		assertNotNull(paragraphInstance);
 		assertTrue(paragraphInstance.isValid(true));
@@ -123,22 +124,22 @@ public class ParagraphInstanceRepositoryTest extends AbstractTest {
 		assertNotNull(paragraph);
 		assertTrue(paragraph.isValid(true));
 
-		Collection<ParagraphInstanceJpaImpl> paragraphInstances = (Collection<ParagraphInstanceJpaImpl>) _instances.findAll(); 
+		Collection<ParagraphInstance> paragraphInstances = (Collection<ParagraphInstance>) _instances.findAll(); 
 		assertNotNull(paragraphInstances);
 		assertFalse(paragraphInstances.isEmpty());
 		paragraphInstances.forEach(i -> {
 			assertTrue(i.isValid(true));
-			ParagraphJpaImpl p = i.getParagraph();
+			Paragraph p = i.getParagraph();
 			assertNotNull(p);
 			assertTrue(p.isValid(true));
 		});
 
-		paragraphInstances = (Collection<ParagraphInstanceJpaImpl>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "%TEST%");
+		paragraphInstances = (Collection<ParagraphInstance>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "%TEST%");
 		assertNotNull(paragraphInstances);
 		assertFalse(paragraphInstances.isEmpty());
 		paragraphInstances.forEach(i -> {
 			assertTrue(i.isValid(true));
-			ParagraphJpaImpl p = i.getParagraph();
+			Paragraph p = i.getParagraph();
 			assertNotNull(p);
 			assertTrue(p.isValid(true));
 		});
@@ -153,15 +154,15 @@ public class ParagraphInstanceRepositoryTest extends AbstractTest {
 		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, ""));
 		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, "Snicklefritz"));
 
-		paragraphInstances = (Collection<ParagraphInstanceJpaImpl>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_PARAGRAPH_CODE_PREFIX);
+		paragraphInstances = (Collection<ParagraphInstance>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_PARAGRAPH_CODE_PREFIX);
 		assertTrue(paragraphInstances.isEmpty());
-		paragraphInstances = (Collection<ParagraphInstanceJpaImpl>) _instances.findByProjectIdAndContentContentCdLike("", TEST_PARAGRAPH_CODE_PREFIX);
+		paragraphInstances = (Collection<ParagraphInstance>) _instances.findByProjectIdAndContentContentCdLike("", TEST_PARAGRAPH_CODE_PREFIX);
 		assertTrue(paragraphInstances.isEmpty());
-		paragraphInstances = (Collection<ParagraphInstanceJpaImpl>) _instances.findByProjectIdAndContentContentCdLike("Snicklefritz", TEST_PARAGRAPH_CODE_PREFIX);
+		paragraphInstances = (Collection<ParagraphInstance>) _instances.findByProjectIdAndContentContentCdLike("Snicklefritz", TEST_PARAGRAPH_CODE_PREFIX);
 		assertTrue(paragraphInstances.isEmpty());
-		paragraphInstances = (Collection<ParagraphInstanceJpaImpl>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "");
+		paragraphInstances = (Collection<ParagraphInstance>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "");
 		assertTrue(paragraphInstances.isEmpty());
-		paragraphInstances = (Collection<ParagraphInstanceJpaImpl>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "Snicklefritz");
+		paragraphInstances = (Collection<ParagraphInstance>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "Snicklefritz");
 		assertTrue(paragraphInstances.isEmpty());
 		try {
 			_instances.findOne((Long) null);
@@ -180,22 +181,22 @@ public class ParagraphInstanceRepositoryTest extends AbstractTest {
 	@Test
 	public void c_DiscriminatorTest() {
 		final String contentCd = "PARAGRAPH_INSTANCE_DISCRIMINATOR_TEST_" + uuid();
-		ParagraphJpaImpl cx = new ParagraphJpaImpl(contentCd, "BLAH BLAH BLAH");
+		Paragraph cx = new Paragraph(contentCd, "BLAH BLAH BLAH");
 		cx = _paragraphs.save(cx);
-		final ParagraphInstanceJpaImpl x = new ParagraphInstanceJpaImpl(cx, TEST_PROJECT_ID_VALUE);
-		final ParagraphInstanceJpaImpl y = _instances.save(x);
+		final ParagraphInstance x = new ParagraphInstance(cx, TEST_PROJECT_ID_VALUE);
+		final ParagraphInstance y = _instances.save(x);
 		assertNull(y.getDiscriminator());
-		final ParagraphInstanceJpaImpl z = _instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, contentCd);
-		assertEquals(ParagraphInstanceJpaImpl.class.getSimpleName(), z.getDiscriminator());
+		final ParagraphInstance z = _instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, contentCd);
+		assertEquals(ParagraphInstance.class.getSimpleName(), z.getDiscriminator());
 	}
 
 	@Test
 	public void x_DeleteTest() {
 		final String projectId = TEST_PROJECT_ID_VALUE;
-		ParagraphJpaImpl paragraph = _paragraphs.save(makeTestParagraph());
+		Paragraph paragraph = _paragraphs.save(makeTestParagraph());
 		assertNotNull(paragraph);
 		assertTrue(paragraph.isValid(true));
-		ParagraphInstanceJpaImpl paragraphInstance = new ParagraphInstanceJpaImpl(paragraph, projectId);
+		ParagraphInstance paragraphInstance = new ParagraphInstance(paragraph, projectId);
 		paragraphInstance = _instances.save(paragraphInstance);
 		assertNotNull(paragraphInstance);
 		assertTrue(paragraphInstance.isValid(true));
@@ -203,7 +204,7 @@ public class ParagraphInstanceRepositoryTest extends AbstractTest {
 
 		_instances.delete(id);
 		assertNull(_instances.findOne(paragraphInstance.getId()));
-		paragraphInstance = new ParagraphInstanceJpaImpl(paragraph, projectId);
+		paragraphInstance = new ParagraphInstance(paragraph, projectId);
 		paragraphInstance = _instances.save(paragraphInstance);
 		assertNotNull(paragraphInstance);
 		assertTrue(paragraphInstance.isValid(true));
@@ -211,21 +212,21 @@ public class ParagraphInstanceRepositoryTest extends AbstractTest {
 		_instances.delete(paragraphInstance);
 		assertNull(_instances.findOne(paragraphInstance.getId()));
 		
-		Collection<ParagraphJpaImpl> paragraphs = makeTestParagraphs(7);
-		paragraphs = (Collection<ParagraphJpaImpl>) _paragraphs.save(paragraphs);
+		Collection<Paragraph> paragraphs = makeTestParagraphs(7);
+		paragraphs = (Collection<Paragraph>) _paragraphs.save(paragraphs);
 		assertNotNull(paragraphs);
 		assertFalse(paragraphs.isEmpty());
-		final Collection<ParagraphInstanceJpaImpl> list = new TreeSet<ParagraphInstanceJpaImpl>();
+		final Collection<ParagraphInstance> list = new TreeSet<ParagraphInstance>();
 		paragraphs.forEach(p -> {
 			assertTrue(p.isValid(true));
-			list.add(new ParagraphInstanceJpaImpl(p, projectId));
+			list.add(new ParagraphInstance(p, projectId));
 		});
-		Collection<ParagraphInstanceJpaImpl> paragraphInstances = (Collection<ParagraphInstanceJpaImpl>) _instances.save(list);
+		Collection<ParagraphInstance> paragraphInstances = (Collection<ParagraphInstance>) _instances.save(list);
 		assertNotNull(paragraphInstances);
 		assertFalse(paragraphInstances.isEmpty());
 		paragraphInstances.forEach(i -> {
 			assertTrue(i.isValid(true));
-			ParagraphJpaImpl p = i.getParagraph();
+			Paragraph p = i.getParagraph();
 			assertNotNull(p);
 			assertTrue(p.isValid(true));
 		});		
@@ -235,7 +236,7 @@ public class ParagraphInstanceRepositoryTest extends AbstractTest {
 		});
 		
 		_instances.deleteAll();
-		paragraphInstances = (Collection<ParagraphInstanceJpaImpl>) _instances.findAll();
+		paragraphInstances = (Collection<ParagraphInstance>) _instances.findAll();
 		assertTrue(paragraphInstances.isEmpty());
 	}
 }

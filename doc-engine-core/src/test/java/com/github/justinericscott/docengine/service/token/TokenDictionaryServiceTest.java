@@ -22,17 +22,16 @@ import javax.annotation.PostConstruct;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import com.github.justinericscott.docengine.models.TokenDefinition;
+import com.github.justinericscott.docengine.models.TokenDefinitions;
 import com.github.justinericscott.docengine.service.token.BusinessDataService;
 import com.github.justinericscott.docengine.service.token.TokenDictionaryService;
 import com.github.justinericscott.docengine.service.token.types.ExternalEntity;
 import com.github.justinericscott.docengine.service.token.types.ExternalSchema;
-import com.github.justinericscott.docengine.types.TokenDefinitionJpaImpl;
-import com.github.justinericscott.docengine.types.TokenDefinitions;
 import com.github.justinericscott.docengine.util.AbstractTest;
 
 /**
@@ -42,7 +41,6 @@ import com.github.justinericscott.docengine.util.AbstractTest;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TokenDictionaryServiceTest extends AbstractTest {
-	private static final Logger LOG = LoggerFactory.getLogger(TokenDictionaryServiceTest.class);
 	private static boolean isSetup = false;
 
 	@Autowired
@@ -53,30 +51,30 @@ public class TokenDictionaryServiceTest extends AbstractTest {
 
 	@Test
 	public void a_SaveTest() {
-		TokenDefinitionJpaImpl definition = createFakeTokenDefinition();
+		TokenDefinition definition = createFakeTokenDefinition();
 		assertNotNull(definition);
 		assertTrue(definition.isValid(true));
-		TokenDefinitions definitions = new TokenDefinitions(new ArrayList<TokenDefinitionJpaImpl>(
+		TokenDefinitions definitions = new TokenDefinitions(new ArrayList<TokenDefinition>(
 				Arrays.asList(makeTestToken(), makeTestToken(), makeTestToken(), makeTestToken(), makeTestToken())));
 		definitions = _dictionary.save(definitions);
-		Arrays.asList(definitions.getDefinitions()).forEach(def -> {
+		Arrays.asList(definitions.getTokens()).forEach(def -> {
 			assertTrue(def.isValid(true));
 		});
-		assertNull(_dictionary.save((TokenDefinitionJpaImpl) null));
-		assertNull(_dictionary.save(new TokenDefinitionJpaImpl("", "TOKEN_TEST_NAME")));
-		assertNull(_dictionary.save(new TokenDefinitionJpaImpl(TEST_TOKEN_CODE_PREFIX + uuid(), "")));
+		assertNull(_dictionary.save((TokenDefinition) null));
+		assertNull(_dictionary.save(new TokenDefinition("", "TOKEN_TEST_NAME")));
+		assertNull(_dictionary.save(new TokenDefinition(TEST_TOKEN_CODE_PREFIX + uuid(), "")));
 		definition = createFakeTokenDefinition();
-		assertNull(_dictionary.save(new TokenDefinitionJpaImpl(definition, definition.getTokenCd())));
+		assertNull(_dictionary.save(new TokenDefinition(definition, definition.getTokenCd())));
 	}
 
 	@Test
 	public void b_FindTest() {
 		// Get All
-		Iterable<TokenDefinitionJpaImpl> definitions = new ArrayList<TokenDefinitionJpaImpl>(
+		Iterable<TokenDefinition> definitions = new ArrayList<TokenDefinition>(
 				Arrays.asList(createFakeTokenDefinition(), createFakeTokenDefinition(),
 						createFakeTokenDefinition(), createFakeTokenDefinition(),
 						createFakeTokenDefinition()));
-		definitions = Arrays.asList(_dictionary.findAll().getDefinitions());
+		definitions = Arrays.asList(_dictionary.findAll().getTokens());
 		definitions.forEach(t -> {
 			assertNotNull(t);
 			assertTrue(t.isValid(true));
@@ -84,7 +82,7 @@ public class TokenDictionaryServiceTest extends AbstractTest {
 		});
 
 		// Get Token Definition
-		TokenDefinitionJpaImpl def = createFakeTokenDefinition();
+		TokenDefinition def = createFakeTokenDefinition();
 		def = _dictionary.findOne(def.getId());
 		assertNotNull(def);
 		assertTrue(def.isValid(true));
@@ -95,7 +93,7 @@ public class TokenDictionaryServiceTest extends AbstractTest {
 		assertNull(_dictionary.findByTokenCd(""));
 		assertNull(_dictionary.findOne(0L));
 		assertNull(_dictionary.findByTokenCd("Snicklefritz"));
-		definitions = Arrays.asList(_dictionary.findByTokenCdLike("%TEST%").getDefinitions());
+		definitions = Arrays.asList(_dictionary.findByTokenCdLike("%TEST%").getTokens());
 		assertNotNull(definitions);
 		assertTrue(definitions.iterator().hasNext());
 		assertNull(_dictionary.findByTokenCdLike((String) null));
@@ -120,53 +118,38 @@ public class TokenDictionaryServiceTest extends AbstractTest {
 	@Test
 	public void e_RefreshWhereEntityMapTest() {
 		Collection<String> codes = new ArrayList<String>();
-		final Iterable<TokenDefinitionJpaImpl> tokens = Arrays.asList(_dictionary.findAll().getDefinitions());
-		for (TokenDefinitionJpaImpl t : _dictionary.findAll().getDefinitions()) {
-			LOG.debug("Adding Token Code: " + t.getTokenCd());
+		final Iterable<TokenDefinition> tokens = Arrays.asList(_dictionary.findAll().getTokens());
+		for (TokenDefinition t : _dictionary.findAll().getTokens()) {
 			codes.add(t.getTokenCd());
 		}
-		LOG.debug("Deconstructing WhereEntity Map.");
-		Iterator<Entry<String, Map<String, Map<String, Deque<TokenDefinitionJpaImpl>>>>> whereMap = _dictionary
+		Iterator<Entry<String, Map<String, Map<String, Deque<TokenDefinition>>>>> whereMap = _dictionary
 				.getDefinitionMap().entrySet().iterator();
 		while (whereMap.hasNext()) {
-			Entry<String, Map<String, Map<String, Deque<TokenDefinitionJpaImpl>>>> whereMapEntry = whereMap.next();
-			String whereMapKey = whereMapEntry.getKey();
-			LOG.debug("Found Key At Level 1 (where.entity): " + whereMapKey);
-			Iterator<Entry<String, Map<String, Deque<TokenDefinitionJpaImpl>>>> entities = whereMapEntry.getValue()
+			Entry<String, Map<String, Map<String, Deque<TokenDefinition>>>> whereMapEntry = whereMap.next();
+			Iterator<Entry<String, Map<String, Deque<TokenDefinition>>>> entities = whereMapEntry.getValue()
 					.entrySet().iterator();
 			while (entities.hasNext()) {
-				Entry<String, Map<String, Deque<TokenDefinitionJpaImpl>>> entity = entities.next();
-				String entityKey = entity.getKey();
-				LOG.debug("Found Key At Level 2 (entity): " + entityKey);
-				Iterator<Entry<String, Deque<TokenDefinitionJpaImpl>>> attributes = entity.getValue().entrySet()
+				Entry<String, Map<String, Deque<TokenDefinition>>> entity = entities.next();
+				Iterator<Entry<String, Deque<TokenDefinition>>> attributes = entity.getValue().entrySet()
 						.iterator();
 				while (attributes.hasNext()) {
-					Entry<String, Deque<TokenDefinitionJpaImpl>> attribute = attributes.next();
-					String attributeKey = attribute.getKey();
-					LOG.debug("Found Key At Level 3 (attribute): " + attributeKey);
-					Iterator<TokenDefinitionJpaImpl> definitions = attribute.getValue().iterator();
+					Entry<String, Deque<TokenDefinition>> attribute = attributes.next();
+					Iterator<TokenDefinition> definitions = attribute.getValue().iterator();
 					while (definitions.hasNext()) {
-						TokenDefinitionJpaImpl definition = definitions.next();
-						LOG.debug("Found Definitions: " + definition.toString());
+						TokenDefinition definition = definitions.next();
+						assertTrue(definition.isValid(true));
 					}
-
 				}
 			}
 		}
-		for (TokenDefinitionJpaImpl t : tokens) {
+		for (TokenDefinition t : tokens) {
 			assertNotNull(t.getId());
 		}
 	}
 
-	@Test
+//	@Test
 	public void f_RefreshWhereEntitySqlMapTest() {
-		Iterator<Entry<String, String>> whereSqlMap = _dictionary.getSqlMap().entrySet().iterator();
-		while (whereSqlMap.hasNext()) {
-			Entry<String, String> entry = whereSqlMap.next();
-			String key = entry.getKey();
-			String value = entry.getValue();
-			LOG.debug("Key: " + key + " | Value: " + value);
-		}
+		
 	}
 
 	public void xx_DeleteTest() {
@@ -192,15 +175,12 @@ public class TokenDictionaryServiceTest extends AbstractTest {
 						logic1 = getFileFromClasspath("sql/logic-oracle-scenario-1.dml");
 						logic2 = getFileFromClasspath("sql/logic-oracle-scenario-2.dml");
 						logic3 = getFileFromClasspath("sql/logic-oracle-scenario-3.dml");
-						LOG.info("Setting Up External Schema Using {} Database.", (url.contains("hsqldb")
-								? "HyperSQL using Oracle syntax" : (url.contains("oracle") ? "Oracle" : "")));
 					} else if (isNotNullOrEmpty(url) && url.contains("mysql") && !isSetup) {
 						ddl = getFileFromClasspath("sql/grex-mysql.ddl");
 						dml = getFileFromClasspath("sql/grex-mysql.dml");
 						logic1 = getFileFromClasspath("sql/logic-mysql-scenario-1.dml");
 						logic2 = getFileFromClasspath("sql/logic-mysql-scenario-2.dml");
 						logic3 = getFileFromClasspath("sql/logic-mysql-scenario-3.dml");
-						LOG.info("Setting Up External Schema Using MySQL Database.");
 					}
 					if (isNotNullAndExists(ddl)) {
 						_business.execute(breakSqlScriptIntoStatements(ddl));
@@ -229,8 +209,8 @@ public class TokenDictionaryServiceTest extends AbstractTest {
 		isSetup = true;
 	}
 
-	private TokenDefinitionJpaImpl createFakeTokenDefinition() {
-		final TokenDefinitionJpaImpl token = _dictionary.save(makeTestToken());
+	private TokenDefinition createFakeTokenDefinition() {
+		final TokenDefinition token = _dictionary.save(makeTestToken());
 		assertNotNull(token);
 		assertTrue(token.isValid(true));
 		return token;
@@ -238,40 +218,40 @@ public class TokenDictionaryServiceTest extends AbstractTest {
 
 	private void createRealTokenDefinitions() {
 		// Project Number
-		final TokenDefinitionJpaImpl projectNumberRlp = new TokenDefinitionJpaImpl(TEST_CODE_PROJECT_NBR_R101,
+		final TokenDefinition projectNumberRlp = new TokenDefinition(TEST_CODE_PROJECT_NBR_R101,
 				TEST_NAME_PROJECT_NUMBER);
 		projectNumberRlp.setEntity(TEST_NAME_ENTITY);
 		projectNumberRlp.setAttribute(TEST_NAME_ATTRIBUTE_PROJECT_NBR);
 		projectNumberRlp.setWhere(TEST_NAME_WHERE);
 		projectNumberRlp.setDocumentCd(TEST_CODE_DOC_TYPE_R101);
 
-		final TokenDefinitionJpaImpl projectNumberPropLease = new TokenDefinitionJpaImpl(projectNumberRlp,
+		final TokenDefinition projectNumberPropLease = new TokenDefinition(projectNumberRlp,
 				TEST_CODE_PROJECT_NBR_L201_PROPOSED);
 		projectNumberPropLease.setDocumentCd(TEST_CODE_DOC_TYPE_L201);
 		projectNumberPropLease.setPhase(TEST_CODE_PHASE_PROPOSED);
 
-		final TokenDefinitionJpaImpl projectNumberAwardLease = new TokenDefinitionJpaImpl(projectNumberPropLease,
+		final TokenDefinition projectNumberAwardLease = new TokenDefinition(projectNumberPropLease,
 				TEST_CODE_PROJECT_NBR_L201_AWARDED);
 		projectNumberAwardLease.setPhase(TEST_CODE_PHASE_AWARDED);
 
 		// Lease Number
-		final TokenDefinitionJpaImpl leaseNumberRlp = new TokenDefinitionJpaImpl(TEST_CODE_LEASE_NBR_R101,
+		final TokenDefinition leaseNumberRlp = new TokenDefinition(TEST_CODE_LEASE_NBR_R101,
 				TEST_NAME_LEASE_NUMBER);
 		leaseNumberRlp.setEntity(TEST_NAME_ENTITY);
 		leaseNumberRlp.setAttribute(TEST_NAME_ATTRIBUTE_LEASE_NBR);
 		leaseNumberRlp.setWhere(TEST_NAME_WHERE);
 		leaseNumberRlp.setDocumentCd(TEST_CODE_DOC_TYPE_R101);
 
-		final TokenDefinitionJpaImpl leaseNumberPropLease = new TokenDefinitionJpaImpl(leaseNumberRlp,
+		final TokenDefinition leaseNumberPropLease = new TokenDefinition(leaseNumberRlp,
 				TEST_CODE_LEASE_NBR_L201_PROPOSED);
 		leaseNumberPropLease.setDocumentCd(TEST_CODE_DOC_TYPE_L201);
 		leaseNumberPropLease.setPhase(TEST_CODE_PHASE_PROPOSED);
 
-		final TokenDefinitionJpaImpl leaseNumberAwardLease = new TokenDefinitionJpaImpl(leaseNumberPropLease,
+		final TokenDefinition leaseNumberAwardLease = new TokenDefinition(leaseNumberPropLease,
 				TEST_CODE_LEASE_NBR_L201_AWARDED);
 		leaseNumberAwardLease.setPhase(TEST_CODE_PHASE_AWARDED);
 
-		Collection<TokenDefinitionJpaImpl> tokens = new ArrayList<TokenDefinitionJpaImpl>(
+		Collection<TokenDefinition> tokens = new ArrayList<TokenDefinition>(
 				Arrays.asList(projectNumberRlp, projectNumberPropLease, projectNumberAwardLease, leaseNumberRlp,
 						leaseNumberPropLease, leaseNumberAwardLease));
 		TokenDefinitions defs = new TokenDefinitions(tokens);

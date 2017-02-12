@@ -4,7 +4,7 @@
 	<artifactId>doc-engine-core</artifactId>
 	<name>Document Engine Core</name>
 	<properties>
-		<start-class>com.itgfirm.docengine.DocEngine</start-class>
+		<start-class>com.github.justinericscott.docengine.DocEngine</start-class>
 	</properties>
 	<parent>
 		<groupId>com.github.justinericscott.docengine</groupId>
@@ -22,19 +22,24 @@
 		</resources>
 	</build>
 	<dependencies>
-		<!-- LOCATED IN ITG REPO -->
-		<dependency>
-			<groupId>com.itgfirm</groupId>
-			<artifactId>htmltopdf</artifactId>
-		</dependency>
 		<!-- SPRING FRAMEWORK -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
 		</dependency>
 		<!-- DATABASE -->
 		<dependency>
@@ -65,6 +70,18 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-collections4</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jtidy</groupId>
+			<artifactId>jtidy</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

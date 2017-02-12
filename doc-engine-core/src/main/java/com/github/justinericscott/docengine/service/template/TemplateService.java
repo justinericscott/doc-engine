@@ -18,7 +18,7 @@ public interface TemplateService {
 	 * @param name
 	 * @param template
 	 */
-	void loadTemplate(String name, String template);
+	void load(String name, String template);
 	
 	/**
 	 * TODO: Description
@@ -27,5 +27,5 @@ public interface TemplateService {
 	 * @param tokens
 	 * @return
 	 */
-	String process(String template, Map<String, Object> tokens);
+	String run(String name, Map<String, Object> tokens);
 }

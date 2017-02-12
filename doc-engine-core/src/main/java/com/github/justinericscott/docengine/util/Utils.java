@@ -9,7 +9,9 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -17,27 +19,35 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+
 import java.net.URISyntaxException;
 import java.net.URL;
+
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.LinkOption;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+
 import java.sql.Date;
 import java.sql.Timestamp;
+
 import java.time.Instant;
+
 import java.util.Collection;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.io.FileUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.justinericscott.docengine.types.ContentJpaImpl;
-import com.github.justinericscott.docengine.types.InstanceJpaImpl;
-import com.github.justinericscott.docengine.types.TokenDefinitionJpaImpl;
+import com.github.justinericscott.docengine.models.Content;
+import com.github.justinericscott.docengine.models.Instance;
+import com.github.justinericscott.docengine.models.TokenDefinition;
 
 /**
  * @author Justin Scott
@@ -46,7 +56,7 @@ import com.github.justinericscott.docengine.types.TokenDefinitionJpaImpl;
  */
 public class Utils {
 	private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
-	
+
 	private Utils() {
 		// Do not instantiate
 	}
@@ -61,6 +71,21 @@ public class Utils {
 			return script;
 		}
 		return null;
+	}
+
+	public static String collapse(String string) {
+		if (isNotNullOrEmpty(string)) {
+			String result = string.replaceAll("[(\n\r\t)]", "");
+			result = result.replaceAll(">+[ ]+<", "><");
+			result = result.replaceAll("[( )][^A-Za-z0-9<>\\-\\*\\.,;:\\?=/{}\"\\\\\\(\\)]", " ");
+			result = result.replaceAll("[^A-Za-z0-9<>\\-\\*\\.,;:\\?=/{}\"\\\\\\(\\)][( )]", " ");
+			result = result.replaceAll("  ", " ");
+			result = result.replaceAll("}", " } ");
+			result = result.replaceAll("}  <", "}<");
+			return result.replaceAll("\"\"", "\" \"");
+		}
+		LOG.warn("The string to collapse must not be null or empty!");
+		return "";
 	}
 
 	/**
@@ -135,6 +160,25 @@ public class Utils {
 		return null;
 	}
 
+	public static File createDirectory(final File parent, final String name) {
+		if (isNotNullAndExists(parent)) {
+			if (isNotNullOrEmpty(name)) {
+				String path = null;
+				if (parent.isFile()) {
+					path = parent.getParentFile().getAbsolutePath().concat(File.separator.concat(name));
+				} else if (parent.isDirectory()) {
+					path = parent.getAbsolutePath().concat(File.separator.concat(name));
+				}
+				return createDirectory(path);
+			} else {
+				LOG.warn("Directory name must not be null or empty!\nPARENT: {}", parent.getAbsolutePath());
+			}
+		} else {
+			LOG.warn("Parent file must not be null and must exist!");
+		}
+		return null;
+	}
+
 	/**
 	 * Recursively deletes a file or directory and all of its sub-directories
 	 * and files.
@@ -194,18 +238,25 @@ public class Utils {
 	public static File get(final String path) {
 		File file = null;
 		if (path != null) {
+			LOG.trace("Attempting to get file using new File({})...", path);
 			file = new File(path);
 			try {
 				URL url = null;
 				if (!isNotNullAndExists(file)) {
+					LOG.trace("Attempting to get file using Utils.class.getResource({})...", path);
 					url = Utils.class.getResource(path);
 					if (url != null) {
+						LOG.trace("Attempting to get file using new File(url.toURI()) from class...");
 						file = new File(url.toURI());
 					}
 				}
 				if (!isNotNullAndExists(file)) {
+					LOG.trace(
+							"Attempting to get file using Thread.currentThread().getContextClassLoader().getResource({})...",
+							path);
 					url = Thread.currentThread().getContextClassLoader().getResource(path);
 					if (url != null) {
+						LOG.trace("Attempting to get file using new File(url.toURI()) from thread...");
 						file = new File(url.toURI());
 					}
 				}
@@ -214,6 +265,7 @@ public class Utils {
 			}
 			if (!isNotNullAndExists(file)) {
 				try {
+					LOG.trace("Attempting to get file using Paths.get({}).toFile()...", path);
 					file = Paths.get(path).toFile();
 				} catch (final UnsupportedOperationException | InvalidPathException e) {
 					LOG.error(String.format("Problem using Paths: ", path), e);
@@ -257,8 +309,7 @@ public class Utils {
 						}
 					}
 				} else {
-					LOG.warn(
-							"A value is required to check the annotation {} in the class {} for the associated field!",
+					LOG.warn("A value is required to check the annotation {} in the class {} for the associated field!",
 							annotation.getName(), clazz.getName());
 				}
 			} else {
@@ -266,6 +317,30 @@ public class Utils {
 			}
 		} else {
 			LOG.warn("Class cannot be null!");
+		}
+		return null;
+	}
+
+	/**
+	 * Finds and invokes a parameterless {@link Method} from the provided
+	 * {@link Object} using the provided {@link Field} name to locate the
+	 * {@link Method}.
+	 * 
+	 * @param object
+	 *            {@link Object} to invoke the {@link Method} on.
+	 * @param name
+	 *            Name of the {@link Field} to obtain the read {@link Method}
+	 *            for.
+	 * @return Result of invoking the {@link Method}.
+	 * 
+	 * @see #getWriteMethodAndInvoke(Object, String, Object)
+	 * @see #invoke(Method, Object, Object...)
+	 */
+	public static Object getReadMethodAndInvoke(final Object object, final String name) {
+		if (isNotNullOrEmpty(object)) {
+			return invoke(getReadMethod(object.getClass(), name), object);
+		} else {
+			LOG.warn("Object to read from cannot be null!");
 		}
 		return null;
 	}
@@ -294,26 +369,15 @@ public class Utils {
 		return 0L;
 	}
 
-	/**
-	 * Finds and invokes a parameterless {@link Method} from the provided
-	 * {@link Object} using the provided {@link Field} name to locate the
-	 * {@link Method}.
-	 * 
-	 * @param object
-	 *            {@link Object} to invoke the {@link Method} on.
-	 * @param name
-	 *            Name of the {@link Field} to obtain the read {@link Method}
-	 *            for.
-	 * @return Result of invoking the {@link Method}.
-	 * 
-	 * @see #getWriteMethodAndInvoke(Object, String, Object)
-	 * @see #invoke(Method, Object, Object...)
-	 */
-	public static Object getReadMethodAndInvoke(final Object object, final String name) {
-		if (isNotNullOrEmpty(object)) {
-			return invoke(getReadMethod(object.getClass(), name), object);
+	public static File getSystemTempDirectory() {
+		final String path = System.getProperty(SYS_TEMP_DIR);
+		if (isNotNullOrEmpty(path)) {
+			final File file = new File(path);
+			if (isNotNullAndExists(file) && file.isDirectory()) {
+				return file;
+			}
 		} else {
-			LOG.warn("Object to read from cannot be null!");
+			LOG.warn("Could not determine system temporary directory!");
 		}
 		return null;
 	}
@@ -359,46 +423,6 @@ public class Utils {
 		}
 	}
 
-	public static boolean isNotNullAndExists(final File file) {
-		return (file != null && file.exists());
-	}
-
-	public static boolean isNotNullOrEmpty(final Collection<?> collection) {
-		return (collection != null && !collection.isEmpty());
-	}
-
-	public static boolean isNotNullOrEmpty(final Iterable<?> iterable) {
-		return (iterable != null && iterable.iterator().hasNext());
-	}
-
-	public static boolean isNotNullOrEmpty(final Map<?, ?> map) {
-		return (map != null && !map.isEmpty());
-	}
-	
-	public static boolean isNotNullOrEmpty(final Object object) {
-		return (object != null && !object.toString().trim().isEmpty());
-	}
-
-	public static boolean isNotNullOrEmpty(final Object[] object) {
-		return (object != null && object.length > 0);
-	}
-
-	public static boolean isNotNullOrEmpty(final ContentJpaImpl content) {
-		return (content != null && content.isValid());
-	}
-
-	public static boolean isNotNullOrEmpty(final InstanceJpaImpl instance) {
-		return (instance != null && instance.isValid());
-	}
-
-	public static boolean isNotNullOrEmpty(final TokenDefinitionJpaImpl token) {
-		return (token != null && token.isValid());
-	}
-
-	public static boolean isNotNullOrZero(final Number val) {
-		return (val != null && val.longValue() != 0);
-	}
-
 	/**
 	 * Creates an instance of the provided {@link Class}. The {@link Class} must
 	 * not be an interface and must have a default (no-parameter) constructor.
@@ -434,24 +458,79 @@ public class Utils {
 		return null;
 	}
 
-	private static Object invoke(final Method method, final Object object, final Object... params) {
-		if (isNotNullOrEmpty(method)) {
-			method.setAccessible(true);
-			final boolean isStatic = Modifier.isStatic(method.getModifiers());
-			try {
-				if (isStatic) {
-					return method.invoke(null, params);
-				} else if (!isStatic && isNotNullOrEmpty(object)) {
-					return method.invoke(object, params);
-				} else {
-					LOG.warn(
-							String.format("Object was null and method was not static!\nMETHOD: %s", method.getName()));
+	public static boolean isNotNullAndExists(final File file) {
+		return (file != null && file.exists());
+	}
+
+	public static boolean isNotNullOrEmpty(final Collection<?> collection) {
+		return (collection != null && !collection.isEmpty());
+	}
+
+	public static boolean isNotNullOrEmpty(final Iterable<?> iterable) {
+		return (iterable != null && iterable.iterator().hasNext());
+	}
+
+	public static boolean isNotNullOrEmpty(final Map<?, ?> map) {
+		return (map != null && !map.isEmpty());
+	}
+
+	public static boolean isNotNullOrEmpty(final Object object) {
+		return (object != null && !object.toString().trim().isEmpty());
+	}
+
+	public static boolean isNotNullOrEmpty(final Object[] object) {
+		return (object != null && object.length > 0);
+	}
+
+	public static boolean isNotNullOrEmpty(final Content content) {
+		return (content != null && content.isValid());
+	}
+
+	public static boolean isNotNullOrEmpty(final Instance instance) {
+		return (instance != null && instance.isValid());
+	}
+
+	public static boolean isNotNullOrEmpty(final TokenDefinition token) {
+		return (token != null && token.isValid());
+	}
+
+	public static boolean isNotNullOrZero(final Number val) {
+		return (val != null && val.longValue() != 0);
+	}
+
+	public static String read(final File file) {
+		if (isNotNullAndExists(file)) {
+			final long limit = 1073741824L; // 1GB
+			final long size = getSize(file);
+			if (limit > size) {
+				try {
+					final byte[] bytes = Files.readAllBytes(file.toPath());
+					return new String(bytes, Charset.forName("UTF-8"));
+				} catch (final IOException e) {
+					LOG.error(String.format("Problem reading file: %s", file.getAbsolutePath()), e);
 				}
-			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				LOG.error(String.format("Problem invoking method: %s!", method.getName()), e);
 			}
 		} else {
-			LOG.warn("Method cannot be null!");
+			LOG.warn("The file you are trying to read must not by null and must exist!");
+		}
+		return null;
+	}
+
+	public static File write(final File file, final String string) {
+		if (isNotNullAndExists(file)) {
+			if (string != null) {
+				try (final FileWriter writer = new FileWriter(file)) {
+					writer.write(string);
+					writer.flush();
+					return file;
+				} catch (final IOException e) {
+					LOG.error(String.format("Problem writing file: %s", file.getAbsolutePath()), e);
+				}
+			} else {
+				LOG.warn("The text you want to write to the file must not be null!\nFILE: {}", file.getAbsolutePath());
+			}
+		} else {
+			LOG.warn("The file you want to write to cannot be null and must exist!");
 		}
 		return null;
 	}
@@ -490,7 +569,7 @@ public class Utils {
 						} else if (object instanceof String) {
 							Instant instant = Instant.parse(object.toString());
 							return new java.util.Date(instant.toEpochMilli());
-//							return java.util.Date.from(instant);
+							// return java.util.Date.from(instant);
 						}
 					} else if (type.equals(Double.class)) {
 						if (!(object instanceof Date)) {
@@ -502,7 +581,7 @@ public class Utils {
 						}
 					} else if (type.equals(String.class)) {
 						return String.valueOf(object);
-					} 
+					}
 				} catch (final Exception e) {
 					LOG.error(String.format("Problem casting %s to %s!", object.getClass().getName(), type.getName()),
 							e);
@@ -541,6 +620,25 @@ public class Utils {
 			}
 		} else {
 			LOG.warn("File object must not be null!");
+		}
+		return null;
+	}
+
+	private static File createDirectory(final String path) {
+		if (isNotNullOrEmpty(path)) {
+			File file = get(path);
+			if (!isNotNullAndExists(file)) {
+				file = new File(path);
+				if (file.mkdirs()) {
+					if (isNotNullAndExists(file) && file.isDirectory()) {
+						return file;
+					}
+				}
+			} else if (isNotNullAndExists(file) && file.isDirectory()) {
+				return file;
+			}
+		} else {
+			LOG.warn("Path must not be null or empty.");
 		}
 		return null;
 	}
@@ -653,6 +751,27 @@ public class Utils {
 		return false;
 	}
 
+	private static Object invoke(final Method method, final Object object, final Object... params) {
+		if (isNotNullOrEmpty(method)) {
+			method.setAccessible(true);
+			final boolean isStatic = Modifier.isStatic(method.getModifiers());
+			try {
+				if (isStatic) {
+					return method.invoke(null, params);
+				} else if (!isStatic && isNotNullOrEmpty(object)) {
+					return method.invoke(object, params);
+				} else {
+					LOG.warn(String.format("Object was null and method was not static!\nMETHOD: %s", method.getName()));
+				}
+			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				LOG.error(String.format("Problem invoking method: %s!", method.getName()), e);
+			}
+		} else {
+			LOG.warn("Method cannot be null!");
+		}
+		return null;
+	}
+
 	private static String readFile(final File file) {
 		if (isNotNullAndExists(file)) {
 			byte[] bytes = null;
@@ -666,8 +785,168 @@ public class Utils {
 		return null;
 	}
 
+	public static class RomanNumber {
+		private final static TreeMap<Integer, String> INT_TO_ROMAN_MAP = new TreeMap<Integer, String>();
+		static {
+			INT_TO_ROMAN_MAP.put(1000, "M");
+			INT_TO_ROMAN_MAP.put(900, "CM");
+			INT_TO_ROMAN_MAP.put(500, "D");
+			INT_TO_ROMAN_MAP.put(400, "CD");
+			INT_TO_ROMAN_MAP.put(100, "C");
+			INT_TO_ROMAN_MAP.put(90, "XC");
+			INT_TO_ROMAN_MAP.put(50, "L");
+			INT_TO_ROMAN_MAP.put(40, "XL");
+			INT_TO_ROMAN_MAP.put(10, "X");
+			INT_TO_ROMAN_MAP.put(9, "IX");
+			INT_TO_ROMAN_MAP.put(5, "V");
+			INT_TO_ROMAN_MAP.put(4, "IV");
+			INT_TO_ROMAN_MAP.put(1, "I");
+		}
+
+		public static String toRoman(final int number) {
+			final int l = INT_TO_ROMAN_MAP.floorKey(number);
+			if (number == l) {
+				return INT_TO_ROMAN_MAP.get(number);
+			}
+			return INT_TO_ROMAN_MAP.get(l) + toRoman(number - l);
+		}
+	}
+
+	public enum HTML {
+		BODY("body"), BR("br"), DIV("div"), DOCUMENT("html"), H1("h1"), H2("h2"), H3("h3"), H4("h4"), HEAD("head"), HR(
+				"hr"), LI("li"), OL("ol"), P("p"), SPAN("span"), STYLE("style"), TABLE("table"), TITLE("title");
+
+		private static final Logger LOG = LoggerFactory.getLogger(HTML.class);
+		private static final String ATTR_CSS_CLASS = " class=\"%s\"";
+		private static final String ATTR_CSS_TYPE = "type=\"%s\"";
+		private static final String BRACKET_CLOSE = ">";
+		private static final String BRACKET_OPEN = "<";
+//		private static final String HEADER_HTML5 = "<!DOCTYPE html>";
+		private static final String HEADER_XHTML_STRICT = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">";
+		private static final String NAMESPACE = "xmlns=\"http://www.w3.org/1999/xhtml\"";
+//		private static final String NON_BREAKING_SPACE = "&nbsp;";
+		private static final String XML_NON_BREAKING_SPACE = "&#160;";
+		private static final String SLASH = "/";
+
+		private final String tag;
+
+		private HTML(final String tag) {
+			this.tag = tag;
+		}
+
+		public static String doctype() {
+			return HEADER_XHTML_STRICT;
+		}
+
+		public static String namespace() {
+			return NAMESPACE;
+		}
+
+		public static String space() {
+			return XML_NON_BREAKING_SPACE;
+		}
+
+		public static String tab() {
+			return String.format("%s%s%s", space(), space(), space());
+		}
+
+		public final String close() {
+			return String.format("%s%s%s%s", BRACKET_OPEN, SLASH, tag, BRACKET_CLOSE);
+		}
+
+		public final String open() {
+			return open(null);
+		}
+
+		public final String open(final String cssClass) {
+			return open(cssClass, null);
+		}
+
+		public final String open(final String cssClass, final String inline) {
+			String css = null;
+			if (isNotNullOrEmpty(cssClass)) {
+				css = String.format(ATTR_CSS_CLASS, cssClass);
+			}
+			if (isNotNullOrEmpty(inline)) {
+				if (isNotNullOrEmpty(css)) {
+					return String.format("%s%s %s %s %s", BRACKET_OPEN, tag, css, inline, BRACKET_CLOSE);
+				} else {
+					return String.format("%s%s %s %s", BRACKET_OPEN, tag, inline, BRACKET_CLOSE);
+				}
+			} else {
+				if (isNotNullOrEmpty(css)) {
+					return String.format("%s%s %s %s", BRACKET_OPEN, tag, css, BRACKET_CLOSE);
+				} else {
+					return String.format("%s%s%s", BRACKET_OPEN, tag, BRACKET_CLOSE);
+				}
+			}
+		}
+
+		public final String self() {
+			return self(null);
+		}
+
+		public final String self(final String cssClass) {
+			return self(cssClass, null);
+		}
+
+		public final String self(final String cssClass, final String inline) {
+			String html = null;
+			String css = null;
+			if (isNotNullOrEmpty(cssClass)) {
+				css = String.format(ATTR_CSS_CLASS, inline);
+			}
+			if (isNotNullOrEmpty(inline)) {
+				if (isNotNullOrEmpty(css)) {
+					html = String.format("%s%s %s %s %s%s", BRACKET_OPEN, tag, css, inline, SLASH, BRACKET_CLOSE);
+				} else {
+					html = String.format("%s%s %s %s%s", BRACKET_OPEN, tag, inline, SLASH, BRACKET_CLOSE);
+				}
+			} else {
+				if (isNotNullOrEmpty(css)) {
+					html = String.format("%s%s %s %s%s", BRACKET_OPEN, tag, css, SLASH, BRACKET_CLOSE);
+				} else {
+					html = String.format("%s%s %s%s", BRACKET_OPEN, tag, SLASH, BRACKET_CLOSE);
+				}
+			}
+			if (isNotNullOrEmpty(html)) {
+				return html;
+			}
+			return "";			
+		}
+		
+		public final String style(final String css, final String type) {
+			if (this.equals(STYLE)) {
+				if (isNotNullOrEmpty(css)) {
+					return STYLE.wrap(css, null, String.format(ATTR_CSS_TYPE, type));
+				} else {
+					return STYLE.wrap(null, null, String.format(ATTR_CSS_TYPE, type));
+				}				
+			}
+			return "";
+		}
+		
+		public final String tag() {
+			return tag;
+		}
+
+		public final String wrap(final String html) {
+			return wrap(html, null);
+		}
+
+		public final String wrap(final String html, final String cssClass) {
+			return wrap(html, cssClass, null);
+		}
+
+		public final String wrap(final String html, final String cssClass, final String inline) {
+			LOG.trace("Wrapping HTML with the tag {} using CSS class {} and inline attributes {}. HTML: {}", this.tag, cssClass, inline, html);
+			return String.format("%s%s%s", open(cssClass, inline), html, close());
+		}
+	}
+
 	static class UtilsConstants {
 		static final String PREFIX_COPY_OF = "Copy of - ";
 		static final String REGEX_SPLIT_PATH = "\\.(?=[^\\.]+$)";
+		static final String SYS_TEMP_DIR = "java.io.tmpdir";
 	}
 }

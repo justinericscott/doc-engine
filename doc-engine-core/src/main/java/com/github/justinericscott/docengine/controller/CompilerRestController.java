@@ -16,31 +16,26 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.github.justinericscott.docengine.models.DocumentInstance;
 import com.github.justinericscott.docengine.service.content.CompilerService;
-import com.github.justinericscott.docengine.types.DocumentInstanceJpaImpl;
 
 /**
  * @author Justin Scott
  * 
  *         TODO: Description
  */
-@RestController
+//@RestController
+@Deprecated
+@SuppressWarnings("unused")
 class CompilerRestController {
 	
-	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(CompilerRestController.class);
 	
 	@Autowired
 	private CompilerService service;
 
-	/**
-	 * TODO: Description
-	 * 
-	 * @param id
-	 * @return {@link ResponseEntity}<{@link String}>
-	 */
 	@RequestMapping(method = POST, value = INSTANCE + COMPILE)
-	public final ResponseEntity<String> compileDocumentInstance(@RequestBody final DocumentInstanceJpaImpl instance) {
+	public final ResponseEntity<String> compileDocumentInstance(@RequestBody final DocumentInstance instance) {
 		return new ResponseEntity<String>(service.compileDocument(instance), OK);
 	}
 }

@@ -1,6 +1,7 @@
 package com.github.justinericscott.docengine.repository.content.template;
 
 import static org.junit.Assert.*;
+import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
@@ -13,8 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
+import com.github.justinericscott.docengine.models.Content;
 import com.github.justinericscott.docengine.repository.content.ContentRepository;
-import com.github.justinericscott.docengine.types.ContentJpaImpl;
 import com.github.justinericscott.docengine.util.AbstractTest;
 
 /**
@@ -32,13 +33,13 @@ public class ContentRepositoryTest extends AbstractTest {
 	public void a_SaveTest() {
 		
 		// Happy path...		
-		ContentJpaImpl content = makeTestContent();
+		Content content = makeTestContent();
 		content = _contents.save(content);
 		assertNotNull(content);
 		assertTrue(content.isValid(true));
 		
-		Collection<ContentJpaImpl> contents = makeTestContents(7);
-		contents = (Collection<ContentJpaImpl>) _contents.save(contents);
+		Collection<Content> contents = makeTestContents(7);
+		contents = (Collection<Content>) _contents.save(contents);
 		assertNotNull(contents);
 		assertFalse(contents.isEmpty());
 		contents.forEach(c -> {
@@ -47,38 +48,38 @@ public class ContentRepositoryTest extends AbstractTest {
 		
 		// Break it...
 		try {
-			_contents.save((ContentJpaImpl) null);
+			_contents.save((Content) null);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
 		}
 		try {
-			_contents.save(new ContentJpaImpl("", "TEST BODY"));
+			_contents.save(new Content("", "TEST BODY"));
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
-			_contents.save(new ContentJpaImpl(TEST_CONTENT_CODE_PREFIX + uuid(), ""));
+			_contents.save(new Content(TEST_CONTENT_CODE_PREFIX + uuid(), ""));
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
 			content = _contents.save(makeTestContent());
-			ContentJpaImpl copy = new ContentJpaImpl(content, content.getContentCd());
+			Content copy = new Content(content, content.getContentCd());
 			_contents.save(copy);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}		
 		try {
-			Collection<ContentJpaImpl> copies = new TreeSet<ContentJpaImpl>();
+			Collection<Content> copies = new TreeSet<Content>();
 			copies.addAll(contents);
 			copies.forEach(c -> {
 				c.setId(null);
 			});
-			copies = (Collection<ContentJpaImpl>) _contents.save(copies);
+			copies = (Collection<Content>) _contents.save(copies);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
@@ -89,7 +90,7 @@ public class ContentRepositoryTest extends AbstractTest {
 	public void b_FindTest() {
 		
 		// Happy path...
-		ContentJpaImpl content = _contents.save(makeTestContent());
+		Content content = _contents.save(makeTestContent());
 		final Long id = content.getId();
 		final String contentCd = content.getContentCd();
 		content = _contents.findOne(id);
@@ -99,14 +100,14 @@ public class ContentRepositoryTest extends AbstractTest {
 		assertTrue(content.isValid(true));
 		assertEquals(contentCd, content.getContentCd());
 
-		Collection<ContentJpaImpl> contents = (Collection<ContentJpaImpl>) _contents.findByContentCdLike("%TEST%");
+		Collection<Content> contents = (Collection<Content>) _contents.findByContentCdLike("%TEST%");
 		assertNotNull(contents);
 		assertFalse(contents.isEmpty());
 		contents.forEach(c -> {
 			assertTrue(c.isValid(true));
 		});
 
-		contents = (Collection<ContentJpaImpl>) _contents.findAll();
+		contents = (Collection<Content>) _contents.findAll();
 		assertNotNull(contents);
 		assertFalse(contents.isEmpty());
 		contents.forEach(c -> {
@@ -117,9 +118,9 @@ public class ContentRepositoryTest extends AbstractTest {
 		assertNull(_contents.findOne(Long.MIN_VALUE));
 		assertNull(_contents.findOne(Long.MAX_VALUE));
 		assertNull(_contents.findByContentCd("Snicklefritz"));
-		contents = (Collection<ContentJpaImpl>) _contents.findByContentCdLike("%Snicklefritz%");
+		contents = (Collection<Content>) _contents.findByContentCdLike("%Snicklefritz%");
 		assertTrue(contents.isEmpty());
-		contents = (Collection<ContentJpaImpl>) _contents.findByContentCdLike("");
+		contents = (Collection<Content>) _contents.findByContentCdLike("");
 		assertTrue(contents.isEmpty());
 		try {
 			_contents.findOne((Long) null);
@@ -138,18 +139,18 @@ public class ContentRepositoryTest extends AbstractTest {
 	@Test
 	public void c_DiscriminatorTest() {
 		final String contentCd = "CONTENT_DISCRIMINATOR_TEST_" + uuid();
-		final ContentJpaImpl x = new ContentJpaImpl(contentCd, "BLAH BLAH BLAH");
-		final ContentJpaImpl y = _contents.save(x);
+		final Content x = new Content(contentCd, "BLAH BLAH BLAH");
+		final Content y = _contents.save(x);
 		assertNull(y.getDiscriminator());
-		final ContentJpaImpl z = _contents.findByContentCd(contentCd);
-		assertEquals(ContentJpaImpl.class.getSimpleName(), z.getDiscriminator());
+		final Content z = _contents.findByContentCd(contentCd);
+		assertEquals(Content.class.getSimpleName(), z.getDiscriminator());
 	}
 	
 	@Test
 	public void x_DeleteTest() {
 		
 		// Happy path...
-		ContentJpaImpl content = _contents.save(makeTestContent());
+		Content content = _contents.save(makeTestContent());
 		final Long id = content.getId();
 		_contents.delete(id);
 		assertNull(_contents.findOne(id));
@@ -158,8 +159,8 @@ public class ContentRepositoryTest extends AbstractTest {
 		_contents.delete(content);
 		assertNull(_contents.findOne(content.getId()));
 
-		Collection<ContentJpaImpl> contents = makeTestContents(7);
-		contents = (Collection<ContentJpaImpl>) _contents.save(contents);
+		Collection<Content> contents = makeTestContents(7);
+		contents = (Collection<Content>) _contents.save(contents);
 		assertNotNull(contents);
 		assertFalse(contents.isEmpty());
 		contents.forEach(c -> {
@@ -176,7 +177,7 @@ public class ContentRepositoryTest extends AbstractTest {
 		
 		// Break it...
 		try {
-			_contents.delete(new ContentJpaImpl());
+			_contents.delete(new Content());
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());

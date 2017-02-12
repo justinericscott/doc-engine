@@ -46,7 +46,7 @@ public class ExcelUtils {
 				}
 			}
 		} else {
-			LOG.debug("The class must not be null!");
+			LOG.warn("The class must not be null!");
 		}
 		return null;
 	}
@@ -80,7 +80,7 @@ public class ExcelUtils {
 				return fields;
 			}
 		} else {
-			LOG.debug("The class must not be null!");
+			LOG.warn("The class must not be null!");
 		}
 		return null;
 	}
@@ -97,7 +97,7 @@ public class ExcelUtils {
 				}
 			}
 		} else {
-			LOG.debug("The field to check the column label of must not be null!");
+			LOG.warn("The field to check the column label of must not be null!");
 		}
 		return null;
 	}
@@ -115,7 +115,7 @@ public class ExcelUtils {
 				}
 			}
 		} else {
-			LOG.debug("The class must not be null!");
+			LOG.warn("The class must not be null!");
 		}
 		return null;
 	}
@@ -129,7 +129,7 @@ public class ExcelUtils {
 					final String column = cells.next().getStringCellValue();
 					final String field = getFieldNameFromAnnotationValue(clazz, ExcelColumn.class, column);
 					if (isNotNullOrEmpty(field)) {
-						LOG.debug("Adding field name {} from the annotation {} value {}.", field,
+						LOG.trace("Adding field name {} from the annotation {} value {}.", field,
 								ExcelColumn.class.getName(), column);
 						fields.add(field);
 					}
@@ -141,11 +141,11 @@ public class ExcelUtils {
 							"Collection is empty from attempting to obtain field names from row. Nothing matched the values in the class {} using the ExcelColumn annotation. Returning null.");
 				}
 			} else {
-				LOG.debug(String.format("The header row must not be null while getting field names!\nCLASS: %s",
+				LOG.warn(String.format("The header row must not be null while getting field names!\nCLASS: %s",
 						clazz.getName()));
 			}
 		} else {
-			LOG.debug("The class must not be null!");
+			LOG.warn("The class must not be null!");
 		}
 		return null;
 	}
@@ -160,7 +160,7 @@ public class ExcelUtils {
 				}
 			}
 		} else {
-			LOG.debug("The field to check the order of must not be null!");
+			LOG.warn("The field to check the order of must not be null!");
 		}
 		return null;
 	}
@@ -175,10 +175,10 @@ public class ExcelUtils {
 					return wb.createSheet(name);
 				}
 			} else {
-				LOG.debug("The sheet name must not be null or empty!");
+				LOG.warn("The sheet name must not be null or empty!");
 			}
 		} else {
-			LOG.debug("The workbook must not be null!");
+			LOG.warn("The workbook must not be null!");
 		}
 		return null;
 	}
@@ -208,7 +208,7 @@ public class ExcelUtils {
 				return clazz.getSimpleName();
 			}
 		} else {
-			LOG.debug("The class must not be null!");
+			LOG.warn("The class must not be null!");
 		}
 		return null;
 	}
@@ -230,11 +230,11 @@ public class ExcelUtils {
 					LOG.error(String.format("Problem reading file: %s", file.getAbsolutePath()), e);
 				}
 			} else {
-				LOG.debug(String.format("The provided file does not have a .xlsx extension!\nFILE: %s",
+				LOG.warn(String.format("The provided file does not have a .xlsx extension!\nFILE: %s",
 						file.getAbsolutePath()));
 			}
 		} else {
-			LOG.debug("The file must not be null and must exist!");
+			LOG.warn("The file must not be null and must exist!");
 		}
 		return null;
 	}
@@ -248,10 +248,10 @@ public class ExcelUtils {
 					LOG.error(String.format("Problem writing file: %s", file.getAbsolutePath()), e);
 				}
 			} else {
-				LOG.debug("The file to write to must not be null and must exist!");
+				LOG.warn("The file to write to must not be null and must exist!");
 			}
 		} else {
-			LOG.debug("The workbook must not be null or empty!");
+			LOG.warn("The workbook must not be null or empty!");
 		}
 	}
 

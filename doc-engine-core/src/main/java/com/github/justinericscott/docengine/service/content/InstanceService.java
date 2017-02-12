@@ -3,12 +3,12 @@
  */
 package com.github.justinericscott.docengine.service.content;
 
-import com.github.justinericscott.docengine.types.ClauseInstanceJpaImpl;
-import com.github.justinericscott.docengine.types.DocumentInstanceJpaImpl;
-import com.github.justinericscott.docengine.types.InstanceJpaImpl;
-import com.github.justinericscott.docengine.types.Instances;
-import com.github.justinericscott.docengine.types.ParagraphInstanceJpaImpl;
-import com.github.justinericscott.docengine.types.SectionInstanceJpaImpl;
+import com.github.justinericscott.docengine.models.ClauseInstance;
+import com.github.justinericscott.docengine.models.DocumentInstance;
+import com.github.justinericscott.docengine.models.Instance;
+import com.github.justinericscott.docengine.models.Instances;
+import com.github.justinericscott.docengine.models.ParagraphInstance;
+import com.github.justinericscott.docengine.models.SectionInstance;
 
 /**
  * @author Justin Scott
@@ -40,7 +40,7 @@ public interface InstanceService {
 	 */
 	<T> boolean delete(String projectId, String code, Class<T> type);
 
-	boolean delete(InstanceJpaImpl instance);
+	boolean delete(Instance instance);
 	
 	/**
 	 * Deletes the provided Instance object from the database.
@@ -58,8 +58,12 @@ public interface InstanceService {
 	 * @return All Instance records.
 	 */
 	Instances findAll();
+	
+	<T> T findAll(Class<T> type);
+	
+	<T> T findAll(Class<T> type, boolean eagerKids);
 
-	InstanceJpaImpl findByProjectIdAndCode(String projectId, String code);
+	Instance findByProjectIdAndCode(String projectId, String code);
 	
 	/**
 	 * Gets a single Instance based upon the provided project ID and code.
@@ -93,14 +97,14 @@ public interface InstanceService {
 	 */
 	<T> T findByProjectIdAndCodeLike(String projectId, String like, Class<T> type);
 
-	InstanceJpaImpl findOne(Long id);
+	Instance findOne(Long id);
 	
 	/**
-	 * Obtains an {@link InstanceJpaImpl} for the provided ID.
+	 * Obtains an {@link Instance} for the provided ID.
 	 * 
 	 * @param id
-	 *            Identifier of the {@link InstanceJpaImpl} to return.
-	 * @return Requested {@link InstanceJpaImpl}.
+	 *            Identifier of the {@link Instance} to return.
+	 * @return Requested {@link Instance}.
 	 */
 	<T> T findOne(Long id, Class<T> type);
 
@@ -178,7 +182,7 @@ public interface InstanceService {
 	 * @param instance
 	 * @return The newly merged Instance, with created ID if new.
 	 */
-	InstanceJpaImpl save(InstanceJpaImpl instance);
+	Instance save(Instance instance);
 	
 	/**
 	 * TODO: Document
@@ -186,7 +190,7 @@ public interface InstanceService {
 	 * @param document
 	 * @return
 	 */
-	DocumentInstanceJpaImpl save(DocumentInstanceJpaImpl document);
+	DocumentInstance save(DocumentInstance document);
 	
 	/**
 	 * TODO: Document
@@ -194,7 +198,7 @@ public interface InstanceService {
 	 * @param section
 	 * @return
 	 */
-	SectionInstanceJpaImpl save(SectionInstanceJpaImpl section);
+	SectionInstance save(SectionInstance section);
 	
 	/**
 	 * TODO: Document
@@ -202,7 +206,7 @@ public interface InstanceService {
 	 * @param clause
 	 * @return
 	 */
-	ClauseInstanceJpaImpl save(ClauseInstanceJpaImpl clause);
+	ClauseInstance save(ClauseInstance clause);
 	
 	/**
 	 * TODO: Document
@@ -210,7 +214,7 @@ public interface InstanceService {
 	 * @param paragraph
 	 * @return
 	 */
-	ParagraphInstanceJpaImpl save(ParagraphInstanceJpaImpl paragraph);
+	ParagraphInstance save(ParagraphInstance paragraph);
 
 	/**
 	 * Merges (adds or updates) Instance records.

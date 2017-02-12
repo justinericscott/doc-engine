@@ -24,18 +24,17 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.github.justinericscott.docengine.controller.RestUtils;
-import com.github.justinericscott.docengine.types.ClauseJpaImpl;
-import com.github.justinericscott.docengine.types.Clauses;
-import com.github.justinericscott.docengine.types.ContentJpaImpl;
-import com.github.justinericscott.docengine.types.Contents;
-import com.github.justinericscott.docengine.types.DocumentJpaImpl;
-import com.github.justinericscott.docengine.types.Documents;
-import com.github.justinericscott.docengine.types.InstanceJpaImpl;
-import com.github.justinericscott.docengine.types.Instances;
-import com.github.justinericscott.docengine.types.ParagraphJpaImpl;
-import com.github.justinericscott.docengine.types.Paragraphs;
-import com.github.justinericscott.docengine.types.SectionJpaImpl;
-import com.github.justinericscott.docengine.types.Sections;
+import com.github.justinericscott.docengine.models.Clause;
+import com.github.justinericscott.docengine.models.Clauses;
+import com.github.justinericscott.docengine.models.Contents;
+import com.github.justinericscott.docengine.models.Document;
+import com.github.justinericscott.docengine.models.DocumentInstances;
+import com.github.justinericscott.docengine.models.Documents;
+import com.github.justinericscott.docengine.models.Instances;
+import com.github.justinericscott.docengine.models.Paragraph;
+import com.github.justinericscott.docengine.models.Paragraphs;
+import com.github.justinericscott.docengine.models.Section;
+import com.github.justinericscott.docengine.models.Sections;
 
 /**
  * @author Justin Scott
@@ -47,7 +46,7 @@ public abstract class AbstractRestClient extends RestTemplate {
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractRestClient.class);
 
 	protected final String base;
-	
+
 	@Autowired
 	protected RestUtils utils;
 
@@ -57,7 +56,7 @@ public abstract class AbstractRestClient extends RestTemplate {
 	}
 
 	public AbstractRestClient(final String base) {
-		LOG.info("Adding {} as a subjective base path.", base);
+		LOG.debug("Adding {} as a subjective base path.", base);
 		this.base = base;
 	}
 
@@ -73,25 +72,6 @@ public abstract class AbstractRestClient extends RestTemplate {
 			LOG.warn(LOG_NULL_REL_PATH);
 		}
 	}
-	
-	protected final <T> ResponseEntity<T> adhocGet(final Class<T> type, boolean eagerKids) {
-		if (type.equals(DocumentJpaImpl.class) || type.equals(Documents.class)) {
-			return adhocGet(DOCUMENT, type, eagerKids);
-		} else if (type.equals(SectionJpaImpl.class) || type.equals(Sections.class)) {
-			return adhocGet(SECTION, type, eagerKids);
-		} else if (type.equals(ClauseJpaImpl.class) || type.equals(Clauses.class)) {
-			return adhocGet(CLAUSE, type, eagerKids);
-		} else if (type.equals(ParagraphJpaImpl.class) || type.equals(Paragraphs.class)) {
-			return adhocGet(PARAGRAPH, type);
-		} else if (type.equals(Contents.class)) {
-			return adhocGet(CONTENTS, type);
-		} else if (type.equals(Instances.class)) {
-			return adhocGet(INSTANCES, type);
-		} else if (type.equals(ContentJpaImpl.class) || type.equals(InstanceJpaImpl.class)) {
-			return adhocGet(null, type);
-		}
-		return null;		
-	}
 
 	protected final <T> ResponseEntity<T> adhocGet(final Class<T> type) {
 		return adhocGet(type, false);
@@ -101,15 +81,42 @@ public abstract class AbstractRestClient extends RestTemplate {
 		return adhocGet(rel, type, (Object[]) null);
 	}
 
+	protected final <T> ResponseEntity<T> adhocGet(final Class<T> type, boolean eagerKids) {
+		if (type.equals(Document.class) || type.equals(Documents.class)
+				|| type.equals(DocumentInstances.class)) {
+			if (eagerKids) {
+				return adhocGet(DOCUMENT + DOCUMENTS + IS_EAGER_KIDS, type, eagerKids);
+			}
+			return adhocGet(DOCUMENT + DOCUMENTS, type);
+		} else if (type.equals(Section.class) || type.equals(Sections.class)) {
+			if (eagerKids) {
+				return adhocGet(CONTENTS + BY_TYPE + IS_EAGER_KIDS, type, eagerKids);
+			}
+			return adhocGet(CONTENTS + BY_TYPE, type);
+		} else if (type.equals(Clause.class) || type.equals(Clauses.class)) {
+			if (eagerKids) {
+				return adhocGet(CONTENTS + BY_TYPE + IS_EAGER_KIDS, type, eagerKids);
+			}
+			return adhocGet(CONTENTS + BY_TYPE, type);
+		} else if (type.equals(Paragraph.class) || type.equals(Paragraphs.class)) {
+			return adhocGet(CONTENTS + BY_TYPE, type);
+		} else if (type.equals(Contents.class)) {
+			return adhocGet(CONTENTS, type);
+		} else if (type.equals(Instances.class)) {
+			return adhocGet(INSTANCES, type);
+		}
+		return null;
+	}
+
 	protected final <T> ResponseEntity<T> adhocGet(final String rel, final Class<T> type, final Object... params) {
 		final String dest = utils.getDestination(base, rel);
 		if (isNotNullOrEmpty(type)) {
 			try {
 				if (isNotNullOrEmpty(params)) {
-					LOG.debug("Sending request with params to {}...", dest);
+					LOG.trace("Sending request with params to {}...", dest);
 					return super.getForEntity(dest, type, params);
 				} else {
-					LOG.debug("Sending request without params to {}...", dest);
+					LOG.trace("Sending request without params to {}...", dest);
 					return super.getForEntity(dest, type);
 				}
 			} catch (final HttpMessageNotReadableException e) {

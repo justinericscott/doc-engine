@@ -1,6 +1,7 @@
 package com.github.justinericscott.docengine.controller;
 
 import static org.junit.Assert.*;
+import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,21 +18,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.client.HttpClientErrorException;
 
-import com.github.justinericscott.docengine.types.ClauseInstanceJpaImpl;
-import com.github.justinericscott.docengine.types.ClauseInstances;
-import com.github.justinericscott.docengine.types.ClauseJpaImpl;
-import com.github.justinericscott.docengine.types.ContentJpaImpl;
-import com.github.justinericscott.docengine.types.Contents;
-import com.github.justinericscott.docengine.types.DocumentInstanceJpaImpl;
-import com.github.justinericscott.docengine.types.DocumentJpaImpl;
-import com.github.justinericscott.docengine.types.InstanceJpaImpl;
-import com.github.justinericscott.docengine.types.Instances;
-import com.github.justinericscott.docengine.types.ParagraphInstanceJpaImpl;
-import com.github.justinericscott.docengine.types.ParagraphInstances;
-import com.github.justinericscott.docengine.types.ParagraphJpaImpl;
-import com.github.justinericscott.docengine.types.SectionInstanceJpaImpl;
-import com.github.justinericscott.docengine.types.SectionInstances;
-import com.github.justinericscott.docengine.types.SectionJpaImpl;
+import com.github.justinericscott.docengine.models.Clause;
+import com.github.justinericscott.docengine.models.ClauseInstance;
+import com.github.justinericscott.docengine.models.ClauseInstances;
+import com.github.justinericscott.docengine.models.Content;
+import com.github.justinericscott.docengine.models.Contents;
+import com.github.justinericscott.docengine.models.Document;
+import com.github.justinericscott.docengine.models.DocumentInstance;
+import com.github.justinericscott.docengine.models.Instance;
+import com.github.justinericscott.docengine.models.Instances;
+import com.github.justinericscott.docengine.models.Paragraph;
+import com.github.justinericscott.docengine.models.ParagraphInstance;
+import com.github.justinericscott.docengine.models.ParagraphInstances;
+import com.github.justinericscott.docengine.models.Section;
+import com.github.justinericscott.docengine.models.SectionInstance;
+import com.github.justinericscott.docengine.models.SectionInstances;
 import com.github.justinericscott.docengine.util.AbstractTest;
 import com.github.justinericscott.docengine.util.rest.RestClient;
 
@@ -57,61 +58,61 @@ public class InstanceRestControllerTest extends AbstractTest {
 	public void a_SaveTest() {
 		final String projectId = TEST_PROJECT_ID_PREFIX + uuid();
 		// Merge 1
-		ContentJpaImpl content = new ContentJpaImpl(TEST_CONTENT_CODE_PREFIX + uuid(), "TEST_BODY");
-		content = _contents.save(content, ContentJpaImpl.class);
+		Content content = new Content(TEST_CONTENT_CODE_PREFIX + uuid(), "TEST_BODY");
+		content = _contents.save(content, Content.class);
 		assertNotNull(content);
 		assertTrue(content.isValid(true));
 
-		InstanceJpaImpl instance = new InstanceJpaImpl(content, projectId);
-		instance = _instances.save(instance, InstanceJpaImpl.class);
+		Instance instance = new Instance(content, projectId);
+		instance = _instances.save(instance, Instance.class);
 		assertNotNull(instance);
 		assertTrue(instance.isValid(true));
 
 		// Merge complex one at a time
-		DocumentJpaImpl doc = new DocumentJpaImpl(TEST_DOCUMENT_CODE_PREFIX + uuid(), "TEST_BODY");
-		doc = _contents.save(doc, DocumentJpaImpl.class);
+		Document doc = new Document(TEST_DOCUMENT_CODE_PREFIX + uuid(), "TEST_BODY");
+		doc = _contents.save(doc, Document.class);
 		assertNotNull(doc);
 		assertTrue(doc.isValid(true));
-		DocumentInstanceJpaImpl docInst = new DocumentInstanceJpaImpl(doc, projectId);
-		docInst = _instances.save(docInst, DocumentInstanceJpaImpl.class);
+		DocumentInstance docInst = new DocumentInstance(doc, projectId);
+		docInst = _instances.save(docInst, DocumentInstance.class);
 		assertNotNull(docInst);
 		Long id = docInst.getId();
 		assertTrue(docInst.isValid(true));
 
-		SectionJpaImpl sec = new SectionJpaImpl(TEST_SECTION_CODE_PREFIX + uuid(), "TEST_BODY");
+		Section sec = new Section(TEST_SECTION_CODE_PREFIX + uuid(), "TEST_BODY");
 		doc.addSection(sec);
-		sec = _contents.save(sec, SectionJpaImpl.class);
+		sec = _contents.save(sec, Section.class);
 		assertNotNull(sec);
 		assertTrue(sec.isValid(true));
-		SectionInstanceJpaImpl secInst = new SectionInstanceJpaImpl(sec, projectId);
+		SectionInstance secInst = new SectionInstance(sec, projectId);
 		docInst.addSection(secInst);
-		secInst = _instances.save(secInst, SectionInstanceJpaImpl.class);
+		secInst = _instances.save(secInst, SectionInstance.class);
 		assertNotNull(secInst);
 		assertTrue(secInst.isValid(true));
 
-		ClauseJpaImpl cla = new ClauseJpaImpl(TEST_CLAUSE_CODE_PREFIX + uuid(), "TEST_BODY");
+		Clause cla = new Clause(TEST_CLAUSE_CODE_PREFIX + uuid(), "TEST_BODY");
 		sec.addClause(cla);
-		cla = _contents.save(cla, ClauseJpaImpl.class);
+		cla = _contents.save(cla, Clause.class);
 		assertNotNull(cla);
 		assertTrue(cla.isValid(true));
-		ClauseInstanceJpaImpl claInst = new ClauseInstanceJpaImpl(cla, projectId);
+		ClauseInstance claInst = new ClauseInstance(cla, projectId);
 		secInst.addClause(claInst);
-		claInst = _instances.save(claInst, ClauseInstanceJpaImpl.class);
+		claInst = _instances.save(claInst, ClauseInstance.class);
 		assertNotNull(claInst);
 		assertTrue(claInst.isValid(true));
 
-		ParagraphJpaImpl para = new ParagraphJpaImpl(TEST_PARAGRAPH_CODE_PREFIX + uuid(), "TEST_BODY");
+		Paragraph para = new Paragraph(TEST_PARAGRAPH_CODE_PREFIX + uuid(), "TEST_BODY");
 		cla.addParagraph(para);
-		para = _contents.save(para, ParagraphJpaImpl.class);
+		para = _contents.save(para, Paragraph.class);
 		assertNotNull(para);
 		assertTrue(para.isValid(true));
-		ParagraphInstanceJpaImpl paraInst = new ParagraphInstanceJpaImpl(para, projectId);
+		ParagraphInstance paraInst = new ParagraphInstance(para, projectId);
 		claInst.addParagraph(paraInst);
-		paraInst = _instances.save(paraInst, ParagraphInstanceJpaImpl.class);
+		paraInst = _instances.save(paraInst, ParagraphInstance.class);
 		assertNotNull(paraInst);
 		assertTrue(paraInst.isValid(true));
 
-		docInst = _instances.findOne(id, DocumentInstanceJpaImpl.class);
+		docInst = _instances.findOne(id, DocumentInstance.class);
 		assertNotNull(docInst);
 		assertTrue(docInst.isValid(true));
 
@@ -124,44 +125,44 @@ public class InstanceRestControllerTest extends AbstractTest {
 		assertTrue(docInst.isValid(true));
 
 		// Merge a list
-		List<ContentJpaImpl> list = new ArrayList<ContentJpaImpl>();
-		List<InstanceJpaImpl> instances = new ArrayList<InstanceJpaImpl>();
+		List<Content> list = new ArrayList<Content>();
+		List<Instance> instances = new ArrayList<Instance>();
 		list.add(createContent());
 		list.add(createContent());
 		list.add(createContent());
-		Contents contents = new Contents(list.toArray(new ContentJpaImpl[list.size()]));
+		Contents contents = new Contents(list.toArray(new Content[list.size()]));
 		contents = _contents.save(contents, Contents.class);
 		assertNotNull(contents);
-		for (ContentJpaImpl c : contents.getContents()) {
+		for (Content c : contents.getContents()) {
 			assertTrue(c.isValid(true));
-			instances.add(new InstanceJpaImpl(c, projectId));
+			instances.add(new Instance(c, projectId));
 		}
 		Instances saved = _instances.save(new Instances(instances), Instances.class);
 		assertNotNull(saved);
-		for (InstanceJpaImpl i : saved.getInstances()) {
+		for (Instance i : saved.getInstances()) {
 			assertTrue(i.isValid(true));
 		}
 		content = createContent();
 		// Null Object
-		assertNull(_instances.save(null, InstanceJpaImpl.class));
+		assertNull(_instances.save(null, Instance.class));
 		// Empty Project ID
-		assertNull(_instances.save(new InstanceJpaImpl(content), InstanceJpaImpl.class));
+		assertNull(_instances.save(new Instance(content), Instance.class));
 		// No Content
-		assertNull(_instances.save(new InstanceJpaImpl(TEST_PROJECT_ID_PREFIX + uuid()), InstanceJpaImpl.class));
+		assertNull(_instances.save(new Instance(TEST_PROJECT_ID_PREFIX + uuid()), Instance.class));
 
 		// Content with no ID
-		content = new ContentJpaImpl(TEST_CONTENT_CODE_PREFIX + uuid(), "TEST_BODY");
-		InstanceJpaImpl in = new InstanceJpaImpl(content, TEST_PROJECT_ID_PREFIX + uuid());
-		assertNull(_instances.save(in, InstanceJpaImpl.class));
+		content = new Content(TEST_CONTENT_CODE_PREFIX + uuid(), "TEST_BODY");
+		Instance in = new Instance(content, TEST_PROJECT_ID_PREFIX + uuid());
+		assertNull(_instances.save(in, Instance.class));
 		// Duplicates
 		instance = createInstance();
-		assertNull(_instances.save(new InstanceJpaImpl(content, instance.getProjectId()), InstanceJpaImpl.class));
+		assertNull(_instances.save(new Instance(content, instance.getProjectId()), Instance.class));
 	}
 
 	@Test
 	public void b_FindTest() {
 		// Get All
-		Collection<InstanceJpaImpl> instances = new ArrayList<InstanceJpaImpl>();
+		Collection<Instance> instances = new ArrayList<Instance>();
 		instances.add(createInstance());
 		instances.add(createInstance());
 		instances.add(createInstance());
@@ -170,87 +171,87 @@ public class InstanceRestControllerTest extends AbstractTest {
 		assertNotNull(inst);
 		Instances all = (Instances) _instances.findAll();
 		assertNotNull(all);
-		for (InstanceJpaImpl i : all.getInstances()) {
+		for (Instance i : all.getInstances()) {
 			assertTrue(i.isValid(true));
 		}
 
 		// Get Instance
-		InstanceJpaImpl instance = createInstance();
-		instance = _instances.findOne(instance.getId(), InstanceJpaImpl.class);
+		Instance instance = createInstance();
+		instance = _instances.findOne(instance.getId(), Instance.class);
 
 		instance = _instances.findByProjectIdAndCode(instance.getProjectId(), instance.getContent().getContentCd(),
-				InstanceJpaImpl.class);
+				Instance.class);
 
 		// Get sub-classes, no eagerKids
-		DocumentInstanceJpaImpl document = createDocumentInstance();
+		DocumentInstance document = createDocumentInstance();
 		String projectId = document.getProjectId();
 		Long id = document.getId();
 		// String code = document.getContent().getContentCd();
 
 		assertTrue(
-				DocumentInstanceJpaImpl.class.equals(_instances.findOne(id, DocumentInstanceJpaImpl.class, true).getClass()));
-		assertTrue(DocumentInstanceJpaImpl.class.equals(_instances
-				.findByProjectIdAndCode(projectId, document.getDocument().getContentCd(), DocumentInstanceJpaImpl.class, true)
+				DocumentInstance.class.equals(_instances.findOne(id, DocumentInstance.class, true).getClass()));
+		assertTrue(DocumentInstance.class.equals(_instances
+				.findByProjectIdAndCode(projectId, document.getDocument().getContentCd(), DocumentInstance.class, true)
 				.getClass()));
-		assertTrue(_instances.findOne(id, DocumentInstanceJpaImpl.class).getSections().isEmpty());
+		assertTrue(_instances.findOne(id, DocumentInstance.class).getSections().isEmpty());
 
-		assertTrue(SectionInstanceJpaImpl.class.equals(_instances
-				.findOne(document.getSections().iterator().next().getId(), SectionInstanceJpaImpl.class, true).getClass()));
-		assertTrue(SectionInstanceJpaImpl.class.equals(_instances.findByProjectIdAndCode(projectId,
-				document.getSections().iterator().next().getSection().getContentCd(), SectionInstanceJpaImpl.class, true)
+		assertTrue(SectionInstance.class.equals(_instances
+				.findOne(document.getSections().iterator().next().getId(), SectionInstance.class, true).getClass()));
+		assertTrue(SectionInstance.class.equals(_instances.findByProjectIdAndCode(projectId,
+				document.getSections().iterator().next().getSection().getContentCd(), SectionInstance.class, true)
 				.getClass()));
 //		assertNull(((SectionInstanceJpaImpl) _instances.findOne(document.getSectionsList().iterator().next().getId(),
 //				SectionInstanceJpaImpl.class, true)).getClausesList());
 
-		assertTrue(ClauseInstanceJpaImpl.class.equals(
+		assertTrue(ClauseInstance.class.equals(
 				_instances.findOne(document.getSections().iterator().next().getClauses().iterator().next().getId(),
-						ClauseInstanceJpaImpl.class, true).getClass()));
+						ClauseInstance.class, true).getClass()));
 
 		assertTrue(
-				ClauseInstanceJpaImpl.class.equals(_instances
+				ClauseInstance.class.equals(_instances
 						.findByProjectIdAndCode(projectId, document.getSections().iterator().next().getClauses()
-								.iterator().next().getClause().getContentCd(), ClauseInstanceJpaImpl.class, true)
+								.iterator().next().getClause().getContentCd(), ClauseInstance.class, true)
 						.getClass()));
 
 //		assertNull(((ClauseInstanceJpaImpl) _instances.findOne(
 //				document.getSectionsList().iterator().next().getClausesList().iterator().next().getId(),
 //				ClauseInstanceJpaImpl.class, true)).getParagraphsList());
 
-		assertTrue(ParagraphInstanceJpaImpl.class
+		assertTrue(ParagraphInstance.class
 				.equals(_instances.findOne(document.getSections().iterator().next().getClauses().iterator().next()
-						.getParagraphs().iterator().next().getId(), ParagraphInstanceJpaImpl.class).getClass()));
-		assertTrue(ParagraphInstanceJpaImpl.class.equals(_instances
+						.getParagraphs().iterator().next().getId(), ParagraphInstance.class).getClass()));
+		assertTrue(ParagraphInstance.class.equals(_instances
 				.findByProjectIdAndCode(projectId,
 						document.getSections().iterator().next().getClauses().iterator().next().getParagraphs()
 								.iterator().next().getParagraph().getContentCd(),
-						ParagraphInstanceJpaImpl.class)
+						ParagraphInstance.class)
 				.getClass()));
 
 		// Get Children by ID
 		assertNotNull(document.getId());
 		SectionInstances sections = _instances.getChildren(document.getId(), SectionInstances.class);
-		for (SectionInstanceJpaImpl s : sections.getSectionsList()) {
+		for (SectionInstance s : sections.getSectionsList()) {
 			assertTrue(s.getClauses().isEmpty());
 			ClauseInstances clauses = _instances.getChildren(s.getId(), ClauseInstances.class);
-			for (ClauseInstanceJpaImpl c : clauses.getClausesList()) {
+			for (ClauseInstance c : clauses.getClausesList()) {
 				assertTrue(c.getParagraphs().isEmpty());
 				ParagraphInstances paragraphs = _instances.getChildren(c.getId(), ParagraphInstances.class);
-				for (ParagraphInstanceJpaImpl p : paragraphs.getParagraphsList()) {
+				for (ParagraphInstance p : paragraphs.getParagraphsList()) {
 					assertTrue(p.isValid(true));
 				}
 			}
 		}
 
 		// Get Children by ID with kids
-		for (SectionInstanceJpaImpl s : _instances.getChildren(document.getId(), SectionInstances.class, true)
+		for (SectionInstance s : _instances.getChildren(document.getId(), SectionInstances.class, true)
 				.getSectionsList()) {
-			if (SectionInstanceJpaImpl.class.isInstance(s)) {
+			if (SectionInstance.class.isInstance(s)) {
 				for (Object c : _instances.getChildren(s.getId(), ClauseInstances.class, true).getClausesList()) {
-					if (c instanceof ClauseInstanceJpaImpl) {
-						ClauseInstanceJpaImpl clause = ClauseInstanceJpaImpl.class.cast(c);
+					if (c instanceof ClauseInstance) {
+						ClauseInstance clause = ClauseInstance.class.cast(c);
 						for (Object p : _instances.getChildren(clause.getId(), ParagraphInstances.class, true)
 								.getParagraphsList()) {
-							if (p instanceof ParagraphInstanceJpaImpl) {
+							if (p instanceof ParagraphInstance) {
 
 							}
 						}
@@ -260,28 +261,27 @@ public class InstanceRestControllerTest extends AbstractTest {
 		}
 
 		// Get Children by code
-		DocumentJpaImpl doc = document.getDocument();
+		Document doc = document.getDocument();
 		assertNotNull(doc);
 		String code = doc.getContentCd();
 		assertNotNull(code);
-		System.err.println(code);
 		SectionInstances secs = _instances.getChildren(projectId, code, SectionInstances.class);
 		assertNotNull(secs);
-		Iterable<SectionInstanceJpaImpl> iter = secs.getSectionsList();
+		Iterable<SectionInstance> iter = secs.getSectionsList();
 
-		for (SectionInstanceJpaImpl s : iter) {
-			if (s instanceof SectionInstanceJpaImpl) {
-				SectionInstanceJpaImpl section = (SectionInstanceJpaImpl) s;
+		for (SectionInstance s : iter) {
+			if (s instanceof SectionInstance) {
+				SectionInstance section = (SectionInstance) s;
 				for (Object c : _instances
 						.getChildren(projectId, section.getSection().getContentCd(), ClauseInstances.class)
 						.getClausesList()) {
-					if (c instanceof ClauseInstanceJpaImpl) {
-						ClauseInstanceJpaImpl clause = (ClauseInstanceJpaImpl) c;
+					if (c instanceof ClauseInstance) {
+						ClauseInstance clause = (ClauseInstance) c;
 						for (Object p : _instances
 								.getChildren(projectId, clause.getClause().getContentCd(), ParagraphInstances.class)
 								.getParagraphsList()) {
-							if (p instanceof ParagraphInstanceJpaImpl) {
-								assertNotNull(((InstanceJpaImpl) p).getId());
+							if (p instanceof ParagraphInstance) {
+								assertNotNull(((Instance) p).getId());
 							}
 						}
 					}
@@ -290,20 +290,20 @@ public class InstanceRestControllerTest extends AbstractTest {
 		}
 
 		// Get Children by code with kids
-		for (InstanceJpaImpl s : _instances.getChildren(projectId, code, SectionInstances.class, true).getSectionsList()) {
-			if (s instanceof SectionInstanceJpaImpl) {
-				SectionInstanceJpaImpl section = (SectionInstanceJpaImpl) s;
+		for (Instance s : _instances.getChildren(projectId, code, SectionInstances.class, true).getSectionsList()) {
+			if (s instanceof SectionInstance) {
+				SectionInstance section = (SectionInstance) s;
 				code = section.getSection().getContentCd();
-				for (InstanceJpaImpl c : _instances.getChildren(projectId, code, ClauseInstances.class, true)
+				for (Instance c : _instances.getChildren(projectId, code, ClauseInstances.class, true)
 						.getClausesList()) {
-					if (c instanceof ClauseInstanceJpaImpl) {
-						ClauseInstanceJpaImpl clause = (ClauseInstanceJpaImpl) c;
+					if (c instanceof ClauseInstance) {
+						ClauseInstance clause = (ClauseInstance) c;
 						assertNotNull(clause.getParagraphs().iterator().next().getId());
 						_instances.getChildren(projectId, clause.getClause().getContentCd(),
-								ClauseInstanceJpaImpl.class, true);
+								ClauseInstance.class, true);
 						for (Object p : _instances.getChildren(projectId, clause.getClause().getContentCd(),
 								ParagraphInstances.class, true).getParagraphsList()) {
-							if (p instanceof ParagraphInstanceJpaImpl) {
+							if (p instanceof ParagraphInstance) {
 
 							} else {
 								throw new IllegalStateException();
@@ -319,37 +319,37 @@ public class InstanceRestControllerTest extends AbstractTest {
 		}
 
 		instance = createInstance();
-		assertNotNull(_instances.findByProjectIdAndCodeLike(instance.getProjectId(), "%TEST%", InstanceJpaImpl.class));
+		assertNotNull(_instances.findByProjectIdAndCodeLike(instance.getProjectId(), "%TEST%", Instance.class));
 
 		instance = createInstance();
 		code = instance.getContent().getContentCd();
 
-		assertNull(_instances.findOne(0L, InstanceJpaImpl.class));
-		assertNull(_instances.findOne(99999999L, InstanceJpaImpl.class));
-		assertNull(_instances.findByProjectIdAndCode("TEST_PROJECT_ID", "Snicklefritz", InstanceJpaImpl.class));
-		assertNull(_instances.findByProjectIdAndCode("Snicklefritz", code, InstanceJpaImpl.class));
+		assertNull(_instances.findOne(0L, Instance.class));
+		assertNull(_instances.findOne(99999999L, Instance.class));
+		assertNull(_instances.findByProjectIdAndCode("TEST_PROJECT_ID", "Snicklefritz", Instance.class));
+		assertNull(_instances.findByProjectIdAndCode("Snicklefritz", code, Instance.class));
 		try {
-			_instances.findByProjectIdAndCode("TEST_PROJECT_ID", null, InstanceJpaImpl.class);
+			_instances.findByProjectIdAndCode("TEST_PROJECT_ID", null, Instance.class);
 		} catch (Exception e) {
 			assertEquals(e.getClass(), HttpClientErrorException.class);
 		}
 		try {
-			_instances.findByProjectIdAndCode("TEST_PROJECT_ID", "", InstanceJpaImpl.class);
+			_instances.findByProjectIdAndCode("TEST_PROJECT_ID", "", Instance.class);
 		} catch (Exception e) {
 			assertEquals(e.getClass(), HttpClientErrorException.class);
 		}
 		try {
-			_instances.findOne((Long) null, InstanceJpaImpl.class);
+			_instances.findOne((Long) null, Instance.class);
 		} catch (Exception e) {
 			assertEquals(e.getClass(), HttpClientErrorException.class);
 		}
 		try {
-			_instances.findByProjectIdAndCode("", code, InstanceJpaImpl.class);
+			_instances.findByProjectIdAndCode("", code, Instance.class);
 		} catch (Exception e) {
 			assertEquals(e.getClass(), HttpClientErrorException.class);
 		}
 		try {
-			_instances.findByProjectIdAndCode(null, code, InstanceJpaImpl.class);
+			_instances.findByProjectIdAndCode(null, code, Instance.class);
 		} catch (Exception e) {
 			assertEquals(e.getClass(), HttpClientErrorException.class);
 		}
@@ -367,36 +367,36 @@ public class InstanceRestControllerTest extends AbstractTest {
 
 	@Test
 	public void xx_DeleteTest() {
-		InstanceJpaImpl instance = createInstance();
+		Instance instance = createInstance();
 		_instances.delete(instance);
 		_contents.delete(instance.getContent());
-		assertNull(_instances.findOne(instance.getId(), InstanceJpaImpl.class));
+		assertNull(_instances.findOne(instance.getId(), Instance.class));
 		instance = createInstance();
 		_instances.delete(instance);
 		assertNull(_instances.findOne(instance.getId()));
 		_contents.delete(instance.getContent());
 	}
 	
-	private ContentJpaImpl createContent() {
-		ContentJpaImpl content = makeTestContent();
-		content = _contents.save(content, ContentJpaImpl.class);
+	private Content createContent() {
+		Content content = makeTestContent();
+		content = _contents.save(content, Content.class);
 		assertNotNull(content);
 		assertTrue(content.isValid(true));
 		return content;
 	}
 
-	private DocumentJpaImpl createDocument() {
-		DocumentJpaImpl document = makeTestDocumentComplete();
-		document = _contents.save(document, DocumentJpaImpl.class);
+	private Document createDocument() {
+		Document document = makeTestDocumentComplete();
+		document = _contents.save(document, Document.class);
 		assertNotNull(document);
 		assertTrue(document.isValid(true));
 		return document;
 	}
 
-	private DocumentInstanceJpaImpl createDocumentInstance() {
-		DocumentJpaImpl document = createDocument();
-		DocumentInstanceJpaImpl documentInstance = new DocumentInstanceJpaImpl(document, TEST_PROJECT_ID_VALUE);
-		documentInstance = _instances.save(documentInstance, DocumentInstanceJpaImpl.class);
+	private DocumentInstance createDocumentInstance() {
+		Document document = createDocument();
+		DocumentInstance documentInstance = new DocumentInstance(document, TEST_PROJECT_ID_VALUE);
+		documentInstance = _instances.save(documentInstance, DocumentInstance.class);
 		assertNotNull(documentInstance);
 		assertTrue(documentInstance.isValid(true));
 		assertNotNull(documentInstance.getDocument());
@@ -418,9 +418,9 @@ public class InstanceRestControllerTest extends AbstractTest {
 		return documentInstance;
 	}
 
-	private InstanceJpaImpl createInstance() {
-		InstanceJpaImpl instance = new InstanceJpaImpl(createContent(), TEST_PROJECT_ID_VALUE);
-		instance = _instances.save(instance, InstanceJpaImpl.class);
+	private Instance createInstance() {
+		Instance instance = new Instance(createContent(), TEST_PROJECT_ID_VALUE);
+		instance = _instances.save(instance, Instance.class);
 		assertNotNull(instance);
 		assertTrue(instance.isValid(true));
 		assertNotNull(instance.getContent());

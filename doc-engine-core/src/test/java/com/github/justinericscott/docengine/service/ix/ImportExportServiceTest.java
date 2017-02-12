@@ -14,11 +14,11 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.github.justinericscott.docengine.models.Content;
+import com.github.justinericscott.docengine.models.Contents;
 import com.github.justinericscott.docengine.service.content.ContentService;
 import com.github.justinericscott.docengine.service.content.InstanceService;
 import com.github.justinericscott.docengine.service.ix.ImportExportService;
-import com.github.justinericscott.docengine.types.ContentJpaImpl;
-import com.github.justinericscott.docengine.types.Contents;
 import com.github.justinericscott.docengine.util.AbstractTest;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -38,9 +38,9 @@ public class ImportExportServiceTest extends AbstractTest {
 	public void a_ImportTest() {
 		if (_instances.deleteAll()) {
 			if (_contents.deleteAll()) {
-				Contents objects = _service.importFromFile(Contents.class, TEST_PATH_IMPORT);
+				Iterable<Content> objects = _service.importFromFile(Content.class, TEST_PATH_IMPORT);
 				assertNotNull(objects);
-				for (final ContentJpaImpl o : objects.getContents()) {
+				for (final Content o : objects) {
 					assertTrue(o.isValid(true));
 					LOG.trace("Type of Content is {}.", o.getClass().getSimpleName());
 				}			
@@ -56,7 +56,7 @@ public class ImportExportServiceTest extends AbstractTest {
 	public void b_ExportTest() {
 		Contents contents = _contents.findAll();
 		assertNotNull(contents);
-		File file = _service.exportToFile(ContentJpaImpl.class, TEST_PATH_EXPORT);
+		File file = _service.exportToFile(Content.class, TEST_PATH_EXPORT);
 		assertNotNull(file);
 		assertTrue(file.exists());		
 	}
