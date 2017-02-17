@@ -98,6 +98,12 @@ public class ToHTMLTest extends AbstractTest {
 		html = clause.toHTML(true);
 		html = tidy(html, "target/models/ClauseToHTMLTestOrderedListOneLevel.html");
 		assertEquals(TEST_EXP_CLAUSE_OL_ONE_LEVEL, html);
+		clause.getParagraphs().clear();
+		clause.setBody("CLAUSE: ORDERED LIST: DOUBLE LEVEL");
+		createOrderedListTwoLevel(clause);
+		html = clause.toHTML(true);
+		html = tidy(html, "target/models/ClauseToHTMLTestOrderedListTwoLevel.html");
+		assertEquals(TEST_EXP_CLAUSE_OL_TWO_LEVEL, html);
 	}
 
 	@Test
@@ -141,6 +147,16 @@ public class ToHTMLTest extends AbstractTest {
 		html = section.toHTML(true);
 		html = tidy(html, "target/models/SectionToHTMLTestOrderedListSingleLevel.html");
 		assertEquals(TEST_EXP_SECTION_OL_ONE_LEVEL, html);
+		clause1.getParagraphs().clear();
+		section.setBody("SECTION: TWO CLAUSES: ORDERED LIST: DOUBLE LEVEL");
+		clause1.setBody("CLAUSE ONE: ORDERED LIST: DOUBLE LEVEL");
+		createOrderedListTwoLevel(clause1);
+		clause2.getParagraphs().clear();
+		clause2.setBody("CLAUSE TWO: ORDERED LIST: DOUBLE LEVEL");
+		createOrderedListTwoLevel(clause2);
+		html = section.toHTML(true);
+		html = tidy(html, "target/models/SectionToHTMLTestOrderedListDoubleLevel.html");
+		assertEquals(TEST_EXP_SECTION_OL_TWO_LEVEL, html);
 	}
 
 	public String tidy(final String xhtml, final String path) {
@@ -234,6 +250,14 @@ public class ToHTMLTest extends AbstractTest {
 		return null;
 	}
 	
+	private void createOrderedListTwoLevel(final Clause clause) {
+		if (isNotNullOrEmpty(clause)) {
+			for (final Paragraph p : createOrderedListTwoLevel(clause.getContentCd())) {
+				clause.addParagraph(p);
+			}
+		}
+	}
+
 	private Collection<Paragraph> createOrderedListTwoLevel(final String code) {
 		if (isNotNullOrEmpty(code)) {
 			final Collection<Paragraph> list = new LinkedList<Paragraph>();
@@ -341,11 +365,15 @@ public class ToHTMLTest extends AbstractTest {
 				get("models/SectionExpectedOutput_TwoClausesTwoParagraphsEach.html"));
 		static final String TEST_EXP_SECTION_OL_ONE_LEVEL = read(
 				get("models/SectionExpectedOutput_OrderedList_OneLevel.html"));
+		static final String TEST_EXP_SECTION_OL_TWO_LEVEL = read(
+				get("models/SectionExpectedOutput_OrderedList_TwoLevel.html"));
 		static final String TEST_EXP_CLAUSE_NO_PARAGRAPHS = read(get("models/ClauseExpectedOutput_NoParagraphs.html"));
 		static final String TEST_EXP_CLAUSE_TWO_PARAGRAPHS = read(
 				get("models/ClauseExpectedOutput_TwoParagraphs.html"));
 		static final String TEST_EXP_CLAUSE_OL_ONE_LEVEL = read(
 				get("models/ClauseExpectedOutput_OrderedList_OneLevel.html"));
+		static final String TEST_EXP_CLAUSE_OL_TWO_LEVEL = read(
+				get("models/ClauseExpectedOutput_OrderedList_TwoLevel.html"));
 		static final String TEST_EXP_PARAGRAPH_NO_SUBS = read(get("models/ParagraphExpectedOutput_NoSubs.html"));
 		static final String TEST_EXP_PARAGRAPH_OL_ONE_LEVEL = read(
 				get("models/ParagraphExpectedOutput_OrderedList_OneLevel.html"));

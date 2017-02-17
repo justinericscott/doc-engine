@@ -95,14 +95,15 @@ public class Paragraph extends Content {
 				}
 				
 				if (isNotNullOrEmpty(clause) && isFirstInClause) {
-					sb.append(LI.wrap(body));
+					if (isParent && isNotNullOrEmpty(recursion)) {
+						sb.append(LI.wrap(body.concat(recursion)));
+					} else {
+						sb.append(LI.wrap(body));
+					}
 					sb.append(OL.close());
 					sb.append(DIV.close());
 					if (!isLast) {
 						sb.append(OL.open(null, "start=2"));
-						if (isParent && isNotNullOrEmpty(recursion)) {
-							sb.append(LI.wrap(body.concat(recursion)));
-						}
 					}
 				} else {
 					if (isParent && isNotNullOrEmpty(recursion)) {
