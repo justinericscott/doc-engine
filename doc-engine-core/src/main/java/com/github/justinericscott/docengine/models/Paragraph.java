@@ -3,8 +3,11 @@ package com.github.justinericscott.docengine.models;
 import static com.github.justinericscott.docengine.models.AbstractJpaModel.ModelConstants.*;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullOrEmpty;
 import static com.github.justinericscott.docengine.util.Utils.HTML.*;
+
 import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.*;
+
+import java.util.Iterator;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -18,7 +21,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
  */
 @Entity
 public class Paragraph extends Content {
-
 	private boolean isFirst = false;
 	private boolean isFirstInClause = false;
 	private boolean isLast = false;
@@ -69,6 +71,55 @@ public class Paragraph extends Content {
 		return toHTML(null);
 	}
 
+	static String getParagraphsHTML(final Clause clause) {
+		if (isNotNullOrEmpty(clause) && !clause.getParagraphs().isEmpty()) {
+			final StringBuilder sb = new StringBuilder();
+			final Iterator<Paragraph> paragraphs = clause.getParagraphs().iterator();
+			while (paragraphs.hasNext()) {
+				sb.append(getParagraphsHTML(clause, paragraphs));
+			}
+			return sb.toString();
+		}
+		return null;
+	}
+	
+	static String getParagraphsHTML(final Clause clause, final Iterator<Paragraph> iter) {
+		final StringBuilder sb = new StringBuilder();
+		while (iter.hasNext()) {
+			boolean isOption = false;
+			boolean isParent = false;
+			boolean isLast = false;
+			final Paragraph paragraph = iter.next();
+			if (isNotNullOrEmpty(clause)) {
+				final String add = paragraph.getCss();
+				final String clauseCss = clause.getCss();
+				if (isNotNullOrEmpty(clauseCss) && isNotNullOrEmpty(add) && !clauseCss.contains(add)) {
+					clause.setCss(clauseCss.concat("\n\n").concat(add));
+				} else if (!isNotNullOrEmpty(clauseCss) && isNotNullOrEmpty(add)) {
+					clause.setCss(add);
+				}				
+			}
+			final String options = paragraph.getFlags();
+			if (isNotNullOrEmpty(options)) {
+				isOption = options.contains(HTML_STYLE_FLAG_OPTIONAL);
+				isParent = options.contains(HTML_STYLE_FLAG_PARENT);
+				isLast = options.contains(HTML_STYLE_FLAG_LAST);
+			}
+			if ((!isLast && isParent) && (!isOption || (isOption && true))) {
+				sb.append(paragraph.toHTML(getParagraphsHTML(clause, iter)));
+			} else if ((isLast && isParent) && (!isOption || (isOption && true))) {
+				sb.append(paragraph.toHTML(getParagraphsHTML(clause, iter)));
+				return sb.toString();
+			} else if (isLast && (!isOption || (isOption && true))) {
+				sb.append(paragraph.toHTML());
+				return sb.toString();
+			} else {
+				sb.append(paragraph.toHTML());
+			}
+		}
+		return sb.toString();
+	}
+	
 	final String toHTML(final boolean header) {
 		return toHTML(null, null, header);
 	}

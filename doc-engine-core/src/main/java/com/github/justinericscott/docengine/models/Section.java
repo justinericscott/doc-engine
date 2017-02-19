@@ -3,6 +3,7 @@ package com.github.justinericscott.docengine.models;
 import static com.github.justinericscott.docengine.models.AbstractJpaModel.ModelConstants.*;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullOrEmpty;
 import static com.github.justinericscott.docengine.util.Utils.HTML.*;
+
 import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.*;
 
@@ -110,13 +111,13 @@ public class Section extends Content {
 		}
 		sb.append(HR.self());
 		clauses.forEach(clause -> {
+			sb.append(clause.toHTML());
 			final String add = clause.getCss();
 			if (isNotNullOrEmpty(css) && !css.contains(add)) {
 				css = css.concat("\n\n").concat(add);
 			} else if (!isNotNullOrEmpty(css)) {
 				css = add;
 			}
-			sb.append(clause.toHTML());
 		});
 		if (header) {
 			final String title = TITLE.wrap("Test Title - Section");

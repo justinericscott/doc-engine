@@ -1,20 +1,12 @@
-body, h1 {
+body {
 	font-family: Calibri;
 	font-size: 8pt;
 	line-height: 120%;
 }
 
-h1 {
-	font-size: 14px;
+.blue-text {
 	font-weight: bold;
-	line-height: 100%;
-}
-
-hr {
-	height: 2px;
-	display: block;
-	color: black;
-	background-color: black;
+	color: blue;
 }
 
 .break {

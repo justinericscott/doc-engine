@@ -1,14 +1,9 @@
-body, h2 {
-	font-family: Calibri;
-	font-size: 8pt;
-	line-height: 120%;
-}
-
 h2 {
+	font-family: Calibri;
 	font-size: 12px;
 	line-height: 100%;
-	margin-bottom: 10px;
-	margin-top: 14px;
+	margin-bottom: 8px;
+	margin-top: 12px;
 }
 
 .blue-text {
@@ -18,4 +13,5 @@ h2 {
 
 .group {
 	keep-together: yes;
+	margin-bottom: -10px;
 }

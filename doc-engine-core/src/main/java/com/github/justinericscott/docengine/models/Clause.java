@@ -3,11 +3,11 @@ package com.github.justinericscott.docengine.models;
 import static com.github.justinericscott.docengine.models.AbstractJpaModel.ModelConstants.*;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullOrEmpty;
 import static com.github.justinericscott.docengine.util.Utils.HTML.*;
+
 import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.*;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.TreeSet;
 
 import javax.persistence.Entity;
@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
  */
 @Entity
 public class Clause extends Content {
-
+	
 	/** Parent Type **/
 	@JsonBackReference("clauses")
 	@ManyToOne(targetEntity = Section.class, fetch = LAZY, cascade = REFRESH)
@@ -109,10 +109,7 @@ public class Clause extends Content {
 		if (paragraphs.isEmpty()) {
 			sb.append(DIV.close());
 		} else {
-			final Iterator<Paragraph> iter = paragraphs.iterator();
-			while (iter.hasNext()) {
-				sb.append(getParagraphsHTML(iter));
-			}			
+			sb.append(Paragraph.getParagraphsHTML(this));
 		}
 		if (header) {
 			final String title = TITLE.wrap("Test Title - Clause");
@@ -123,36 +120,5 @@ public class Clause extends Content {
 		} else {
 			return sb.toString();
 		}
-	}
-
-	private String getParagraphsHTML(final Iterator<Paragraph> iter) {
-		final StringBuilder sb = new StringBuilder();
-		while (iter.hasNext()) {
-			boolean isOption = false; 
-			boolean isParent = false;
-			boolean isLast = false;
-			final Paragraph paragraph = iter.next();
-			final String add = paragraph.getCss();
-			if (isNotNullOrEmpty(css) && !css.contains(add)) {
-				css = css.concat("\n\n").concat(add);
-			} else if (!isNotNullOrEmpty(css)) {
-				css = add;
-			}
-			final String options = paragraph.getFlags();
-			if (isNotNullOrEmpty(options)) {
-				isOption = options.contains(HTML_STYLE_FLAG_OPTIONAL);
-				isParent = options.contains(HTML_STYLE_FLAG_PARENT);
-				isLast = options.contains(HTML_STYLE_FLAG_LAST);
-			}
-			if (isParent && (!isOption || (isOption && true))) {
-				sb.append(paragraph.toHTML(getParagraphsHTML(iter)));
-			} else if (isLast && (!isOption || (isOption && true))) {
-				sb.append(paragraph.toHTML());
-				return sb.toString();
-			} else {
-				sb.append(paragraph.toHTML());
-			}
-		}
-		return sb.toString();
 	}
 }

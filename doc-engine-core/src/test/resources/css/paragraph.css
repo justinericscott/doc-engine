@@ -1,62 +1,51 @@
-body, p, div, ol, ul, li {
+body, p, div {
 	font-family: Calibri;
 	font-size: 8pt;
 	line-height: 120%;
-}
-
-p, div, ol, ul {
 	margin-bottom: 1em;
 }
 
 ol {
-	padding-left: -20px;
+	padding-left: -5px;
 	list-style-type: upper-alpha;
+	margin-bottom: 5px;
 }
 
 ol li ol {
-	padding-left: 0px;
+	/* 	padding-left: -5px; */
 	list-style-type: decimal;
+	margin-bottom: 5px;
 }
 
 ol li ol li ol {
+	/* 	padding-left: -30px; */
 	list-style-type: lower-alpha;
+	margin-bottom: 5px;
 }
 
 ol li ol li ol li ol {
+	/* 	padding-left: -40px; */
 	list-style-type: lower-roman;
-}
-
-li {
-	margin-bottom: 0.8em;
+	margin-bottom: 5px;
 }
 
 ul {
 	list-style-type: none;
-}
-
-hr {
-	height: 2px;
-	display: block;
-	color: black;
-	background-color: black;
-	margin-top: 20px;
+	margin-bottom: 5px;
 }
 
 table {
 	border-collapse: collapse;
 	width: 650px;
 	use-full-page: yes;
-
 }
 
 table, tr, th, td {
 	border: 1px solid black;
-	font-family: Calibri;
 	font-size: 8pt;
 	table-layout: auto;
 	margin-left: auto;
 	margin-right: auto;
-
 }
 
 .underline {
