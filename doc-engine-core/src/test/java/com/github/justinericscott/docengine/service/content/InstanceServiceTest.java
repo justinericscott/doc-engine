@@ -18,21 +18,32 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.github.justinericscott.docengine.models.Clause;
-import com.github.justinericscott.docengine.models.ClauseInstance;
-import com.github.justinericscott.docengine.models.ClauseInstances;
+//import com.github.justinericscott.docengine.models.Clause;
+//import com.github.justinericscott.docengine.models.ClauseInstance;
+//import com.github.justinericscott.docengine.models.ClauseInstances;
 import com.github.justinericscott.docengine.models.Content;
+import com.github.justinericscott.docengine.models.Content.Clause;
+import com.github.justinericscott.docengine.models.Content.Document;
+import com.github.justinericscott.docengine.models.Content.Paragraph;
+import com.github.justinericscott.docengine.models.Content.Section;
 import com.github.justinericscott.docengine.models.Contents;
-import com.github.justinericscott.docengine.models.Document;
-import com.github.justinericscott.docengine.models.DocumentInstance;
+//import com.github.justinericscott.docengine.models.Document;
+//import com.github.justinericscott.docengine.models.DocumentInstance;
 import com.github.justinericscott.docengine.models.Instance;
+import com.github.justinericscott.docengine.models.Instance.ClauseInstance;
+import com.github.justinericscott.docengine.models.Instance.DocumentInstance;
+import com.github.justinericscott.docengine.models.Instance.ParagraphInstance;
+import com.github.justinericscott.docengine.models.Instance.SectionInstance;
 import com.github.justinericscott.docengine.models.Instances;
-import com.github.justinericscott.docengine.models.Paragraph;
-import com.github.justinericscott.docengine.models.ParagraphInstance;
-import com.github.justinericscott.docengine.models.ParagraphInstances;
-import com.github.justinericscott.docengine.models.Section;
-import com.github.justinericscott.docengine.models.SectionInstance;
-import com.github.justinericscott.docengine.models.SectionInstances;
+import com.github.justinericscott.docengine.models.Instances.ClauseInstances;
+import com.github.justinericscott.docengine.models.Instances.ParagraphInstances;
+import com.github.justinericscott.docengine.models.Instances.SectionInstances;
+//import com.github.justinericscott.docengine.models.Paragraph;
+//import com.github.justinericscott.docengine.models.ParagraphInstance;
+//import com.github.justinericscott.docengine.models.ParagraphInstances;
+//import com.github.justinericscott.docengine.models.Section;
+//import com.github.justinericscott.docengine.models.SectionInstance;
+//import com.github.justinericscott.docengine.models.SectionInstances;
 import com.github.justinericscott.docengine.service.content.ContentService;
 import com.github.justinericscott.docengine.service.content.InstanceService;
 import com.github.justinericscott.docengine.util.AbstractTest;
@@ -126,7 +137,7 @@ public class InstanceServiceTest extends AbstractTest {
 		// contents.getContents().forEach(c -> {
 		// instances.add(new InstanceJpaImpl(c, projectId));
 		// });
-		Collection<Instance> iter = _instances.save(new Instances(instances)).getInstancesList();
+		Collection<Instance> iter = _instances.save(new Instances(instances)).getInstances();
 		assertNotNull(iter);
 		assertTrue(iter.iterator().hasNext());
 		iter.forEach(inst -> {
@@ -155,10 +166,10 @@ public class InstanceServiceTest extends AbstractTest {
 		for (Content c : contents.getContents()) {
 			instances.add(new Instance(c, pId));
 		}
-		Collection<Instance> iter = _instances.save(new Instances(instances)).getInstancesList();
+		Collection<Instance> iter = _instances.save(new Instances(instances)).getInstances();
 		assertNotNull(iter);
 		assertTrue(iter.iterator().hasNext());
-		iter = _instances.findAll().getInstancesList();
+		iter = _instances.findAll().getInstances();
 		assertNotNull(iter);
 		assertTrue(iter.iterator().hasNext());
 		iter.forEach(i -> {

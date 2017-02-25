@@ -2,7 +2,9 @@ package com.github.justinericscott.docengine.repository.content;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.github.justinericscott.docengine.models.Section;
+import com.github.justinericscott.docengine.models.Content.Section;
+
+//import com.github.justinericscott.docengine.models.Section;
 
 public interface SectionRepository extends CrudRepository<Section, Long> {
 	

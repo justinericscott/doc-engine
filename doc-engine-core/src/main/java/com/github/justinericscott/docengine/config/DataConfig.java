@@ -1,7 +1,6 @@
 package com.github.justinericscott.docengine.config;
 
 import static com.github.justinericscott.docengine.DocEngine.Constants.*;
-import static com.github.justinericscott.docengine.config.DataConfig.DataConfigConstants.*;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -83,9 +82,15 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  *         </ul>
  */
 @Configuration
-@EnableJpaRepositories({ REPO_CONTENT, REPO_TOKEN })
+@EnableJpaRepositories({ DataConfig.REPO_CONTENT, DataConfig.REPO_TOKEN })
 @EnableTransactionManagement
 class DataConfig {
+	protected static final String REPO_CONTENT = "com.github.justinericscott.docengine.repository.content";
+	protected static final String REPO_TOKEN = "com.github.justinericscott.docengine.repository.token";
+	private static final String DATASTORE_ENGINE = "datasource.engine";
+	private static final String DATASTORE_BUSINESS = "datasource.business";
+	private static final String JPA_DATETIME_PACKAGE = "org.springframework.data.jpa.convert.threeten";
+	private static final String JPA_PACKAGE = "com.github.justinericscott.docengine.models";
 	private static final Logger LOG = LoggerFactory.getLogger(DataConfig.class);
 
 	/**
@@ -161,20 +166,5 @@ class DataConfig {
 	public PlatformTransactionManager getTransactionManager() {
 		LOG.debug("Creating new JPA Transaction Manager.");
 		return new JpaTransactionManager(entityManagerFactory().getObject());
-	}
-
-	static class DataConfigConstants {
-		static final String DATASTORE_ENGINE = "datasource.engine";
-		static final String DATASTORE_BUSINESS = "datasource.business";
-
-		static final String HIBERNATE_TO_DDL_AUTO = "hibernate.hbm2ddl.auto";
-		static final String HIBERNATE_TO_DDL_AUTO_UPDATE = "update";
-		static final String HIBERNATE_TO_DDL_AUTO_CREATE_DROP = "create-drop";
-		
-		static final String JPA_PACKAGE = "com.github.justinericscott.docengine.models";
-		static final String JPA_DATETIME_PACKAGE = "org.springframework.data.jpa.convert.threeten";
-
-		static final String REPO_CONTENT = "com.github.justinericscott.docengine.repository.content";
-		static final String REPO_TOKEN = "com.github.justinericscott.docengine.repository.token";
 	}
 }

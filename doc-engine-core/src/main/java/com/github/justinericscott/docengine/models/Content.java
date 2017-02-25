@@ -1,25 +1,38 @@
 package com.github.justinericscott.docengine.models;
 
-import static com.github.justinericscott.docengine.models.AbstractJpaModel.ModelConstants.*;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullOrEmpty;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullOrZero;
+import static com.github.justinericscott.docengine.util.Utils.HTML.*;
+
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.CascadeType.REFRESH;
+import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.AUTO;
 import static javax.persistence.TemporalType.DATE;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.TreeSet;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import com.github.justinericscott.docengine.annotation.ExcelColumn;
 import com.github.justinericscott.docengine.annotation.ExcelColumnOrder;
 import com.github.justinericscott.docengine.annotation.ExcelSheet;
@@ -30,75 +43,100 @@ import com.github.justinericscott.docengine.annotation.ExcelSheet;
  *         ContentJpaImpl Data Model
  */
 @Entity
-@ExcelSheet(EXCEL_SHEET_NAME_CONTENT)
-@Table(name = JPA_TBL_CONTENT)
+@ExcelSheet(Content.XLS_SHEET_CONTENT)
+@Table(name = Content.DB_TBL_CONTENT)
 public class Content extends AbstractJpaModel implements Comparable<Content> {
+	static final String CONTENT_FLAG_FIRST = "FIRST";
+	static final String CONTENT_FLAG_FIRST_IN_CLAUSE = "1ST_IN_CLAUSE";
+	static final String CONTENT_FLAG_LAST = "LAST";
+	static final String CONTENT_FLAG_SUB = "SUB";
+	static final String DB_TBL_CONTENT = "CONTENT";
+	static final String XLS_SHEET_CONTENT = "Content";
+	private static final String DB_SEQ_CONTENT = DB_TBL_CONTENT + "_SQ";
+	private static final String DB_COL_BODY = "BODY_TXT";
+	private static final String DB_COL_CATEGORY = "CATEGORY_CD";
+	private static final String DB_COL_CONTENT_CD = "CONTENT_CD";
+	private static final String DB_COL_CONTENT_ID = DB_TBL_CONTENT + "_ID";
+	private static final String DB_COL_CONTENT_NBR = "CONTENT_NBR";
+	private static final String DB_COL_CSS = "CSS_TXT";
+	private static final String DB_COL_HELPER = "HELPER_TXT";
+	private static final String DB_COL_VALID_END = "VALID_END_DT";
+	private static final String DB_COL_VALID_START = "VALID_START_DT";	
+	private static final String XLS_COL_BODY = "Content Body";
+	private static final String XLS_COL_CATEGORY = "Category Code";
+	private static final String XLS_COL_CONTENT_CD = "Content Code";
+	private static final String XLS_COL_CONTENT_ID = "Content ID";
+	private static final String XLS_COL_CONTENT_NBR = "Content Number";
+	private static final String XLS_COL_CSS = "Content CSS";
+	private static final String XLS_COL_HELPER = "Helper Text";
+	private static final String XLS_COL_VALID_START = "Start Date";
+	private static final String XLS_COL_VALID_END = "End Date";
 	private static final Logger LOG = LoggerFactory.getLogger(Content.class);
 
-	@Id
-	@GeneratedValue(strategy = AUTO, generator = JPA_SEQ_CONTENT)
-	@SequenceGenerator(name = JPA_SEQ_CONTENT, sequenceName = JPA_SEQ_CONTENT)
-	@Column(name = JPA_COL_CONTENT_ID, unique = true)
-	@ExcelColumn(EXCEL_COL_CONTENT_ID)
+	@Column(name = DB_COL_CONTENT_ID, unique = true)
+	@ExcelColumn(XLS_COL_CONTENT_ID)
 	@ExcelColumnOrder(1)
+	@GeneratedValue(strategy = AUTO, generator = DB_SEQ_CONTENT)
+	@Id
+	@SequenceGenerator(name = DB_SEQ_CONTENT, sequenceName = DB_SEQ_CONTENT)
 	protected Long id;
-	@Column(name = JPA_COL_PARENT, length = 4000)
-	@ExcelColumn(EXCEL_COL_PARENT)
+	@Column(name = DB_COL_PARENT, length = 4000)
+	@ExcelColumn(XLS_COL_PARENT)
 	@ExcelColumnOrder(2)
 	private Long parentId;
-	@ExcelColumn(EXCEL_COL_DISCRIMINATOR)
-	@Column(name = JPA_DSCRMNTR_COL, updatable = false, insertable = false)
+	@Column(name = DB_COL_DISCRIMINATOR, updatable = false, insertable = false)
+	@ExcelColumn(XLS_COL_DISCRIMINATOR)
 	@ExcelColumnOrder(3)
 	private String discriminator;
-	@Column(name = JPA_COL_CONTENT_CD, length = 100, nullable = false, unique = true)
-	@ExcelColumn(EXCEL_COL_CONTENT_CD)
+	@Column(name = DB_COL_CONTENT_CD, length = 100, nullable = false, unique = true)
+	@ExcelColumn(XLS_COL_CONTENT_CD)
 	@ExcelColumnOrder(4)
 	protected String contentCd;
-	@Column(name = JPA_COL_NAME, length = 1000)
-	@ExcelColumn(EXCEL_COL_NAME)
+	@Column(name = DB_COL_NAME, length = 1000)
+	@ExcelColumn(XLS_COL_NAME)
 	@ExcelColumnOrder(5)
 	protected String name;
-	@Column(name = JPA_COL_DESCRIPTION, length = 4000)
-	@ExcelColumn(EXCEL_COL_DESCRIPTION)
+	@Column(name = DB_COL_DESCRIPTION, length = 4000)
+	@ExcelColumn(XLS_COL_DESCRIPTION)
 	@ExcelColumnOrder(6)
 	protected String description;
-	@Column(name = JPA_COL_CONTENT_NBR, length = 10)
-	@ExcelColumn(EXCEL_COL_CONTENT_NBR)
+	@Column(name = DB_COL_CONTENT_NBR, length = 10)
+	@ExcelColumn(XLS_COL_CONTENT_NBR)
 	@ExcelColumnOrder(7)
 	protected String contentNumber;
-	@Column(name = JPA_COL_BODY, length = 4000, nullable = false)
-	@ExcelColumn(EXCEL_COL_BODY)
+	@Column(name = DB_COL_BODY, length = 4000, nullable = false)
+	@ExcelColumn(XLS_COL_BODY)
 	@ExcelColumnOrder(8)
 	protected String body;
-	@Column(name = JPA_COL_CSS, length = 4000)
-	@ExcelColumn(EXCEL_COL_CSS)
+	@Column(name = DB_COL_CSS, length = 4000)
+	@ExcelColumn(XLS_COL_CSS)
 	@ExcelColumnOrder(9)
 	protected String css;
-	@Column(name = JPA_COL_HELPER, length = 4000)
-	@ExcelColumn(EXCEL_COL_HELPER)
+	@Column(name = DB_COL_HELPER, length = 4000)
+	@ExcelColumn(XLS_COL_HELPER)
 	@ExcelColumnOrder(10)
 	protected String helper;
-	@Column(name = JPA_COL_CATEGORY, length = 100)
-	@ExcelColumn(EXCEL_COL_CATEGORY)
+	@Column(name = DB_COL_CATEGORY, length = 100)
+	@ExcelColumn(XLS_COL_CATEGORY)
 	@ExcelColumnOrder(11)
 	protected String category;
-	@Column(name = JPA_COL_FLAGS, length = 100)
-	@ExcelColumn(EXCEL_COL_FLAGS)
+	@Column(name = DB_COL_FLAGS, length = 100)
+	@ExcelColumn(XLS_COL_FLAGS)
 	@ExcelColumnOrder(12)
 	protected String flags;
-	@Column(name = JPA_COL_ORDER)
-	@ExcelColumn(EXCEL_COL_ORDER)
+	@Column(name = DB_COL_ORDER)
+	@ExcelColumn(XLS_COL_ORDER)
 	@ExcelColumnOrder(13)
 	protected Integer orderBy;
-	@Temporal(DATE)
-	@Column(name = JPA_COL_VALID_START, nullable = false)
-	@ExcelColumn(EXCEL_COL_VALID_START)
+	@Column(name = DB_COL_VALID_START, nullable = false)
+	@ExcelColumn(XLS_COL_VALID_START)
 	@ExcelColumnOrder(14)
-	protected Date validStart = now();
 	@Temporal(DATE)
-	@Column(name = JPA_COL_VALID_END, nullable = false)
-	@ExcelColumn(EXCEL_COL_VALID_END)
+	protected Date validStart = now();
+	@Column(name = DB_COL_VALID_END, nullable = false)
+	@ExcelColumn(XLS_COL_VALID_END)
 	@ExcelColumnOrder(15)
+	@Temporal(DATE)
 	protected Date validEnd = max();
 
 	public Content() {
@@ -262,12 +300,10 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 		this.validEnd = validEnd;
 	}
 
-	@JsonIgnore
 	public final boolean isValid() {
 		return isValid(false);
 	}
 
-	@JsonIgnore
 	public final boolean isValid(final boolean checkForId) {
 		if (checkForId && !isNotNullOrZero(id)) {
 			LOG.warn("ID must not be null or zero!");
@@ -284,18 +320,462 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 		return true;
 	}
 
-	@JsonIgnore
 	@Override
 	public final int compareTo(final Content o) {
 		return this.getContentCd().compareTo(o.getContentCd());
 	}
 	
-	@JsonIgnore
 	@Override
 	public String toHTML() {
+		return body;
+	}
+
+	@Entity
+	public static class Document extends Content {
+
+		/** Child Type **/
+		@JsonManagedReference("sections")
+		@OneToMany(cascade = ALL, mappedBy = JPA_MAPPED_BY_DOCUMENT, targetEntity = Section.class)
+		@OrderColumn(name = DB_COL_ORDER)
+		private Collection<Section> sections = new TreeSet<Section>();
+
+		public Document() {
+			// Default constructor for Spring/Hibernate
+		}
+
+		public Document(final String code, final String body) {
+			super(code, body);
+		}
+
+		public Document(final Content content) {
+			super(content);
+		}
+
+		public Document(final Content content, final String code) {
+			super(content, code);
+		}
+
+		public final void addSection(final Section section) {
+			if (isNotNullOrEmpty(section)) {
+				section.setDocument(this);
+				this.sections.add(section);
+			}
+		}
+
+		public final Collection<Section> getSections() {
+			return (Collection<Section>) sections;
+		}
+
+		public final void setSections(final Collection<Section> sections) {
+			this.sections = sections;
+		}
+
+		@Override
+		public String toHTML() {
+			final StringBuilder sb = new StringBuilder();
+			for (final Section section : getSections()) {
+				sb.append(section.toHTML());
+			}
+			return sb.toString();
+		}	
+	}
+
+	@Entity
+	public static class Section extends Content {
+
+		/** Parent Type **/
+		@JsonBackReference("sections")
+		@ManyToOne(cascade = REFRESH, fetch = LAZY, targetEntity = Document.class)
+		private Document document;
+
+		/** Child Type **/
+		@JsonManagedReference("clauses")
+		@OneToMany(cascade = ALL, mappedBy = JPA_MAPPED_BY_SECTION, targetEntity = Clause.class)
+		@OrderColumn(name = DB_COL_ORDER)
+		private Collection<Clause> clauses = new TreeSet<Clause>();
+
+		public Section() {
+			// Default constructor for Spring/Hibernate
+		}
+
+		public Section(final String code, final String body) {
+			super(code, body);
+		}
+
+		public Section(final Content content, final String code) {
+			super(content, code);
+		}
+
+		public final Document getDocument() {
+			return document;
+		}
+
+		public final void setDocument(final Document document) {
+			this.document = document;
+		}
+
+		public final void addClause(final Clause clause) {
+			if (isNotNullOrEmpty(clause)) {
+				clause.setSection(this);
+				clauses.add(clause);
+			}
+		}
+
+		public final Collection<Clause> getClauses() {
+			return clauses;
+		}
+
+		public final void setClauses(final Collection<Clause> clauses) {
+			this.clauses = clauses;
+		}
+
+		@Override
+		public final String toHTML() {
+			return toHTML(false);
+		}
 		
+		public final String toHTML(final boolean header) {
+			return toHTML(null, header);
+		}
+
+		final String toHTML(final String customBody) {
+			return toHTML(customBody, null);
+		}
 		
+		final String toHTML(final String customBody, final boolean header) {
+			return toHTML(customBody, null, header);
+		}
 		
-		return "";
+		final String toHTML(final String customBody, final String customNumber) {
+			return toHTML(customBody, customNumber, false);
+		}
+
+		final String toHTML(final String customBody, final String customNumber, final boolean header) {
+			this.body = (isNotNullOrEmpty(customBody) ? customBody : body);
+			this.contentNumber = (isNotNullOrEmpty(customNumber) ? customNumber : contentNumber);
+			final StringBuilder sb = new StringBuilder();
+			if (orderBy > 1) {
+				sb.append(BR.self("break"));
+			}
+			sb.append(HR.self());
+			if (isNotNullOrEmpty(contentNumber)) {
+				sb.append(H1.wrap(String.format("%s%s%s", contentNumber, tab(), body)));
+			} else {
+				sb.append(H1.wrap(body));
+			}
+			sb.append(HR.self());
+			clauses.forEach(clause -> {
+				sb.append(clause.toHTML());
+				final String add = clause.getCss();
+				if (isNotNullOrEmpty(css) && !css.contains(add)) {
+					css = css.concat("\n\n").concat(add);
+				} else if (!isNotNullOrEmpty(css)) {
+					css = add;
+				}
+			});
+			if (header) {
+				final String title = TITLE.wrap("Test Title - Section");
+				final String head = HEAD.wrap(title.concat(STYLE.style(css, CSS_TYPE_TEXT)));
+				final String body = BODY.wrap(sb.toString());
+				final String html = String.format("%s%s", head, body);
+				return doctype().concat(DOCUMENT.wrap(html, null, namespace()));
+			} else {
+				return sb.toString();
+			}
+		}
+	}
+
+	@Entity
+	public static class Clause extends Content {
+		
+		/** Parent Type **/
+		@JsonBackReference("clauses")
+		@ManyToOne(cascade = REFRESH, fetch = LAZY, targetEntity = Section.class)
+		private Section section;
+
+		/** Child Type **/
+		@JsonManagedReference("paragraphs")
+		@OneToMany(cascade = ALL, mappedBy = JPA_MAPPED_BY_CLAUSE, targetEntity = Paragraph.class)
+		@OrderColumn(name = DB_COL_ORDER)
+		private Collection<Paragraph> paragraphs = new TreeSet<Paragraph>();
+
+		public Clause() {
+			// Default constructor for Spring/Hibernate
+		}
+
+		public Clause(final String code, final String body) {
+			super(code, body);
+		}
+
+		public Clause(final Content content, final String code) {
+			super(content, code);
+		}
+
+		public final Section getSection() {
+			return section;
+		}
+
+		public final void setSection(final Section section) {
+			this.section = section;
+		}
+
+		public final void addParagraph(final Paragraph paragraph) {
+			if (isNotNullOrEmpty(paragraph)) {
+				paragraph.setClause(this);
+				paragraphs.add(paragraph);
+			}
+		}
+
+		public final Collection<Paragraph> getParagraphs() {
+			return paragraphs;
+		}
+
+		public final void setParagraphs(final Collection<Paragraph> paragraphs) {
+			this.paragraphs = paragraphs;
+		}
+
+		@Override
+		public final String toHTML() {
+			return toHTML(false);
+		}
+		
+		final String toHTML(final boolean header) {
+			return toHTML(null, header);
+		}
+
+		final String toHTML(final String customBody) {
+			return toHTML(customBody, null);
+		}
+		
+		final String toHTML(final String customBody, final boolean header) {
+			return toHTML(customBody, null, header);
+		}
+		
+		final String toHTML(final String customBody, final String customNumber) {
+			return toHTML(customBody, customNumber, false);
+		}
+
+		final String toHTML(final String customBody, final String customNumber, final boolean header) {
+			this.body = (isNotNullOrEmpty(customBody) ? customBody : body);
+			this.contentNumber = (isNotNullOrEmpty(customNumber) ? customNumber : contentNumber);
+			final StringBuilder sb = new StringBuilder();
+			sb.append(DIV.open("group"));
+			if (isNotNullOrEmpty(contentNumber)) {
+				sb.append(H2.wrap(String.format("%s%s%s", contentNumber, tab(), body)));
+			} else {
+				sb.append(H2.wrap(body));
+			}
+			if (paragraphs.isEmpty()) {
+				sb.append(DIV.close());
+			} else {
+				sb.append(Paragraph.getParagraphsHTML(this));
+			}
+			if (header) {
+				final String title = TITLE.wrap("Test Title - Clause");
+				final String head = HEAD.wrap(title.concat(STYLE.style(css, CSS_TYPE_TEXT)));
+				final String body = BODY.wrap(sb.toString());
+				final String html = String.format("%s%s", head, body);
+				return doctype().concat(DOCUMENT.wrap(html, null, namespace()));
+			} else {
+				return sb.toString();
+			}
+		}
+	}
+
+	@Entity
+	public static class Paragraph extends Content {
+		@Transient
+		private boolean isFirst = false;
+		@Transient
+		private boolean isFirstInClause = false;
+		@Transient
+		private boolean isLast = false;
+		@Transient
+		private boolean isOptional = false;
+		@Transient
+		private boolean isParent = false;
+		@Transient
+		private boolean isSubPara = false;
+		@Transient
+		private boolean isTable = false;
+
+		@JsonBackReference("paragraphs")
+		@ManyToOne(cascade = REFRESH, fetch = LAZY, targetEntity = Clause.class)
+		private Clause clause;
+
+		public Paragraph() {
+			// Default constructor for Spring/Hibernate
+		}
+
+		public Paragraph(final String code, final String body) {
+			super(code, body);
+		}
+
+		public Paragraph(final Content content) {
+			super(content);
+		}
+
+		public Paragraph(final Content content, final String code) {
+			super(content, code);
+		}
+
+		public Paragraph(final Paragraph paragraph, final String code) {
+			super(paragraph, code);
+			this.clause = paragraph.getClause();
+		}
+
+		public Paragraph(final Paragraph paragraph) {
+			super(paragraph);
+			this.clause = paragraph.getClause();
+		}
+
+		public final Clause getClause() {
+			return clause;
+		}
+
+		public final void setClause(final Clause clause) {
+			this.clause = clause;
+		}
+
+		public final String toHTML() {
+			return toHTML(null);
+		}
+
+		static String getParagraphsHTML(final Clause clause) {
+			if (isNotNullOrEmpty(clause) && !clause.getParagraphs().isEmpty()) {
+				final StringBuilder sb = new StringBuilder();
+				final Iterator<Paragraph> paragraphs = clause.getParagraphs().iterator();
+				while (paragraphs.hasNext()) {
+					sb.append(getParagraphsHTML(clause, paragraphs));
+				}
+				return sb.toString();
+			}
+			return null;
+		}
+		
+		static String getParagraphsHTML(final Clause clause, final Iterator<Paragraph> iter) {
+			final StringBuilder sb = new StringBuilder();
+			while (iter.hasNext()) {
+				boolean isOption = false;
+				boolean isParent = false;
+				boolean isLast = false;
+				final Paragraph paragraph = iter.next();
+				if (isNotNullOrEmpty(clause)) {
+					final String add = paragraph.getCss();
+					final String clauseCss = clause.getCss();
+					if (isNotNullOrEmpty(clauseCss) && isNotNullOrEmpty(add) && !clauseCss.contains(add)) {
+						clause.setCss(clauseCss.concat("\n\n").concat(add));
+					} else if (!isNotNullOrEmpty(clauseCss) && isNotNullOrEmpty(add)) {
+						clause.setCss(add);
+					}				
+				}
+				final String options = paragraph.getFlags();
+				if (isNotNullOrEmpty(options)) {
+					isOption = options.contains(CONTENT_FLAG_OPTIONAL);
+					isParent = options.contains(CONTENT_FLAG_PARENT);
+					isLast = options.contains(CONTENT_FLAG_LAST);
+				}
+				if ((!isLast && isParent) && (!isOption || (isOption && true))) {
+					sb.append(paragraph.toHTML(getParagraphsHTML(clause, iter)));
+				} else if ((isLast && isParent) && (!isOption || (isOption && true))) {
+					sb.append(paragraph.toHTML(getParagraphsHTML(clause, iter)));
+					return sb.toString();
+				} else if (isLast && (!isOption || (isOption && true))) {
+					sb.append(paragraph.toHTML());
+					return sb.toString();
+				} else {
+					sb.append(paragraph.toHTML());
+				}
+			}
+			return sb.toString();
+		}
+		
+		final String toHTML(final boolean header) {
+			return toHTML(null, null, header);
+		}
+
+		final String toHTML(final String recursion) {
+			return toHTML(recursion, null, false);
+		}
+
+		final String toHTML(final String recursion, final boolean header) {
+			return toHTML(recursion, null, header);
+		}
+
+		final String toHTML(final String recursion, final String custom, boolean header) {
+			setFlags();
+			this.body = (isNotNullOrEmpty(custom) ? custom : body);
+			final StringBuilder sb = new StringBuilder();
+			if (isNotNullOrEmpty(helper)) {
+				sb.append(helper);
+			}
+			if (!isOptional || (isOptional && true)) {
+				if (isSubPara && !isTable) {
+					if (isFirst) {
+						sb.append(OL.open());
+					}
+					
+					if (isNotNullOrEmpty(clause) && isFirstInClause) {
+						if (isParent && isNotNullOrEmpty(recursion)) {
+							sb.append(LI.wrap(body.concat(recursion)));
+						} else {
+							sb.append(LI.wrap(body));
+						}
+						sb.append(OL.close());
+						sb.append(DIV.close());
+						if (!isLast) {
+							sb.append(OL.open(null, "start=2"));
+						}
+					} else {
+						if (isParent && isNotNullOrEmpty(recursion)) {
+							sb.append(LI.wrap(body.concat(recursion)));
+						} else {
+							sb.append(LI.wrap(body));
+						}
+					}
+					
+					if (isLast) {
+						sb.append(OL.close());
+					}
+				
+				} else if (!isSubPara && !isTable) {
+					sb.append(P.wrap(body));
+					if (isNotNullOrEmpty(clause) && isFirstInClause) {
+						sb.append(DIV.close());
+					}
+					if (isNotNullOrEmpty(recursion)) {
+						sb.append(recursion);
+					}
+				} else {
+					sb.append(body);
+					if (isFirstInClause && isNotNullOrEmpty(clause)) {
+						sb.append(DIV.close());
+					}
+					if (isNotNullOrEmpty(recursion)) {
+						sb.append(recursion);
+					}
+				}
+			}
+			if (header) {
+				final String title = TITLE.wrap("Test Title - Paragraph");
+				final String head = HEAD.wrap(title.concat(STYLE.style(css.trim(), CSS_TYPE_TEXT)));
+				final String body = BODY.wrap(sb.toString());
+				return doctype().concat(DOCUMENT.wrap(String.format("%s%s", head, body), null, namespace()));
+			} else {
+				return sb.toString();
+			}
+		}
+
+		private void setFlags() {
+			if (isNotNullOrEmpty(flags)) {
+				isFirst = flags.contains(CONTENT_FLAG_FIRST);
+				isFirstInClause = flags.contains(CONTENT_FLAG_FIRST_IN_CLAUSE);
+				isLast = flags.contains(CONTENT_FLAG_LAST);
+				isOptional = flags.contains(CONTENT_FLAG_OPTIONAL);
+				isParent = flags.contains(CONTENT_FLAG_PARENT);
+				isSubPara = flags.contains(CONTENT_FLAG_SUB);
+				isTable = contentCd.toLowerCase().contains(TABLE.tag().toLowerCase());
+			}
+		}
 	}
 }

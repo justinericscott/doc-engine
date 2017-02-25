@@ -136,12 +136,12 @@ public class BusinessDataServiceTest extends AbstractTest {
 	public void ea_GetExternalSchemaTest() {
 		ExternalSchema schema = service.getExternalSchema();
 		assertNotNull(schema);
-		LOG.debug("SCHEMA: " + schema.getName());
+		LOG.trace("SCHEMA: " + schema.getName());
 		assertNotNull(schema.getTables());
 		for (ExternalEntity e : schema.getTables()) {
 			if (e.getName().startsWith("TR_") || e.getName().startsWith("tr_")) {
 				assertNotNull(e.getColumns());
-				LOG.debug("ENTITY: " + e.getName());
+				LOG.trace("ENTITY: " + e.getName());
 				for (ExternalAttribute a : e.getColumns()) {
 					assertNotNull(a.getName());
 					LOG.trace("ATTRIBUTE: " + a.getName());

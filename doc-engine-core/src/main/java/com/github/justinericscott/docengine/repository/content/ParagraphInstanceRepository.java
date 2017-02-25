@@ -2,7 +2,9 @@ package com.github.justinericscott.docengine.repository.content;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.github.justinericscott.docengine.models.ParagraphInstance;
+import com.github.justinericscott.docengine.models.Instance.ParagraphInstance;
+
+//import com.github.justinericscott.docengine.models.ParagraphInstance;
 
 public interface ParagraphInstanceRepository extends CrudRepository<ParagraphInstance, Long> {
 

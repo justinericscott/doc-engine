@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.justinericscott.docengine.models.DocumentInstance;
+import com.github.justinericscott.docengine.models.Instance.DocumentInstance;
+//import com.github.justinericscott.docengine.models.DocumentInstance;
 import com.github.justinericscott.docengine.service.content.CompilerService;
 
 /**

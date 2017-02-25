@@ -15,16 +15,24 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import com.github.justinericscott.docengine.models.ClauseInstance;
-import com.github.justinericscott.docengine.models.ClauseInstances;
-import com.github.justinericscott.docengine.models.DocumentInstance;
-import com.github.justinericscott.docengine.models.DocumentInstances;
+//import com.github.justinericscott.docengine.models.ClauseInstance;
+//import com.github.justinericscott.docengine.models.ClauseInstances;
+//import com.github.justinericscott.docengine.models.DocumentInstance;
+//import com.github.justinericscott.docengine.models.DocumentInstances;
 import com.github.justinericscott.docengine.models.Instance;
+import com.github.justinericscott.docengine.models.Instance.ClauseInstance;
+import com.github.justinericscott.docengine.models.Instance.DocumentInstance;
+import com.github.justinericscott.docengine.models.Instance.ParagraphInstance;
+import com.github.justinericscott.docengine.models.Instance.SectionInstance;
 import com.github.justinericscott.docengine.models.Instances;
-import com.github.justinericscott.docengine.models.ParagraphInstance;
-import com.github.justinericscott.docengine.models.ParagraphInstances;
-import com.github.justinericscott.docengine.models.SectionInstance;
-import com.github.justinericscott.docengine.models.SectionInstances;
+import com.github.justinericscott.docengine.models.Instances.ClauseInstances;
+//import com.github.justinericscott.docengine.models.ParagraphInstance;
+//import com.github.justinericscott.docengine.models.ParagraphInstances;
+//import com.github.justinericscott.docengine.models.SectionInstance;
+//import com.github.justinericscott.docengine.models.SectionInstances;
+import com.github.justinericscott.docengine.models.Instances.DocumentInstances;
+import com.github.justinericscott.docengine.models.Instances.ParagraphInstances;
+import com.github.justinericscott.docengine.models.Instances.SectionInstances;
 
 /**
  * @author Justin Scott

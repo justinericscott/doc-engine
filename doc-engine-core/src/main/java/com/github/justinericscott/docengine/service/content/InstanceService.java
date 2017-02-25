@@ -3,12 +3,16 @@
  */
 package com.github.justinericscott.docengine.service.content;
 
-import com.github.justinericscott.docengine.models.ClauseInstance;
-import com.github.justinericscott.docengine.models.DocumentInstance;
+//import com.github.justinericscott.docengine.models.ClauseInstance;
+//import com.github.justinericscott.docengine.models.DocumentInstance;
 import com.github.justinericscott.docengine.models.Instance;
+import com.github.justinericscott.docengine.models.Instance.ClauseInstance;
+import com.github.justinericscott.docengine.models.Instance.DocumentInstance;
+import com.github.justinericscott.docengine.models.Instance.ParagraphInstance;
+import com.github.justinericscott.docengine.models.Instance.SectionInstance;
 import com.github.justinericscott.docengine.models.Instances;
-import com.github.justinericscott.docengine.models.ParagraphInstance;
-import com.github.justinericscott.docengine.models.SectionInstance;
+//import com.github.justinericscott.docengine.models.ParagraphInstance;
+//import com.github.justinericscott.docengine.models.SectionInstance;
 
 /**
  * @author Justin Scott

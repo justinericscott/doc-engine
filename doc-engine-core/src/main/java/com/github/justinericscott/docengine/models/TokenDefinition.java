@@ -1,6 +1,5 @@
 package com.github.justinericscott.docengine.models;
 
-import static com.github.justinericscott.docengine.models.AbstractJpaModel.ModelConstants.*;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullOrEmpty;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullOrZero;
 import static javax.persistence.GenerationType.AUTO;
@@ -15,54 +14,68 @@ import javax.persistence.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /**
  * @author Justin Scott
  * 
  *         TODO: Description
  */
 @Entity
-@Table(name = JPA_TBL_TOKEN_DICTIONARY)
+@Table(name = TokenDefinition.DB_TBL_TOKEN_DICTIONARY)
 public class TokenDefinition extends AbstractJpaModel implements Comparable<TokenDefinition> {
+	protected static final String DB_TBL_TOKEN_DICTIONARY = "TOKEN_DICTIONARY";
+	private static final String DB_COL_ALT_TEXT = "ALT_TXT";
+	private static final String DB_COL_ATTRIBUTE = "ATTR_TXT";
+	private static final String DB_COL_DOCUMENT_CD = "DOCUMENT_CD";
+	private static final String DB_COL_ENTITY = "ENTITY_TXT";
+	private static final String DB_COL_FIELD_INSTR = "FIELD_INSTR_TXT";
+	private static final String DB_COL_FIELD_LABEL = "FIELD_LABEL_TXT";
+	private static final String DB_COL_IS_ROMAN = "IS_ROMAN_BLN";
+	private static final String DB_COL_IS_X_ABLE = "IS_X_ABLE_BLN";
+	private static final String DB_COL_PHASE_CD = "PHASE_CD";
+	private static final String DB_COL_PROCESS = "PROCESS_TXT";
+	private static final String DB_COL_TASK = "TASK_TXT";
+	private static final String DB_COL_TOKEN_CD = "TOKEN_CD";
+	private static final String DB_COL_TOKEN_ID = DB_TBL_TOKEN_DICTIONARY + "_ID";
+	private static final String DB_COL_WHERE = "WHERE_TXT";
+	private static final String DB_SEQ_TOKEN = DB_TBL_TOKEN_DICTIONARY + "_SQ";
 	private static final Logger LOG = LoggerFactory.getLogger(TokenDefinition.class);
 
 	@Id
-	@GeneratedValue(generator = JPA_SEQ_TOKEN, strategy = AUTO)
-	@SequenceGenerator(name = JPA_SEQ_TOKEN, sequenceName = JPA_SEQ_TOKEN)
-	@Column(name = JPA_COL_TOKEN_ID)
+	@GeneratedValue(generator = DB_SEQ_TOKEN, strategy = AUTO)
+	@SequenceGenerator(name = DB_SEQ_TOKEN, sequenceName = DB_SEQ_TOKEN)
+	@Column(name = DB_COL_TOKEN_ID)
 	private Long id;
-	@Column(name = JPA_COL_NAME, length = 100, nullable = false)
+	@Column(name = DB_COL_NAME, length = 100, nullable = false)
 	private String name;
-	@Column(name = JPA_COL_TOKEN_CD, length = 100, nullable = false, unique = true)
+	@Column(name = DB_COL_TOKEN_CD, length = 100, nullable = false, unique = true)
 	private String tokenCd;
-	@Column(name = JPA_COL_DOCUMENT_CD, length = 100)
+	@Column(name = DB_COL_DOCUMENT_CD, length = 100)
 	private String documentCd;
-	@Column(name = JPA_COL_PHASE_CD, length = 100)
+	@Column(name = DB_COL_PHASE_CD, length = 100)
 	private String phase;
-	@Column(name = JPA_COL_DESCRIPTION, length = 1000)
+	@Column(name = DB_COL_DESCRIPTION, length = 1000)
 	private String description;
-	@Column(name = JPA_COL_ALT_TEXT, length = 100)
+	@Column(name = DB_COL_ALT_TEXT, length = 100)
 	private String altText;
-	@Column(name = JPA_COL_FLAGS, length = 100)
+	@Column(name = DB_COL_FLAGS, length = 100)
 	private String flags;
-	@Column(name = JPA_COL_IS_X_ABLE)
+	@Column(name = DB_COL_IS_X_ABLE)
 	private Boolean isXable = false;
-	@Column(name = JPA_COL_IS_ROMAN)
+	@Column(name = DB_COL_IS_ROMAN)
 	private Boolean isRoman = false;
-	@Column(name = JPA_COL_ENTITY, length = 100)
+	@Column(name = DB_COL_ENTITY, length = 100)
 	private String entity;
-	@Column(name = JPA_COL_ATTRIBUTE, length = 4000)
+	@Column(name = DB_COL_ATTRIBUTE, length = 4000)
 	private String attribute;
-	@Column(name = JPA_COL_WHERE, length = 4000)
+	@Column(name = DB_COL_WHERE, length = 4000)
 	private String where;
-	@Column(name = JPA_COL_PROCESS, length = 100)
+	@Column(name = DB_COL_PROCESS, length = 100)
 	private String process;
-	@Column(name = JPA_COL_TASK, length = 100)
+	@Column(name = DB_COL_TASK, length = 100)
 	private String task;
-	@Column(name = JPA_COL_FIELD_LABEL, length = 100)
+	@Column(name = DB_COL_FIELD_LABEL, length = 100)
 	private String label;
-	@Column(name = JPA_COL_FIELD_INSTR, length = 1000)
+	@Column(name = DB_COL_FIELD_INSTR, length = 1000)
 	private String instructions;
 
 	public TokenDefinition() {
@@ -280,13 +293,9 @@ public class TokenDefinition extends AbstractJpaModel implements Comparable<Toke
 		return this.getTokenCd().compareTo(o.getTokenCd());
 	}
 	
-	@JsonIgnore
 	@Override
-	public String toHTML() {
-		
-		
-		
-		return "";
+	public String toHTML() {		
+		return toString();
 	}
 
 	@Override

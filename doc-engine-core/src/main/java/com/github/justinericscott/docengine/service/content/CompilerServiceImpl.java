@@ -9,11 +9,16 @@ import java.util.Iterator;
 
 import org.springframework.stereotype.Service;
 
-import com.github.justinericscott.docengine.models.ClauseInstance;
-import com.github.justinericscott.docengine.models.DocumentInstance;
-import com.github.justinericscott.docengine.models.Paragraph;
-import com.github.justinericscott.docengine.models.ParagraphInstance;
-import com.github.justinericscott.docengine.models.SectionInstance;
+//import com.github.justinericscott.docengine.models.ClauseInstance;
+import com.github.justinericscott.docengine.models.Content.Paragraph;
+import com.github.justinericscott.docengine.models.Instance.ClauseInstance;
+//import com.github.justinericscott.docengine.models.DocumentInstance;
+//import com.github.justinericscott.docengine.models.Paragraph;
+//import com.github.justinericscott.docengine.models.ParagraphInstance;
+//import com.github.justinericscott.docengine.models.SectionInstance;
+import com.github.justinericscott.docengine.models.Instance.DocumentInstance;
+import com.github.justinericscott.docengine.models.Instance.ParagraphInstance;
+import com.github.justinericscott.docengine.models.Instance.SectionInstance;
 
 /**
  * @author Justin Scott

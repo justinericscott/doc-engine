@@ -3,8 +3,6 @@
  */
 package com.github.justinericscott.docengine.util;
 
-import static com.github.justinericscott.docengine.util.Utils.UtilsConstants.*;
-
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -13,6 +11,7 @@ import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -56,6 +55,10 @@ import com.github.justinericscott.docengine.models.TokenDefinition;
  */
 public class Utils {
 	private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
+	private static final String PREFIX_COPY_OF = "Copy of - ";
+	private static final String REGEX_SPLIT_PATH = "\\.(?=[^\\.]+$)";
+	private static final String SYS_TEMP_DIR = "java.io.tmpdir";
+
 
 	private Utils() {
 		// Do not instantiate
@@ -942,11 +945,5 @@ public class Utils {
 			LOG.trace("Wrapping HTML with the tag {} using CSS class {} and inline attributes {}. HTML: {}", this.tag, cssClass, inline, html);
 			return String.format("%s%s%s", open(cssClass, inline), html, close());
 		}
-	}
-
-	static class UtilsConstants {
-		static final String PREFIX_COPY_OF = "Copy of - ";
-		static final String REGEX_SPLIT_PATH = "\\.(?=[^\\.]+$)";
-		static final String SYS_TEMP_DIR = "java.io.tmpdir";
 	}
 }

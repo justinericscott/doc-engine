@@ -8,6 +8,7 @@ import static com.github.justinericscott.docengine.controller.RestUtils.createRe
 import static com.github.justinericscott.docengine.controller.RestUtils.RestConstants.*;
 import static com.github.justinericscott.docengine.util.Logs.*;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullOrEmpty;
+
 import static org.springframework.http.HttpMethod.*;
 
 import java.util.Map;
@@ -16,6 +17,7 @@ import javax.persistence.MappedSuperclass;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -24,17 +26,18 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.github.justinericscott.docengine.controller.RestUtils;
-import com.github.justinericscott.docengine.models.Clause;
-import com.github.justinericscott.docengine.models.Clauses;
+import com.github.justinericscott.docengine.models.Content.Clause;
+import com.github.justinericscott.docengine.models.Content.Document;
+import com.github.justinericscott.docengine.models.Content.Paragraph;
+import com.github.justinericscott.docengine.models.Content.Section;
 import com.github.justinericscott.docengine.models.Contents;
-import com.github.justinericscott.docengine.models.Document;
-import com.github.justinericscott.docengine.models.DocumentInstances;
-import com.github.justinericscott.docengine.models.Documents;
+import com.github.justinericscott.docengine.models.Contents.Clauses;
+import com.github.justinericscott.docengine.models.Contents.Documents;
+import com.github.justinericscott.docengine.models.Contents.Paragraphs;
+import com.github.justinericscott.docengine.models.Contents.Sections;
 import com.github.justinericscott.docengine.models.Instances;
-import com.github.justinericscott.docengine.models.Paragraph;
-import com.github.justinericscott.docengine.models.Paragraphs;
-import com.github.justinericscott.docengine.models.Section;
-import com.github.justinericscott.docengine.models.Sections;
+import com.github.justinericscott.docengine.models.Instances.DocumentInstances;
+
 
 /**
  * @author Justin Scott

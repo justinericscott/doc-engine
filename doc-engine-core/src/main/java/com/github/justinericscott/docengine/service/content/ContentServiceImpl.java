@@ -18,16 +18,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.github.justinericscott.docengine.models.Clause;
-import com.github.justinericscott.docengine.models.Clauses;
+//import com.github.justinericscott.docengine.models.Clause;
+//import com.github.justinericscott.docengine.models.Clauses;
 import com.github.justinericscott.docengine.models.Content;
+import com.github.justinericscott.docengine.models.Content.Clause;
+import com.github.justinericscott.docengine.models.Content.Document;
+import com.github.justinericscott.docengine.models.Content.Paragraph;
+import com.github.justinericscott.docengine.models.Content.Section;
 import com.github.justinericscott.docengine.models.Contents;
-import com.github.justinericscott.docengine.models.Document;
-import com.github.justinericscott.docengine.models.Documents;
-import com.github.justinericscott.docengine.models.Paragraph;
-import com.github.justinericscott.docengine.models.Paragraphs;
-import com.github.justinericscott.docengine.models.Section;
-import com.github.justinericscott.docengine.models.Sections;
+import com.github.justinericscott.docengine.models.Contents.Clauses;
+import com.github.justinericscott.docengine.models.Contents.Documents;
+import com.github.justinericscott.docengine.models.Contents.Paragraphs;
+import com.github.justinericscott.docengine.models.Contents.Sections;
+//import com.github.justinericscott.docengine.models.Document;
+//import com.github.justinericscott.docengine.models.Documents;
+//import com.github.justinericscott.docengine.models.Paragraph;
+//import com.github.justinericscott.docengine.models.Paragraphs;
+//import com.github.justinericscott.docengine.models.Section;
+//import com.github.justinericscott.docengine.models.Sections;
 import com.github.justinericscott.docengine.repository.content.ClauseRepository;
 import com.github.justinericscott.docengine.repository.content.ContentRepository;
 import com.github.justinericscott.docengine.repository.content.DocumentRepository;
@@ -165,21 +173,21 @@ final class ContentServiceImpl implements ContentService {
 			_sections.delete(section);
 		} else if (type.equals(Sections.class)) {
 			final Sections sections = Sections.class.cast(object);
-			_sections.delete(sections.getSectionsList());
+			_sections.delete(sections.getSections());
 		} else if (type.equals(Clause.class)) {
 			final Clause clause = Clause.class.cast(object);
 			id = clause.getId();
 			_clauses.delete(clause);
 		} else if (type.equals(Clauses.class)) {
 			final Clauses clauses = Clauses.class.cast(object);
-			_clauses.delete(clauses.getClausesList());
+			_clauses.delete(clauses.getClauses());
 		} else if (type.equals(Paragraph.class)) {
 			final Paragraph paragraph = Paragraph.class.cast(object);
 			id = paragraph.getId();
 			_paragraphs.delete(paragraph);
 		} else if (type.equals(Paragraphs.class)) {
 			final Paragraphs paragraphs = Paragraphs.class.cast(object);
-			_paragraphs.delete(paragraphs.getParagraphsList());
+			_paragraphs.delete(paragraphs.getParagraphs());
 		} else if (type.equals(Content.class)) {
 			return delete(Content.class.cast(object));
 		} else {

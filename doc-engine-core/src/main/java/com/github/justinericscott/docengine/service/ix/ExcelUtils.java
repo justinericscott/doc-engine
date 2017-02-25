@@ -1,6 +1,5 @@
 package com.github.justinericscott.docengine.service.ix;
 
-import static com.github.justinericscott.docengine.service.ix.ExcelUtils.ExcelUtilsConstants.*;
 import static com.github.justinericscott.docengine.util.Utils.getFieldNameFromAnnotationValue;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullAndExists;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullOrEmpty;
@@ -10,7 +9,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.lang.reflect.Field;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -32,6 +33,7 @@ import com.github.justinericscott.docengine.annotation.ExcelSheet;
 
 public class ExcelUtils {
 	private static final Logger LOG = LoggerFactory.getLogger(ExcelUtils.class);
+	private static final String FILE_EXTENSION_EXCEL = ".xlsx";
 	
 	public static Iterable<String> getExcelColumnFieldNamesFromClass(final Class<?> clazz) {
 		if (isNotNullOrEmpty(clazz)) {
@@ -253,9 +255,5 @@ public class ExcelUtils {
 		} else {
 			LOG.warn("The workbook must not be null or empty!");
 		}
-	}
-
-	static class ExcelUtilsConstants {
-		static final String FILE_EXTENSION_EXCEL = ".xlsx";
 	}
 }

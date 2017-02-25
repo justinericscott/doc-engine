@@ -3,6 +3,7 @@ package com.github.justinericscott.docengine.controller;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
 import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
 
 import java.util.ArrayList;
@@ -11,19 +12,28 @@ import java.util.Collection;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.github.justinericscott.docengine.models.Clause;
-import com.github.justinericscott.docengine.models.Clauses;
+//import com.github.justinericscott.docengine.models.Clause;
+//import com.github.justinericscott.docengine.models.Clauses;
 import com.github.justinericscott.docengine.models.Content;
+import com.github.justinericscott.docengine.models.Content.Clause;
+import com.github.justinericscott.docengine.models.Content.Document;
+import com.github.justinericscott.docengine.models.Content.Paragraph;
+import com.github.justinericscott.docengine.models.Content.Section;
 import com.github.justinericscott.docengine.models.Contents;
-import com.github.justinericscott.docengine.models.Document;
-import com.github.justinericscott.docengine.models.Documents;
-import com.github.justinericscott.docengine.models.Paragraph;
-import com.github.justinericscott.docengine.models.Paragraphs;
-import com.github.justinericscott.docengine.models.Section;
-import com.github.justinericscott.docengine.models.Sections;
+import com.github.justinericscott.docengine.models.Contents.Clauses;
+import com.github.justinericscott.docengine.models.Contents.Documents;
+import com.github.justinericscott.docengine.models.Contents.Paragraphs;
+import com.github.justinericscott.docengine.models.Contents.Sections;
+//import com.github.justinericscott.docengine.models.Document;
+//import com.github.justinericscott.docengine.models.Documents;
+//import com.github.justinericscott.docengine.models.Paragraph;
+//import com.github.justinericscott.docengine.models.Paragraphs;
+//import com.github.justinericscott.docengine.models.Section;
+//import com.github.justinericscott.docengine.models.Sections;
 import com.github.justinericscott.docengine.util.AbstractTest;
 import com.github.justinericscott.docengine.util.rest.RestClient;
 
@@ -144,11 +154,11 @@ public class ContentRestControllerTest extends AbstractTest {
 				.getParagraphs().iterator().next().getContentCd(), Paragraphs.class));
 
 		// Get Children by ID
-		for (Section s : _contents.getChildren(id, Sections.class, true).getSectionsList()) {
+		for (Section s : _contents.getChildren(id, Sections.class, true).getSections()) {
 			assertTrue(s.isValid(true));
-			for (Clause c : _contents.getChildren(s.getId(), Clauses.class, true).getClausesList()) {
+			for (Clause c : _contents.getChildren(s.getId(), Clauses.class, true).getClauses()) {
 				assertTrue(c.isValid(true));
-				for (Paragraph p : _contents.getChildren(c.getId(), Paragraphs.class, true).getParagraphsList()) {
+				for (Paragraph p : _contents.getChildren(c.getId(), Paragraphs.class, true).getParagraphs()) {
 					assertTrue(p.isValid(true));
 				}
 			}
@@ -156,37 +166,37 @@ public class ContentRestControllerTest extends AbstractTest {
 
 		// Get Children by ID with kids
 		Sections sections = _contents.getChildren(document.getId(), Sections.class, true);
-		for (Section s : sections.getSectionsList()) {
+		for (Section s : sections.getSections()) {
 			assertTrue(s.isValid(true));
 			assertNotNull(s.getClauses());
-			for (Clause c : _contents.getChildren(s.getId(), Clauses.class, true).getClausesList()) {
+			for (Clause c : _contents.getChildren(s.getId(), Clauses.class, true).getClauses()) {
 				assertTrue(c.isValid(true));
 				assertNotNull(c.getParagraphs());
-				for (Paragraph p : _contents.getChildren(c.getId(), Paragraphs.class).getParagraphsList()) {
+				for (Paragraph p : _contents.getChildren(c.getId(), Paragraphs.class).getParagraphs()) {
 					assertTrue(p.isValid(true));
 				}
 			}
 		}
 
 		// Get Children by code
-		for (Section s : _contents.getChildren(document.getContentCd(), Sections.class, true).getSectionsList()) {
+		for (Section s : _contents.getChildren(document.getContentCd(), Sections.class, true).getSections()) {
 			assertTrue(s.isValid(true));
-			for (Clause c : _contents.getChildren(s.getContentCd(), Clauses.class, true).getClausesList()) {
+			for (Clause c : _contents.getChildren(s.getContentCd(), Clauses.class, true).getClauses()) {
 				assertTrue(c.isValid(true));
-				for (Paragraph p : _contents.getChildren(c.getContentCd(), Paragraphs.class).getParagraphsList()) {
+				for (Paragraph p : _contents.getChildren(c.getContentCd(), Paragraphs.class).getParagraphs()) {
 					assertTrue(p.isValid(true));
 				}
 			}
 		}
 
 		// Get Children by code with kids
-		for (Section s : _contents.getChildren(document.getContentCd(), Sections.class, true).getSectionsList()) {
+		for (Section s : _contents.getChildren(document.getContentCd(), Sections.class, true).getSections()) {
 			assertTrue(s.isValid(true));
 			assertNotNull(s.getClauses());
-			for (Clause c : _contents.getChildren(s.getContentCd(), Clauses.class, true).getClausesList()) {
+			for (Clause c : _contents.getChildren(s.getContentCd(), Clauses.class, true).getClauses()) {
 				assertTrue(c.isValid(true));
 				assertNotNull(c.getParagraphs());
-				for (Paragraph p : _contents.getChildren(c.getContentCd(), Paragraphs.class).getParagraphsList()) {
+				for (Paragraph p : _contents.getChildren(c.getContentCd(), Paragraphs.class).getParagraphs()) {
 					if (p instanceof Paragraph) {
 						assertTrue(p.isValid(true));
 					}

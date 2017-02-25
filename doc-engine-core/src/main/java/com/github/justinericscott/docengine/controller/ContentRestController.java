@@ -17,16 +17,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.justinericscott.docengine.models.Clause;
-import com.github.justinericscott.docengine.models.Clauses;
+//import com.github.justinericscott.docengine.models.Clause;
+//import com.github.justinericscott.docengine.models.Clauses;
 import com.github.justinericscott.docengine.models.Content;
+import com.github.justinericscott.docengine.models.Content.Clause;
+import com.github.justinericscott.docengine.models.Content.Document;
+import com.github.justinericscott.docengine.models.Content.Paragraph;
+import com.github.justinericscott.docengine.models.Content.Section;
 import com.github.justinericscott.docengine.models.Contents;
-import com.github.justinericscott.docengine.models.Document;
-import com.github.justinericscott.docengine.models.Documents;
-import com.github.justinericscott.docengine.models.Paragraph;
-import com.github.justinericscott.docengine.models.Paragraphs;
-import com.github.justinericscott.docengine.models.Section;
-import com.github.justinericscott.docengine.models.Sections;
+import com.github.justinericscott.docengine.models.Contents.Clauses;
+import com.github.justinericscott.docengine.models.Contents.Documents;
+import com.github.justinericscott.docengine.models.Contents.Paragraphs;
+import com.github.justinericscott.docengine.models.Contents.Sections;
+//import com.github.justinericscott.docengine.models.Document;
+//import com.github.justinericscott.docengine.models.Documents;
+//import com.github.justinericscott.docengine.models.Paragraph;
+//import com.github.justinericscott.docengine.models.Paragraphs;
+//import com.github.justinericscott.docengine.models.Section;
+//import com.github.justinericscott.docengine.models.Sections;
 import com.github.justinericscott.docengine.service.content.ContentService;
 
 /**

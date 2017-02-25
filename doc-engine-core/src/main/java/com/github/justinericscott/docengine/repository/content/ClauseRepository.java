@@ -2,7 +2,9 @@ package com.github.justinericscott.docengine.repository.content;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.github.justinericscott.docengine.models.Clause;
+import com.github.justinericscott.docengine.models.Content.Clause;
+
+//import com.github.justinericscott.docengine.models.Clause;
 
 public interface ClauseRepository extends CrudRepository<Clause, Long> {
 

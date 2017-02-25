@@ -3,7 +3,9 @@
  */
 package com.github.justinericscott.docengine.service.content;
 
-import com.github.justinericscott.docengine.models.DocumentInstance;
+import com.github.justinericscott.docengine.models.Instance.DocumentInstance;
+
+//import com.github.justinericscott.docengine.models.DocumentInstance;
 
 /**
  * @author Justin Scott
