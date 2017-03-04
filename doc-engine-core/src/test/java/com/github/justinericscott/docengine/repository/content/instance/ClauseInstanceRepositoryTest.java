@@ -1,7 +1,8 @@
 package com.github.justinericscott.docengine.repository.content.instance;
 
 import static org.junit.Assert.*;
-import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
+
+import static com.github.justinericscott.docengine.util.TestUtils.TestConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
@@ -14,14 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
-//import com.github.justinericscott.docengine.models.Clause;
-//import com.github.justinericscott.docengine.models.ClauseInstance;
 import com.github.justinericscott.docengine.models.Content.Clause;
 import com.github.justinericscott.docengine.models.Content.Paragraph;
 import com.github.justinericscott.docengine.models.Instance.ClauseInstance;
 import com.github.justinericscott.docengine.models.Instance.ParagraphInstance;
-//import com.github.justinericscott.docengine.models.Paragraph;
-//import com.github.justinericscott.docengine.models.ParagraphInstance;
 import com.github.justinericscott.docengine.repository.content.ClauseInstanceRepository;
 import com.github.justinericscott.docengine.repository.content.ClauseRepository;
 import com.github.justinericscott.docengine.util.AbstractTest;
@@ -160,11 +157,11 @@ public class ClauseInstanceRepositoryTest extends AbstractTest {
 		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, ""));
 		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, "Snicklefritz"));
 
-		clauseInstances = (Collection<ClauseInstance>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_CLAUSE_CODE_PREFIX);
+		clauseInstances = (Collection<ClauseInstance>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_CODE_PREFIX_CLAUSE);
 		assertTrue(clauseInstances.isEmpty());
-		clauseInstances = (Collection<ClauseInstance>) _instances.findByProjectIdAndContentContentCdLike("", TEST_CLAUSE_CODE_PREFIX);
+		clauseInstances = (Collection<ClauseInstance>) _instances.findByProjectIdAndContentContentCdLike("", TEST_CODE_PREFIX_CLAUSE);
 		assertTrue(clauseInstances.isEmpty());
-		clauseInstances = (Collection<ClauseInstance>) _instances.findByProjectIdAndContentContentCdLike("Snicklefritz", TEST_CLAUSE_CODE_PREFIX);
+		clauseInstances = (Collection<ClauseInstance>) _instances.findByProjectIdAndContentContentCdLike("Snicklefritz", TEST_CODE_PREFIX_CLAUSE);
 		assertTrue(clauseInstances.isEmpty());
 		clauseInstances = (Collection<ClauseInstance>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "");
 		assertTrue(clauseInstances.isEmpty());

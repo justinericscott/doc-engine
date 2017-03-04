@@ -16,7 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.context.annotation.Bean;
-import org.w3c.tidy.Tidy;
+
+import com.github.justinericscott.docengine.util.Utils.TidyFactory;
 
 import freemarker.cache.FileTemplateLoader;
 import freemarker.cache.MultiTemplateLoader;
@@ -98,21 +99,5 @@ public class TemplateConfig {
 		final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setIgnoringElementContentWhitespace(true);
 		return factory;	
-	}
-	
-	public class TidyFactory {
-		public final Tidy getTidy() {
-			final Tidy tidy = new Tidy();
-			tidy.setXmlOut(true);
-			tidy.setXmlTags(true);
-			tidy.setXHTML(true);
-			tidy.setShowWarnings(true);
-			tidy.setQuiet(true);
-			tidy.setIndentContent(true);
-			tidy.setIndentCdata(true);
-			tidy.setSmartIndent(true);
-			tidy.setMakeClean(true);
-			return tidy;				
-		}
-	}
+	}	
 }

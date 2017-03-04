@@ -1,13 +1,15 @@
 package com.github.justinericscott.docengine.repository.token;
 
 import static org.junit.Assert.*;
-import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
+
+import static com.github.justinericscott.docengine.util.TestUtils.TestConstants.*;
 
 import java.util.Collection;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -51,7 +53,7 @@ public class TokenDictionaryRepositoryTest extends AbstractTest {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
-			_tokens.save(new TokenDefinition(TEST_TOKEN_CODE_PREFIX + uuid(), ""));
+			_tokens.save(new TokenDefinition(TEST_CODE_PREFIX_TOKEN + uuid(), ""));
 			fail();
 		} catch (Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());

@@ -1,18 +1,20 @@
 package com.github.justinericscott.docengine.repository.token;
 
-import static com.github.justinericscott.docengine.DocEngine.Constants.*;
+import static com.github.justinericscott.docengine.util.Utils.Constants.*;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullOrEmpty;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.BadSqlGrammarException;

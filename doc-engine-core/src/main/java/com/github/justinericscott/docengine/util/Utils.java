@@ -43,6 +43,7 @@ import org.apache.commons.io.FileUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.tidy.Tidy;
 
 import com.github.justinericscott.docengine.models.Content;
 import com.github.justinericscott.docengine.models.Instance;
@@ -58,7 +59,6 @@ public class Utils {
 	private static final String PREFIX_COPY_OF = "Copy of - ";
 	private static final String REGEX_SPLIT_PATH = "\\.(?=[^\\.]+$)";
 	private static final String SYS_TEMP_DIR = "java.io.tmpdir";
-
 
 	private Utils() {
 		// Do not instantiate
@@ -788,33 +788,25 @@ public class Utils {
 		return null;
 	}
 
-	public static class RomanNumber {
-		private final static TreeMap<Integer, String> INT_TO_ROMAN_MAP = new TreeMap<Integer, String>();
-		static {
-			INT_TO_ROMAN_MAP.put(1000, "M");
-			INT_TO_ROMAN_MAP.put(900, "CM");
-			INT_TO_ROMAN_MAP.put(500, "D");
-			INT_TO_ROMAN_MAP.put(400, "CD");
-			INT_TO_ROMAN_MAP.put(100, "C");
-			INT_TO_ROMAN_MAP.put(90, "XC");
-			INT_TO_ROMAN_MAP.put(50, "L");
-			INT_TO_ROMAN_MAP.put(40, "XL");
-			INT_TO_ROMAN_MAP.put(10, "X");
-			INT_TO_ROMAN_MAP.put(9, "IX");
-			INT_TO_ROMAN_MAP.put(5, "V");
-			INT_TO_ROMAN_MAP.put(4, "IV");
-			INT_TO_ROMAN_MAP.put(1, "I");
-		}
+	public static final class Constants {
+		public static final String AUTOWIRE_QUALIFIER_DOCUMENT = "document";
+		public static final String AUTOWIRE_QUALIFIER_SECTION = "section";
+		public static final String AUTOWIRE_QUALIFIER_CLAUSE = "clause";
+		public static final String AUTOWIRE_QUALIFIER_PARAGRAPH = "paragraph";
+		public static final String AUTOWIRE_QUALIFIER_JDBC_TX = "jdbcTransactionManager";
+		public static final String AUTOWIRE_QUALIFIER_ORM_TX = "transactionManager";
+		public static final String AUTOWIRE_QUALIFIER_JDBC = "jdbc";
+		public static final String AUTOWIRE_QUALIFIER_ORM = "orm";
+		public static final String AUTOWIRE_QUALIFIER_ENDPOINT = "endpoint";
 
-		public static String toRoman(final int number) {
-			final int l = INT_TO_ROMAN_MAP.floorKey(number);
-			if (number == l) {
-				return INT_TO_ROMAN_MAP.get(number);
-			}
-			return INT_TO_ROMAN_MAP.get(l) + toRoman(number - l);
-		}
+		public static final String ENGINE_CONTROL_STOP = "stop";
+
+		public static final String PROPERTY_DEFAULT = "classpath:default.properties";
+		public static final String PROPERTY_CUSTOM = "file:${DOC_ENGINE_HOME}/config/custom.properties";
+
+		public static final String SYSTEM_VARIABLE_FOR_HOME = "DOC_ENGINE_HOME";
 	}
-
+	
 	public enum HTML {
 		BODY("body"), BR("br"), DIV("div"), DOCUMENT("html"), H1("h1"), H2("h2"), H3("h3"), H4("h4"), HEAD("head"), HR(
 				"hr"), LI("li"), OL("ol"), P("p"), SPAN("span"), STYLE("style"), TABLE("table"), TITLE("title");
@@ -944,6 +936,49 @@ public class Utils {
 		public final String wrap(final String html, final String cssClass, final String inline) {
 			LOG.trace("Wrapping HTML with the tag {} using CSS class {} and inline attributes {}. HTML: {}", this.tag, cssClass, inline, html);
 			return String.format("%s%s%s", open(cssClass, inline), html, close());
+		}
+	}
+	
+	public static class RomanNumber {
+		private final static TreeMap<Integer, String> INT_TO_ROMAN_MAP = new TreeMap<Integer, String>();
+		static {
+			INT_TO_ROMAN_MAP.put(1000, "M");
+			INT_TO_ROMAN_MAP.put(900, "CM");
+			INT_TO_ROMAN_MAP.put(500, "D");
+			INT_TO_ROMAN_MAP.put(400, "CD");
+			INT_TO_ROMAN_MAP.put(100, "C");
+			INT_TO_ROMAN_MAP.put(90, "XC");
+			INT_TO_ROMAN_MAP.put(50, "L");
+			INT_TO_ROMAN_MAP.put(40, "XL");
+			INT_TO_ROMAN_MAP.put(10, "X");
+			INT_TO_ROMAN_MAP.put(9, "IX");
+			INT_TO_ROMAN_MAP.put(5, "V");
+			INT_TO_ROMAN_MAP.put(4, "IV");
+			INT_TO_ROMAN_MAP.put(1, "I");
+		}
+
+		public static String toRoman(final int number) {
+			final int l = INT_TO_ROMAN_MAP.floorKey(number);
+			if (number == l) {
+				return INT_TO_ROMAN_MAP.get(number);
+			}
+			return INT_TO_ROMAN_MAP.get(l) + toRoman(number - l);
+		}
+	}
+
+	public static class TidyFactory {
+		public final Tidy getTidy() {
+			final Tidy tidy = new Tidy();
+			tidy.setXmlOut(true);
+			tidy.setXmlTags(true);
+			tidy.setXHTML(true);
+			tidy.setShowWarnings(true);
+			tidy.setQuiet(true);
+			tidy.setIndentContent(true);
+			tidy.setIndentCdata(true);
+			tidy.setSmartIndent(true);
+			tidy.setMakeClean(true);
+			return tidy;				
 		}
 	}
 }

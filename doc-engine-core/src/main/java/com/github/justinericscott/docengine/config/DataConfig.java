@@ -1,6 +1,6 @@
 package com.github.justinericscott.docengine.config;
 
-import static com.github.justinericscott.docengine.DocEngine.Constants.*;
+import static com.github.justinericscott.docengine.util.Utils.Constants.*;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;

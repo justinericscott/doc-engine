@@ -3,12 +3,14 @@
 package com.github.justinericscott.docengine.service.content;
 
 import static org.junit.Assert.*;
-import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
+
+import static com.github.justinericscott.docengine.util.TestUtils.TestConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
 
 import org.hibernate.LazyInitializationException;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -18,17 +20,12 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-//import com.github.justinericscott.docengine.models.Clause;
-//import com.github.justinericscott.docengine.models.ClauseInstance;
-//import com.github.justinericscott.docengine.models.ClauseInstances;
 import com.github.justinericscott.docengine.models.Content;
 import com.github.justinericscott.docengine.models.Content.Clause;
 import com.github.justinericscott.docengine.models.Content.Document;
 import com.github.justinericscott.docengine.models.Content.Paragraph;
 import com.github.justinericscott.docengine.models.Content.Section;
 import com.github.justinericscott.docengine.models.Contents;
-//import com.github.justinericscott.docengine.models.Document;
-//import com.github.justinericscott.docengine.models.DocumentInstance;
 import com.github.justinericscott.docengine.models.Instance;
 import com.github.justinericscott.docengine.models.Instance.ClauseInstance;
 import com.github.justinericscott.docengine.models.Instance.DocumentInstance;
@@ -38,12 +35,6 @@ import com.github.justinericscott.docengine.models.Instances;
 import com.github.justinericscott.docengine.models.Instances.ClauseInstances;
 import com.github.justinericscott.docengine.models.Instances.ParagraphInstances;
 import com.github.justinericscott.docengine.models.Instances.SectionInstances;
-//import com.github.justinericscott.docengine.models.Paragraph;
-//import com.github.justinericscott.docengine.models.ParagraphInstance;
-//import com.github.justinericscott.docengine.models.ParagraphInstances;
-//import com.github.justinericscott.docengine.models.Section;
-//import com.github.justinericscott.docengine.models.SectionInstance;
-//import com.github.justinericscott.docengine.models.SectionInstances;
 import com.github.justinericscott.docengine.service.content.ContentService;
 import com.github.justinericscott.docengine.service.content.InstanceService;
 import com.github.justinericscott.docengine.util.AbstractTest;
@@ -75,7 +66,7 @@ public class InstanceServiceTest extends AbstractTest {
 
 		// Save advanced one at a time
 		Document doc = (Document) _contents
-				.save(new Document(TEST_CONTENT_CODE_PREFIX + uuid(), "TEST_BODY"));
+				.save(new Document(TEST_CODE_PREFIX_CONTENT + uuid(), "TEST_BODY"));
 		assertNotNull(doc);
 		assertNotNull(doc.getId());
 		DocumentInstance document = new DocumentInstance(doc, projectId);
@@ -83,7 +74,7 @@ public class InstanceServiceTest extends AbstractTest {
 		assertNotNull(document);
 		assertNotNull(document.getId());
 
-		Section sec = new Section(TEST_CONTENT_CODE_PREFIX + uuid(), "TEST_BODY");
+		Section sec = new Section(TEST_CODE_PREFIX_CONTENT + uuid(), "TEST_BODY");
 		doc.addSection(sec);
 		sec = (Section) _contents.save(sec);
 		assertNotNull(sec);
@@ -94,7 +85,7 @@ public class InstanceServiceTest extends AbstractTest {
 		assertNotNull(section);
 		assertNotNull(section.getId());
 
-		Clause cla = new Clause(TEST_CONTENT_CODE_PREFIX + uuid(), "TEST_BODY");
+		Clause cla = new Clause(TEST_CODE_PREFIX_CONTENT + uuid(), "TEST_BODY");
 		sec.addClause(cla);
 		cla = (Clause) _contents.save(cla);
 		assertNotNull(cla);
@@ -105,7 +96,7 @@ public class InstanceServiceTest extends AbstractTest {
 		assertNotNull(clause);
 		assertNotNull(clause.getId());
 
-		Paragraph para = new Paragraph(TEST_CONTENT_CODE_PREFIX + uuid(), "TEST_BODY");
+		Paragraph para = new Paragraph(TEST_CODE_PREFIX_CONTENT + uuid(), "TEST_BODY");
 		cla.addParagraph(para);
 		para = (Paragraph) _contents.save(para);
 		assertNotNull(para);
@@ -390,9 +381,9 @@ public class InstanceServiceTest extends AbstractTest {
 
 		instance = createInstance();
 		assertNotNull(instance.getId());
-		assertNull(_instances.findByProjectIdAndCodeLike(null, TEST_CONTENT_CODE_PREFIX));
-		assertNull(_instances.findByProjectIdAndCodeLike("", TEST_CONTENT_CODE_PREFIX));
-		assertNull(_instances.findByProjectIdAndCodeLike("Snicklefritz", TEST_CONTENT_CODE_PREFIX));
+		assertNull(_instances.findByProjectIdAndCodeLike(null, TEST_CODE_PREFIX_CONTENT));
+		assertNull(_instances.findByProjectIdAndCodeLike("", TEST_CODE_PREFIX_CONTENT));
+		assertNull(_instances.findByProjectIdAndCodeLike("Snicklefritz", TEST_CODE_PREFIX_CONTENT));
 		assertNull(_instances.findByProjectIdAndCodeLike(instance.getProjectId(), ""));
 		assertNull(_instances.findByProjectIdAndCodeLike(instance.getProjectId(), null));
 		assertNull(_instances.findByProjectIdAndCodeLike(instance.getProjectId(), "Snicklefritz"));

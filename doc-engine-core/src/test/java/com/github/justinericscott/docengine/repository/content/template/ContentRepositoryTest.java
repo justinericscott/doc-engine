@@ -1,7 +1,8 @@
 package com.github.justinericscott.docengine.repository.content.template;
 
 import static org.junit.Assert.*;
-import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
+
+import static com.github.justinericscott.docengine.util.TestUtils.TestConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
@@ -60,7 +61,7 @@ public class ContentRepositoryTest extends AbstractTest {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
-			_contents.save(new Content(TEST_CONTENT_CODE_PREFIX + uuid(), ""));
+			_contents.save(new Content(TEST_CODE_PREFIX_CONTENT + uuid(), ""));
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());

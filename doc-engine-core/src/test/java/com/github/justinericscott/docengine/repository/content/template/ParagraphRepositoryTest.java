@@ -1,7 +1,8 @@
 package com.github.justinericscott.docengine.repository.content.template;
 
 import static org.junit.Assert.*;
-import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
+
+import static com.github.justinericscott.docengine.util.TestUtils.TestConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
@@ -14,7 +15,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 import com.github.justinericscott.docengine.models.Content.Paragraph;
-//import com.github.justinericscott.docengine.models.Paragraph;
 import com.github.justinericscott.docengine.repository.content.ParagraphRepository;
 import com.github.justinericscott.docengine.util.AbstractTest;
 
@@ -60,7 +60,7 @@ public class ParagraphRepositoryTest extends AbstractTest {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
-			_paragraphs.save(new Paragraph(TEST_PARAGRAPH_CODE_PREFIX + uuid(), ""));
+			_paragraphs.save(new Paragraph(TEST_CODE_PREFIX_PARAGRAPH + uuid(), ""));
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());

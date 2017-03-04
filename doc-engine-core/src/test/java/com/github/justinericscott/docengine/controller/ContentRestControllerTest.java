@@ -1,10 +1,8 @@
 package com.github.justinericscott.docengine.controller;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
+import static com.github.justinericscott.docengine.util.TestUtils.TestConstants.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,8 +14,6 @@ import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-//import com.github.justinericscott.docengine.models.Clause;
-//import com.github.justinericscott.docengine.models.Clauses;
 import com.github.justinericscott.docengine.models.Content;
 import com.github.justinericscott.docengine.models.Content.Clause;
 import com.github.justinericscott.docengine.models.Content.Document;
@@ -28,12 +24,6 @@ import com.github.justinericscott.docengine.models.Contents.Clauses;
 import com.github.justinericscott.docengine.models.Contents.Documents;
 import com.github.justinericscott.docengine.models.Contents.Paragraphs;
 import com.github.justinericscott.docengine.models.Contents.Sections;
-//import com.github.justinericscott.docengine.models.Document;
-//import com.github.justinericscott.docengine.models.Documents;
-//import com.github.justinericscott.docengine.models.Paragraph;
-//import com.github.justinericscott.docengine.models.Paragraphs;
-//import com.github.justinericscott.docengine.models.Section;
-//import com.github.justinericscott.docengine.models.Sections;
 import com.github.justinericscott.docengine.util.AbstractTest;
 import com.github.justinericscott.docengine.util.rest.RestClient;
 
@@ -60,17 +50,17 @@ public class ContentRestControllerTest extends AbstractTest {
 		assertNotNull(document);
 		assertTrue(document.isValid(true));
 
-		Section section = new Section(content, TEST_CONTENT_CODE_PREFIX + uuid());
+		Section section = new Section(content, TEST_CODE_PREFIX_CONTENT + uuid());
 		document.addSection(section);
 		section = _contents.save(section, Section.class);
 		assertNotNull(section);
 
-		Clause clause = new Clause(content, TEST_CONTENT_CODE_PREFIX + uuid());
+		Clause clause = new Clause(content, TEST_CODE_PREFIX_CONTENT + uuid());
 		section.addClause(clause);
 		clause = _contents.save(clause, Clause.class);
 		assertNotNull(clause);
 
-		Paragraph paragraph = new Paragraph(content, TEST_CONTENT_CODE_PREFIX + uuid());
+		Paragraph paragraph = new Paragraph(content, TEST_CODE_PREFIX_CONTENT + uuid());
 		clause.addParagraph(paragraph);
 		paragraph = _contents.save(paragraph, Paragraph.class);
 		assertNotNull(paragraph);
@@ -94,10 +84,10 @@ public class ContentRestControllerTest extends AbstractTest {
 //		});
 		assertNull(_contents.save(null, Content.class));
 		assertNull(_contents.save(new Content("TEST"), Content.class));
-		assertNull(_contents.save(new Content(TEST_CONTENT_CODE_PREFIX + uuid(), ""), Content.class));
+		assertNull(_contents.save(new Content(TEST_CODE_PREFIX_CONTENT + uuid(), ""), Content.class));
 		assertNull(_contents.save(new Content(content, content.getContentCd()), Content.class));
 		assertNull(_contents.save(new Document(new Content("TEST", "CODE")), Document.class));
-		assertNull(_contents.save(new Document(new Content(""), TEST_CONTENT_CODE_PREFIX + uuid()),
+		assertNull(_contents.save(new Document(new Content(""), TEST_CODE_PREFIX_CONTENT + uuid()),
 				Document.class));
 
 	}
@@ -205,25 +195,25 @@ public class ContentRestControllerTest extends AbstractTest {
 		}
 		assertNull(_contents.getChildren(999999999L, Document.class));
 		
-		document = new Document(content, TEST_CONTENT_CODE_PREFIX + uuid());
+		document = new Document(content, TEST_CODE_PREFIX_CONTENT + uuid());
 		document = _contents.save(document, Document.class);
 		assertTrue(document.isValid(true));
 
-		Section section = new Section(content, TEST_CONTENT_CODE_PREFIX + uuid());
+		Section section = new Section(content, TEST_CODE_PREFIX_CONTENT + uuid());
 		section.setDocument(document);
 		document.addSection(section);
 		document = _contents.save(document, Document.class);
 		section = document.getSections().iterator().next();
 		assertTrue(section.isValid(true));
 
-		Clause clause = new Clause(content, TEST_CONTENT_CODE_PREFIX + uuid());
+		Clause clause = new Clause(content, TEST_CODE_PREFIX_CONTENT + uuid());
 		clause.setSection(section);
 		section.addClause(clause);
 		section = _contents.save(section, Section.class);
 		clause = section.getClauses().iterator().next();
 		assertTrue(clause.isValid(true));
 
-		Paragraph paragraph = new Paragraph(content, TEST_CONTENT_CODE_PREFIX + uuid());
+		Paragraph paragraph = new Paragraph(content, TEST_CODE_PREFIX_CONTENT + uuid());
 		paragraph.setClause(clause);
 		clause.addParagraph(paragraph);
 		clause = _contents.save(clause, Clause.class);

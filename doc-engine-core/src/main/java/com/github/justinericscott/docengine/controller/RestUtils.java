@@ -1,6 +1,6 @@
 package com.github.justinericscott.docengine.controller;
 
-import static com.github.justinericscott.docengine.DocEngine.Constants.*;
+import static com.github.justinericscott.docengine.util.Utils.Constants.*;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullOrEmpty;
 import static org.springframework.http.HttpStatus.*;
 

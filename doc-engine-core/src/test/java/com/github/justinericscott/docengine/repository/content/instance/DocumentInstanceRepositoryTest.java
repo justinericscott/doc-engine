@@ -1,7 +1,8 @@
 package com.github.justinericscott.docengine.repository.content.instance;
 
 import static org.junit.Assert.*;
-import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
+
+import static com.github.justinericscott.docengine.util.TestUtils.TestConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
@@ -14,8 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
-//import com.github.justinericscott.docengine.models.Clause;
-//import com.github.justinericscott.docengine.models.ClauseInstance;
 import com.github.justinericscott.docengine.models.Content.Clause;
 import com.github.justinericscott.docengine.models.Content.Document;
 import com.github.justinericscott.docengine.models.Content.Paragraph;
@@ -24,12 +23,6 @@ import com.github.justinericscott.docengine.models.Instance.ClauseInstance;
 import com.github.justinericscott.docengine.models.Instance.DocumentInstance;
 import com.github.justinericscott.docengine.models.Instance.ParagraphInstance;
 import com.github.justinericscott.docengine.models.Instance.SectionInstance;
-//import com.github.justinericscott.docengine.models.Document;
-//import com.github.justinericscott.docengine.models.DocumentInstance;
-//import com.github.justinericscott.docengine.models.Paragraph;
-//import com.github.justinericscott.docengine.models.ParagraphInstance;
-//import com.github.justinericscott.docengine.models.Section;
-//import com.github.justinericscott.docengine.models.SectionInstance;
 import com.github.justinericscott.docengine.repository.content.DocumentInstanceRepository;
 import com.github.justinericscott.docengine.repository.content.DocumentRepository;
 import com.github.justinericscott.docengine.util.AbstractTest;
@@ -168,11 +161,11 @@ public class DocumentInstanceRepositoryTest extends AbstractTest {
 		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, ""));
 		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, "Snicklefritz"));
 
-		documentInstances = (Collection<DocumentInstance>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_DOCUMENT_CODE_PREFIX);
+		documentInstances = (Collection<DocumentInstance>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_CODE_PREFIX_DOCUMENT);
 		assertTrue(documentInstances.isEmpty());
-		documentInstances = (Collection<DocumentInstance>) _instances.findByProjectIdAndContentContentCdLike("", TEST_DOCUMENT_CODE_PREFIX);
+		documentInstances = (Collection<DocumentInstance>) _instances.findByProjectIdAndContentContentCdLike("", TEST_CODE_PREFIX_DOCUMENT);
 		assertTrue(documentInstances.isEmpty());
-		documentInstances = (Collection<DocumentInstance>) _instances.findByProjectIdAndContentContentCdLike("Snicklefritz", TEST_DOCUMENT_CODE_PREFIX);
+		documentInstances = (Collection<DocumentInstance>) _instances.findByProjectIdAndContentContentCdLike("Snicklefritz", TEST_CODE_PREFIX_DOCUMENT);
 		assertTrue(documentInstances.isEmpty());
 		documentInstances = (Collection<DocumentInstance>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "");
 		assertTrue(documentInstances.isEmpty());

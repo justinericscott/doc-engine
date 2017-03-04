@@ -1,15 +1,10 @@
 package com.github.justinericscott.docengine.service.template;
 
-import static com.github.justinericscott.docengine.util.Utils.create;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullOrEmpty;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
 import java.io.StringWriter;
+
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -17,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.w3c.tidy.Tidy;
 
 import freemarker.cache.MultiTemplateLoader;
 import freemarker.cache.StringTemplateLoader;
@@ -83,55 +77,6 @@ class TemplateServiceImpl implements TemplateService {
 			}
 			return name;
 		}
-	}
-	
-	public static String tidy(final String xhtml, final String path) {
-		if (isNotNullOrEmpty(xhtml)) {
-			String errpath = null;
-			try (final InputStream in = new ByteArrayInputStream(xhtml.getBytes())) {
-				try (final StringWriter htmlstring = new StringWriter()) {
-					try (final PrintWriter htmlprint = new PrintWriter(htmlstring)) {
-						try (final StringWriter errstring = new StringWriter()) {
-							try (final PrintWriter errprint = new PrintWriter(errstring)) {
-								final Tidy tidy = new Tidy();
-								tidy.setXHTML(true);
-								tidy.setShowWarnings(true);
-								tidy.setQuiet(true);
-								tidy.setErrout(errprint);
-								tidy.setIndentContent(true);
-								tidy.setIndentCdata(true);
-								tidy.parse(in, htmlprint);
-								tidy.setConfigurationFromProps(null);
-								htmlprint.flush();
-								errprint.flush();
-								if (isNotNullOrEmpty(path) && path.endsWith(".html")) {
-									errpath = path.substring(0, path.length() - 5).concat("_TIDY.txt");
-								}
-								final File htmlfile = create((isNotNullOrEmpty(path) ? path : "target/html/tidy.txt"));
-								try (final FileOutputStream htmlfileout = new FileOutputStream(htmlfile)) {
-									htmlfileout.write(errstring.toString().getBytes());
-									htmlstring.flush();
-									htmlfileout.flush();
-								}
-								final File errfile = create(
-										(isNotNullOrEmpty(errpath) ? errpath : "target/html/tidy.txt"));
-								try (final FileOutputStream errfileout = new FileOutputStream(errfile)) {
-									errfileout.write(errstring.toString().getBytes());
-									errstring.flush();
-									errfileout.flush();
-								}
-								final String out = htmlstring.toString() + errstring.toString();
-								return out;
-
-							}
-						}
-					}
-				}
-			} catch (final IOException e) {
-				LOG.error("Problem using Tidy!", e);
-			}
-		}
-		return null;
 	}
 
 	private String process(final String name, final Map<String, Object> tokens) {

@@ -1,7 +1,8 @@
 package com.github.justinericscott.docengine.repository.content.instance;
 
 import static org.junit.Assert.*;
-import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
+
+import static com.github.justinericscott.docengine.util.TestUtils.TestConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
@@ -154,11 +155,11 @@ public class InstanceRepositoryTest extends AbstractTest {
 		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, ""));
 		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, "Snicklefritz"));
 
-		instances = (Collection<Instance>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_CONTENT_CODE_PREFIX);
+		instances = (Collection<Instance>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_CODE_PREFIX_CONTENT);
 		assertTrue(instances.isEmpty());
-		instances = (Collection<Instance>) _instances.findByProjectIdAndContentContentCdLike("", TEST_CONTENT_CODE_PREFIX);
+		instances = (Collection<Instance>) _instances.findByProjectIdAndContentContentCdLike("", TEST_CODE_PREFIX_CONTENT);
 		assertTrue(instances.isEmpty());
-		instances = (Collection<Instance>) _instances.findByProjectIdAndContentContentCdLike("Snicklefritz", TEST_CONTENT_CODE_PREFIX);
+		instances = (Collection<Instance>) _instances.findByProjectIdAndContentContentCdLike("Snicklefritz", TEST_CODE_PREFIX_CONTENT);
 		assertTrue(instances.isEmpty());
 		instances = (Collection<Instance>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "");
 		assertTrue(instances.isEmpty());

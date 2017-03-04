@@ -1,23 +1,24 @@
 package com.github.justinericscott.docengine.repository.content.template;
 
 import static org.junit.Assert.*;
-import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
+
+import static com.github.justinericscott.docengine.util.TestUtils.TestConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
 
 import org.hibernate.LazyInitializationException;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 import com.github.justinericscott.docengine.models.Content.Clause;
 import com.github.justinericscott.docengine.models.Content.Paragraph;
-//import com.github.justinericscott.docengine.models.Clause;
-//import com.github.justinericscott.docengine.models.Paragraph;
 import com.github.justinericscott.docengine.repository.content.ClauseRepository;
 import com.github.justinericscott.docengine.util.AbstractTest;
 
@@ -62,7 +63,7 @@ public class ClauseRepositoryTest extends AbstractTest {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
-			_clauses.save(new Clause(TEST_CLAUSE_CODE_PREFIX + uuid(), ""));
+			_clauses.save(new Clause(TEST_CODE_PREFIX_CLAUSE + uuid(), ""));
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());

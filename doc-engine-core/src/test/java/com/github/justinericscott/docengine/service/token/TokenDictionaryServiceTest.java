@@ -2,7 +2,7 @@ package com.github.justinericscott.docengine.service.token;
 
 import static org.junit.Assert.*;
 import static com.github.justinericscott.docengine.service.token.TokenDictionaryServiceTest.TokenDictionaryServiceTestConstants.*;
-import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
+import static com.github.justinericscott.docengine.util.TestUtils.TestConstants.*;
 import static com.github.justinericscott.docengine.util.TestUtils.getFileFromClasspath;
 import static com.github.justinericscott.docengine.util.Utils.breakSqlScriptIntoStatements;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullAndExists;
@@ -62,7 +62,7 @@ public class TokenDictionaryServiceTest extends AbstractTest {
 		});
 		assertNull(_dictionary.save((TokenDefinition) null));
 		assertNull(_dictionary.save(new TokenDefinition("", "TOKEN_TEST_NAME")));
-		assertNull(_dictionary.save(new TokenDefinition(TEST_TOKEN_CODE_PREFIX + uuid(), "")));
+		assertNull(_dictionary.save(new TokenDefinition(TEST_CODE_PREFIX_TOKEN + uuid(), "")));
 		definition = createFakeTokenDefinition();
 		assertNull(_dictionary.save(new TokenDefinition(definition, definition.getTokenCd())));
 	}

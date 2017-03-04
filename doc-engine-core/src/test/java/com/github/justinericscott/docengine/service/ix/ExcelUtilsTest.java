@@ -1,7 +1,7 @@
 package com.github.justinericscott.docengine.service.ix;
 
 import static com.github.justinericscott.docengine.service.ix.ExcelUtils.*;
-import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
+import static com.github.justinericscott.docengine.util.TestUtils.TestConstants.*;
 import static com.github.justinericscott.docengine.util.Utils.*;
 import static org.junit.Assert.*;
 
@@ -77,7 +77,7 @@ public class ExcelUtilsTest extends AbstractTest {
 		assertEquals(4, fields.size());
 		int idx = 0;
 		for (final String f : fields) {
-			assertEquals(TEST_DATA_FIELD_NAMES[idx], f);
+			assertEquals(TEST_FIELD_NAMES[idx], f);
 			idx++;
 		}
 		fields.clear();
@@ -87,7 +87,7 @@ public class ExcelUtilsTest extends AbstractTest {
 		assertEquals(4, fields.size());
 		idx = 0;
 		for (final String f : fields) {
-			assertEquals(TEST_DATA_FIELD_NAMES[idx], f);
+			assertEquals(TEST_FIELD_NAMES[idx], f);
 			idx++;
 		}
 		fields.clear();
@@ -114,7 +114,7 @@ public class ExcelUtilsTest extends AbstractTest {
 		assertEquals(4, fields.size());
 		int idx = 0;
 		for (final Field f : fields) {
-			assertEquals(TEST_DATA_FIELD_NAMES[idx], f.getName());
+			assertEquals(TEST_FIELD_NAMES[idx], f.getName());
 			idx++;
 		}
 		fields.clear();
@@ -124,7 +124,7 @@ public class ExcelUtilsTest extends AbstractTest {
 		assertEquals(4, fields.size());
 		idx = 3;
 		for (final Field f : fields) {
-			assertEquals(TEST_DATA_FIELD_NAMES[idx], f.getName());
+			assertEquals(TEST_FIELD_NAMES[idx], f.getName());
 			idx--;
 		}
 		assertNull(getExcelColumnFieldsFromClass(TEST_CLASS_NO_ANNOTATION));
@@ -138,7 +138,7 @@ public class ExcelUtilsTest extends AbstractTest {
 		assertEquals(4, labels.size());
 		int idx = 0;
 		for (final String label : labels) {
-			assertEquals(TEST_DATA_FIELD_NAMES[idx], label);
+			assertEquals(TEST_FIELD_NAMES[idx], label);
 			idx++;
 		}
 		labels.clear();
@@ -148,7 +148,7 @@ public class ExcelUtilsTest extends AbstractTest {
 		assertEquals(4, labels.size());
 		idx = 0;
 		for (final String label : labels) {
-			assertEquals(TEST_DATA_FIELD_LABELS[idx], label);
+			assertEquals(TEST_FIELD_LABELS[idx], label);
 			idx++;
 		}
 		assertNull(getExcelColumnHeaderFromClass(TEST_CLASS_NO_ANNOTATION));

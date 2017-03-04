@@ -1,7 +1,8 @@
 package com.github.justinericscott.docengine.repository.content.instance;
 
 import static org.junit.Assert.*;
-import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
+
+import static com.github.justinericscott.docengine.util.TestUtils.TestConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
@@ -16,8 +17,6 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 import com.github.justinericscott.docengine.models.Content.Paragraph;
 import com.github.justinericscott.docengine.models.Instance.ParagraphInstance;
-//import com.github.justinericscott.docengine.models.Paragraph;
-//import com.github.justinericscott.docengine.models.ParagraphInstance;
 import com.github.justinericscott.docengine.repository.content.ParagraphInstanceRepository;
 import com.github.justinericscott.docengine.repository.content.ParagraphRepository;
 import com.github.justinericscott.docengine.util.AbstractTest;
@@ -156,11 +155,11 @@ public class ParagraphInstanceRepositoryTest extends AbstractTest {
 		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, ""));
 		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, "Snicklefritz"));
 
-		paragraphInstances = (Collection<ParagraphInstance>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_PARAGRAPH_CODE_PREFIX);
+		paragraphInstances = (Collection<ParagraphInstance>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_CODE_PREFIX_PARAGRAPH);
 		assertTrue(paragraphInstances.isEmpty());
-		paragraphInstances = (Collection<ParagraphInstance>) _instances.findByProjectIdAndContentContentCdLike("", TEST_PARAGRAPH_CODE_PREFIX);
+		paragraphInstances = (Collection<ParagraphInstance>) _instances.findByProjectIdAndContentContentCdLike("", TEST_CODE_PREFIX_PARAGRAPH);
 		assertTrue(paragraphInstances.isEmpty());
-		paragraphInstances = (Collection<ParagraphInstance>) _instances.findByProjectIdAndContentContentCdLike("Snicklefritz", TEST_PARAGRAPH_CODE_PREFIX);
+		paragraphInstances = (Collection<ParagraphInstance>) _instances.findByProjectIdAndContentContentCdLike("Snicklefritz", TEST_CODE_PREFIX_PARAGRAPH);
 		assertTrue(paragraphInstances.isEmpty());
 		paragraphInstances = (Collection<ParagraphInstance>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "");
 		assertTrue(paragraphInstances.isEmpty());

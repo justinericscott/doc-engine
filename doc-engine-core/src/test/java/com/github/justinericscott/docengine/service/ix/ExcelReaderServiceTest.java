@@ -2,7 +2,7 @@ package com.github.justinericscott.docengine.service.ix;
 
 import static org.junit.Assert.*;
 import static com.github.justinericscott.docengine.service.ix.ExcelUtils.*;
-import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
+import static com.github.justinericscott.docengine.util.TestUtils.TestConstants.*;
 import static com.github.justinericscott.docengine.util.TestUtils.getSystemTempDirectory;
 import static com.github.justinericscott.docengine.util.TestUtils.list;
 import static com.github.justinericscott.docengine.util.Utils.delete;
@@ -36,7 +36,7 @@ import com.github.justinericscott.docengine.util.AbstractTest;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ExcelReaderServiceTest extends AbstractTest {
 	private static final Logger LOG = LoggerFactory.getLogger(ExcelReaderServiceTest.class);
-	
+
 	@Autowired
 	private ExcelReaderService service;
 
@@ -78,13 +78,13 @@ public class ExcelReaderServiceTest extends AbstractTest {
 	@Test
 	public void b_getFieldNamesTest() {
 		final Row header = createHeaderRow();
-		final Collection<String> list = (Collection<String>) getExcelColumnFieldNamesFromRow(TEST_CLASS_CUSTOM_LABELS_ORDERED,
-				header);
+		final Collection<String> list = (Collection<String>) getExcelColumnFieldNamesFromRow(
+				TEST_CLASS_CUSTOM_LABELS_ORDERED, header);
 		assertNotNull(list);
 		assertEquals(4, list.size());
 		int idx = 0;
 		for (final String s : list) {
-			assertEquals(TEST_DATA_FIELD_NAMES[idx], s);
+			assertEquals(TEST_FIELD_NAMES[idx], s);
 			idx++;
 		}
 		assertNull(getExcelColumnFieldNamesFromRow(null, getRow()));
@@ -100,10 +100,10 @@ public class ExcelReaderServiceTest extends AbstractTest {
 		assertNotNull(o);
 		assertTrue(TEST_CLASS_CUSTOM_LABELS_ORDERED.isInstance(o));
 		final ExampleExcelTypeWithCustomLabelsOrdered ex = (ExampleExcelTypeWithCustomLabelsOrdered) o;
-		assertEquals(TEST_VALUES[0], ex.getId());
-		assertEquals(TEST_VALUES[1], ex.getName());
-		assertEquals(TEST_VALUES[2], ex.getDescription());
-		assertEquals(TEST_VALUES[3], ex.getPositive());
+		assertEquals(TEST_FIELD_VALUES[0], ex.getId());
+		assertEquals(TEST_FIELD_VALUES[1], ex.getName());
+		assertEquals(TEST_FIELD_VALUES[2], ex.getDescription());
+		assertEquals(TEST_FIELD_VALUES[3], ex.getPositive());
 	}
 
 	@Test
@@ -124,7 +124,8 @@ public class ExcelReaderServiceTest extends AbstractTest {
 
 	@Test
 	public void e_readTest() {
-		final Collection<?> objects = (Collection<?>) service.read(TEST_CLASS_CUSTOM_LABELS_ORDERED, get(TEST_FILE_NAME_READ));
+		final Collection<?> objects = (Collection<?>) service.read(TEST_CLASS_CUSTOM_LABELS_ORDERED,
+				get(TEST_FILE_NAME_READ));
 		assertNotNull(objects);
 		assertEquals(100, objects.size());
 		assertNull(service.read(TEST_CLASS_CUSTOM_LABELS_ORDERED, null));
@@ -163,7 +164,7 @@ public class ExcelReaderServiceTest extends AbstractTest {
 	private Row createHeaderRow() {
 		final Row row = getRow();
 		int idx = 0;
-		for (final String header : TEST_DATA_FIELD_LABELS) {
+		for (final String header : TEST_FIELD_LABELS) {
 			row.createCell(idx).setCellValue(header);
 			idx++;
 		}
@@ -173,7 +174,7 @@ public class ExcelReaderServiceTest extends AbstractTest {
 	private Cell getCell() {
 		final Cell cell = getRow().createCell(0);
 		cell.setCellType(Cell.CELL_TYPE_STRING);
-		cell.setCellValue((String) null); 
+		cell.setCellValue((String) null);
 		return cell;
 	}
 
@@ -197,7 +198,7 @@ public class ExcelReaderServiceTest extends AbstractTest {
 	private Row x_createRealRow() {
 		final Row row = getRow();
 		int idx = 0;
-		for (final Object o : TEST_VALUES) {
+		for (final Object o : TEST_FIELD_VALUES) {
 			final Cell cell = row.createCell(idx);
 			if (o instanceof Integer) {
 				cell.setCellValue((int) o);
@@ -221,7 +222,7 @@ public class ExcelReaderServiceTest extends AbstractTest {
 		int rowIdx = 0;
 		int colIdx = 0;
 		Row row = sheet.createRow(rowIdx);
-		for (final String header : TEST_DATA_FIELD_LABELS) {
+		for (final String header : TEST_FIELD_LABELS) {
 			row.createCell(colIdx).setCellValue(header);
 			colIdx++;
 		}
@@ -230,7 +231,7 @@ public class ExcelReaderServiceTest extends AbstractTest {
 		while (rowIdx < 10) {
 			row = sheet.createRow(rowIdx);
 			colIdx = 0;
-			for (final Object o : TEST_VALUES) {
+			for (final Object o : TEST_FIELD_VALUES) {
 				final Cell cell = row.createCell(colIdx);
 				if (o instanceof Integer) {
 					final Integer i = (Integer) o;

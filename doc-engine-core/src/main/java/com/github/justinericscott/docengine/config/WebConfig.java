@@ -1,7 +1,7 @@
 package com.github.justinericscott.docengine.config;
 
 import static com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature.*;
-import static com.github.justinericscott.docengine.DocEngine.Constants.*;
+import static com.github.justinericscott.docengine.util.Utils.Constants.*;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullOrEmpty;
 
 import java.net.InetAddress;

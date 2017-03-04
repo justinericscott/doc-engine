@@ -1,7 +1,8 @@
 package com.github.justinericscott.docengine.repository.content.template;
 
 import static org.junit.Assert.*;
-import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
+
+import static com.github.justinericscott.docengine.util.TestUtils.TestConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
@@ -16,13 +17,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 import com.github.justinericscott.docengine.models.Content.Clause;
-//import com.github.justinericscott.docengine.models.Clause;
 import com.github.justinericscott.docengine.models.Content.Document;
 import com.github.justinericscott.docengine.models.Content.Paragraph;
 import com.github.justinericscott.docengine.models.Content.Section;
-//import com.github.justinericscott.docengine.models.Document;
-//import com.github.justinericscott.docengine.models.Paragraph;
-//import com.github.justinericscott.docengine.models.Section;
 import com.github.justinericscott.docengine.repository.content.DocumentRepository;
 import com.github.justinericscott.docengine.util.AbstractTest;
 
@@ -67,7 +64,7 @@ public class DocumentRepositoryTest extends AbstractTest {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
-			_documents.save(new Document(TEST_SECTION_CODE_PREFIX + uuid(), ""));
+			_documents.save(new Document(TEST_CODE_PREFIX_SECTION + uuid(), ""));
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());

@@ -1,7 +1,7 @@
 package com.github.justinericscott.docengine.service.content;
 
 import static org.junit.Assert.*;
-import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
+import static com.github.justinericscott.docengine.util.TestUtils.TestConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
@@ -12,8 +12,6 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 
-//import com.github.justinericscott.docengine.models.Clause;
-//import com.github.justinericscott.docengine.models.Clauses;
 import com.github.justinericscott.docengine.models.Content;
 import com.github.justinericscott.docengine.models.Content.Clause;
 import com.github.justinericscott.docengine.models.Content.Document;
@@ -24,12 +22,6 @@ import com.github.justinericscott.docengine.models.Contents.Clauses;
 import com.github.justinericscott.docengine.models.Contents.Documents;
 import com.github.justinericscott.docengine.models.Contents.Paragraphs;
 import com.github.justinericscott.docengine.models.Contents.Sections;
-//import com.github.justinericscott.docengine.models.Document;
-//import com.github.justinericscott.docengine.models.Documents;
-//import com.github.justinericscott.docengine.models.Paragraph;
-//import com.github.justinericscott.docengine.models.Paragraphs;
-//import com.github.justinericscott.docengine.models.Section;
-//import com.github.justinericscott.docengine.models.Sections;
 import com.github.justinericscott.docengine.service.content.ContentService;
 import com.github.justinericscott.docengine.util.AbstractTest;
 
@@ -53,7 +45,7 @@ public class ContentServiceTest extends AbstractTest {
 		assertTrue(content.isValid(true));
 		assertNull(_contents.save((Content) null));
 		assertNull(_contents.save(new Content("", "TEST BODY")));
-		assertNull(_contents.save(new Content(TEST_CONTENT_CODE_PREFIX + uuid(), "")));
+		assertNull(_contents.save(new Content(TEST_CODE_PREFIX_CONTENT + uuid(), "")));
 		assertNull(_contents.save(new Content(content, content.getContentCd())));
 
 		// Many
@@ -70,20 +62,20 @@ public class ContentServiceTest extends AbstractTest {
 
 		// Merge complex one at a time
 		Document document = (Document) _contents
-				.save(new Document(content, TEST_DOCUMENT_CODE_PREFIX + uuid()));
+				.save(new Document(content, TEST_CODE_PREFIX_DOCUMENT + uuid()));
 		assertNotNull(document.getId());
 
-		Section section = new Section(content, TEST_SECTION_CODE_PREFIX + uuid());
+		Section section = new Section(content, TEST_CODE_PREFIX_SECTION + uuid());
 		document.addSection(section);
 		section = (Section) _contents.save(section);
 		assertNotNull(section.getId());
 
-		Clause clause = new Clause(content, TEST_CLAUSE_CODE_PREFIX + uuid());
+		Clause clause = new Clause(content, TEST_CODE_PREFIX_CLAUSE + uuid());
 		section.addClause(clause);
 		clause = (Clause) _contents.save(clause);
 		assertNotNull(clause.getId());
 
-		Paragraph paragraph = new Paragraph(content, TEST_PARAGRAPH_CODE_PREFIX + uuid());
+		Paragraph paragraph = new Paragraph(content, TEST_CODE_PREFIX_PARAGRAPH + uuid());
 		clause.addParagraph(paragraph);
 		paragraph = (Paragraph) _contents.save(paragraph);
 		assertNotNull(paragraph.getId());
@@ -109,9 +101,9 @@ public class ContentServiceTest extends AbstractTest {
 		}
 		assertNull(_contents.save((Content) null));
 		assertNull(_contents.save((Content) new Content("", "TEST BODY")));
-		assertNull(_contents.save((Content) new Content(TEST_CONTENT_CODE_PREFIX + uuid(), "")));
+		assertNull(_contents.save((Content) new Content(TEST_CODE_PREFIX_CONTENT + uuid(), "")));
 		assertNull(_contents
-				.save((Content) new Content(new Content(""), TEST_CONTENT_CODE_PREFIX + uuid())));
+				.save((Content) new Content(new Content(""), TEST_CODE_PREFIX_CONTENT + uuid())));
 		content = createContent();
 		assertNull(_contents.save((Content) new Content(content, content.getContentCd())));
 	}

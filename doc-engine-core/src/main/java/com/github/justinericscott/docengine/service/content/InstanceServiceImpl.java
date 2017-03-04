@@ -1,6 +1,6 @@
 package com.github.justinericscott.docengine.service.content;
 
-import static com.github.justinericscott.docengine.DocEngine.Constants.*;
+import static com.github.justinericscott.docengine.util.Utils.Constants.*;
 import static com.github.justinericscott.docengine.util.Utils.*;
 
 import java.util.Collection;
@@ -13,10 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-//import com.github.justinericscott.docengine.models.ClauseInstance;
-//import com.github.justinericscott.docengine.models.ClauseInstances;
-//import com.github.justinericscott.docengine.models.DocumentInstance;
-//import com.github.justinericscott.docengine.models.DocumentInstances;
 import com.github.justinericscott.docengine.models.Instance;
 import com.github.justinericscott.docengine.models.Instance.ClauseInstance;
 import com.github.justinericscott.docengine.models.Instance.DocumentInstance;
@@ -27,10 +23,6 @@ import com.github.justinericscott.docengine.models.Instances.ClauseInstances;
 import com.github.justinericscott.docengine.models.Instances.DocumentInstances;
 import com.github.justinericscott.docengine.models.Instances.ParagraphInstances;
 import com.github.justinericscott.docengine.models.Instances.SectionInstances;
-//import com.github.justinericscott.docengine.models.ParagraphInstance;
-//import com.github.justinericscott.docengine.models.ParagraphInstances;
-//import com.github.justinericscott.docengine.models.SectionInstance;
-//import com.github.justinericscott.docengine.models.SectionInstances;
 import com.github.justinericscott.docengine.repository.content.ClauseInstanceRepository;
 import com.github.justinericscott.docengine.repository.content.DocumentInstanceRepository;
 import com.github.justinericscott.docengine.repository.content.InstanceRepository;

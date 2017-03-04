@@ -1,7 +1,8 @@
 package com.github.justinericscott.docengine.service.ix;
 
 import static org.junit.Assert.*;
-import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
+
+import static com.github.justinericscott.docengine.util.TestUtils.TestConstants.*;
 import static com.github.justinericscott.docengine.util.TestUtils.getSystemTempDirectory;
 import static com.github.justinericscott.docengine.util.TestUtils.list;
 import static com.github.justinericscott.docengine.util.Utils.copy;
@@ -71,10 +72,10 @@ public class ExcelWriterServiceTest extends AbstractTest {
 		final Row row = getRow();
 		excel.fillHeader(row, TEST_CLASS_CUSTOM_LABELS_ORDERED);
 		assertEquals(4, row.getPhysicalNumberOfCells());
-		assertEquals(TEST_DATA_FIELD_LABELS[0], row.getCell(0).getStringCellValue());
-		assertEquals(TEST_DATA_FIELD_LABELS[1], row.getCell(1).getStringCellValue());
-		assertEquals(TEST_DATA_FIELD_LABELS[2], row.getCell(2).getStringCellValue());
-		assertEquals(TEST_DATA_FIELD_LABELS[3], row.getCell(3).getStringCellValue());
+		assertEquals(TEST_FIELD_LABELS[0], row.getCell(0).getStringCellValue());
+		assertEquals(TEST_FIELD_LABELS[1], row.getCell(1).getStringCellValue());
+		assertEquals(TEST_FIELD_LABELS[2], row.getCell(2).getStringCellValue());
+		assertEquals(TEST_FIELD_LABELS[3], row.getCell(3).getStringCellValue());
 		final Iterator<Cell> iter = row.iterator();
 		while (iter.hasNext()) {
 			iter.next();
@@ -117,10 +118,10 @@ public class ExcelWriterServiceTest extends AbstractTest {
 		excel.insertRow(sheet, TEST_CLASS_CUSTOM_LABELS_ORDERED, null, 0, true);
 		Row row = sheet.getRow(0);
 		assertEquals(4, row.getPhysicalNumberOfCells());
-		assertEquals(TEST_DATA_FIELD_LABELS[0], row.getCell(0).getStringCellValue());
-		assertEquals(TEST_DATA_FIELD_LABELS[1], row.getCell(1).getStringCellValue());
-		assertEquals(TEST_DATA_FIELD_LABELS[2], row.getCell(2).getStringCellValue());
-		assertEquals(TEST_DATA_FIELD_LABELS[3], row.getCell(3).getStringCellValue());
+		assertEquals(TEST_FIELD_LABELS[0], row.getCell(0).getStringCellValue());
+		assertEquals(TEST_FIELD_LABELS[1], row.getCell(1).getStringCellValue());
+		assertEquals(TEST_FIELD_LABELS[2], row.getCell(2).getStringCellValue());
+		assertEquals(TEST_FIELD_LABELS[3], row.getCell(3).getStringCellValue());
 		final ExampleExcelTypeWithCustomLabelsOrdered example = new ExampleExcelTypeWithCustomLabelsOrdered(1, "name",
 				"description", new Boolean(true));
 		excel.insertRow(sheet, TEST_CLASS_CUSTOM_LABELS_ORDERED, example, 1, false);

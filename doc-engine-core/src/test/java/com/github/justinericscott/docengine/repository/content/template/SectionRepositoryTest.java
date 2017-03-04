@@ -1,25 +1,25 @@
 package com.github.justinericscott.docengine.repository.content.template;
 
 import static org.junit.Assert.*;
-import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
+
+import static com.github.justinericscott.docengine.util.TestUtils.TestConstants.*;
 
 import java.util.Collection;
 import java.util.TreeSet;
 
 import org.hibernate.LazyInitializationException;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 import com.github.justinericscott.docengine.models.Content.Clause;
 import com.github.justinericscott.docengine.models.Content.Paragraph;
-//import com.github.justinericscott.docengine.models.Clause;
 import com.github.justinericscott.docengine.models.Content.Section;
-//import com.github.justinericscott.docengine.models.Paragraph;
-//import com.github.justinericscott.docengine.models.Section;
 import com.github.justinericscott.docengine.repository.content.SectionRepository;
 import com.github.justinericscott.docengine.util.AbstractTest;
 
@@ -64,7 +64,7 @@ public class SectionRepositoryTest extends AbstractTest {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
-			_sections.save(new Section(TEST_SECTION_CODE_PREFIX + uuid(), ""));
+			_sections.save(new Section(TEST_CODE_PREFIX_SECTION + uuid(), ""));
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());

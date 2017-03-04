@@ -1,6 +1,6 @@
 package com.github.justinericscott.docengine.service.token;
 
-import static com.github.justinericscott.docengine.DocEngine.Constants.*;
+import static com.github.justinericscott.docengine.util.Utils.Constants.*;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullOrEmpty;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullOrZero;
 import static java.util.Collections.unmodifiableList;

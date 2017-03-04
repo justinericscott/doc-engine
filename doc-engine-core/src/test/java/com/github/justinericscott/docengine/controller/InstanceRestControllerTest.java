@@ -1,7 +1,8 @@
 package com.github.justinericscott.docengine.controller;
 
 import static org.junit.Assert.*;
-import static com.github.justinericscott.docengine.util.AbstractTest.TestConstants.*;
+
+import static com.github.justinericscott.docengine.util.TestUtils.TestConstants.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,17 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.client.HttpClientErrorException;
 
-//import com.github.justinericscott.docengine.models.Clause;
-//import com.github.justinericscott.docengine.models.ClauseInstance;
-//import com.github.justinericscott.docengine.models.ClauseInstances;
 import com.github.justinericscott.docengine.models.Content;
 import com.github.justinericscott.docengine.models.Content.Clause;
 import com.github.justinericscott.docengine.models.Content.Document;
 import com.github.justinericscott.docengine.models.Content.Paragraph;
 import com.github.justinericscott.docengine.models.Content.Section;
 import com.github.justinericscott.docengine.models.Contents;
-//import com.github.justinericscott.docengine.models.Document;
-//import com.github.justinericscott.docengine.models.DocumentInstance;
 import com.github.justinericscott.docengine.models.Instance;
 import com.github.justinericscott.docengine.models.Instance.ClauseInstance;
 import com.github.justinericscott.docengine.models.Instance.DocumentInstance;
@@ -38,12 +34,6 @@ import com.github.justinericscott.docengine.models.Instances;
 import com.github.justinericscott.docengine.models.Instances.ClauseInstances;
 import com.github.justinericscott.docengine.models.Instances.ParagraphInstances;
 import com.github.justinericscott.docengine.models.Instances.SectionInstances;
-//import com.github.justinericscott.docengine.models.Paragraph;
-//import com.github.justinericscott.docengine.models.ParagraphInstance;
-//import com.github.justinericscott.docengine.models.ParagraphInstances;
-//import com.github.justinericscott.docengine.models.Section;
-//import com.github.justinericscott.docengine.models.SectionInstance;
-//import com.github.justinericscott.docengine.models.SectionInstances;
 import com.github.justinericscott.docengine.util.AbstractTest;
 import com.github.justinericscott.docengine.util.rest.RestClient;
 
@@ -69,7 +59,7 @@ public class InstanceRestControllerTest extends AbstractTest {
 	public void a_SaveTest() {
 		final String projectId = TEST_PROJECT_ID_PREFIX + uuid();
 		// Merge 1
-		Content content = new Content(TEST_CONTENT_CODE_PREFIX + uuid(), "TEST_BODY");
+		Content content = new Content(TEST_CODE_PREFIX_CONTENT + uuid(), "TEST_BODY");
 		content = _contents.save(content, Content.class);
 		assertNotNull(content);
 		assertTrue(content.isValid(true));
@@ -80,7 +70,7 @@ public class InstanceRestControllerTest extends AbstractTest {
 		assertTrue(instance.isValid(true));
 
 		// Merge complex one at a time
-		Document doc = new Document(TEST_DOCUMENT_CODE_PREFIX + uuid(), "TEST_BODY");
+		Document doc = new Document(TEST_CODE_PREFIX_DOCUMENT + uuid(), "TEST_BODY");
 		doc = _contents.save(doc, Document.class);
 		assertNotNull(doc);
 		assertTrue(doc.isValid(true));
@@ -90,7 +80,7 @@ public class InstanceRestControllerTest extends AbstractTest {
 		Long id = docInst.getId();
 		assertTrue(docInst.isValid(true));
 
-		Section sec = new Section(TEST_SECTION_CODE_PREFIX + uuid(), "TEST_BODY");
+		Section sec = new Section(TEST_CODE_PREFIX_SECTION + uuid(), "TEST_BODY");
 		doc.addSection(sec);
 		sec = _contents.save(sec, Section.class);
 		assertNotNull(sec);
@@ -101,7 +91,7 @@ public class InstanceRestControllerTest extends AbstractTest {
 		assertNotNull(secInst);
 		assertTrue(secInst.isValid(true));
 
-		Clause cla = new Clause(TEST_CLAUSE_CODE_PREFIX + uuid(), "TEST_BODY");
+		Clause cla = new Clause(TEST_CODE_PREFIX_CLAUSE + uuid(), "TEST_BODY");
 		sec.addClause(cla);
 		cla = _contents.save(cla, Clause.class);
 		assertNotNull(cla);
@@ -112,7 +102,7 @@ public class InstanceRestControllerTest extends AbstractTest {
 		assertNotNull(claInst);
 		assertTrue(claInst.isValid(true));
 
-		Paragraph para = new Paragraph(TEST_PARAGRAPH_CODE_PREFIX + uuid(), "TEST_BODY");
+		Paragraph para = new Paragraph(TEST_CODE_PREFIX_PARAGRAPH + uuid(), "TEST_BODY");
 		cla.addParagraph(para);
 		para = _contents.save(para, Paragraph.class);
 		assertNotNull(para);
@@ -162,7 +152,7 @@ public class InstanceRestControllerTest extends AbstractTest {
 		assertNull(_instances.save(new Instance(TEST_PROJECT_ID_PREFIX + uuid()), Instance.class));
 
 		// Content with no ID
-		content = new Content(TEST_CONTENT_CODE_PREFIX + uuid(), "TEST_BODY");
+		content = new Content(TEST_CODE_PREFIX_CONTENT + uuid(), "TEST_BODY");
 		Instance in = new Instance(content, TEST_PROJECT_ID_PREFIX + uuid());
 		assertNull(_instances.save(in, Instance.class));
 		// Duplicates

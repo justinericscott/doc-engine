@@ -4,6 +4,7 @@ import static com.github.justinericscott.docengine.util.TestUtils.getFileFromCla
 import static org.junit.Assert.*;
 
 import java.io.File;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -45,6 +46,7 @@ import com.github.justinericscott.docengine.util.AbstractTest;
 public class LogicServiceTest extends AbstractTest {
 	private static final Logger LOG = LoggerFactory.getLogger(LogicServiceTest.class);
 	private static final String EXPECTED = "Project Number Matches. Logic works!";
+	private static final String LOGIC_TABLE = "logic/DroolsTesting.xls";
 	private static final String PROJECT_NUMBER = "0NJ4321";
 
 	@Autowired
@@ -54,7 +56,7 @@ public class LogicServiceTest extends AbstractTest {
 	public void a_SimpleDecisionTableTest() {
 		final Project project = new Project();
 		project.setProjectNumber(PROJECT_NUMBER);
-		final File file = getFileFromClasspath("DroolsTesting.xls");
+		final File file = getFileFromClasspath(LOGIC_TABLE);
 		assertNotNull(file);
 		assertTrue(file.exists());
 		service.addResource(file);
@@ -96,7 +98,7 @@ public class LogicServiceTest extends AbstractTest {
 		response.forEach(r -> {
 			LOG.debug("Response: {}", r);
 		});
-		final File file = getFileFromClasspath("DroolsTesting.xls");
+		final File file = getFileFromClasspath(LOGIC_TABLE);
 		assertNotNull(file);
 		assertTrue(file.exists());
 		final Resource resource = ResourceFactory.newFileResource(file);

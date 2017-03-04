@@ -1,6 +1,7 @@
 package com.github.justinericscott.docengine;
 
-import static com.github.justinericscott.docengine.DocEngine.Constants.*;
+import static com.github.justinericscott.docengine.util.Utils.Constants.*;
+
 import static org.junit.Assert.*;
 
 import org.junit.FixMethodOrder;

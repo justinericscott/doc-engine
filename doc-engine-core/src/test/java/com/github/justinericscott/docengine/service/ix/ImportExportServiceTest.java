@@ -1,6 +1,7 @@
 package com.github.justinericscott.docengine.service.ix;
 
-import static com.github.justinericscott.docengine.service.ix.ImportExportServiceTest.ImportExportServiceTestConstants.*;
+import static com.github.justinericscott.docengine.util.TestUtils.TestConstants.*;
+
 import static org.junit.Assert.*;
 
 import java.io.File;
@@ -38,7 +39,7 @@ public class ImportExportServiceTest extends AbstractTest {
 	public void a_ImportTest() {
 		if (_instances.deleteAll()) {
 			if (_contents.deleteAll()) {
-				Iterable<Content> objects = _service.importFromFile(Content.class, TEST_PATH_IMPORT);
+				Iterable<Content> objects = _service.importFromFile(Content.class, TEST_FILE_IMPORT);
 				assertNotNull(objects);
 				for (final Content o : objects) {
 					assertTrue(o.isValid(true));
@@ -56,7 +57,7 @@ public class ImportExportServiceTest extends AbstractTest {
 	public void b_ExportTest() {
 		Contents contents = _contents.findAll();
 		assertNotNull(contents);
-		File file = _service.exportToFile(Content.class, TEST_PATH_EXPORT);
+		File file = _service.exportToFile(Content.class, TEST_FILE_EXPORT);
 		assertNotNull(file);
 		assertTrue(file.exists());		
 	}
@@ -64,10 +65,5 @@ public class ImportExportServiceTest extends AbstractTest {
 	@Test
 	public void c_LiveContentTest() {
 		
-	}
-
-	static class ImportExportServiceTestConstants {
-		static final String TEST_PATH_IMPORT = "content-export.xlsx";
-		static final String TEST_PATH_EXPORT = "target/content-export.xlsx";
 	}
 }
