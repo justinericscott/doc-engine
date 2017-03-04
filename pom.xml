@@ -20,7 +20,7 @@
 		<version>1.5.1.RELEASE</version>
 	</parent>
 	<modules>
-		<module>doc-engine-appian-types</module>
+<!-- 		<module>doc-engine-appian-types</module> -->
 		<module>doc-engine-core</module>
 	</modules>
 	<properties>
