@@ -69,6 +69,7 @@ public class TemplateConfig {
 	private TemplateLoader loader() {
 		try {
 			LOG.debug("Creating new MultiTemplateLoader to allow Strings and Files.");
+//			LOG.debug("Creating new StringTemplateLoader.");
 			final File temp = getSystemTempDirectory();
 			final File templates = createDirectory(temp, "Freemarker_Templates");
 			final File internal = get("templates" + File.separator + "..");

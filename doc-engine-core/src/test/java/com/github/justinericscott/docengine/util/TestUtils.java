@@ -18,6 +18,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +37,7 @@ import com.github.justinericscott.docengine.service.ix.types.ExampleExcelTypeWit
 import com.github.justinericscott.docengine.service.ix.types.NoAnnotationType;
 import com.github.justinericscott.docengine.util.Utils.TidyFactory;
 
+@SuppressWarnings("serial")
 public class TestUtils {
 	private static final Logger LOG = LoggerFactory.getLogger(TestUtils.class);
 	private static final TidyFactory TIDY_FACTORY = new TidyFactory();
@@ -255,14 +258,38 @@ public class TestUtils {
 		public static final String[] TEST_FIELD_LABELS = { "Identification", "Name", "Description", "Positive" };
 		public static final Object[] TEST_FIELD_VALUES = { 111L, "Test Name", "Test Description", new Boolean(true) };
 
+		public static final String TEST_FILE_BODY = "template/template-body.ftl";
+		public static final String TEST_FILE_EXP_BODY = "template/expected-body.html";
+		public static final String TEST_FILE_EXP_BROKEN_BODY = "template/expected-broken-body.html";
+		public static final String TEST_FILE_EXP_NULL_TEMPLATE_NAME = "template/expected-null-template-name.html";
+		public static final String TEST_FILE_EXP_NULL_TOKEN = "template/expected-null-token.html";
+		public static final String TEST_FILE_EXP_NULL_TOKENS = "template/expected-null-tokens.html";
 		public static final String TEST_FILE_EXPORT = "target/content-export.xlsx";
 		public static final String TEST_FILE_IMPORT = "ix/content-import.xlsx";
 		public static final String TEST_FILE_NAME_READ = "ix/test-data-read.xlsx";
 		public static final String TEST_FILE_NAME_WRITE = "target/test-data-write.xlsx";
 
+		public static final String TEST_FTL_BODY = read(get(TEST_FILE_BODY));
+		public static final String TEST_FTL_BODY_NAME = "test_template";
+		public static final String TEST_FTL_BROKEN_BODY = "Hello, ${name!\" ... What's Your Name?}!!!";
+		public static final String TEST_FTL_BROKEN_NAME = "test_template_broken";
+		public static final String TEST_FTL_EXP_BODY = read(get(TEST_FILE_EXP_BODY));
+		public static final String TEST_FTL_EXP_BROKEN_BODY = read(get(TEST_FILE_EXP_BROKEN_BODY));
+		public static final String TEST_FTL_EXP_NULL_TEMPLATE_NAME = read(get(TEST_FILE_EXP_NULL_TEMPLATE_NAME));
+		public static final String TEST_FTL_EXP_NULL_TOKEN = read(get(TEST_FILE_EXP_NULL_TOKEN));
+		public static final String TEST_FTL_EXP_NULL_TOKENS = read(get(TEST_FILE_EXP_NULL_TOKENS));
+
 		public static final String TEST_PROJECT_ID_PREFIX = "TEST_PROJECT_ID_";
 		public static final String TEST_PROJECT_ID_VALUE = "SIMPH00501";
 
 		public static final String TEST_SHEET_NAME = "Excel Example Type";
+		
+		public static final String TEST_TOKEN_NAME = "world";
+		public static final Object TEST_TOKEN_VALUE = "World";	
+		public static final Map<String, Object> TOKENS = new HashMap<String, Object>() {
+			{
+				put(TEST_TOKEN_NAME, TEST_TOKEN_VALUE);
+			}
+		};
 	}
 }
