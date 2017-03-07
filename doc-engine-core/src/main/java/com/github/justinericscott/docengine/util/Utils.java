@@ -781,7 +781,7 @@ public class Utils {
 			try {
 				bytes = Files.readAllBytes(Paths.get(file.getPath()));
 			} catch (final IOException e) {
-				LOG.debug(e.getMessage(), e);
+				LOG.trace(e.getMessage(), e);
 			}
 			return new String(bytes);
 		}

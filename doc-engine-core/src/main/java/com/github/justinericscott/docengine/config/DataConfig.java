@@ -100,7 +100,7 @@ class DataConfig {
 	 */
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-		LOG.debug("Creating new Hibernate JPA Entity Manager Factory.");
+		LOG.trace("Creating new Hibernate JPA Entity Manager Factory.");
 		final LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 		factory.setDataSource(getDataSource());
 		factory.setJpaVendorAdapter(getJpaVendorAdaptor());
@@ -116,13 +116,13 @@ class DataConfig {
 	@Bean(AUTOWIRE_QUALIFIER_JDBC)
 	@ConfigurationProperties(DATASTORE_BUSINESS)
 	public DataSource getJdbcDataSource() {
-		LOG.debug("Creating new Business Datasource.");
+		LOG.trace("Creating new Business Datasource.");
 		return DataSourceBuilder.create(getClass().getClassLoader()).build();
 	}
 
 	@Bean
 	public JdbcTemplate getJdbcTemplate() {
-		LOG.debug("Creating new JDBC Template.");
+		LOG.trace("Creating new JDBC Template.");
 		return new JdbcTemplate(getJdbcDataSource());
 	}
 
@@ -133,7 +133,7 @@ class DataConfig {
 	 */
 	@Bean(AUTOWIRE_QUALIFIER_JDBC_TX)
 	public PlatformTransactionManager getJdbcTransactionManager() {
-		LOG.debug("Creating new JDBC Transaction Manager.");
+		LOG.trace("Creating new JDBC Transaction Manager.");
 		return new DataSourceTransactionManager(getJdbcDataSource());
 	}
 
@@ -145,14 +145,13 @@ class DataConfig {
 	@Bean(AUTOWIRE_QUALIFIER_ORM)
 	@ConfigurationProperties(DATASTORE_ENGINE)
 	public DataSource getDataSource() {
-		LOG.debug("Creating new Engine Datasource.");
+		LOG.trace("Creating new Engine Datasource.");
 		return DataSourceBuilder.create(getClass().getClassLoader()).build();
 	}
 
 	@Bean
 	public JpaVendorAdapter getJpaVendorAdaptor() {
 		final HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
-//		jpaVendorAdapter.setShowSql(true);
 		jpaVendorAdapter.setGenerateDdl(true);
 		return jpaVendorAdapter;
 	}
@@ -164,7 +163,7 @@ class DataConfig {
 	 */
 	@Bean(AUTOWIRE_QUALIFIER_ORM_TX)
 	public PlatformTransactionManager getTransactionManager() {
-		LOG.debug("Creating new JPA Transaction Manager.");
+		LOG.trace("Creating new JPA Transaction Manager.");
 		return new JpaTransactionManager(entityManagerFactory().getObject());
 	}
 }

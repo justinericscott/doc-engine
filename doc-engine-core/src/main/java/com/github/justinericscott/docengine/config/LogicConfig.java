@@ -37,33 +37,33 @@ public class LogicConfig {
 
 	@Bean
 	public KieContainer container() {
-		LOG.debug("Creating new KieContainer.");
+		LOG.trace("Creating new KieContainer.");
 		builderForStateless();
 		return services().newKieContainer(release());
 	}
 
 	@Bean
 	public KieFileSystem fileSystem() {
-		LOG.debug("Creating new KieFileSystem.");
+		LOG.trace("Creating new KieFileSystem.");
 		final KieFileSystem fs = services().newKieFileSystem();
 		return fs;
 	}
 
 	@Bean
 	public KieModuleModel module() {
-		LOG.debug("Creating new KieModuleModel.");
+		LOG.trace("Creating new KieModuleModel.");
 		final KieModuleModel module = services().newKieModuleModel();
 		return module;
 	}
 
 	@Bean
 	public KieServices services() {
-		LOG.debug("Getting KieServices...");
+		LOG.trace("Getting KieServices...");
 		return KieServices.Factory.get();
 	}
 
 	private KieBaseModel base() {
-		LOG.debug("Creating new KieBaseModel: {}.", KIE_BASE_NAME);
+		LOG.trace("Creating new KieBaseModel: {}.", KIE_BASE_NAME);
 		final KieBaseModel base = module().newKieBaseModel(KIE_BASE_NAME);
 		base.setDefault(true);
 		base.setEqualsBehavior(EQUALITY);
@@ -71,7 +71,7 @@ public class LogicConfig {
 	}
 
 	private KieBuilder builderForStateless() {
-		LOG.debug("Creating new KieBuilder for stateless use.");
+		LOG.trace("Creating new KieBuilder for stateless use.");
 		stateless();
 		final KieBuilder builder = services().newKieBuilder(fileSystem());
 		final Results results = builder.getResults();
@@ -85,12 +85,12 @@ public class LogicConfig {
 	}
 
 	private ReleaseId release() {
-		LOG.debug("Creating new ReleaseId.");
+		LOG.trace("Creating new ReleaseId.");
 		return services().getRepository().getDefaultReleaseId();
 	}
 
 	private void stateless() {
-		LOG.debug("Creating new KieSessionModel for stateless sessions.");
+		LOG.trace("Creating new KieSessionModel for stateless sessions.");
 		final KieSessionModel session = base().newKieSessionModel(KIE_STATELESS_SESSION_MODEL_NAME);
 		session.setType(STATELESS);
 		session.setDefault(true);

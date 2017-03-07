@@ -2,13 +2,19 @@ package com.github.justinericscott.docengine.service.template;
 
 import java.util.Map;
 
-public interface TemplateService {
+import freemarker.template.Template;
 
-	String get(String name);
+public interface TemplateService {
 	
+	String adhoc(String ftl, Map<String, Object> tokens);
+
+	Template get(String name);
+
 	void load(String name, String ftl);
 	
-	String process(String name, Map<String, Object> tokens);
-	
-	String once(String ftl, Map<String, Object> tokens);
+	void load(String name, String ftl, boolean overwrite);
+
+	void remove(String name);
+
+	String run(String name, Map<String, Object> tokens);
 }
