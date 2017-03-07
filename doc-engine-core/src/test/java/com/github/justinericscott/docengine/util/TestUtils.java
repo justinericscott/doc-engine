@@ -259,6 +259,7 @@ public class TestUtils {
 		public static final Object[] TEST_FIELD_VALUES = { 111L, "Test Name", "Test Description", new Boolean(true) };
 
 		public static final String TEST_FILE_BODY = "template/template-body.ftl";
+		public static final String TEST_FILE_CONTENT = "ix/Document Engine Content.xlsx";
 		public static final String TEST_FILE_EXP_BODY = "template/expected-body.html";
 		public static final String TEST_FILE_EXP_BROKEN_BODY = "template/expected-broken-body.html";
 		public static final String TEST_FILE_EXP_NULL_TEMPLATE_NAME = "template/expected-null-template-name.html";

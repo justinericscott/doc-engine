@@ -523,6 +523,34 @@ final class ContentServiceImpl implements ContentService {
 		}
 		return null;
 	}
+	
+	@Override
+	public Iterable<?> save(Iterable<?> objects) {
+		if (isNotNullOrEmpty(objects)) {
+			final Collection<Object> saved = new TreeSet<Object>();
+			objects.forEach(o -> {
+				final Class<?> type = o.getClass();
+				if (type.equals(Document.class)) {
+					final Document d = _documents.save((Document) o);
+					saved.add(type.cast(d));
+				} else if (type.equals(Section.class)) {
+					final Section s = _sections.save((Section) o);
+					saved.add(type.cast(s));
+				} else if (type.equals(Clause.class)) {
+					final Clause c = _clauses.save((Clause) o);
+					saved.add(type.cast(c));
+				} else if (type.equals(Paragraph.class)) {
+					final Paragraph p = _paragraphs.save((Paragraph) o);
+					saved.add(type.cast(p));
+				} else if (type.equals(Content.class)) {
+					final Content c = _contents.save((Content) o);
+					saved.add(type.cast(c));					
+				}
+			});
+			return saved;
+		}
+		return null;
+	}
 
 	@Override
 	public final <T> Iterable<T> save(final Iterable<T> objects, final Class<T> type) {

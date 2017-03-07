@@ -64,8 +64,7 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 	private static final String DB_COL_VALID_START = "VALID_START_DT";	
 	private static final String XLS_COL_BODY = "Content Body";
 	private static final String XLS_COL_CATEGORY = "Category Code";
-	private static final String XLS_COL_CONTENT_CD = "Content Code";
-	private static final String XLS_COL_CONTENT_ID = "Content ID";
+	private static final String XLS_COL_CONTENT_CD = "Content ID";
 	private static final String XLS_COL_CONTENT_NBR = "Content Number";
 	private static final String XLS_COL_CSS = "Content CSS";
 	private static final String XLS_COL_HELPER = "Helper Text";
@@ -74,36 +73,40 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 	private static final Logger LOG = LoggerFactory.getLogger(Content.class);
 
 	@Column(name = DB_COL_CONTENT_ID, unique = true)
-	@ExcelColumn(XLS_COL_CONTENT_ID)
-	@ExcelColumnOrder(1)
 	@GeneratedValue(strategy = AUTO, generator = DB_SEQ_CONTENT)
 	@Id
 	@SequenceGenerator(name = DB_SEQ_CONTENT, sequenceName = DB_SEQ_CONTENT)
 	protected Long id;
 	@Column(name = DB_COL_PARENT, length = 4000)
-	@ExcelColumn(XLS_COL_PARENT)
-	@ExcelColumnOrder(2)
 	private Long parentId;
 	@Column(name = DB_COL_DISCRIMINATOR, updatable = false, insertable = false)
 	@ExcelColumn(XLS_COL_DISCRIMINATOR)
-	@ExcelColumnOrder(3)
+	@ExcelColumnOrder(1)
 	private String discriminator;
 	@Column(name = DB_COL_CONTENT_CD, length = 100, nullable = false, unique = true)
 	@ExcelColumn(XLS_COL_CONTENT_CD)
-	@ExcelColumnOrder(4)
+	@ExcelColumnOrder(2)
 	protected String contentCd;
+	@Column(name = DB_COL_CONTENT_NBR, length = 10)
+	@ExcelColumn(XLS_COL_CONTENT_NBR)
+	@ExcelColumnOrder(3)
+	protected String contentNumber;
 	@Column(name = DB_COL_NAME, length = 1000)
 	@ExcelColumn(XLS_COL_NAME)
-	@ExcelColumnOrder(5)
+	@ExcelColumnOrder(4)
 	protected String name;
 	@Column(name = DB_COL_DESCRIPTION, length = 4000)
 	@ExcelColumn(XLS_COL_DESCRIPTION)
-	@ExcelColumnOrder(6)
+	@ExcelColumnOrder(5)
 	protected String description;
-	@Column(name = DB_COL_CONTENT_NBR, length = 10)
-	@ExcelColumn(XLS_COL_CONTENT_NBR)
+	@Column(name = DB_COL_CATEGORY, length = 100)
+	@ExcelColumn(XLS_COL_CATEGORY)
+	@ExcelColumnOrder(6)
+	protected String category;
+	@Column(name = DB_COL_ORDER)
+	@ExcelColumn(XLS_COL_ORDER)
 	@ExcelColumnOrder(7)
-	protected String contentNumber;
+	protected Integer orderBy;
 	@Column(name = DB_COL_BODY, length = 4000, nullable = false)
 	@ExcelColumn(XLS_COL_BODY)
 	@ExcelColumnOrder(8)
@@ -116,26 +119,18 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 	@ExcelColumn(XLS_COL_HELPER)
 	@ExcelColumnOrder(10)
 	protected String helper;
-	@Column(name = DB_COL_CATEGORY, length = 100)
-	@ExcelColumn(XLS_COL_CATEGORY)
-	@ExcelColumnOrder(11)
-	protected String category;
 	@Column(name = DB_COL_FLAGS, length = 100)
 	@ExcelColumn(XLS_COL_FLAGS)
-	@ExcelColumnOrder(12)
+	@ExcelColumnOrder(11)
 	protected String flags;
-	@Column(name = DB_COL_ORDER)
-	@ExcelColumn(XLS_COL_ORDER)
-	@ExcelColumnOrder(13)
-	protected Integer orderBy;
 	@Column(name = DB_COL_VALID_START, nullable = false)
 	@ExcelColumn(XLS_COL_VALID_START)
-	@ExcelColumnOrder(14)
+	@ExcelColumnOrder(12)
 	@Temporal(DATE)
 	protected Date validStart = now();
 	@Column(name = DB_COL_VALID_END, nullable = false)
 	@ExcelColumn(XLS_COL_VALID_END)
-	@ExcelColumnOrder(15)
+	@ExcelColumnOrder(13)
 	@Temporal(DATE)
 	protected Date validEnd = max();
 
@@ -322,7 +317,20 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 
 	@Override
 	public final int compareTo(final Content o) {
-		return this.getContentCd().compareTo(o.getContentCd());
+		if (isNotNullOrEmpty(o)) {
+			if (isNotNullOrEmpty(o.getContentCd())) {
+				if (isNotNullOrEmpty(this.getContentCd())) {
+					return this.getContentCd().compareTo(o.getContentCd());	
+				} else {
+					LOG.debug("This object does not have a content code.");
+				}
+			} else {
+				LOG.debug("The comparison object does not have a content code.");
+			}
+		} else {
+			LOG.debug("The comparison object is null.");
+		}
+		return 0;
 	}
 	
 	@Override

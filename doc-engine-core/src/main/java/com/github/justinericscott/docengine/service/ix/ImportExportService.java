@@ -33,5 +33,5 @@ public interface ImportExportService {
 	 */
 	Iterable<? extends Content> importFromFile(final Class<? extends Content>[] types, final String path);
 	
-	<T> Iterable<T> importFromFile(final Class<T> type, final String path);
+	Iterable<?> importFromFile(final Class<?> type, final String path);
 }

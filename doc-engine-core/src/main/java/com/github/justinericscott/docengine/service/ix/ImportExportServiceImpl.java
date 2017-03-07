@@ -64,11 +64,11 @@ public class ImportExportServiceImpl implements ImportExportService {
 	}
 
 	@Override
-	public <T> Iterable<T> importFromFile(final Class<T> type, final String path) {
+	public Iterable<?> importFromFile(final Class<?> type, final String path) {
 		if (isNotNullOrEmpty(type)) {
-			final Collection<T> objects = (Collection<T>) _reader.read(type, get(path));
+			final Iterable<?> objects = _reader.read(type, get(path));
 			if (isNotNullOrEmpty(objects)) {
-				final Iterable<T> contents = _contents.save(objects, type);
+				final Iterable<?> contents = _contents.save(objects);
 				return contents;
 			} else {
 				LOG.warn("No objects where created from the provided Class and File path!");

@@ -39,10 +39,11 @@ public class ImportExportServiceTest extends AbstractTest {
 	public void a_ImportTest() {
 		if (_instances.deleteAll()) {
 			if (_contents.deleteAll()) {
-				Iterable<Content> objects = _service.importFromFile(Content.class, TEST_FILE_IMPORT);
+				final Iterable<?> objects = _service.importFromFile(Content.class, TEST_FILE_CONTENT);
 				assertNotNull(objects);
-				for (final Content o : objects) {
-					assertTrue(o.isValid(true));
+				for (final Object o : objects) {
+					final Content c = (Content) o;
+					assertTrue(c.isValid(true));
 					LOG.trace("Type of Content is {}.", o.getClass().getSimpleName());
 				}			
 			} else {
@@ -60,10 +61,5 @@ public class ImportExportServiceTest extends AbstractTest {
 		File file = _service.exportToFile(Content.class, TEST_FILE_EXPORT);
 		assertNotNull(file);
 		assertTrue(file.exists());		
-	}
-	
-	@Test
-	public void c_LiveContentTest() {
-		
 	}
 }

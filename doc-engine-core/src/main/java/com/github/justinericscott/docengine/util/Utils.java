@@ -220,7 +220,7 @@ public class Utils {
 	public static Class<?> find(final String name) {
 		if (isNotNullOrEmpty(name)) {
 			try {
-				return Class.forName(name);
+				return Class.forName(name, false, Content.class.getClassLoader());
 			} catch (final ClassNotFoundException e) {
 				LOG.error(String.format("Problem finding class: %s", name), e);
 			}

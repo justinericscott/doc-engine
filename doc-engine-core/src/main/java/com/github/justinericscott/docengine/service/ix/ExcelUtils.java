@@ -139,7 +139,7 @@ public class ExcelUtils {
 				if (!fields.isEmpty()) {
 					return fields;
 				} else {
-					LOG.debug(
+					LOG.trace(
 							"Collection is empty from attempting to obtain field names from row. Nothing matched the values in the class {} using the ExcelColumn annotation. Returning null.");
 				}
 			} else {

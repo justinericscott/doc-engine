@@ -1,11 +1,13 @@
 package com.github.justinericscott.docengine.service.ix;
 
 import static org.apache.poi.ss.usermodel.Cell.*;
+
 import static com.github.justinericscott.docengine.service.ix.ExcelUtils.*;
 import static com.github.justinericscott.docengine.util.Utils.*;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -34,7 +36,7 @@ class ExcelReaderServiceImpl implements ExcelReaderService {
 	}
 
 	@Override
-	public final <T> Iterable<T> read(final Class<T> clazz, final File file) {
+	public final Iterable<?> read(final Class<?> clazz, final File file) {
 		if (isNotNullOrEmpty(clazz)) {
 			try (final Workbook wb = getExcelWorkbook(file)) {
 				if (isNotNullOrEmpty(wb)) {
@@ -44,7 +46,7 @@ class ExcelReaderServiceImpl implements ExcelReaderService {
 						while (idx < sheets) {
 							final Sheet sheet = wb.getSheetAt(idx);
 							if (sheet.getSheetName().equals(getExcelSheetNameFromClass(clazz))) {
-								final Iterable<T> objects = createObjects(clazz, sheet);
+								final Iterable<?> objects = createObjects(clazz, sheet);
 								if (isNotNullOrEmpty(objects)) {
 									return objects;
 								}
@@ -72,9 +74,9 @@ class ExcelReaderServiceImpl implements ExcelReaderService {
 		return null;
 	}
 
-	final <T> Iterable<T> createObjects(final Class<T> clazz, final Sheet sheet) {
+	final Iterable<?> createObjects(final Class<?> clazz, final Sheet sheet) {
 		if (sheet != null) {
-			final Collection<T> list = new ArrayList<T>(sheet.getPhysicalNumberOfRows());
+			final Collection<Object> list = new ArrayList<Object>(sheet.getPhysicalNumberOfRows());
 			final Iterator<Row> rows = sheet.rowIterator();
 			Collection<String> fields = null;
 			while (rows.hasNext()) {
@@ -98,12 +100,12 @@ class ExcelReaderServiceImpl implements ExcelReaderService {
 		return null;
 	}
 
-	final <T> T createObject(final Class<T> type, final Row row, final Iterable<String> fields) {
+	final Object createObject(final Class<?> clazz, final Row row, final Iterable<String> fields) {
 		if (row != null) {
-			final T object = instantiate(type);
-			if (isNotNullOrEmpty(object) && type.isInstance(object)) {
-				final List<String> names = (List<String>) fields;
-				final int size = names.size();
+			final List<String> names = (List<String>) fields;
+			final int size = names.size();
+			if (isNotNullOrEmpty(clazz)) {
+				final Object object = instantiate(clazz);
 				int idx = 0;
 				while (idx < size) {
 					final String name = names.get(idx);
@@ -112,10 +114,27 @@ class ExcelReaderServiceImpl implements ExcelReaderService {
 					getWriteMethodAndInvoke(object, name, value);
 					idx++;
 				}
-				return type.cast(object);
+				return clazz.cast(object);				
+			} else {
+				final int col = names.indexOf("discriminator");
+				if (col >= 0) {
+					final Cell d = row.getCell(col);
+					final String discriminator = d.getStringCellValue();
+					final Class<?> type = find("com.github.justinericscott.docengine.models.Content$" + discriminator);				
+					final Object object = instantiate(type);
+					int idx = 0;
+					while (idx < size) {
+						final String name = names.get(idx);
+						final Cell cell = row.getCell(idx, MissingCellPolicy.RETURN_NULL_AND_BLANK);
+						final Object value = getCellValue(cell);
+						getWriteMethodAndInvoke(object, name, value);
+						idx++;
+					}
+					return type.cast(object);
+				}				
 			}
 		} else {
-			_LOG.warn("The row must not be null!\nCLASS: {}", type.getName());
+			_LOG.warn("The row must not be null!");
 		}
 		return null;
 	}

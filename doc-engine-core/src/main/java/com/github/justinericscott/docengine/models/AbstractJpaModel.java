@@ -20,6 +20,10 @@ import org.hibernate.annotations.UpdateTimestamp;
  */
 @MappedSuperclass
 public abstract class AbstractJpaModel {
+	private static final String DB_COL_CREATED_BY = "CREATED_BY";
+	private static final String DB_COL_CREATED_DT = "CREATED_DT";
+	private static final String DB_COL_UPDATED_BY = "UPDATED_BY";
+	private static final String DB_COL_UPDATED_DT = "UPDATED_DT";
 	protected static final String CONTENT_FLAG_OPTIONAL = "OPT";
 	protected static final String CONTENT_FLAG_PARENT = "PARENT";
 	protected static final String CSS_TYPE_TEXT = "text/css";
@@ -33,15 +37,11 @@ public abstract class AbstractJpaModel {
 	protected static final String JPA_MAPPED_BY_DOCUMENT = "document";
 	protected static final String JPA_MAPPED_BY_SECTION = "section";
 	protected static final String XLS_COL_DESCRIPTION = "Description";
-	protected static final String XLS_COL_DISCRIMINATOR = "Discriminator";
 	protected static final String XLS_COL_FLAGS = "Flags";
 	protected static final String XLS_COL_NAME = "Name";
 	protected static final String XLS_COL_ORDER = "Order By";
 	protected static final String XLS_COL_PARENT = "Parent ID";
-	private static final String DB_COL_CREATED_BY = "CREATED_BY";
-	private static final String DB_COL_CREATED_DT = "CREATED_DT";
-	private static final String DB_COL_UPDATED_BY = "UPDATED_BY";
-	private static final String DB_COL_UPDATED_DT = "UPDATED_DT";
+	public static final String XLS_COL_DISCRIMINATOR = "Discriminator";
 
 	@Column(name = DB_COL_CREATED_BY, nullable = false)
 	private Long createdBy = -1L;

@@ -82,6 +82,8 @@ public interface ContentService {
 
 	Content save(Content content);
 	
+	Iterable<?> save(Iterable<?> objects);
+	
 	<T> Iterable<T> save(final Iterable<T> objects, Class<T> type);
 	
 	Contents save(Contents contents);
