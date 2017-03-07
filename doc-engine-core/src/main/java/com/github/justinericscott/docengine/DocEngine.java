@@ -87,23 +87,4 @@ public class DocEngine {
 			LOG.info("Document Engine is not running!");
 		}
 	}
-
-//	public static final class Constants {
-//		public static final String AUTOWIRE_QUALIFIER_DOCUMENT = "document";
-//		public static final String AUTOWIRE_QUALIFIER_SECTION = "section";
-//		public static final String AUTOWIRE_QUALIFIER_CLAUSE = "clause";
-//		public static final String AUTOWIRE_QUALIFIER_PARAGRAPH = "paragraph";
-//		public static final String AUTOWIRE_QUALIFIER_JDBC_TX = "jdbcTransactionManager";
-//		public static final String AUTOWIRE_QUALIFIER_ORM_TX = "transactionManager";
-//		public static final String AUTOWIRE_QUALIFIER_JDBC = "jdbc";
-//		public static final String AUTOWIRE_QUALIFIER_ORM = "orm";
-//		public static final String AUTOWIRE_QUALIFIER_ENDPOINT = "endpoint";
-//
-//		public static final String ENGINE_CONTROL_STOP = "stop";
-//
-//		public static final String PROPERTY_DEFAULT = "classpath:default.properties";
-//		public static final String PROPERTY_CUSTOM = "file:${DOC_ENGINE_HOME}/config/custom.properties";
-//
-//		public static final String SYSTEM_VARIABLE_FOR_HOME = "DOC_ENGINE_HOME";
-//	}
 }

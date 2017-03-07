@@ -60,7 +60,7 @@ final class ContentServiceImpl implements ContentService {
 	private ParagraphRepository _paragraphs;
 
 	ContentServiceImpl() {
-		LOG.debug("Creating new Content Service.");
+		LOG.trace("Creating new Content Service.");
 	}
 
 	@Override

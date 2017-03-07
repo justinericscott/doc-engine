@@ -48,7 +48,7 @@ class WebConfig extends WebMvcConfigurerAdapter {
 
 	@Override
 	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-		LOG.debug("Adding Mapping Jackson 2 HTTP Message Converter...");
+		LOG.trace("Adding Mapping Jackson 2 HTTP Message Converter...");
 		converters.add(new MappingJackson2HttpMessageConverter(objectMapper()));
 	}
 
@@ -58,7 +58,7 @@ class WebConfig extends WebMvcConfigurerAdapter {
 			final StringBuilder endpoint = new StringBuilder();
 			endpoint.append(getHTTPPrefix()).append(getURL()).append(getPort()).append(getContextPath());
 			this.endpoint = endpoint.toString();
-			LOG.debug("Found the endpoint {}.", this.endpoint);
+			LOG.trace("Found the endpoint {}.", this.endpoint);
 		}
 		return this.endpoint;
 	}
@@ -73,7 +73,7 @@ class WebConfig extends WebMvcConfigurerAdapter {
 
 	private String getContextPath() {
 		final String path = _server.getContextPath();
-		LOG.debug("Found the context path {}.", path);
+		LOG.trace("Found the context path {}.", path);
 		return path;
 	}
 
@@ -86,16 +86,16 @@ class WebConfig extends WebMvcConfigurerAdapter {
 
 	private String getPort() {
 		if (isNotNullOrEmpty(port)) {
-			LOG.debug("Found the port number {}.", port);
+			LOG.trace("Found the port number {}.", port);
 		} else {
 			port = String.valueOf(_server.getPort());
-			LOG.debug("Found the port number {}.", port);
+			LOG.trace("Found the port number {}.", port);
 			if (Integer.valueOf(port) <= 0) {
 				port = _environment.getProperty("system.port");
-				LOG.debug("Found the port number {}.", port);
+				LOG.trace("Found the port number {}.", port);
 				if (!isNotNullOrEmpty(port)) {
 					port = _environment.getProperty("server.port");
-					LOG.debug("Found the port number {}.", port);
+					LOG.trace("Found the port number {}.", port);
 				}
 			}
 		}
@@ -113,7 +113,7 @@ class WebConfig extends WebMvcConfigurerAdapter {
 					final String n = address.getHostName();
 					if (isNotNullOrEmpty(n)) {
 						name = n;
-						LOG.debug("Found host name: {}.", name);
+						LOG.trace("Found host name: {}.", name);
 					}
 				}
 			}

@@ -58,7 +58,7 @@ final class InstanceRestController<T, L> {
 	private RestUtils _utils;
 
 	InstanceRestController() {
-		LOG.debug("Creating new Instance REST Controller.");
+		LOG.trace("Creating new Instance REST Controller.");
 	}
 
 	@RestController
@@ -66,7 +66,7 @@ final class InstanceRestController<T, L> {
 	final class DocumentInstanceRestController {
 
 		DocumentInstanceRestController() {
-			LOG.debug("Creating new Document Instance REST Controller.");
+			LOG.trace("Creating new Document Instance REST Controller.");
 		}
 
 		@RequestMapping(method = GET, value = DOCUMENTS)
@@ -185,7 +185,7 @@ final class InstanceRestController<T, L> {
 	final class SectionInstanceRestController {
 
 		SectionInstanceRestController() {
-			LOG.debug("Creating new Section Instance REST Controller.");
+			LOG.trace("Creating new Section Instance REST Controller.");
 		}
 
 		@RequestMapping(method = GET, value = BY_PROJECT_ID + BY_CODE)
@@ -297,7 +297,7 @@ final class InstanceRestController<T, L> {
 	final class ClauseInstanceRestController {
 
 		ClauseInstanceRestController() {
-			LOG.debug("Creating new Clause Instance REST Controller.");
+			LOG.trace("Creating new Clause Instance REST Controller.");
 		}
 
 		@RequestMapping(method = GET, value = BY_PROJECT_ID + BY_CODE)
@@ -412,7 +412,7 @@ final class InstanceRestController<T, L> {
 	final class ParagraphInstanceRestController {
 
 		ParagraphInstanceRestController() {
-			LOG.debug("Creating new Paragraph Instance REST Controller.");
+			LOG.trace("Creating new Paragraph Instance REST Controller.");
 		}
 
 		@RequestMapping(method = GET, value = BY_PROJECT_ID + BY_CODE)

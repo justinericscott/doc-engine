@@ -23,7 +23,7 @@ final class BusinessDataServiceImpl implements BusinessDataService {
 	private BusinessDataRepository _business;
 	
 	BusinessDataServiceImpl() {
-		LOG.debug("Creating new Business Data Service.");
+		LOG.trace("Creating new Business Data Service.");
 	}
 
 	@Override

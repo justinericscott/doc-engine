@@ -62,7 +62,7 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	private BusinessDataService _business;
 
 	TokenDictionaryServiceImpl() {
-		LOG.debug("Creating new Token Dictionary Service.");
+		LOG.trace("Creating new Token Dictionary Service.");
 	}
 	
 	public final void clear() {

@@ -57,7 +57,7 @@ final class ContentRestController {
 	private RestUtils _utils;
 
 	ContentRestController() {
-		LOG.debug("Creating new Content REST Controller.");
+		LOG.trace("Creating new Content REST Controller.");
 	}
 
 	@RestController
@@ -65,7 +65,7 @@ final class ContentRestController {
 	final class DocumentRestController {
 
 		DocumentRestController() {
-			LOG.debug("Creating new Document REST Controller.");
+			LOG.trace("Creating new Document REST Controller.");
 		}
 
 		@RequestMapping(method = DELETE, value = BY_ID)
@@ -202,7 +202,7 @@ final class ContentRestController {
 	final class SectionRestController {
 
 		SectionRestController() {
-			LOG.debug("Creating new Section REST Controller.");
+			LOG.trace("Creating new Section REST Controller.");
 		}
 
 		@RequestMapping(method = GET, value = BY_CODE)
@@ -317,7 +317,7 @@ final class ContentRestController {
 	final class ClauseRestController {
 
 		ClauseRestController() {
-			LOG.debug("Creating new Clause REST Controller.");
+			LOG.trace("Creating new Clause REST Controller.");
 		}
 
 		@RequestMapping(method = GET, value = BY_CODE)
@@ -432,7 +432,7 @@ final class ContentRestController {
 	final class ParagraphRestController {
 
 		ParagraphRestController() {
-			LOG.debug("Creating new Paragraph REST Controller.");
+			LOG.trace("Creating new Paragraph REST Controller.");
 		}
 
 		@RequestMapping(method = GET, value = BY_CODE)

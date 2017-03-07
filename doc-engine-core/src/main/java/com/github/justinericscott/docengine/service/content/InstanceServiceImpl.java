@@ -50,7 +50,7 @@ final class InstanceServiceImpl implements InstanceService {
 	private ParagraphInstanceRepository _paragraphs;
 
 	InstanceServiceImpl() {
-		LOG.debug("Creating new Instance Service.");
+		LOG.trace("Creating new Instance Service.");
 	}
 
 	@Override
@@ -377,7 +377,7 @@ final class InstanceServiceImpl implements InstanceService {
 				}
 			}
 		} else {
-			LOG.debug("The ID of the parent must not be null, empty or zero!");
+			LOG.warn("The ID of the parent must not be null, empty or zero!");
 		}
 		return null;
 	}

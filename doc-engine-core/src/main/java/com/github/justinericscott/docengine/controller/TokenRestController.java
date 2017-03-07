@@ -35,7 +35,7 @@ final class TokenRestController {
 	private TokenDictionaryService _dictionary;
 
 	TokenRestController() {
-		LOG.debug("Creating new Token REST Controller.");
+		LOG.trace("Creating new Token REST Controller.");
 	}
 	
 	@RequestMapping(method = GET, value = TOKENS)
