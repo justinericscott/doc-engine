@@ -70,7 +70,7 @@ class LogicServiceImpl implements LogicService {
 			if (isNotNullOrEmpty(response)) {
 				return response;
 			} else {
-				LOG.debug("No response from logic service after execution.");
+				LOG.trace("No response from logic service after execution.");
 			}
 		} else {
 			LOG.warn("Tokens must not be null or empty!");

@@ -52,7 +52,16 @@ public class LogicServiceTest extends AbstractTest {
 	private LogicService service;
 
 	@Test
-	public void a_SimpleDecisionTableTest() {
+	public void a_LoadTest() {
+		final File file = getFileFromClasspath(LOGIC_TABLE);
+		assertNotNull(file);
+		assertTrue(file.exists());
+		service.load(file);
+		service.load(null);
+	}
+	
+	@Test
+	public void b_StatelessDecisionTableTest() {
 		final File file = getFileFromClasspath(LOGIC_TABLE);
 		assertNotNull(file);
 		assertTrue(file.exists());
@@ -63,6 +72,12 @@ public class LogicServiceTest extends AbstractTest {
 		assertNotNull(results);
 		assertTrue(results.iterator().hasNext());
 		assertEquals(EXPECTED, results.iterator().next());
+		project.setProjectNumber("NOPE");
+		assertNull(service.stateless(project));
+		service.load(null);
+		assertNull(service.stateless(project));
+		service.load(file);
+		assertNull(service.stateless(null));
 	}
 
 	@Test
