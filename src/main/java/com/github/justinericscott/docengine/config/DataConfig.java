@@ -153,6 +153,7 @@ class DataConfig {
 	public JpaVendorAdapter getJpaVendorAdaptor() {
 		final HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
 		jpaVendorAdapter.setGenerateDdl(true);
+		jpaVendorAdapter.setShowSql(true);
 		return jpaVendorAdapter;
 	}
 	
