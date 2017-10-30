@@ -293,7 +293,7 @@ public class TokenDefinition extends AbstractJpaModel implements Comparable<Toke
 		return this.getTokenCd().compareTo(o.getTokenCd());
 	}
 	
-	@Override
+//	@Override
 	public String toHTML() {		
 		return toString();
 	}

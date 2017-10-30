@@ -98,5 +98,5 @@ public abstract class AbstractJpaModel {
 		this.updatedDt = updatedDt;
 	}
 	
-	abstract String toHTML();
+//	abstract String toHTML();
 }

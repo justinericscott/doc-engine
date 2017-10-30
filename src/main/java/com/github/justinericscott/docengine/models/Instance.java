@@ -268,7 +268,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 		return this.getContent().getContentCd().compareTo(o.getContent().getContentCd());
 	}
 	
-	@Override
+//	@Override
 	public String toHTML() {		
 		return getBody();
 	}

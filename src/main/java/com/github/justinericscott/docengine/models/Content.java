@@ -333,7 +333,7 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 		return 0;
 	}
 	
-	@Override
+//	@Override
 	public String toHTML() {
 		return body;
 	}
