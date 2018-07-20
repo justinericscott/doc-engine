@@ -44,14 +44,14 @@ class BusinessDataRepositoryImpl implements BusinessDataRepository {
 	}
 
 	@Override
-	public final void execute(final String sql) {
+	public void execute(final String sql) {
 		if (isNotNullOrEmpty(sql)) {
 			LOG.debug("About To Execute SQL: " + sql);
 			jdbc.execute(sql);			
 		}
 	}
 
-	public final void execute(final String[] script) {
+	public void execute(final String[] script) {
 		if (isNotNullOrEmpty(script)) {
 			LOG.debug("About to execute script.");
 			for (final String s : script) {
@@ -61,7 +61,7 @@ class BusinessDataRepositoryImpl implements BusinessDataRepository {
 	}
 
 	@Override
-	public final List<Map<String, Object>> queryForList(final String sql) {
+	public List<Map<String, Object>> queryForList(final String sql) {
 		if (isNotNullOrEmpty(sql)) {
 			try {
 				return jdbc.queryForList(sql);		
@@ -73,7 +73,7 @@ class BusinessDataRepositoryImpl implements BusinessDataRepository {
 	}
 
 	@Override
-	public final Map<String, Object> queryForMap(final String sql) {
+	public Map<String, Object> queryForMap(final String sql) {
 		if (isNotNullOrEmpty(sql)) {
 			try {
 				return jdbc.queryForMap(sql);
@@ -85,7 +85,7 @@ class BusinessDataRepositoryImpl implements BusinessDataRepository {
 	}
 
 	@Override
-	public final int update(final String sql) {
+	public int update(final String sql) {
 		if (isNotNullOrEmpty(sql)) {
 			try {
 				return jdbc.update(sql);
@@ -97,7 +97,7 @@ class BusinessDataRepositoryImpl implements BusinessDataRepository {
 	}
 
 	@Override
-	public final Integer[] update(final String[] script) {
+	public Integer[] update(final String[] script) {
 		if (isNotNullOrEmpty(script)) {
 			final List<Integer> result = new ArrayList<Integer>(script.length);
 			LOG.debug("About to execute script.");

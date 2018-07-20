@@ -22,7 +22,8 @@ import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import com.github.justinericscott.docengine.models.Content;
 import com.github.justinericscott.docengine.models.Content.Clause;
@@ -37,7 +38,8 @@ import com.github.justinericscott.docengine.models.TokenDefinition;
  *         TODO: Description
  */
 @SpringBootTest(properties = { "server.port=8087" }, webEnvironment = DEFINED_PORT)
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
+@ContextConfiguration
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Ignore
 public class AbstractTest {

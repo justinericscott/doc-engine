@@ -1,4 +1,4 @@
-package com.github.justinericscott.docengine.repository.content.template;
+package com.github.justinericscott.docengine.repository.content;
 
 import static org.junit.Assert.*;
 
@@ -32,22 +32,24 @@ public class ContentRepositoryTest extends AbstractTest {
 
 	@Test
 	public void a_SaveTest() {
-		
 		// Happy path...		
 		Content content = makeTestContent();
 		content = _contents.save(content);
 		assertNotNull(content);
 		assertTrue(content.isValid(true));
-		
 		Collection<Content> contents = makeTestContents(7);
-		contents = (Collection<Content>) _contents.save(contents);
+		contents = (Collection<Content>) _contents.saveAll(contents);
 		assertNotNull(contents);
 		assertFalse(contents.isEmpty());
 		contents.forEach(c -> {
 			assertTrue(c.isValid(true));
 		});
-		
+	}
+	
+	@Test
+	public void ax_SaveBreakTest() {
 		// Break it...
+		Content content = null;
 		try {
 			_contents.save((Content) null);
 			fail("Should throw exception....");
@@ -74,13 +76,15 @@ public class ContentRepositoryTest extends AbstractTest {
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}		
+		Collection<Content> contents = makeTestContents(7);
+		_contents.saveAll(contents);
 		try {
 			Collection<Content> copies = new TreeSet<Content>();
 			copies.addAll(contents);
 			copies.forEach(c -> {
 				c.setId(null);
 			});
-			copies = (Collection<Content>) _contents.save(copies);
+			copies = (Collection<Content>) _contents.saveAll(copies);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
@@ -89,42 +93,42 @@ public class ContentRepositoryTest extends AbstractTest {
 
 	@Test
 	public void b_FindTest() {
-		
 		// Happy path...
 		Content content = _contents.save(makeTestContent());
 		final Long id = content.getId();
 		final String contentCd = content.getContentCd();
-		content = _contents.findOne(id);
+		content = _contents.findById(id).get();
 		assertTrue(content.isValid(true));
-
-		content = _contents.findByContentCd(contentCd);
+		content = _contents.findOptionalByContentCd(contentCd).get();
 		assertTrue(content.isValid(true));
 		assertEquals(contentCd, content.getContentCd());
-
 		Collection<Content> contents = (Collection<Content>) _contents.findByContentCdLike("%TEST%");
 		assertNotNull(contents);
 		assertFalse(contents.isEmpty());
 		contents.forEach(c -> {
 			assertTrue(c.isValid(true));
 		});
-
 		contents = (Collection<Content>) _contents.findAll();
 		assertNotNull(contents);
 		assertFalse(contents.isEmpty());
 		contents.forEach(c -> {
 			assertTrue(c.isValid(true));
 		});
+	}
 
+	@Test
+	public void bx_FindBreakTest() {
 		// Break it...		
-		assertNull(_contents.findOne(Long.MIN_VALUE));
-		assertNull(_contents.findOne(Long.MAX_VALUE));
-		assertNull(_contents.findByContentCd("Snicklefritz"));
+		Collection<Content> contents = null;
+		assertFalse(_contents.findById(Long.MIN_VALUE).isPresent());
+		assertFalse(_contents.findById(Long.MAX_VALUE).isPresent());
+		assertFalse(_contents.findOptionalByContentCd("Snicklefritz").isPresent());
 		contents = (Collection<Content>) _contents.findByContentCdLike("%Snicklefritz%");
 		assertTrue(contents.isEmpty());
 		contents = (Collection<Content>) _contents.findByContentCdLike("");
 		assertTrue(contents.isEmpty());
 		try {
-			_contents.findOne((Long) null);
+			_contents.findById((Long) null).get();
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
@@ -136,7 +140,7 @@ public class ContentRepositoryTest extends AbstractTest {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
 		}
 	}
-
+	
 	@Test
 	public void c_DiscriminatorTest() {
 		final String contentCd = "CONTENT_DISCRIMINATOR_TEST_" + uuid();
@@ -149,33 +153,33 @@ public class ContentRepositoryTest extends AbstractTest {
 	
 	@Test
 	public void x_DeleteTest() {
-		
 		// Happy path...
 		Content content = _contents.save(makeTestContent());
 		final Long id = content.getId();
-		_contents.delete(id);
-		assertNull(_contents.findOne(id));
-
+		_contents.deleteById(id);
+		assertFalse(_contents.findById(id).isPresent());
 		content = _contents.save(makeTestContent());
 		_contents.delete(content);
-		assertNull(_contents.findOne(content.getId()));
-
+		assertFalse(_contents.findById(content.getId()).isPresent());
 		Collection<Content> contents = makeTestContents(7);
-		contents = (Collection<Content>) _contents.save(contents);
+		contents = (Collection<Content>) _contents.saveAll(contents);
 		assertNotNull(contents);
 		assertFalse(contents.isEmpty());
 		contents.forEach(c -> {
 			assertTrue(c.isValid(true));
 		});
-		_contents.delete(contents);
+		_contents.deleteAll(contents);
 		contents.forEach(c -> {
-			assertNull(_contents.findOne(c.getId()));
+			assertFalse(_contents.findById(c.getId()).isPresent());
 		});
 
 //		_contents.deleteAll();
 //		contents = (Collection<ContentJpaImpl>) _contents.findAll();
 //		assertTrue(contents.isEmpty());
-		
+	}
+	
+	@Test
+	public void xx_DeleteBreakTest() {
 		// Break it...
 		try {
 			_contents.delete(new Content());
@@ -184,7 +188,7 @@ public class ContentRepositoryTest extends AbstractTest {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}		
 		try {
-			_contents.delete((Long) null);
+			_contents.deleteById((Long) null);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());

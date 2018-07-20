@@ -120,147 +120,147 @@ public class TokenDefinition extends AbstractJpaModel implements Comparable<Toke
 		}		
 	}
 
-	public final Long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public final void setId(final Long id) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
-	public final String getName() {
+	public String getName() {
 		return name;
 	}
 
-	public final void setName(final String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
-	public final String getTokenCd() {
+	public String getTokenCd() {
 		return tokenCd;
 	}
 
-	public final void setTokenCd(final String tokenCd) {
+	public void setTokenCd(final String tokenCd) {
 		this.tokenCd = tokenCd;
 	}
 
-	public final String getDocumentCd() {
+	public String getDocumentCd() {
 		return documentCd;
 	}
 
-	public final void setDocumentCd(final String documentCd) {
+	public void setDocumentCd(final String documentCd) {
 		this.documentCd = documentCd;
 	}
 
-	public final String getPhase() {
+	public String getPhase() {
 		return phase;
 	}
 
-	public final void setPhase(final String phase) {
+	public void setPhase(final String phase) {
 		this.phase = phase;
 	}
 
-	public final String getDescription() {
+	public String getDescription() {
 		return description;
 	}
 
-	public final void setDescription(final String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
-	public final String getAltText() {
+	public String getAltText() {
 		return altText;
 	}
 
-	public final void setAltText(final String altText) {
+	public void setAltText(final String altText) {
 		this.altText = altText;
 	}
 
-	public final String getFlags() {
+	public String getFlags() {
 		return flags;
 	}
 
-	public final void setFlags(final String flags) {
+	public void setFlags(final String flags) {
 		this.flags = flags;
 	}
 
-	public final Boolean isXable() {
+	public Boolean isXable() {
 		return isXable;
 	}
 
-	public final void setIsXable(final Boolean isXable) {
+	public void setIsXable(final Boolean isXable) {
 		this.isXable = isXable;
 	}
 
-	public final Boolean isRoman() {
+	public Boolean isRoman() {
 		return isRoman;
 	}
 
-	public final void setIsRoman(final Boolean isRoman) {
+	public void setIsRoman(final Boolean isRoman) {
 		this.isRoman = isRoman;
 	}
 
-	public final String getEntity() {
+	public String getEntity() {
 		return entity;
 	}
 
-	public final void setEntity(final String entity) {
+	public void setEntity(final String entity) {
 		this.entity = entity;
 	}
 
-	public final String getAttribute() {
+	public String getAttribute() {
 		return attribute;
 	}
 
-	public final void setAttribute(final String attribute) {
+	public void setAttribute(final String attribute) {
 		this.attribute = attribute;
 	}
 
-	public final String getWhere() {
+	public String getWhere() {
 		return where;
 	}
 
-	public final void setWhere(final String where) {
+	public void setWhere(final String where) {
 		this.where = where;
 	}
 
-	public final String getProcess() {
+	public String getProcess() {
 		return process;
 	}
 
-	public final void setProcess(final String process) {
+	public void setProcess(final String process) {
 		this.process = process;
 	}
 
-	public final String getTask() {
+	public String getTask() {
 		return task;
 	}
 
-	public final void setTask(final String task) {
+	public void setTask(final String task) {
 		this.task = task;
 	}
 
-	public final String getLabel() {
+	public String getLabel() {
 		return label;
 	}
 
-	public final void setLabel(final String label) {
+	public void setLabel(final String label) {
 		this.label = label;
 	}
 
-	public final String getInstructions() {
+	public String getInstructions() {
 		return instructions;
 	}
 
-	public final void setInstructions(final String instructions) {
+	public void setInstructions(final String instructions) {
 		this.instructions = instructions;
 	}
 
-	public final boolean isValid() {
+	public boolean isValid() {
 		return isValid(false);
 	}
 
-	public final boolean isValid(final boolean checkForId) {
+	public boolean isValid(final boolean checkForId) {
 		if (checkForId && !isNotNullOrZero(id)) {
 			LOG.warn("ID must not be null or zero!");
 			return false;
@@ -289,7 +289,7 @@ public class TokenDefinition extends AbstractJpaModel implements Comparable<Toke
 	}
 
 	@Override
-	public final int compareTo(final TokenDefinition o) {
+	public int compareTo(final TokenDefinition o) {
 		return this.getTokenCd().compareTo(o.getTokenCd());
 	}
 	
@@ -299,7 +299,7 @@ public class TokenDefinition extends AbstractJpaModel implements Comparable<Toke
 	}
 
 	@Override
-	public final String toString() {
+	public String toString() {
 		final String result = "Code - %s: Name - %s: select %s from %s where %s";
 		return String.format(result, tokenCd, name, attribute, entity, where);
 	}

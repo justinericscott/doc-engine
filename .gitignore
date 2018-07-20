@@ -4,3 +4,4 @@
 .classpath
 release.properties
 /logs/
+/bin/

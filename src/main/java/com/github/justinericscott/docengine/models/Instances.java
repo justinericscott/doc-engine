@@ -36,24 +36,24 @@ public class Instances {
 		setInstances(instances);
 	}
 
-//	public final Instance[] getInstances() {
+//	public Instance[] getInstances() {
 //		return instances;
 //	}
 
 	@JsonIgnore
-	public final Collection<Instance> getInstances() {
+	public Collection<Instance> getInstances() {
 		if (isNotNullOrEmpty(instances)) {
 			return Arrays.asList(instances);
 		}
 		return null;
 	}
 
-//	public final void setInstances(final Instance[] instances) {
+//	public void setInstances(final Instance[] instances) {
 //		this.instances = instances;
 //	}
 
 	@JsonIgnore
-	public final void setInstances(final Collection<Instance> instances) {
+	public void setInstances(final Collection<Instance> instances) {
 		if (isNotNullOrEmpty(instances)) {
 			this.instances = instances.toArray(new Instance[instances.size()]);
 		}
@@ -77,24 +77,24 @@ public class Instances {
 			setDocuments(documents);
 		}
 
-//		public final DocumentInstance[] getDocuments() {
+//		public DocumentInstance[] getDocuments() {
 //			return documents;
 //		}
 
 		@JsonIgnore
-		public final Collection<DocumentInstance> getDocumentsList() {
+		public Collection<DocumentInstance> getDocumentsList() {
 			if (isNotNullOrEmpty(documents)) {
 				return (Collection<DocumentInstance>) Arrays.asList(documents);
 			}
 			return null;
 		}
 
-//		public final void setDocuments(final DocumentInstance[] documents) {
+//		public void setDocuments(final DocumentInstance[] documents) {
 //			this.documents = documents;
 //		}
 
 		@JsonIgnore
-		public final void setDocuments(final Collection<DocumentInstance> documents) {
+		public void setDocuments(final Collection<DocumentInstance> documents) {
 			if (isNotNullOrEmpty(documents)) {
 				this.documents = documents.toArray(new DocumentInstance[documents.size()]);
 			}
@@ -119,24 +119,24 @@ public class Instances {
 			setSections(sections);
 		}
 
-//		public final SectionInstance[] getSections() {
+//		public SectionInstance[] getSections() {
 //			return sections;
 //		}
 
 		@JsonIgnore
-		public final Collection<SectionInstance> getSectionsList() {
+		public Collection<SectionInstance> getSectionsList() {
 			if (isNotNullOrEmpty(sections)) {
 				return Arrays.asList(sections);
 			}
 			return null;
 		}
 
-//		public final void setSections(final SectionInstance[] sections) {
+//		public void setSections(final SectionInstance[] sections) {
 //			this.sections = sections;
 //		}
 
 		@JsonIgnore
-		public final void setSections(final Collection<SectionInstance> sections) {
+		public void setSections(final Collection<SectionInstance> sections) {
 			if (isNotNullOrEmpty(sections)) {
 				this.sections = sections.toArray(new SectionInstance[sections.size()]);
 			}
@@ -161,24 +161,24 @@ public class Instances {
 			setClauses(clauses);
 		}
 
-//		public final ClauseInstance[] getClauses() {
+//		public ClauseInstance[] getClauses() {
 //			return this.clauses;
 //		}
 
 		@JsonIgnore
-		public final Collection<ClauseInstance> getClausesList() {
+		public Collection<ClauseInstance> getClausesList() {
 			if (isNotNullOrEmpty(clauses)) {
 				return Arrays.asList(clauses);	
 			}
 			return null;
 		}
 
-//		public final void setClauses(final ClauseInstance[] clauses) {
+//		public void setClauses(final ClauseInstance[] clauses) {
 //			this.clauses = clauses;
 //		}
 
 		@JsonIgnore
-		public final void setClauses(final Collection<ClauseInstance> clauses) {
+		public void setClauses(final Collection<ClauseInstance> clauses) {
 			if (isNotNullOrEmpty(clauses)) {
 				this.clauses = clauses.toArray(new ClauseInstance[clauses.size()]);	
 			}		
@@ -203,24 +203,24 @@ public class Instances {
 			setParagraphs(paragraphs);
 		}
 
-//		public final ParagraphInstance[] getParagraphs() {
+//		public ParagraphInstance[] getParagraphs() {
 //			return paragraphs;
 //		}
 
 		@JsonIgnore
-		public final Collection<ParagraphInstance> getParagraphsList() {
+		public Collection<ParagraphInstance> getParagraphsList() {
 			if (isNotNullOrEmpty(paragraphs)) {
 				return Arrays.asList(paragraphs);
 			}
 			return null;
 		}
 
-//		public final void setParagraphs(final ParagraphInstance[] paragraphs) {
+//		public void setParagraphs(final ParagraphInstance[] paragraphs) {
 //			this.paragraphs = paragraphs;
 //		}
 
 		@JsonIgnore
-		public final void setParagraphs(final Collection<ParagraphInstance> paragraphs) {
+		public void setParagraphs(final Collection<ParagraphInstance> paragraphs) {
 			if (isNotNullOrEmpty(paragraphs)) {
 				this.paragraphs = paragraphs.toArray(new ParagraphInstance[paragraphs.size()]);
 			}

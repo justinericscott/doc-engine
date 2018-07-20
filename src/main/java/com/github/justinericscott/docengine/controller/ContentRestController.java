@@ -86,10 +86,20 @@ final class ContentRestController {
 			if (isNotNullOrEmpty(contents)) {
 				return createResponseForSuccess(contents);
 			} else {
-				return createResponseForNoContent(_utils.getURI(_utils.getDestination(CONTENTS)), contents);
+				return createResponseForNoContent(_utils.getURI(_utils.getDestination(CONTENT + DOCUMENT + DOCUMENTS)), contents);
 			}
 		}
 
+//		@RequestMapping(method = GET, path = DOCUMENTS + IS_EAGER_KIDS)
+//		final ResponseEntity<Documents> findAll(@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
+//			final Documents contents = _contents.findAll(Documents.class, eagerKids);
+//			if (isNotNullOrEmpty(contents)) {
+//				return createResponseForSuccess(contents);
+//			} else {
+//				return createResponseForNoContent(_utils.getURI(_utils.getDestination(CONTENT + DOCUMENT + DOCUMENTS)), contents);
+//			}
+//		}
+		
 		@RequestMapping(method = GET, value = BY_CODE)
 		final ResponseEntity<Document> findByCode(@PathVariable(PARAM_CODE) final String code) {
 			final Document document = _contents.findByCode(code, Document.class);
@@ -100,16 +110,16 @@ final class ContentRestController {
 			}
 		}
 
-		@RequestMapping(method = GET, value = BY_CODE + IS_EAGER_KIDS)
-		final ResponseEntity<Document> findByCode(@PathVariable(PARAM_CODE) final String code,
-				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			final Document document = _contents.findByCode(code, Document.class, eagerKids);
-			if (isNotNullOrEmpty(document)) {
-				return createResponseForSuccess(document);
-			} else {
-				return createResponseForNoContent(_utils.getURI(CONTENT + DOCUMENT, BY_CODE + IS_EAGER_KIDS), document);
-			}
-		}
+//		@RequestMapping(method = GET, value = BY_CODE + IS_EAGER_KIDS)
+//		final ResponseEntity<Document> findByCode(@PathVariable(PARAM_CODE) final String code,
+//				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
+//			final Document document = _contents.findByCode(code, Document.class, eagerKids);
+//			if (isNotNullOrEmpty(document)) {
+//				return createResponseForSuccess(document);
+//			} else {
+//				return createResponseForNoContent(_utils.getURI(CONTENT + DOCUMENT, BY_CODE + IS_EAGER_KIDS), document);
+//			}
+//		}
 
 		@RequestMapping(method = GET, value = BY_CODE_LIKE)
 		final ResponseEntity<Documents> findByCodeLike(@PathVariable(PARAM_LIKE) final String like) {
@@ -131,16 +141,16 @@ final class ContentRestController {
 			}
 		}
 
-		@RequestMapping(method = GET, value = BY_ID + IS_EAGER_KIDS)
-		final ResponseEntity<Document> findOne(@PathVariable(PARAM_ID) final Long id,
-				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			final Document document = _contents.findOne(id, Document.class, eagerKids);
-			if (isNotNullOrEmpty(document)) {
-				return createResponseForSuccess(document);
-			} else {
-				return createResponseForNoContent(_utils.getURI(CONTENT + DOCUMENT, BY_ID + IS_EAGER_KIDS), document);
-			}
-		}
+//		@RequestMapping(method = GET, value = BY_ID + IS_EAGER_KIDS)
+//		final ResponseEntity<Document> findOne(@PathVariable(PARAM_ID) final Long id,
+//				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
+//			final Document document = _contents.findOne(id, Document.class, eagerKids);
+//			if (isNotNullOrEmpty(document)) {
+//				return createResponseForSuccess(document);
+//			} else {
+//				return createResponseForNoContent(_utils.getURI(CONTENT + DOCUMENT, BY_ID + IS_EAGER_KIDS), document);
+//			}
+//		}
 
 		@RequestMapping(method = GET, value = CHILDREN + BY_ID)
 		final ResponseEntity<Sections> getChildren(@PathVariable(PARAM_ID) final Long id) {
@@ -152,17 +162,17 @@ final class ContentRestController {
 			}
 		}
 
-		@RequestMapping(method = GET, value = CHILDREN + BY_ID + IS_EAGER_KIDS)
-		final ResponseEntity<Sections> getChildren(@PathVariable(PARAM_ID) final Long id,
-				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			final Sections sections = _contents.getChildren(id, Sections.class, eagerKids);
-			if (isNotNullOrEmpty(sections)) {
-				return createResponseForSuccess(sections);
-			} else {
-				return createResponseForNoContent(_utils.getURI(CONTENT + DOCUMENT, CHILDREN + BY_ID + IS_EAGER_KIDS),
-						sections);
-			}
-		}
+//		@RequestMapping(method = GET, value = CHILDREN + BY_ID + IS_EAGER_KIDS)
+//		final ResponseEntity<Sections> getChildren(@PathVariable(PARAM_ID) final Long id,
+//				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
+//			final Sections sections = _contents.getChildren(id, Sections.class, eagerKids);
+//			if (isNotNullOrEmpty(sections)) {
+//				return createResponseForSuccess(sections);
+//			} else {
+//				return createResponseForNoContent(_utils.getURI(CONTENT + DOCUMENT, CHILDREN + BY_ID + IS_EAGER_KIDS),
+//						sections);
+//			}
+//		}
 
 		@RequestMapping(method = GET, value = CHILDREN + BY_CODE)
 		final ResponseEntity<Sections> getChildren(@PathVariable(PARAM_CODE) final String code) {
@@ -174,17 +184,17 @@ final class ContentRestController {
 			}
 		}
 
-		@RequestMapping(method = GET, value = CHILDREN + BY_CODE + IS_EAGER_KIDS)
-		final ResponseEntity<Sections> getChildren(@PathVariable(PARAM_CODE) final String code,
-				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			final Sections sections = _contents.getChildren(code, Sections.class, eagerKids);
-			if (isNotNullOrEmpty(sections)) {
-				return createResponseForSuccess(sections);
-			} else {
-				return createResponseForNoContent(_utils.getURI(CONTENT + DOCUMENT, CHILDREN + BY_CODE + IS_EAGER_KIDS),
-						sections);
-			}
-		}
+//		@RequestMapping(method = GET, value = CHILDREN + BY_CODE + IS_EAGER_KIDS)
+//		final ResponseEntity<Sections> getChildren(@PathVariable(PARAM_CODE) final String code,
+//				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
+//			final Sections sections = _contents.getChildren(code, Sections.class, eagerKids);
+//			if (isNotNullOrEmpty(sections)) {
+//				return createResponseForSuccess(sections);
+//			} else {
+//				return createResponseForNoContent(_utils.getURI(CONTENT + DOCUMENT, CHILDREN + BY_CODE + IS_EAGER_KIDS),
+//						sections);
+//			}
+//		}
 
 		@RequestMapping(method = PUT)
 		final ResponseEntity<Document> save(@RequestBody final Document document) {
@@ -205,6 +215,26 @@ final class ContentRestController {
 			LOG.trace("Creating new Section REST Controller.");
 		}
 
+		@RequestMapping(method = GET, path = SECTIONS)
+		final ResponseEntity<Sections> findAll() {
+			final Sections contents = _contents.findAll(Sections.class);
+			if (isNotNullOrEmpty(contents)) {
+				return createResponseForSuccess(contents);
+			} else {
+				return createResponseForNoContent(_utils.getURI(_utils.getDestination(CONTENTS)), contents);
+			}
+		}
+
+//		@RequestMapping(method = GET, path = SECTIONS + IS_EAGER_KIDS)
+//		final ResponseEntity<Sections> findAll(@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
+//			final Sections contents = _contents.findAll(Sections.class, eagerKids);
+//			if (isNotNullOrEmpty(contents)) {
+//				return createResponseForSuccess(contents);
+//			} else {
+//				return createResponseForNoContent(_utils.getURI(_utils.getDestination(CONTENTS)), contents);
+//			}
+//		}
+		
 		@RequestMapping(method = GET, value = BY_CODE)
 		final ResponseEntity<Section> findByCode(@PathVariable(PARAM_CODE) final String code) {
 			final Section section = _contents.findByCode(code, Section.class);
@@ -215,16 +245,16 @@ final class ContentRestController {
 			}
 		}
 
-		@RequestMapping(method = GET, value = BY_CODE + IS_EAGER_KIDS)
-		final ResponseEntity<Section> findByCode(@PathVariable(PARAM_CODE) final String code,
-				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			final Section section = _contents.findByCode(code, Section.class, eagerKids);
-			if (isNotNullOrEmpty(section)) {
-				return createResponseForSuccess(section);
-			} else {
-				return createResponseForNoContent(_utils.getURI(CONTENT + SECTION, BY_CODE + IS_EAGER_KIDS), section);
-			}
-		}
+//		@RequestMapping(method = GET, value = BY_CODE + IS_EAGER_KIDS)
+//		final ResponseEntity<Section> findByCode(@PathVariable(PARAM_CODE) final String code,
+//				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
+//			final Section section = _contents.findByCode(code, Section.class, eagerKids);
+//			if (isNotNullOrEmpty(section)) {
+//				return createResponseForSuccess(section);
+//			} else {
+//				return createResponseForNoContent(_utils.getURI(CONTENT + SECTION, BY_CODE + IS_EAGER_KIDS), section);
+//			}
+//		}
 
 		@RequestMapping(method = GET, value = BY_CODE_LIKE)
 		final ResponseEntity<Sections> getByCodeLike(@PathVariable(PARAM_LIKE) final String like) {
@@ -246,16 +276,16 @@ final class ContentRestController {
 			}
 		}
 
-		@RequestMapping(method = GET, value = BY_ID + IS_EAGER_KIDS)
-		final ResponseEntity<Section> findOne(@PathVariable(PARAM_ID) final Long id,
-				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			final Section section = _contents.findOne(id, Section.class, eagerKids);
-			if (isNotNullOrEmpty(section)) {
-				return createResponseForSuccess(section);
-			} else {
-				return createResponseForNoContent(_utils.getURI(CONTENT + SECTION, BY_ID + IS_EAGER_KIDS), section);
-			}
-		}
+//		@RequestMapping(method = GET, value = BY_ID + IS_EAGER_KIDS)
+//		final ResponseEntity<Section> findOne(@PathVariable(PARAM_ID) final Long id,
+//				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
+//			final Section section = _contents.findOne(id, Section.class, eagerKids);
+//			if (isNotNullOrEmpty(section)) {
+//				return createResponseForSuccess(section);
+//			} else {
+//				return createResponseForNoContent(_utils.getURI(CONTENT + SECTION, BY_ID + IS_EAGER_KIDS), section);
+//			}
+//		}
 
 		@RequestMapping(method = GET, value = CHILDREN + BY_ID)
 		final ResponseEntity<Clauses> getChildren(@PathVariable(PARAM_ID) final Long id) {
@@ -267,17 +297,17 @@ final class ContentRestController {
 			}
 		}
 
-		@RequestMapping(method = GET, value = CHILDREN + BY_ID + IS_EAGER_KIDS)
-		final ResponseEntity<Clauses> getChildren(@PathVariable(PARAM_ID) final Long id,
-				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			final Clauses clauses = _contents.getChildren(id, Clauses.class, eagerKids);
-			if (isNotNullOrEmpty(clauses)) {
-				return createResponseForSuccess(clauses);
-			} else {
-				return createResponseForNoContent(_utils.getURI(CONTENT + SECTION, CHILDREN + BY_ID + IS_EAGER_KIDS),
-						clauses);
-			}
-		}
+//		@RequestMapping(method = GET, value = CHILDREN + BY_ID + IS_EAGER_KIDS)
+//		final ResponseEntity<Clauses> getChildren(@PathVariable(PARAM_ID) final Long id,
+//				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
+//			final Clauses clauses = _contents.getChildren(id, Clauses.class, eagerKids);
+//			if (isNotNullOrEmpty(clauses)) {
+//				return createResponseForSuccess(clauses);
+//			} else {
+//				return createResponseForNoContent(_utils.getURI(CONTENT + SECTION, CHILDREN + BY_ID + IS_EAGER_KIDS),
+//						clauses);
+//			}
+//		}
 
 		@RequestMapping(method = GET, value = CHILDREN + BY_CODE)
 		final ResponseEntity<Clauses> getChildren(@PathVariable(PARAM_CODE) final String code) {
@@ -289,17 +319,17 @@ final class ContentRestController {
 			}
 		}
 
-		@RequestMapping(method = GET, value = CHILDREN + BY_CODE + IS_EAGER_KIDS)
-		final ResponseEntity<Clauses> getChildren(@PathVariable(PARAM_CODE) final String code,
-				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			final Clauses clauses = _contents.getChildren(code, Clauses.class, eagerKids);
-			if (isNotNullOrEmpty(clauses)) {
-				return createResponseForSuccess(clauses);
-			} else {
-				return createResponseForNoContent(_utils.getURI(CONTENT + SECTION, CHILDREN + BY_CODE + IS_EAGER_KIDS),
-						clauses);
-			}
-		}
+//		@RequestMapping(method = GET, value = CHILDREN + BY_CODE + IS_EAGER_KIDS)
+//		final ResponseEntity<Clauses> getChildren(@PathVariable(PARAM_CODE) final String code,
+//				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
+//			final Clauses clauses = _contents.getChildren(code, Clauses.class, eagerKids);
+//			if (isNotNullOrEmpty(clauses)) {
+//				return createResponseForSuccess(clauses);
+//			} else {
+//				return createResponseForNoContent(_utils.getURI(CONTENT + SECTION, CHILDREN + BY_CODE + IS_EAGER_KIDS),
+//						clauses);
+//			}
+//		}
 
 		@RequestMapping(method = PUT)
 		final ResponseEntity<Section> save(@RequestBody final Section section) {
@@ -320,6 +350,26 @@ final class ContentRestController {
 			LOG.trace("Creating new Clause REST Controller.");
 		}
 
+		@RequestMapping(method = GET, path = CLAUSES)
+		final ResponseEntity<Clauses> findAll() {
+			final Clauses contents = _contents.findAll(Clauses.class);
+			if (isNotNullOrEmpty(contents)) {
+				return createResponseForSuccess(contents);
+			} else {
+				return createResponseForNoContent(_utils.getURI(_utils.getDestination(CONTENTS)), contents);
+			}
+		}
+
+//		@RequestMapping(method = GET, path = CLAUSES + IS_EAGER_KIDS)
+//		final ResponseEntity<Clauses> findAll(@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
+//			final Clauses contents = _contents.findAll(Clauses.class, eagerKids);
+//			if (isNotNullOrEmpty(contents)) {
+//				return createResponseForSuccess(contents);
+//			} else {
+//				return createResponseForNoContent(_utils.getURI(_utils.getDestination(CONTENTS)), contents);
+//			}
+//		}
+		
 		@RequestMapping(method = GET, value = BY_CODE)
 		final ResponseEntity<Clause> findByCode(@PathVariable(PARAM_CODE) final String code) {
 			final Clause clause = _contents.findByCode(code, Clause.class);
@@ -330,16 +380,16 @@ final class ContentRestController {
 			}
 		}
 
-		@RequestMapping(method = GET, value = BY_CODE + IS_EAGER_KIDS)
-		final ResponseEntity<Clause> findByCode(@PathVariable(PARAM_CODE) final String code,
-				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			final Clause clause = _contents.findByCode(code, Clause.class, eagerKids);
-			if (isNotNullOrEmpty(clause)) {
-				return createResponseForSuccess(clause);
-			} else {
-				return createResponseForNoContent(_utils.getURI(CONTENT + CLAUSE, BY_CODE + IS_EAGER_KIDS), clause);
-			}
-		}
+//		@RequestMapping(method = GET, value = BY_CODE + IS_EAGER_KIDS)
+//		final ResponseEntity<Clause> findByCode(@PathVariable(PARAM_CODE) final String code,
+//				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
+//			final Clause clause = _contents.findByCode(code, Clause.class, eagerKids);
+//			if (isNotNullOrEmpty(clause)) {
+//				return createResponseForSuccess(clause);
+//			} else {
+//				return createResponseForNoContent(_utils.getURI(CONTENT + CLAUSE, BY_CODE + IS_EAGER_KIDS), clause);
+//			}
+//		}
 
 		@RequestMapping(method = GET, value = BY_CODE_LIKE)
 		final ResponseEntity<Clauses> findByCodeLike(@PathVariable(PARAM_LIKE) final String like) {
@@ -361,16 +411,16 @@ final class ContentRestController {
 			}
 		}
 
-		@RequestMapping(method = GET, value = BY_ID + IS_EAGER_KIDS)
-		final ResponseEntity<Clause> findOne(@PathVariable(PARAM_ID) final Long id,
-				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			final Clause clause = _contents.findOne(id, Clause.class, eagerKids);
-			if (isNotNullOrEmpty(clause)) {
-				return createResponseForSuccess(clause);
-			} else {
-				return createResponseForNoContent(_utils.getURI(CONTENT + CLAUSE, BY_ID + IS_EAGER_KIDS), clause);
-			}
-		}
+//		@RequestMapping(method = GET, value = BY_ID + IS_EAGER_KIDS)
+//		final ResponseEntity<Clause> findOne(@PathVariable(PARAM_ID) final Long id,
+//				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
+//			final Clause clause = _contents.findOne(id, Clause.class, eagerKids);
+//			if (isNotNullOrEmpty(clause)) {
+//				return createResponseForSuccess(clause);
+//			} else {
+//				return createResponseForNoContent(_utils.getURI(CONTENT + CLAUSE, BY_ID + IS_EAGER_KIDS), clause);
+//			}
+//		}
 
 		@RequestMapping(method = GET, value = CHILDREN + BY_ID)
 		final ResponseEntity<Paragraphs> getChildren(@PathVariable(PARAM_ID) final Long id) {
@@ -382,17 +432,17 @@ final class ContentRestController {
 			}
 		}
 
-		@RequestMapping(method = GET, value = CHILDREN + BY_ID + IS_EAGER_KIDS)
-		final ResponseEntity<Paragraphs> getChildren(@PathVariable(PARAM_ID) final Long id,
-				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			final Paragraphs paragraphs = _contents.getChildren(id, Paragraphs.class, eagerKids);
-			if (isNotNullOrEmpty(paragraphs)) {
-				return createResponseForSuccess(paragraphs);
-			} else {
-				return createResponseForNoContent(_utils.getURI(CONTENT + CLAUSE, CHILDREN + BY_ID + IS_EAGER_KIDS),
-						paragraphs);
-			}
-		}
+//		@RequestMapping(method = GET, value = CHILDREN + BY_ID + IS_EAGER_KIDS)
+//		final ResponseEntity<Paragraphs> getChildren(@PathVariable(PARAM_ID) final Long id,
+//				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
+//			final Paragraphs paragraphs = _contents.getChildren(id, Paragraphs.class, eagerKids);
+//			if (isNotNullOrEmpty(paragraphs)) {
+//				return createResponseForSuccess(paragraphs);
+//			} else {
+//				return createResponseForNoContent(_utils.getURI(CONTENT + CLAUSE, CHILDREN + BY_ID + IS_EAGER_KIDS),
+//						paragraphs);
+//			}
+//		}
 
 		@RequestMapping(method = GET, value = CHILDREN + BY_CODE)
 		final ResponseEntity<Paragraphs> getChildren(@PathVariable(PARAM_CODE) final String code) {
@@ -404,17 +454,17 @@ final class ContentRestController {
 			}
 		}
 
-		@RequestMapping(method = GET, value = CHILDREN + BY_CODE + IS_EAGER_KIDS)
-		final ResponseEntity<Paragraphs> getChildren(@PathVariable(PARAM_CODE) final String code,
-				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-			final Paragraphs paragraphs = _contents.getChildren(code, Paragraphs.class, eagerKids);
-			if (isNotNullOrEmpty(paragraphs)) {
-				return createResponseForSuccess(paragraphs);
-			} else {
-				return createResponseForNoContent(_utils.getURI(CONTENT + CLAUSE, CHILDREN + BY_CODE + IS_EAGER_KIDS),
-						paragraphs);
-			}
-		}
+//		@RequestMapping(method = GET, value = CHILDREN + BY_CODE + IS_EAGER_KIDS)
+//		final ResponseEntity<Paragraphs> getChildren(@PathVariable(PARAM_CODE) final String code,
+//				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
+//			final Paragraphs paragraphs = _contents.getChildren(code, Paragraphs.class, eagerKids);
+//			if (isNotNullOrEmpty(paragraphs)) {
+//				return createResponseForSuccess(paragraphs);
+//			} else {
+//				return createResponseForNoContent(_utils.getURI(CONTENT + CLAUSE, CHILDREN + BY_CODE + IS_EAGER_KIDS),
+//						paragraphs);
+//			}
+//		}
 
 		@RequestMapping(method = PUT)
 		final ResponseEntity<Clause> save(@RequestBody final Clause clause) {
@@ -434,6 +484,26 @@ final class ContentRestController {
 		ParagraphRestController() {
 			LOG.trace("Creating new Paragraph REST Controller.");
 		}
+
+		@RequestMapping(method = GET, path = PARAGRAPHS)
+		final ResponseEntity<Paragraphs> findAll() {
+			final Paragraphs contents = _contents.findAll(Paragraphs.class);
+			if (isNotNullOrEmpty(contents)) {
+				return createResponseForSuccess(contents);
+			} else {
+				return createResponseForNoContent(_utils.getURI(_utils.getDestination(CONTENTS)), contents);
+			}
+		}
+
+//		@RequestMapping(method = GET, path = PARAGRAPHS + IS_EAGER_KIDS)
+//		final ResponseEntity<Paragraphs> findAll(@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
+//			final Paragraphs contents = _contents.findAll(Paragraphs.class, eagerKids);
+//			if (isNotNullOrEmpty(contents)) {
+//				return createResponseForSuccess(contents);
+//			} else {
+//				return createResponseForNoContent(_utils.getURI(_utils.getDestination(CONTENTS)), contents);
+//			}
+//		}
 
 		@RequestMapping(method = GET, value = BY_CODE)
 		final ResponseEntity<Paragraph> findByCode(@PathVariable(PARAM_CODE) final String code) {

@@ -1,12 +1,10 @@
 package com.github.justinericscott.docengine.models;
 
-import static com.github.justinericscott.docengine.util.Utils.isNotNullOrEmpty;
-import static com.github.justinericscott.docengine.util.Utils.isNotNullOrZero;
+import static com.github.justinericscott.docengine.util.Utils.*;
 import static com.github.justinericscott.docengine.util.Utils.HTML.P;
 
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.CascadeType.REFRESH;
-import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.CascadeType.*;
+import static javax.persistence.FetchType.*;
 import static javax.persistence.GenerationType.AUTO;
 
 import java.util.Arrays;
@@ -122,23 +120,23 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 		this.isAdHoc = isAdHoc;
 	}
 
-	public final Long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public final void setId(final Long id) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
-	public final String getProjectId() {
+	public String getProjectId() {
 		return projectId;
 	}
 
-	public final void setProjectId(final String projectId) {
+	public void setProjectId(final String projectId) {
 		this.projectId = projectId;
 	}
 
-	public final String getBody() {
+	public String getBody() {
 		if (isNotNullOrEmpty(customBody)) {
 			return customBody;
 		} else {
@@ -149,7 +147,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 		return "";
 	}
 
-	public final void setBody(final String customBody) {
+	public void setBody(final String customBody) {
 		if (isNotNullOrEmpty(customBody)) {
 			if (!content.getBody().equals(customBody)) {
 				this.customBody = customBody;
@@ -159,11 +157,11 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 		}
 	}
 
-	public final String getCustomBody() {
+	public String getCustomBody() {
 		return customBody;
 	}
 
-	public final void setCustomBody(final String customBody) {
+	public void setCustomBody(final String customBody) {
 		this.customBody = customBody;
 	}
 
@@ -171,7 +169,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 		return customNumber;
 	}
 
-	public final void setCustomNumber(final String customNumber) {
+	public void setCustomNumber(final String customNumber) {
 		this.customNumber = customNumber;
 	}
 
@@ -183,59 +181,59 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 		this.discriminator = discriminator;
 	}
 
-	public final String getFlags() {
+	public String getFlags() {
 		return flags;
 	}
 
-	public final void setFlags(final String flags) {
+	public void setFlags(final String flags) {
 		this.flags = flags;
 	}
 
-	public final String getStatusCd() {
+	public String getStatusCd() {
 		return statusCd;
 	}
 
-	public final void setStatusCd(final String statusCd) {
+	public void setStatusCd(final String statusCd) {
 		this.statusCd = statusCd;
 	}
 
-	public final Integer getOrderBy() {
+	public Integer getOrderBy() {
 		return orderBy;
 	}
 
-	public final void setOrderBy(final Integer orderBy) {
+	public void setOrderBy(final Integer orderBy) {
 		this.orderBy = orderBy;
 	}
 
-	public final boolean isAdHoc() {
+	public boolean isAdHoc() {
 		return isAdHoc;
 	}
 
-	public final void setAdHoc(final boolean isAdHoc) {
+	public void setAdHoc(final boolean isAdHoc) {
 		this.isAdHoc = isAdHoc;
 	}
 
-	public final boolean isStrikeHeader() {
+	public boolean isStrikeHeader() {
 		return isStrikeHeader;
 	}
 
-	public final void setStrikeHeader(final boolean isStrikeHeader) {
+	public void setStrikeHeader(final boolean isStrikeHeader) {
 		this.isStrikeHeader = isStrikeHeader;
 	}
 
-	public final boolean isMarkedForAction() {
+	public boolean isMarkedForAction() {
 		return isMarkedForAction;
 	}
 
-	public final void setMarkedForAction(final boolean isMarkedForAction) {
+	public void setMarkedForAction(final boolean isMarkedForAction) {
 		this.isMarkedForAction = isMarkedForAction;
 	}
 
-	public final String getMarkedForActionComment() {
+	public String getMarkedForActionComment() {
 		return markedForActionComment;
 	}
 
-	public final void setMarkedForActionComment(final String markedForActionComment) {
+	public void setMarkedForActionComment(final String markedForActionComment) {
 		this.markedForActionComment = markedForActionComment;
 	}
 
@@ -247,11 +245,11 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 		this.content = content;
 	}
 
-	public final boolean isValid() {
+	public boolean isValid() {
 		return isValid(false);
 	}
 
-	public final boolean isValid(final boolean checkForId) {
+	public boolean isValid(final boolean checkForId) {
 		if (checkForId && !isNotNullOrZero(id)) {
 			LOG.warn("ID must not be null or zero!");
 			return false;
@@ -264,7 +262,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 	}
 
 	@Override
-	public final int compareTo(final Instance o) {
+	public int compareTo(final Instance o) {
 		return this.getContent().getContentCd().compareTo(o.getContent().getContentCd());
 	}
 	
@@ -297,26 +295,26 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 			}
 		}
 
-		public final Document getDocument() {
+		public Document getDocument() {
 			return (Document) content.getClass().cast(content);
 		}
 
-		public final void setDocument(final Document document) {
+		public void setDocument(final Document document) {
 			super.setContent(document);
 		}
 
-		public final void addSection(final SectionInstance section) {
+		public void addSection(final SectionInstance section) {
 			if (isNotNullOrEmpty(section)) {
 				section.setDocument(this);
 				sections.add(section);
 			}
 		}
 
-		public final Collection<SectionInstance> getSections() {
+		public Collection<SectionInstance> getSections() {
 			return sections;
 		}
 
-		public final void setSections(final Collection<SectionInstance> sections) {
+		public void setSections(final Collection<SectionInstance> sections) {
 			if (isNotNullOrEmpty(sections)) {
 				this.sections = sections;
 			}
@@ -331,7 +329,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 			return sb.toString();
 		}
 
-		final void instantiateSections(final Collection<Section> sections) {
+		void instantiateSections(final Collection<Section> sections) {
 			if (isNotNullOrEmpty(sections)) {
 				for (final Section section : sections) {
 					this.addSection(new SectionInstance(section, this.getProjectId()));
@@ -370,40 +368,40 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 			}
 		}
 
-		public final Section getSection() {
+		public Section getSection() {
 			return (Section) content.getClass().cast(content);
 		}
 
-		public final void setSection(final Section section) {
+		public void setSection(final Section section) {
 			super.setContent(section);
 		}
 
-		public final DocumentInstance getDocument() {
+		public DocumentInstance getDocument() {
 			return document;
 		}
 
-		public final void setDocument(final DocumentInstance documentInstance) {
+		public void setDocument(final DocumentInstance documentInstance) {
 			this.document = documentInstance;
 		}
 
-		public final void addClause(final ClauseInstance clause) {
+		public void addClause(final ClauseInstance clause) {
 			if (isNotNullOrEmpty(clause)) {
 				clause.setSection(this);
 				clauses.add(clause);
 			}
 		}
 
-		public final Collection<ClauseInstance> getClauses() {
+		public Collection<ClauseInstance> getClauses() {
 			return clauses;
 		}
 
-		public final void setClauses(final Collection<ClauseInstance> clauses) {
+		public void setClauses(final Collection<ClauseInstance> clauses) {
 			if (isNotNullOrEmpty(clauses)) {
 				this.clauses = clauses;
 			}
 		}
 
-		final void instantiateClauses(final Collection<Clause> clauses) {
+		void instantiateClauses(final Collection<Clause> clauses) {
 			if (isNotNullOrEmpty(clauses)) {
 				for (final Clause clause : clauses) {
 					this.addClause(new ClauseInstance(clause, this.getProjectId()));
@@ -412,7 +410,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 		}
 
 		@Override
-		public final String toHTML() {
+		public String toHTML() {
 			final StringBuilder sb = new StringBuilder();
 			if (Arrays.asList(STATUSES_IN).contains(statusCd)) {
 				sb.append(getSection().toHTML(customBody, customNumber));
@@ -460,36 +458,36 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 			return (Clause) content.getClass().cast(content);
 		}
 
-		public final void setClause(final Clause clause) {
+		public void setClause(final Clause clause) {
 			super.setContent(clause);
 		}
 
-		public final SectionInstance getSection() {
+		public SectionInstance getSection() {
 			return section;
 		}
 
-		public final void setSection(final SectionInstance sectionInstance) {
+		public void setSection(final SectionInstance sectionInstance) {
 			this.section = sectionInstance;
 		}
 
-		public final void addParagraph(final ParagraphInstance paragraph) {
+		public void addParagraph(final ParagraphInstance paragraph) {
 			if (isNotNullOrEmpty(paragraph)) {
 				paragraph.setClause(this);
 				this.paragraphs.add(paragraph);
 			}
 		}
 
-		public final Collection<ParagraphInstance> getParagraphs() {
+		public Collection<ParagraphInstance> getParagraphs() {
 			return paragraphs;
 		}
 
-		public final void setParagraphs(final Collection<ParagraphInstance> paragraphs) {
+		public void setParagraphs(final Collection<ParagraphInstance> paragraphs) {
 			if (isNotNullOrEmpty(paragraphs)) {
 				this.paragraphs = paragraphs;
 			}
 		}
 
-		final void instantiateParagraphs(final Collection<Paragraph> paragraphs) {
+		void instantiateParagraphs(final Collection<Paragraph> paragraphs) {
 			if (isNotNullOrEmpty(paragraphs)) {
 				for (final Paragraph paragraph : paragraphs) {
 					this.addParagraph(new ParagraphInstance(paragraph, this.getProjectId()));
@@ -498,7 +496,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 		}
 
 		@Override
-		public final String toHTML() {
+		public String toHTML() {
 			final StringBuilder sb = new StringBuilder();
 			if (Arrays.asList(STATUSES_IN).contains(statusCd)) {
 				sb.append(getClause().toHTML(customBody, customNumber));
@@ -558,32 +556,32 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 			this.isAdHoc = isAdHoc;
 		}
 
-		public final Paragraph getParagraph() {
+		public Paragraph getParagraph() {
 			return (Paragraph) content.getClass().cast(content);
 		}
 
-		public final void setParagraph(final Paragraph paragraph) {
+		public void setParagraph(final Paragraph paragraph) {
 			super.setContent(paragraph);
 		}
 
-		public final ClauseInstance getClause() {
+		public ClauseInstance getClause() {
 			return clause;
 		}
 
-		public final void setClause(final ClauseInstance clauseInstance) {
+		public void setClause(final ClauseInstance clauseInstance) {
 			this.clause = clauseInstance;
 		}
 
 		@Override
-		public final String toHTML() {
+		public String toHTML() {
 			return toHTML(null);
 		}
 
-		final String toHTML(final String recursion) {
+		String toHTML(final String recursion) {
 			return toHTML(recursion, false);
 		}
 
-		final String toHTML(final String recursion, final boolean isParentIncluded) {
+		String toHTML(final String recursion, final boolean isParentIncluded) {
 			boolean isIncluded = Arrays.asList(STATUSES_IN).contains(statusCd);
 			if (isIncluded) {
 				return getParagraph().toHTML(recursion, customBody, false);

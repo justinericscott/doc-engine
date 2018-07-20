@@ -65,7 +65,7 @@ public interface InstanceService {
 	
 	<T> T findAll(Class<T> type);
 	
-	<T> T findAll(Class<T> type, boolean eagerKids);
+//	<T> T findAll(Class<T> type, boolean eagerKids);
 
 	Instance findByProjectIdAndCode(String projectId, String code);
 	
@@ -87,7 +87,7 @@ public interface InstanceService {
 	 * @param type
 	 * @return The complex Instance type with its children included.
 	 */
-	<T> T findByProjectIdAndCode(String projectId, String code, Class<T> type, boolean eagerKids);
+//	<T> T findByProjectIdAndCode(String projectId, String code, Class<T> type, boolean eagerKids);
 
 	Instances findByProjectIdAndCodeLike(String projectId, String like);
 	
@@ -120,7 +120,7 @@ public interface InstanceService {
 	 * @return Instance record and its children, if any, related to the provided
 	 *         ID.
 	 */
-	<T> T findOne(Long id, Class<T> type, boolean eagerKids);
+//	<T> T findOne(Long id, Class<T> type, boolean eagerKids);
 
 	/**
 	 * Gets the children, if any, for the provided ID.
@@ -138,7 +138,7 @@ public interface InstanceService {
 	 * @return A List of children (and nested children) instances for the
 	 *         provided ID.
 	 */
-	<T> T getChildren(Long id, Class<T> type, boolean eagerKids);
+//	<T> T getChildren(Long id, Class<T> type, boolean eagerKids);
 
 	/**
 	 * Gets the children, if any, for the provided project ID and code.
@@ -159,7 +159,7 @@ public interface InstanceService {
 	 * @return A List of children (and nested children), if any, for the
 	 *         provided project ID and code.
 	 */
-	<T> T getChildren(String projectId, String code, Class<T> type, boolean eagerKids);
+//	<T> T getChildren(String projectId, String code, Class<T> type, boolean eagerKids);
 
 	/**
 	 * Gets the children, if any, for the provided Instance object.
@@ -178,7 +178,7 @@ public interface InstanceService {
 	 * @return A List of children (and nested children), if any, for the
 	 *         provided Instance object.
 	 */
-	<T, P> T getChildren(P instance, Class<T> type, boolean eagerKids);
+//	<T, P> T getChildren(P instance, Class<T> type, boolean eagerKids);
 
 	/**
 	 * Merges (add or updated) an Instance record.

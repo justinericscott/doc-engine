@@ -1,17 +1,17 @@
 package com.github.justinericscott.docengine.repository.content;
 
+import java.util.Optional;
+
 import org.springframework.data.repository.CrudRepository;
 
 import com.github.justinericscott.docengine.models.Instance.ParagraphInstance;
-
-//import com.github.justinericscott.docengine.models.ParagraphInstance;
 
 public interface ParagraphInstanceRepository extends CrudRepository<ParagraphInstance, Long> {
 
 	@Override
 	Iterable<ParagraphInstance> findAll();
 
-	ParagraphInstance findByProjectIdAndContentContentCd(String projectId, String contentCd);
+	Optional<ParagraphInstance> findOptionalByProjectIdAndContentContentCd(String projectId, String contentCd);
 
 	Iterable<ParagraphInstance> findByProjectIdAndContentContentCdLike(String projectId, String like);
 }

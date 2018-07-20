@@ -16,7 +16,7 @@ import com.github.justinericscott.docengine.service.token.types.ExternalSchema;
 
 @Service
 @Transactional(AUTOWIRE_QUALIFIER_JDBC_TX)
-final class BusinessDataServiceImpl implements BusinessDataService {
+class BusinessDataServiceImpl implements BusinessDataService {
 	private static final Logger LOG = LoggerFactory.getLogger(BusinessDataServiceImpl.class);
 
 	@Autowired
@@ -27,32 +27,32 @@ final class BusinessDataServiceImpl implements BusinessDataService {
 	}
 
 	@Override
-	public final void execute(final String sql) {
+	public void execute(final String sql) {
 		_business.execute(sql);
 	}
 
 	@Override
-	public final void execute(final String[] script) {
+	public void execute(final String[] script) {
 		_business.execute(script);
 	}
 
 	@Override
-	public final ExternalSchema getExternalSchema() {
+	public ExternalSchema getExternalSchema() {
 		return _business.getExternalSchema();
 	}
 
 	@Override
-	public final Map<String, Object> queryForMap(final String sql) {
+	public Map<String, Object> queryForMap(final String sql) {
 		return _business.queryForMap(sql);
 	}
 	
 	@Override
-	public final int update(final String sql) {
+	public int update(final String sql) {
 		return _business.update(sql);
 	}
 	
 	@Override
-	public final Integer[] update(final String[] script) {
+	public Integer[] update(final String[] script) {
 		return _business.update(script);
 	}
 }

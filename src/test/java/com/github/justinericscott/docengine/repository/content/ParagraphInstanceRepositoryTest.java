@@ -1,4 +1,4 @@
-package com.github.justinericscott.docengine.repository.content.instance;
+package com.github.justinericscott.docengine.repository.content;
 
 import static org.junit.Assert.*;
 
@@ -51,9 +51,8 @@ public class ParagraphInstanceRepositoryTest extends AbstractTest {
 		paragraph = paragraphInstance.getParagraph();
 		assertNotNull(paragraph);
 		assertTrue(paragraph.isValid(true));
-
 		Collection<Paragraph> paragraphs = makeTestParagraphs(7);
-		paragraphs = (Collection<Paragraph>) _paragraphs.save(paragraphs);
+		paragraphs = (Collection<Paragraph>) _paragraphs.saveAll(paragraphs);
 		assertNotNull(paragraphs);
 		assertFalse(paragraphs.isEmpty());
 		final Collection<ParagraphInstance> list = new TreeSet<ParagraphInstance>();
@@ -62,7 +61,7 @@ public class ParagraphInstanceRepositoryTest extends AbstractTest {
 			list.add(new ParagraphInstance(p, TEST_PROJECT_ID_VALUE));
 		});
 		Collection<ParagraphInstance> paragraphInstances = new TreeSet<ParagraphInstance>();
-		paragraphInstances = (Collection<ParagraphInstance>) _instances.save(list);
+		paragraphInstances = (Collection<ParagraphInstance>) _instances.saveAll(list);
 		assertNotNull(paragraphInstances);
 		assertFalse(paragraphInstances.isEmpty());
 		paragraphInstances.forEach(i -> {
@@ -71,7 +70,6 @@ public class ParagraphInstanceRepositoryTest extends AbstractTest {
 			assertNotNull(p);
 			assertTrue(p.isValid(true));
 		});
-
 		try {
 			_instances.save((ParagraphInstance) null);
 			fail("Should throw exception....");
@@ -111,20 +109,18 @@ public class ParagraphInstanceRepositoryTest extends AbstractTest {
 		assertNotNull(paragraphInstance);
 		assertTrue(paragraphInstance.isValid(true));
 		final Long id = paragraphInstance.getId();
-
-		paragraphInstance = _instances.findOne(id);
+		paragraphInstance = _instances.findById(id).get();
 		assertNotNull(paragraphInstance);
 		assertTrue(paragraphInstance.isValid(true));
 		paragraph = paragraphInstance.getParagraph();
 		assertNotNull(paragraph);
 		assertTrue(paragraph.isValid(true));
-		paragraphInstance = _instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, contentCd);
+		paragraphInstance = _instances.findOptionalByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, contentCd).get();
 		assertNotNull(paragraphInstance);
 		assertTrue(paragraphInstance.isValid(true));
 		paragraph = paragraphInstance.getParagraph();
 		assertNotNull(paragraph);
 		assertTrue(paragraph.isValid(true));
-
 		Collection<ParagraphInstance> paragraphInstances = (Collection<ParagraphInstance>) _instances.findAll(); 
 		assertNotNull(paragraphInstances);
 		assertFalse(paragraphInstances.isEmpty());
@@ -134,7 +130,6 @@ public class ParagraphInstanceRepositoryTest extends AbstractTest {
 			assertNotNull(p);
 			assertTrue(p.isValid(true));
 		});
-
 		paragraphInstances = (Collection<ParagraphInstance>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "%TEST%");
 		assertNotNull(paragraphInstances);
 		assertFalse(paragraphInstances.isEmpty());
@@ -143,19 +138,25 @@ public class ParagraphInstanceRepositoryTest extends AbstractTest {
 			Paragraph p = i.getParagraph();
 			assertNotNull(p);
 			assertTrue(p.isValid(true));
-		});
-		
+		});		
+	}
+	
+	@Test
+	public void bx_FindBreakTest() {
 		// Break it...		
-		assertNull(_instances.findOne(0L));
-		assertNull(_instances.findOne(99999999L));
-		assertNull(_instances.findByProjectIdAndContentContentCd("", contentCd));
-		assertNull(_instances.findByProjectIdAndContentContentCd((String) null, contentCd));
-		assertNull(_instances.findByProjectIdAndContentContentCd("Snicklefritz", contentCd));
-		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, null));
-		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, ""));
-		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, "Snicklefritz"));
-
-		paragraphInstances = (Collection<ParagraphInstance>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_CODE_PREFIX_PARAGRAPH);
+		Paragraph paragraph = _paragraphs.save(makeTestParagraph());
+		assertNotNull(paragraph);
+		assertTrue(paragraph.isValid(true));
+		final String contentCd = paragraph.getContentCd();
+		assertFalse(_instances.findById(0L).isPresent());
+		assertFalse(_instances.findById(99999999L).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd("", contentCd).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd((String) null, contentCd).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd("Snicklefritz", contentCd).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, null).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, "").isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, "Snicklefritz").isPresent());
+		Collection<ParagraphInstance> paragraphInstances = (Collection<ParagraphInstance>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_CODE_PREFIX_PARAGRAPH);
 		assertTrue(paragraphInstances.isEmpty());
 		paragraphInstances = (Collection<ParagraphInstance>) _instances.findByProjectIdAndContentContentCdLike("", TEST_CODE_PREFIX_PARAGRAPH);
 		assertTrue(paragraphInstances.isEmpty());
@@ -166,7 +167,7 @@ public class ParagraphInstanceRepositoryTest extends AbstractTest {
 		paragraphInstances = (Collection<ParagraphInstance>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "Snicklefritz");
 		assertTrue(paragraphInstances.isEmpty());
 		try {
-			_instances.findOne((Long) null);
+			_instances.findById((Long) null).get();
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
@@ -202,19 +203,17 @@ public class ParagraphInstanceRepositoryTest extends AbstractTest {
 		assertNotNull(paragraphInstance);
 		assertTrue(paragraphInstance.isValid(true));
 		Long id = paragraphInstance.getId();
-
-		_instances.delete(id);
-		assertNull(_instances.findOne(paragraphInstance.getId()));
+		_instances.deleteById(id);
+		assertFalse(_instances.findById(paragraphInstance.getId()).isPresent());
 		paragraphInstance = new ParagraphInstance(paragraph, projectId);
 		paragraphInstance = _instances.save(paragraphInstance);
 		assertNotNull(paragraphInstance);
 		assertTrue(paragraphInstance.isValid(true));
 		id = paragraphInstance.getId();
 		_instances.delete(paragraphInstance);
-		assertNull(_instances.findOne(paragraphInstance.getId()));
-		
+		assertFalse(_instances.findById(paragraphInstance.getId()).isPresent());
 		Collection<Paragraph> paragraphs = makeTestParagraphs(7);
-		paragraphs = (Collection<Paragraph>) _paragraphs.save(paragraphs);
+		paragraphs = (Collection<Paragraph>) _paragraphs.saveAll(paragraphs);
 		assertNotNull(paragraphs);
 		assertFalse(paragraphs.isEmpty());
 		final Collection<ParagraphInstance> list = new TreeSet<ParagraphInstance>();
@@ -222,7 +221,7 @@ public class ParagraphInstanceRepositoryTest extends AbstractTest {
 			assertTrue(p.isValid(true));
 			list.add(new ParagraphInstance(p, projectId));
 		});
-		Collection<ParagraphInstance> paragraphInstances = (Collection<ParagraphInstance>) _instances.save(list);
+		Collection<ParagraphInstance> paragraphInstances = (Collection<ParagraphInstance>) _instances.saveAll(list);
 		assertNotNull(paragraphInstances);
 		assertFalse(paragraphInstances.isEmpty());
 		paragraphInstances.forEach(i -> {
@@ -231,11 +230,10 @@ public class ParagraphInstanceRepositoryTest extends AbstractTest {
 			assertNotNull(p);
 			assertTrue(p.isValid(true));
 		});		
-		_instances.delete(paragraphInstances);
+		_instances.deleteAll(paragraphInstances);
 		paragraphInstances.forEach(i -> {
-			assertNull(_instances.findOne(i.getId()));;
+			assertFalse(_instances.findById(i.getId()).isPresent());;
 		});
-		
 		_instances.deleteAll();
 		paragraphInstances = (Collection<ParagraphInstance>) _instances.findAll();
 		assertTrue(paragraphInstances.isEmpty());

@@ -1,12 +1,10 @@
 package com.github.justinericscott.docengine.models;
 
-import static com.github.justinericscott.docengine.util.Utils.isNotNullOrEmpty;
-import static com.github.justinericscott.docengine.util.Utils.isNotNullOrZero;
+import static com.github.justinericscott.docengine.util.Utils.*;
 import static com.github.justinericscott.docengine.util.Utils.HTML.*;
 
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.CascadeType.REFRESH;
-import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.CascadeType.*;
+import static javax.persistence.FetchType.*;
 import static javax.persistence.GenerationType.AUTO;
 import static javax.persistence.TemporalType.DATE;
 
@@ -175,11 +173,11 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 		}
 	}
 
-	public final Long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public final void setId(final Long id) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
@@ -199,15 +197,15 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 		this.discriminator = discriminator;
 	}
 
-	public final String getContentCd() {
+	public String getContentCd() {
 		return contentCd;
 	}
 
-	public final void setContentCd(final String contentCd) {
+	public void setContentCd(final String contentCd) {
 		this.contentCd = contentCd;
 	}
 
-	public final String getName() {
+	public String getName() {
 		return name;
 	}
 
@@ -215,91 +213,91 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 		this.name = name;
 	}
 
-	public final String getDescription() {
+	public String getDescription() {
 		return description;
 	}
 
-	public final void setDescription(final String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
-	public final String getContentNumber() {
+	public String getContentNumber() {
 		return contentNumber;
 	}
 
-	public final void setContentNumber(final String contentNumber) {
+	public void setContentNumber(final String contentNumber) {
 		this.contentNumber = contentNumber;
 	}
 
-	public final String getBody() {
+	public String getBody() {
 		return body;
 	}
 
-	public final void setBody(final String body) {
+	public void setBody(final String body) {
 		this.body = body;
 	}
 
-	public final String getCss() {
+	public String getCss() {
 		return css;
 	}
 
-	public final void setCss(final String css) {
+	public void setCss(final String css) {
 		this.css = css;
 	}
 
-	public final String getHelper() {
+	public String getHelper() {
 		return helper;
 	}
 
-	public final void setHelper(final String helper) {
+	public void setHelper(final String helper) {
 		this.helper = helper;
 	}
 
-	public final String getCategory() {
+	public String getCategory() {
 		return category;
 	}
 
-	public final void setCategory(final String category) {
+	public void setCategory(final String category) {
 		this.category = category;
 	}
 
-	public final String getFlags() {
+	public String getFlags() {
 		return flags;
 	}
 
-	public final void setFlags(final String flags) {
+	public void setFlags(final String flags) {
 		this.flags = flags;
 	}
 
-	public final Integer getOrderBy() {
+	public Integer getOrderBy() {
 		return orderBy;
 	}
 
-	public final void setOrderBy(final Integer orderBy) {
+	public void setOrderBy(final Integer orderBy) {
 		this.orderBy = orderBy;
 	}
 
-	public final Date getValidStart() {
+	public Date getValidStart() {
 		return validStart;
 	}
 
-	public final void setValidStart(final Date validStart) {
+	public void setValidStart(final Date validStart) {
 		this.validStart = validStart;
 	}
 
-	public final Date getValidEnd() {
+	public Date getValidEnd() {
 		return validEnd;
 	}
 
-	public final void setValidEnd(final Date validEnd) {
+	public void setValidEnd(final Date validEnd) {
 		this.validEnd = validEnd;
 	}
 
-	public final boolean isValid() {
+	public boolean isValid() {
 		return isValid(false);
 	}
 
-	public final boolean isValid(final boolean checkForId) {
+	public boolean isValid(final boolean checkForId) {
 		if (checkForId && !isNotNullOrZero(id)) {
 			LOG.warn("ID must not be null or zero!");
 			return false;
@@ -316,7 +314,7 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 	}
 
 	@Override
-	public final int compareTo(final Content o) {
+	public int compareTo(final Content o) {
 		if (isNotNullOrEmpty(o)) {
 			if (isNotNullOrEmpty(o.getContentCd())) {
 				if (isNotNullOrEmpty(this.getContentCd())) {
@@ -363,18 +361,18 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 			super(content, code);
 		}
 
-		public final void addSection(final Section section) {
+		public void addSection(final Section section) {
 			if (isNotNullOrEmpty(section)) {
 				section.setDocument(this);
 				this.sections.add(section);
 			}
 		}
 
-		public final Collection<Section> getSections() {
+		public Collection<Section> getSections() {
 			return (Collection<Section>) sections;
 		}
 
-		public final void setSections(final Collection<Section> sections) {
+		public void setSections(final Collection<Section> sections) {
 			this.sections = sections;
 		}
 
@@ -414,51 +412,51 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 			super(content, code);
 		}
 
-		public final Document getDocument() {
+		public Document getDocument() {
 			return document;
 		}
 
-		public final void setDocument(final Document document) {
+		public void setDocument(final Document document) {
 			this.document = document;
 		}
 
-		public final void addClause(final Clause clause) {
+		public void addClause(final Clause clause) {
 			if (isNotNullOrEmpty(clause)) {
 				clause.setSection(this);
 				clauses.add(clause);
 			}
 		}
 
-		public final Collection<Clause> getClauses() {
+		public Collection<Clause> getClauses() {
 			return clauses;
 		}
 
-		public final void setClauses(final Collection<Clause> clauses) {
+		public void setClauses(final Collection<Clause> clauses) {
 			this.clauses = clauses;
 		}
 
 		@Override
-		public final String toHTML() {
+		public String toHTML() {
 			return toHTML(false);
 		}
 		
-		public final String toHTML(final boolean header) {
+		public String toHTML(final boolean header) {
 			return toHTML(null, header);
 		}
 
-		final String toHTML(final String customBody) {
+		String toHTML(final String customBody) {
 			return toHTML(customBody, null);
 		}
 		
-		final String toHTML(final String customBody, final boolean header) {
+		String toHTML(final String customBody, final boolean header) {
 			return toHTML(customBody, null, header);
 		}
 		
-		final String toHTML(final String customBody, final String customNumber) {
+		String toHTML(final String customBody, final String customNumber) {
 			return toHTML(customBody, customNumber, false);
 		}
 
-		final String toHTML(final String customBody, final String customNumber, final boolean header) {
+		String toHTML(final String customBody, final String customNumber, final boolean header) {
 			this.body = (isNotNullOrEmpty(customBody) ? customBody : body);
 			this.contentNumber = (isNotNullOrEmpty(customNumber) ? customNumber : contentNumber);
 			final StringBuilder sb = new StringBuilder();
@@ -519,51 +517,51 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 			super(content, code);
 		}
 
-		public final Section getSection() {
+		public Section getSection() {
 			return section;
 		}
 
-		public final void setSection(final Section section) {
+		public void setSection(final Section section) {
 			this.section = section;
 		}
 
-		public final void addParagraph(final Paragraph paragraph) {
+		public void addParagraph(final Paragraph paragraph) {
 			if (isNotNullOrEmpty(paragraph)) {
 				paragraph.setClause(this);
 				paragraphs.add(paragraph);
 			}
 		}
 
-		public final Collection<Paragraph> getParagraphs() {
+		public Collection<Paragraph> getParagraphs() {
 			return paragraphs;
 		}
 
-		public final void setParagraphs(final Collection<Paragraph> paragraphs) {
+		public void setParagraphs(final Collection<Paragraph> paragraphs) {
 			this.paragraphs = paragraphs;
 		}
 
 		@Override
-		public final String toHTML() {
+		public String toHTML() {
 			return toHTML(false);
 		}
 		
-		final String toHTML(final boolean header) {
+		String toHTML(final boolean header) {
 			return toHTML(null, header);
 		}
 
-		final String toHTML(final String customBody) {
+		String toHTML(final String customBody) {
 			return toHTML(customBody, null);
 		}
 		
-		final String toHTML(final String customBody, final boolean header) {
+		String toHTML(final String customBody, final boolean header) {
 			return toHTML(customBody, null, header);
 		}
 		
-		final String toHTML(final String customBody, final String customNumber) {
+		String toHTML(final String customBody, final String customNumber) {
 			return toHTML(customBody, customNumber, false);
 		}
 
-		final String toHTML(final String customBody, final String customNumber, final boolean header) {
+		String toHTML(final String customBody, final String customNumber, final boolean header) {
 			this.body = (isNotNullOrEmpty(customBody) ? customBody : body);
 			this.contentNumber = (isNotNullOrEmpty(customNumber) ? customNumber : contentNumber);
 			final StringBuilder sb = new StringBuilder();
@@ -637,15 +635,15 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 			this.clause = paragraph.getClause();
 		}
 
-		public final Clause getClause() {
+		public Clause getClause() {
 			return clause;
 		}
 
-		public final void setClause(final Clause clause) {
+		public void setClause(final Clause clause) {
 			this.clause = clause;
 		}
 
-		public final String toHTML() {
+		public String toHTML() {
 			return toHTML(null);
 		}
 
@@ -698,19 +696,19 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 			return sb.toString();
 		}
 		
-		final String toHTML(final boolean header) {
+		String toHTML(final boolean header) {
 			return toHTML(null, null, header);
 		}
 
-		final String toHTML(final String recursion) {
+		String toHTML(final String recursion) {
 			return toHTML(recursion, null, false);
 		}
 
-		final String toHTML(final String recursion, final boolean header) {
+		String toHTML(final String recursion, final boolean header) {
 			return toHTML(recursion, null, header);
 		}
 
-		final String toHTML(final String recursion, final String custom, boolean header) {
+		String toHTML(final String recursion, final String custom, boolean header) {
 			setFlags();
 			this.body = (isNotNullOrEmpty(custom) ? custom : body);
 			final StringBuilder sb = new StringBuilder();

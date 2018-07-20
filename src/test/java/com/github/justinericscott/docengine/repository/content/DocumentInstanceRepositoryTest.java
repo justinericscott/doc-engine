@@ -1,4 +1,4 @@
-package com.github.justinericscott.docengine.repository.content.instance;
+package com.github.justinericscott.docengine.repository.content;
 
 import static org.junit.Assert.*;
 
@@ -57,9 +57,8 @@ public class DocumentInstanceRepositoryTest extends AbstractTest {
 		document = documentInstance.getDocument();
 		assertNotNull(document);
 		assertTrue(document.isValid(true));
-
 		Collection<Document> documents = makeTestDocuments(7);
-		documents = (Collection<Document>) _documents.save(documents);
+		documents = (Collection<Document>) _documents.saveAll(documents);
 		assertNotNull(documents);
 		assertFalse(documents.isEmpty());
 		final Collection<DocumentInstance> list = new TreeSet<DocumentInstance>();
@@ -68,7 +67,7 @@ public class DocumentInstanceRepositoryTest extends AbstractTest {
 			list.add(new DocumentInstance(d, TEST_PROJECT_ID_VALUE));
 		});
 		Collection<DocumentInstance> documentInstances = new TreeSet<DocumentInstance>();
-		documentInstances = (Collection<DocumentInstance>) _instances.save(list);
+		documentInstances = (Collection<DocumentInstance>) _instances.saveAll(list);
 		assertNotNull(documentInstances);
 		assertFalse(documentInstances.isEmpty());
 		documentInstances.forEach(i -> {
@@ -77,7 +76,6 @@ public class DocumentInstanceRepositoryTest extends AbstractTest {
 			assertNotNull(d);
 			assertTrue(d.isValid(true));
 		});
-
 		try {
 			_instances.save((DocumentInstance) null);
 			fail("Should throw exception....");
@@ -117,20 +115,18 @@ public class DocumentInstanceRepositoryTest extends AbstractTest {
 		assertNotNull(documentInstance);
 		assertTrue(documentInstance.isValid(true));
 		final Long id = documentInstance.getId();
-
-		documentInstance = _instances.findOne(id);
+		documentInstance = _instances.findById(id).get();
 		assertNotNull(documentInstance);
 		assertTrue(documentInstance.isValid(true));
 		document = documentInstance.getDocument();
 		assertNotNull(document);
 		assertTrue(document.isValid(true));
-		documentInstance = _instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, contentCd);
+		documentInstance = _instances.findOptionalByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, contentCd).get();
 		assertNotNull(documentInstance);
 		assertTrue(documentInstance.isValid(true));
 		document = documentInstance.getDocument();
 		assertNotNull(document);
 		assertTrue(document.isValid(true));
-
 		Collection<DocumentInstance> documentInstances = (Collection<DocumentInstance>) _instances.findAll(); 
 		assertNotNull(documentInstances);
 		assertFalse(documentInstances.isEmpty());
@@ -140,7 +136,6 @@ public class DocumentInstanceRepositoryTest extends AbstractTest {
 			assertNotNull(d);
 			assertTrue(d.isValid(true));
 		});
-
 		documentInstances = (Collection<DocumentInstance>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "%TEST%");
 		assertNotNull(documentInstances);
 		assertFalse(documentInstances.isEmpty());
@@ -149,19 +144,25 @@ public class DocumentInstanceRepositoryTest extends AbstractTest {
 			Document d = i.getDocument();
 			assertNotNull(d);
 			assertTrue(d.isValid(true));
-		});
-		
+		});		
+	}
+	
+	@Test
+	public void bx_FindBreakTest() {
 		// Break it...		
-		assertNull(_instances.findOne(0L));
-		assertNull(_instances.findOne(99999999L));
-		assertNull(_instances.findByProjectIdAndContentContentCd("", contentCd));
-		assertNull(_instances.findByProjectIdAndContentContentCd((String) null, contentCd));
-		assertNull(_instances.findByProjectIdAndContentContentCd("Snicklefritz", contentCd));
-		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, null));
-		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, ""));
-		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, "Snicklefritz"));
-
-		documentInstances = (Collection<DocumentInstance>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_CODE_PREFIX_DOCUMENT);
+		Document document = _documents.save(makeTestDocument());
+		assertNotNull(document);
+		assertTrue(document.isValid(true));
+		final String contentCd = document.getContentCd();
+		assertFalse(_instances.findById(0L).isPresent());
+		assertFalse(_instances.findById(99999999L).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd("", contentCd).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd((String) null, contentCd).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd("Snicklefritz", contentCd).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, null).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, "").isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, "Snicklefritz").isPresent());
+		Collection<DocumentInstance> documentInstances = (Collection<DocumentInstance>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_CODE_PREFIX_DOCUMENT);
 		assertTrue(documentInstances.isEmpty());
 		documentInstances = (Collection<DocumentInstance>) _instances.findByProjectIdAndContentContentCdLike("", TEST_CODE_PREFIX_DOCUMENT);
 		assertTrue(documentInstances.isEmpty());
@@ -172,7 +173,7 @@ public class DocumentInstanceRepositoryTest extends AbstractTest {
 		documentInstances = (Collection<DocumentInstance>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "Snicklefritz");
 		assertTrue(documentInstances.isEmpty());
 		try {
-			_instances.findOne((Long) null);
+			_instances.findById((Long) null).get();
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
@@ -206,59 +207,49 @@ public class DocumentInstanceRepositoryTest extends AbstractTest {
 		section.addClause(clause);
 		Paragraph paragraph = makeTestParagraph();
 		clause.addParagraph(paragraph);
-		
 		document = _documents.save(document);
 		assertNotNull(document);
 		assertTrue(document.isValid(true));
 		assertFalse(document.getSections().isEmpty());
-		
-		
 		section = document.getSections().iterator().next();
 		assertNotNull(section);
 		assertTrue(section.isValid(true));
 		assertFalse(section.getClauses().isEmpty());
-		
 		clause = section.getClauses().iterator().next();
 		assertNotNull(clause);
 		assertTrue(clause.isValid(true));
 		assertFalse(clause.getParagraphs().isEmpty());
-		
 		paragraph = clause.getParagraphs().iterator().next();
 		assertNotNull(paragraph);
 		assertTrue(paragraph.isValid(true));
 		assertNotNull(paragraph.getClause());
 		assertTrue(paragraph.getClause().isValid(true));
-		
 		DocumentInstance documentInstance = new DocumentInstance(document, TEST_PROJECT_ID_VALUE);
 		documentInstance = _instances.save(documentInstance);
 		assertNotNull(documentInstance);
 		assertTrue(documentInstance.isValid(true));
 		Long id = documentInstance.getId();
 		assertFalse(documentInstance.getSections().isEmpty());
-
 		SectionInstance sectionInstance = documentInstance.getSections().iterator().next();		
 		assertNotNull(sectionInstance);
 		assertTrue(sectionInstance.isValid(true));
 		assertNotNull(sectionInstance.getDocument());
 		assertFalse(sectionInstance.getClauses().isEmpty());
-		
 		ClauseInstance clauseInstance = sectionInstance.getClauses().iterator().next();		
 		assertNotNull(clauseInstance);
 		assertTrue(clauseInstance.isValid(true));
 		assertNotNull(clauseInstance.getSection());
 		assertFalse(clauseInstance.getParagraphs().isEmpty());
-		
 		ParagraphInstance paragraphInstance = clauseInstance.getParagraphs().iterator().next();
 		assertNotNull(paragraphInstance);
 		assertTrue(paragraphInstance.isValid(true));
 		assertNotNull(paragraphInstance.getClause());
 		assertTrue(paragraphInstance.getClause().isValid(true));	
-		
-		documentInstance = _instances.findOne(id);
+		documentInstance = _instances.findById(id).get();
 		assertNotNull(documentInstance);
 		assertTrue(documentInstance.isValid(true));
-		_instances.delete(id);
-		_documents.delete(document.getId());
+		_instances.deleteById(id);
+		_documents.deleteById(document.getId());
 	}
 	
 	@Test
@@ -272,19 +263,17 @@ public class DocumentInstanceRepositoryTest extends AbstractTest {
 		assertNotNull(documentInstance);
 		assertTrue(documentInstance.isValid(true));
 		Long id = documentInstance.getId();
-
-		_instances.delete(id);
-		assertNull(_instances.findOne(documentInstance.getId()));
+		_instances.deleteById(id);
+		assertFalse(_instances.findById(documentInstance.getId()).isPresent());
 		documentInstance = new DocumentInstance(document, projectId);
 		documentInstance = _instances.save(documentInstance);
 		assertNotNull(documentInstance);
 		assertTrue(documentInstance.isValid(true));
 		id = documentInstance.getId();
 		_instances.delete(documentInstance);
-		assertNull(_instances.findOne(documentInstance.getId()));
-		
+		assertFalse(_instances.findById(documentInstance.getId()).isPresent());
 		Collection<Document> documents = makeTestDocuments(7);
-		documents = (Collection<Document>) _documents.save(documents);
+		documents = (Collection<Document>) _documents.saveAll(documents);
 		assertNotNull(documents);
 		assertFalse(documents.isEmpty());
 		final Collection<DocumentInstance> list = new TreeSet<DocumentInstance>();
@@ -292,7 +281,7 @@ public class DocumentInstanceRepositoryTest extends AbstractTest {
 			assertTrue(d.isValid(true));
 			list.add(new DocumentInstance(d, projectId));
 		});
-		Collection<DocumentInstance> documentInstances = (Collection<DocumentInstance>) _instances.save(list);
+		Collection<DocumentInstance> documentInstances = (Collection<DocumentInstance>) _instances.saveAll(list);
 		assertNotNull(documentInstances);
 		assertFalse(documentInstances.isEmpty());
 		documentInstances.forEach(i -> {
@@ -301,11 +290,10 @@ public class DocumentInstanceRepositoryTest extends AbstractTest {
 			assertNotNull(d);
 			assertTrue(d.isValid(true));
 		});		
-		_instances.delete(documentInstances);
+		_instances.deleteAll(documentInstances);
 		documentInstances.forEach(i -> {
-			assertNull(_instances.findOne(i.getId()));;
+			assertFalse(_instances.findById(i.getId()).isPresent());;
 		});
-		
 		_instances.deleteAll();
 		documentInstances = (Collection<DocumentInstance>) _instances.findAll();
 		assertTrue(documentInstances.isEmpty());

@@ -40,7 +40,7 @@ public interface RestClient {
 	 */
 	<T> T findAll(Class<T> type);
 	
-	<T> T findAll(Class<T> type, boolean eagerKids);
+//	<T> T findAll(Class<T> type, boolean eagerKids);
 
 	default Object findByCode(String code) {
 		LOG.error(LOG_NO_OP_BY_CODE);
@@ -52,10 +52,10 @@ public interface RestClient {
 		return null;
 	}
 
-	default <T> T findByCode(String code, Class<T> type, boolean eagerKids) {
-		LOG.error(LOG_NO_OP_BY_CODE);
-		return null;
-	}
+//	default <T> T findByCode(String code, Class<T> type, boolean eagerKids) {
+//		LOG.error(LOG_NO_OP_BY_CODE);
+//		return null;
+//	}
 
 	default Object findByCodeLike(String like) {
 		LOG.error(LOG_NO_OP_BY_CODE_LIKE);
@@ -77,10 +77,10 @@ public interface RestClient {
 		return null;
 	}
 
-	default <T> T findByProjectIdAndCode(String projectId, String code, Class<T> type, boolean eagerKids) {
-		LOG.error(LOG_NO_OP_BY_PROJECT_ID_CODE_TYPE_KIDS);
-		return null;
-	}
+//	default <T> T findByProjectIdAndCode(String projectId, String code, Class<T> type, boolean eagerKids) {
+//		LOG.error(LOG_NO_OP_BY_PROJECT_ID_CODE_TYPE_KIDS);
+//		return null;
+//	}
 
 	default <T> T findByProjectIdAndCodeLike(String projectId, String like, Class<T> type) {
 		LOG.error(LOG_NO_OP_BY_PROJECT_ID_LIKE_TYPE);
@@ -91,37 +91,37 @@ public interface RestClient {
 
 	<T> T findOne(Long id, Class<T> type);
 
-	<T> T findOne(Long id, Class<T> type, boolean eagerKids);
+//	<T> T findOne(Long id, Class<T> type, boolean eagerKids);
 
 	default <T> T getChildren(Long id, Class<T> type) {
 		LOG.error(LOG_NO_OP_CHILDREN_BY_ID_TYPE);
 		return null;
 	}
 
-	default <T> T getChildren(Long id, Class<T> type, boolean eagerKids) {
-		LOG.error(LOG_NO_OP_CHILDREN_BY_ID_TYPE_KIDS);
-		return null;
-	}
+//	default <T> T getChildren(Long id, Class<T> type, boolean eagerKids) {
+//		LOG.error(LOG_NO_OP_CHILDREN_BY_ID_TYPE_KIDS);
+//		return null;
+//	}
 
 	default <T> T getChildren(String code, Class<T> type) {
 		LOG.error(LOG_NO_OP_CHILDREN_BY_CODE_TYPE);
 		return null;
 	}
 
-	default <T> T getChildren(String code, Class<T> type, boolean eagerKids) {
-		LOG.error(LOG_NO_OP_CHILDREN_BY_CODE_TYPE_KIDS);
-		return null;
-	}
+//	default <T> T getChildren(String code, Class<T> type, boolean eagerKids) {
+//		LOG.error(LOG_NO_OP_CHILDREN_BY_CODE_TYPE_KIDS);
+//		return null;
+//	}
 
 	default <T> T getChildren(String projectId, String code, Class<T> type) {
 		LOG.error(LOG_NO_OP_CHILDREN_BY_PROJECT_ID_CODE_TYPE);
 		return null;
 	}
 
-	default <T> T getChildren(String projectId, String code, Class<T> type, boolean eagerKids) {
-		LOG.error(LOG_NO_OP_CHILDREN_BY_PROJECT_ID_CODE_TYPE_KIDS);
-		return null;
-	}
+//	default <T> T getChildren(String projectId, String code, Class<T> type, boolean eagerKids) {
+//		LOG.error(LOG_NO_OP_CHILDREN_BY_PROJECT_ID_CODE_TYPE_KIDS);
+//		return null;
+//	}
 
 	<T> T save(T content, Class<T> type);
 	

@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.PostConstruct;
@@ -45,7 +46,7 @@ import com.github.justinericscott.docengine.service.token.types.TokenValue;
  */
 @Service
 @Transactional(AUTOWIRE_QUALIFIER_ORM_TX)
-final class TokenDictionaryServiceImpl implements TokenDictionaryService {
+class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	private static final Logger LOG = LoggerFactory.getLogger(TokenDictionaryServiceImpl.class);
 	private static final String SELECT_ = "SELECT ";
 	private static final String _FROM_ = " FROM ";
@@ -65,7 +66,7 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 		LOG.trace("Creating new Token Dictionary Service.");
 	}
 	
-	public final void clear() {
+	public void clear() {
 		if (_sqlMap != null) {
 			synchronized (_sqlMap) {
 				_sqlMap = null;
@@ -84,7 +85,7 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	}
 
 	@Override
-	public final TokenDefinitions findAll() {
+	public TokenDefinitions findAll() {
 		if (isNotNullOrEmpty(_dictionary)) {
 			synchronized (_dictionary) {
 				LOG.trace("Found Existing Tokens.");
@@ -104,16 +105,19 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	}
 
 	@Override
-	public final TokenDefinition findByTokenCd(final String code) {
+	public TokenDefinition findByTokenCd(final String code) {
 		if (isNotNullOrEmpty(code)) {
-			return _definitions.findByTokenCd(code);
+			final Optional<TokenDefinition> obj = _definitions.findOptionalByTokenCd(code);
+			if (obj.isPresent()) {
+				return obj.get();
+			}
 		}
 		LOG.warn("The token code must not be null or empty!");
 		return null;
 	}
 
 	@Override
-	public final TokenDefinitions findByTokenCdLike(final String like) {
+	public TokenDefinitions findByTokenCdLike(final String like) {
 		if (isNotNullOrEmpty(like)) {
 			final Collection<TokenDefinition> definitions = (Collection<TokenDefinition>) _definitions.findByTokenCdLike(like);
 			if (isNotNullOrEmpty(definitions)) {
@@ -125,16 +129,19 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	}
 
 	@Override
-	public final TokenDefinition findOne(final Long id) {
+	public TokenDefinition findOne(final Long id) {
 		if (isNotNullOrZero(id)) {
-			return _definitions.findOne(id);
+			final Optional<TokenDefinition> obj = _definitions.findById(id);
+			if (obj.isPresent()) {
+				return obj.get();
+			}
 		}
 		LOG.warn("The token ID must not be null or zero!");
 		return null;
 	}
 
 	@Override
-	public final Map<String, Map<String, Map<String, Deque<TokenDefinition>>>> getDefinitionMap() {
+	public Map<String, Map<String, Map<String, Deque<TokenDefinition>>>> getDefinitionMap() {
 		if (isNotNullOrEmpty(_definitionMap)) {
 			synchronized (_definitionMap) {
 				LOG.trace("Found Existing 'Where.Entity' To Entity/Attribute/Definitions Map.");
@@ -154,7 +161,7 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	}
 
 	@Override
-	public final Map<String, String> getSqlMap() {
+	public Map<String, String> getSqlMap() {
 		if (isNotNullOrEmpty(_sqlMap)) {
 			synchronized (_sqlMap) {
 				LOG.trace("Found Existing 'Where.Entity' To SQL Map.");
@@ -174,7 +181,7 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	}
 
 	@Override
-	public final Map<String, ?> getDroolsSafeTokens(final Project project) {
+	public Map<String, ?> getDroolsSafeTokens(final Project project) {
 		final Map<String, Iterable<TokenValue>> projectTokens = getTokenValueMap(project);
 		final Map<String, Object> droolsTokens = new HashMap<String, Object>(projectTokens.size());
 		final Collection<String> keys = projectTokens.keySet();
@@ -213,7 +220,7 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	}
 
 	@Override
-	public final Map<String, ?> getFreemarkerSafeTokens(final Project project) {
+	public Map<String, ?> getFreemarkerSafeTokens(final Project project) {
 		final Map<String, Iterable<TokenValue>> map = getTokenValueMap(project);
 		if (isNotNullOrEmpty(project) && isNotNullOrEmpty(map)) {
 			final Map<String, Object> freemarker = new HashMap<String, Object>();
@@ -267,7 +274,7 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	}
 
 	@Override
-	public final Map<String, TokenData> getTokenDataMap(final String projectId) {
+	public Map<String, TokenData> getTokenDataMap(final String projectId) {
 		final Map<String, TokenData> tokens = new HashMap<String, TokenData>();
 		getSqlMap().forEach((definitionKey, sql) -> {
 			sql = sql.replace("?", "'" + projectId + "'");
@@ -309,7 +316,7 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	}
 
 	@Override
-	public final Map<String, Iterable<TokenValue>> getTokenValueMap(final Project project) {
+	public Map<String, Iterable<TokenValue>> getTokenValueMap(final Project project) {
 		final Map<String, Iterable<TokenValue>> map = new HashMap<String, Iterable<TokenValue>>();
 		getTokenDataMap(project.getProjectNumber()).forEach((name, data) -> {
 			final Collection<TokenValue> values = (Collection<TokenValue>) data.getValues(project.getPhase());
@@ -322,7 +329,7 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	}
 
 	@Override
-	public final TokenDefinition save(final TokenDefinition definition) {
+	public TokenDefinition save(final TokenDefinition definition) {
 		if (isNotNullOrEmpty(definition)) {
 			final TokenDefinition result = _definitions.save(definition);
 			refresh();
@@ -333,10 +340,10 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	}
 
 	@Override
-	public final TokenDefinitions save(final TokenDefinitions definitions) {
+	public TokenDefinitions save(final TokenDefinitions definitions) {
 		if (isNotNullOrEmpty(definitions)) {
 			LOG.trace("Attempting To Save Collection Of Token Definitions.");
-			final Collection<TokenDefinition> result = (Collection<TokenDefinition>) _definitions.save(Arrays.asList(definitions.getTokens()));
+			final Collection<TokenDefinition> result = (Collection<TokenDefinition>) _definitions.saveAll(Arrays.asList(definitions.getTokens()));
 			if (isNotNullOrEmpty(result)) {
 				refresh();
 				return new TokenDefinitions(result);
@@ -347,7 +354,7 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	}
 
 	@Override
-	public final boolean delete(final Long id) {
+	public boolean delete(final Long id) {
 		if (isNotNullOrZero(id)) {
 			delete(findOne(id));
 		}
@@ -355,7 +362,7 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	}
 
 	@Override
-	public final boolean delete(final String code) {
+	public boolean delete(final String code) {
 		if (isNotNullOrEmpty(code)) {
 			return delete(findByTokenCd(code));
 		}
@@ -363,7 +370,7 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 	}
 
 	@Override
-	public final boolean delete(final TokenDefinition definition) {
+	public boolean delete(final TokenDefinition definition) {
 		if (isNotNullOrEmpty(definition)) {
 			final Long id = definition.getId();
 			_definitions.delete(definition);
@@ -378,7 +385,7 @@ final class TokenDictionaryServiceImpl implements TokenDictionaryService {
 
 	@PostConstruct
 	@Override
-	public final void refresh() {
+	public void refresh() {
 		LOG.info("Refreshing Token Dictionary Service...");
 		refreshDictionary();
 		refreshDefinitions();

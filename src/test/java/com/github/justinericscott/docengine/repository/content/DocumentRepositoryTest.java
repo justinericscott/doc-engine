@@ -1,4 +1,4 @@
-package com.github.justinericscott.docengine.repository.content.template;
+package com.github.justinericscott.docengine.repository.content;
 
 import static org.junit.Assert.*;
 
@@ -42,15 +42,13 @@ public class DocumentRepositoryTest extends AbstractTest {
 		document = _documents.save(document);
 		assertNotNull(document);
 		assertTrue(document.isValid(true));
-
 		Collection<Document> documents = makeTestDocuments(7);
-		documents = (Collection<Document>) _documents.save(documents);
+		documents = (Collection<Document>) _documents.saveAll(documents);
 		assertNotNull(documents);
 		assertFalse(documents.isEmpty());
 		documents.forEach(d -> {
 			assertTrue(d.isValid(true));
 		});
-
 		try {
 			_documents.save((Document) null);
 			fail("Should throw exception....");
@@ -83,7 +81,7 @@ public class DocumentRepositoryTest extends AbstractTest {
 			copies.forEach(d -> {
 				d.setId(null);
 			});
-			copies = (Collection<Document>) _documents.save(copies);
+			copies = (Collection<Document>) _documents.saveAll(copies);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
@@ -96,13 +94,11 @@ public class DocumentRepositoryTest extends AbstractTest {
 		Document document = _documents.save(makeTestDocument());
 		final Long id = document.getId();
 		final String contentCd = document.getContentCd();
-		document = _documents.findOne(id);
+		document = _documents.findById(id).get();
 		assertTrue(document.isValid(true));
-
-		document = _documents.findByContentCd(contentCd);
+		document = _documents.findOptionalByContentCd(contentCd).get();
 		assertTrue(document.isValid(true));
 		assertEquals(contentCd, document.getContentCd());
-
 		Collection<Document> documents = (Collection<Document>) _documents
 				.findByContentCdLike("%TEST%");
 		assertNotNull(documents);
@@ -110,24 +106,26 @@ public class DocumentRepositoryTest extends AbstractTest {
 		documents.forEach(d -> {
 			assertTrue(d.isValid(true));
 		});
-
 		documents = (Collection<Document>) _documents.findAll();
 		assertNotNull(documents);
 		assertFalse(documents.isEmpty());
 		documents.forEach(d -> {
 			assertTrue(d.isValid(true));
-		});
-		
+		});		
+	}
+
+	@Test
+	public void bx_FindBreakTest() {
 		// Break it...		
-		assertNull(_documents.findOne(Long.MIN_VALUE));
-		assertNull(_documents.findOne(Long.MAX_VALUE));
-		assertNull(_documents.findByContentCd("Snicklefritz"));
-		documents = (Collection<Document>) _documents.findByContentCdLike("%Snicklefritz%");
+		assertFalse(_documents.findById(Long.MIN_VALUE).isPresent());
+		assertFalse(_documents.findById(Long.MAX_VALUE).isPresent());
+		assertFalse(_documents.findOptionalByContentCd("Snicklefritz").isPresent());
+		Collection<Document> documents = (Collection<Document>) _documents.findByContentCdLike("%Snicklefritz%");
 		assertTrue(documents.isEmpty());
 		documents = (Collection<Document>) _documents.findByContentCdLike("");
 		assertTrue(documents.isEmpty());
 		try {
-			_documents.findOne((Long) null);
+			_documents.findById((Long) null).get();
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
@@ -139,7 +137,7 @@ public class DocumentRepositoryTest extends AbstractTest {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
 		}
 	}
-
+	
 	@Test
 	public void c_DiscriminatorTest() {
 		final String contentCd = "DOCUMENT_DISCRIMINATOR_TEST_" + uuid();
@@ -159,7 +157,6 @@ public class DocumentRepositoryTest extends AbstractTest {
 		section.addClause(clause);
 		Paragraph paragraph = makeTestParagraph();
 		clause.addParagraph(paragraph);
-
 		document = _documents.save(document);
 		assertNotNull(document);
 		assertTrue(document.isValid(true));
@@ -180,8 +177,7 @@ public class DocumentRepositoryTest extends AbstractTest {
 		assertTrue(paragraph.isValid(true));
 		assertNotNull(paragraph.getClause());
 		assertTrue(paragraph.getClause().isValid(true));
-
-		document = _documents.findOne(id);
+		document = _documents.findById(id).get();
 		assertNotNull(document);
 		assertTrue(document.isValid(true));
 		try {
@@ -190,7 +186,7 @@ public class DocumentRepositoryTest extends AbstractTest {
 		} catch (final Exception e) {
 			assertEquals(LazyInitializationException.class, e.getClass());
 		}
-		_documents.delete(id);
+		_documents.deleteById(id);
 	}
 
 	@Test
@@ -198,29 +194,30 @@ public class DocumentRepositoryTest extends AbstractTest {
 		// Happy path...
 		Document document = _documents.save(makeTestDocument());
 		final Long id = document.getId();
-		_documents.delete(id);
-		assertNull(_documents.findOne(id));
-
+		_documents.deleteById(id);
+		assertFalse(_documents.findById(id).isPresent());
 		document = _documents.save(makeTestDocument());
 		_documents.delete(document);
-		assertNull(_documents.findOne(document.getId()));
-
+		assertFalse(_documents.findById(document.getId()).isPresent());
 		Collection<Document> documents = makeTestDocuments(7);
-		documents = (Collection<Document>) _documents.save(documents);
+		documents = (Collection<Document>) _documents.saveAll(documents);
 		assertNotNull(documents);
 		assertFalse(documents.isEmpty());
 		documents.forEach(d -> {
 			assertTrue(d.isValid(true));
 		});
-		_documents.delete(documents);
+		_documents.deleteAll(documents);
 		documents.forEach(d -> {
-			assertNull(_documents.findOne(d.getId()));
+			assertFalse(_documents.findById(d.getId()).isPresent());
 		});
 
 //		_documents.deleteAll();
 //		documents = (Collection<DocumentJpaImpl>) _documents.findAll();
-//		assertTrue(documents.isEmpty());
-		
+//		assertTrue(documents.isEmpty());		
+	}
+	
+	@Test
+	public void xx_DeleteBreakTest() {
 		// Break it...
 		try {
 			_documents.delete(new Document());
@@ -229,7 +226,7 @@ public class DocumentRepositoryTest extends AbstractTest {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}		
 		try {
-			_documents.delete((Long) null);
+			_documents.deleteById((Long) null);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());

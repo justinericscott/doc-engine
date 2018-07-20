@@ -1,4 +1,4 @@
-package com.github.justinericscott.docengine.repository.content.instance;
+package com.github.justinericscott.docengine.repository.content;
 
 import static org.junit.Assert.*;
 
@@ -51,9 +51,8 @@ public class InstanceRepositoryTest extends AbstractTest {
 		content = instance.getContent();
 		assertNotNull(content);
 		assertTrue(content.isValid(true));
-
 		Collection<Content> contents = makeTestContents(7);
-		contents = (Collection<Content>) _contents.save(contents);
+		contents = (Collection<Content>) _contents.saveAll(contents);
 		assertNotNull(contents);
 		assertFalse(contents.isEmpty());
 		final Collection<Instance> list = new TreeSet<Instance>();
@@ -62,7 +61,7 @@ public class InstanceRepositoryTest extends AbstractTest {
 			list.add(new Instance(c, TEST_PROJECT_ID_VALUE));
 		});
 		Collection<Instance> instances = new TreeSet<Instance>();
-		instances = (Collection<Instance>) _instances.save(list);
+		instances = (Collection<Instance>) _instances.saveAll(list);
 		assertNotNull(instances);
 		assertFalse(instances.isEmpty());
 		instances.forEach(i -> {
@@ -71,7 +70,6 @@ public class InstanceRepositoryTest extends AbstractTest {
 			assertNotNull(c);
 			assertTrue(c.isValid(true));
 		});
-
 		try {
 			_instances.save((Instance) null);
 			fail("Should throw exception....");
@@ -100,7 +98,6 @@ public class InstanceRepositoryTest extends AbstractTest {
 
 	@Test
 	public void b_FindTest() {
-		
 		// Happy path...
 		Content content = _contents.save(makeTestContent());
 		assertNotNull(content);
@@ -111,20 +108,18 @@ public class InstanceRepositoryTest extends AbstractTest {
 		assertNotNull(instance);
 		assertTrue(instance.isValid(true));
 		final Long id = instance.getId();
-
-		instance = _instances.findOne(id);
+		instance = _instances.findById(id).get();
 		assertNotNull(instance);
 		assertTrue(instance.isValid(true));
 		content = instance.getContent();
 		assertNotNull(content);
 		assertTrue(content.isValid(true));
-		instance = _instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, contentCd);
+		instance = _instances.findOptionalByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, contentCd).get();
 		assertNotNull(instance);
 		assertTrue(instance.isValid(true));
 		content = instance.getContent();
 		assertNotNull(content);
 		assertTrue(content.isValid(true));
-
 		Collection<Instance> instances = (Collection<Instance>) _instances.findAll(); 
 		assertNotNull(instances);
 		assertFalse(instances.isEmpty());
@@ -134,7 +129,6 @@ public class InstanceRepositoryTest extends AbstractTest {
 			assertNotNull(c);
 			assertTrue(c.isValid(true));
 		});
-
 		instances = (Collection<Instance>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "%TEST%");
 		assertNotNull(instances);
 		assertFalse(instances.isEmpty());
@@ -143,19 +137,25 @@ public class InstanceRepositoryTest extends AbstractTest {
 			Content c = i.getContent();
 			assertNotNull(c);
 			assertTrue(c.isValid(true));
-		});
-		
+		});		
+	}
+	
+	@Test
+	public void bx_FindBreakTest() {
 		// Break it...		
-		assertNull(_instances.findOne(0L));
-		assertNull(_instances.findOne(99999999L));
-		assertNull(_instances.findByProjectIdAndContentContentCd("", contentCd));
-		assertNull(_instances.findByProjectIdAndContentContentCd((String) null, contentCd));
-		assertNull(_instances.findByProjectIdAndContentContentCd("Snicklefritz", contentCd));
-		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, null));
-		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, ""));
-		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, "Snicklefritz"));
-
-		instances = (Collection<Instance>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_CODE_PREFIX_CONTENT);
+		Content content = _contents.save(makeTestContent());
+		assertNotNull(content);
+		assertTrue(content.isValid(true));
+		final String contentCd = content.getContentCd();		
+		assertFalse(_instances.findById(0L).isPresent());
+		assertFalse(_instances.findById(99999999L).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd("", contentCd).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd((String) null, contentCd).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd("Snicklefritz", contentCd).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, null).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, "").isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, "Snicklefritz").isPresent());
+		Collection<Instance> instances = (Collection<Instance>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_CODE_PREFIX_CONTENT);
 		assertTrue(instances.isEmpty());
 		instances = (Collection<Instance>) _instances.findByProjectIdAndContentContentCdLike("", TEST_CODE_PREFIX_CONTENT);
 		assertTrue(instances.isEmpty());
@@ -166,7 +166,7 @@ public class InstanceRepositoryTest extends AbstractTest {
 		instances = (Collection<Instance>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "Snicklefritz");
 		assertTrue(instances.isEmpty());
 		try {
-			_instances.findOne((Long) null);
+			_instances.findById((Long) null).get();
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
@@ -187,11 +187,11 @@ public class InstanceRepositoryTest extends AbstractTest {
 		final Instance x = new Instance(cx, TEST_PROJECT_ID_VALUE);
 		final Instance y = _instances.save(x);
 		assertNull(y.getDiscriminator());
-		final Instance z = _instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, contentCd);
+		final Instance z = _instances.findOptionalByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, contentCd).get();
 		assertEquals(Instance.class.getSimpleName(), z.getDiscriminator());
 	}
 
-	@Test
+//	@Test
 	public void x_DeleteTest() {
 		final String projectId = TEST_PROJECT_ID_VALUE;
 		Content content = _contents.save(makeTestContent());
@@ -202,19 +202,17 @@ public class InstanceRepositoryTest extends AbstractTest {
 		assertNotNull(instance);
 		assertTrue(instance.isValid(true));
 		Long id = instance.getId();
-
-		_instances.delete(id);
-		assertNull(_instances.findOne(instance.getId()));
+		_instances.deleteById(id);
+		assertFalse(_instances.findById(instance.getId()).isPresent());
 		instance = new Instance(content, projectId);
 		instance = _instances.save(instance);
 		assertNotNull(instance);
 		assertTrue(instance.isValid(true));
 		id = instance.getId();
 		_instances.delete(instance);
-		assertNull(_instances.findOne(instance.getId()));
-		
+		assertFalse(_instances.findById(instance.getId()).isPresent());
 		Collection<Content> contents = makeTestContents(7);
-		contents = (Collection<Content>) _contents.save(contents);
+		contents = (Collection<Content>) _contents.saveAll(contents);
 		assertNotNull(contents);
 		assertFalse(contents.isEmpty());
 		final Collection<Instance> list = new TreeSet<Instance>();
@@ -222,7 +220,7 @@ public class InstanceRepositoryTest extends AbstractTest {
 			assertTrue(c.isValid(true));
 			list.add(new Instance(c, projectId));
 		});
-		Collection<Instance> instances = (Collection<Instance>) _instances.save(list);
+		Collection<Instance> instances = (Collection<Instance>) _instances.saveAll(list);
 		assertNotNull(instances);
 		assertFalse(instances.isEmpty());
 		instances.forEach(i -> {
@@ -231,9 +229,9 @@ public class InstanceRepositoryTest extends AbstractTest {
 			assertNotNull(c);
 			assertTrue(c.isValid(true));
 		});		
-		_instances.delete(instances);
+		_instances.deleteAll(instances);
 		instances.forEach(i -> {
-			assertNull(_instances.findOne(i.getId()));;
+			assertFalse(_instances.findById(i.getId()).isPresent());;
 		});
 		
 //		_instances.deleteAll();

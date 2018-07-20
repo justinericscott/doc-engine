@@ -9,10 +9,11 @@ import javax.transaction.TransactionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -87,8 +88,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 class DataConfig {
 	protected static final String REPO_CONTENT = "com.github.justinericscott.docengine.repository.content";
 	protected static final String REPO_TOKEN = "com.github.justinericscott.docengine.repository.token";
-	private static final String DATASTORE_ENGINE = "datasource.engine";
-	private static final String DATASTORE_BUSINESS = "datasource.business";
+	private static final String DATASTORE_ENGINE = "app.datasource.first";
+	private static final String DATASTORE_BUSINESS = "app.datasource.second";
 	private static final String JPA_DATETIME_PACKAGE = "org.springframework.data.jpa.convert.threeten";
 	private static final String JPA_PACKAGE = "com.github.justinericscott.docengine.models";
 	private static final Logger LOG = LoggerFactory.getLogger(DataConfig.class);
@@ -142,6 +143,7 @@ class DataConfig {
 	 * 
 	 * @return {@link DataSource}
 	 */
+	@Primary
 	@Bean(AUTOWIRE_QUALIFIER_ORM)
 	@ConfigurationProperties(DATASTORE_ENGINE)
 	public DataSource getDataSource() {

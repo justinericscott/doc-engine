@@ -26,17 +26,16 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.github.justinericscott.docengine.controller.RestUtils;
-import com.github.justinericscott.docengine.models.Content.Clause;
-import com.github.justinericscott.docengine.models.Content.Document;
-import com.github.justinericscott.docengine.models.Content.Paragraph;
-import com.github.justinericscott.docengine.models.Content.Section;
 import com.github.justinericscott.docengine.models.Contents;
 import com.github.justinericscott.docengine.models.Contents.Clauses;
 import com.github.justinericscott.docengine.models.Contents.Documents;
 import com.github.justinericscott.docengine.models.Contents.Paragraphs;
 import com.github.justinericscott.docengine.models.Contents.Sections;
 import com.github.justinericscott.docengine.models.Instances;
+import com.github.justinericscott.docengine.models.Instances.ClauseInstances;
 import com.github.justinericscott.docengine.models.Instances.DocumentInstances;
+import com.github.justinericscott.docengine.models.Instances.ParagraphInstances;
+import com.github.justinericscott.docengine.models.Instances.SectionInstances;
 
 
 /**
@@ -77,38 +76,25 @@ public abstract class AbstractRestClient extends RestTemplate {
 	}
 
 	protected final <T> ResponseEntity<T> adhocGet(final Class<T> type) {
-		return adhocGet(type, false);
-	}
-
-	protected final <T> ResponseEntity<T> adhocGet(final String rel, final Class<T> type) {
-		return adhocGet(rel, type, (Object[]) null);
-	}
-
-	protected final <T> ResponseEntity<T> adhocGet(final Class<T> type, boolean eagerKids) {
-		if (type.equals(Document.class) || type.equals(Documents.class)
-				|| type.equals(DocumentInstances.class)) {
-			if (eagerKids) {
-				return adhocGet(DOCUMENT + DOCUMENTS + IS_EAGER_KIDS, type, eagerKids);
-			}
+		if (type.equals(Documents.class) || type.equals(DocumentInstances.class)) {
 			return adhocGet(DOCUMENT + DOCUMENTS, type);
-		} else if (type.equals(Section.class) || type.equals(Sections.class)) {
-			if (eagerKids) {
-				return adhocGet(CONTENTS + BY_TYPE + IS_EAGER_KIDS, type, eagerKids);
-			}
-			return adhocGet(CONTENTS + BY_TYPE, type);
-		} else if (type.equals(Clause.class) || type.equals(Clauses.class)) {
-			if (eagerKids) {
-				return adhocGet(CONTENTS + BY_TYPE + IS_EAGER_KIDS, type, eagerKids);
-			}
-			return adhocGet(CONTENTS + BY_TYPE, type);
-		} else if (type.equals(Paragraph.class) || type.equals(Paragraphs.class)) {
-			return adhocGet(CONTENTS + BY_TYPE, type);
+		} else if (type.equals(Sections.class) || type.equals(SectionInstances.class)) {
+			return adhocGet(SECTION + SECTIONS, type);
+		} else if (type.equals(Clauses.class) || type.equals(ClauseInstances.class)) {
+			return adhocGet(CLAUSE + CLAUSES, type);
+		} else if (type.equals(Paragraphs.class) || type.equals(ParagraphInstances.class)) {
+			return adhocGet(PARAGRAPH + PARAGRAPHS, type);
 		} else if (type.equals(Contents.class)) {
 			return adhocGet(CONTENTS, type);
 		} else if (type.equals(Instances.class)) {
 			return adhocGet(INSTANCES, type);
 		}
 		return null;
+//		return adhocGet(type, false);
+	}
+
+	protected final <T> ResponseEntity<T> adhocGet(final String rel, final Class<T> type) {
+		return adhocGet(rel, type, (Object[]) null);
 	}
 
 	protected final <T> ResponseEntity<T> adhocGet(final String rel, final Class<T> type, final Object... params) {
@@ -116,10 +102,10 @@ public abstract class AbstractRestClient extends RestTemplate {
 		if (isNotNullOrEmpty(type)) {
 			try {
 				if (isNotNullOrEmpty(params)) {
-					LOG.trace("Sending request with params to {}...", dest);
+					LOG.debug("Sending request with params to {}...", dest);
 					return super.getForEntity(dest, type, params);
 				} else {
-					LOG.trace("Sending request without params to {}...", dest);
+					LOG.debug("Sending request without params to {}...", dest);
 					return super.getForEntity(dest, type);
 				}
 			} catch (final HttpMessageNotReadableException e) {

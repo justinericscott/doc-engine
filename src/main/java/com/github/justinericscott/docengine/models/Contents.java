@@ -39,24 +39,24 @@ public class Contents {
 		setContents(contents);
 	}
 
-	public final Content[] getContents() {
+	public Content[] getContents() {
 		return contents;
 	}
 
 	@JsonIgnore
-	public final Collection<Content> getContentsList() {
+	public Collection<Content> getContentsList() {
 		if (isNotNullOrEmpty(contents)) {
 			return Arrays.asList(contents);
 		}
 		return null;
 	}
 
-	public final void setContents(final Content[] contents) {
+	public void setContents(final Content[] contents) {
 		this.contents = contents;
 	}
 
 	@JsonIgnore
-	public final void setContents(final Collection<Content> contents) {
+	public void setContents(final Collection<Content> contents) {
 		if (isNotNullOrEmpty(contents)) {
 			this.contents = contents.toArray(new Content[contents.size()]);
 		}
@@ -80,11 +80,11 @@ public class Contents {
 			this.documents = documents.toArray(new Document[documents.size()]);
 		}
 
-		public final Document[] getDocuments() {
+		public Document[] getDocuments() {
 			return documents;
 		}
 
-//		public final void setDocuments(final Document[] documents) {
+//		public void setDocuments(final Document[] documents) {
 //			this.documents = documents;
 //		}
 	}
@@ -107,12 +107,12 @@ public class Contents {
 			setSections(sections);
 		}
 
-//		public final Section[] getSectionsArray() {
+//		public Section[] getSectionsArray() {
 //			return sections;
 //		}
 
 		@JsonIgnore
-		public final Collection<Section> getSections() {
+		public Collection<Section> getSections() {
 			if (isNotNullOrEmpty(sections)) {
 				return Arrays.asList(sections);
 			}
@@ -120,7 +120,7 @@ public class Contents {
 		}
 
 		@JsonIgnore
-		public final void setSections(final Collection<Section> sections) {
+		public void setSections(final Collection<Section> sections) {
 			if (isNotNullOrEmpty(sections)) {
 				this.sections = sections.toArray(new Section[sections.size()]);
 			}
@@ -142,7 +142,7 @@ public class Contents {
 		}
 
 		@JsonIgnore
-		public final Collection<Clause> getClauses() {
+		public Collection<Clause> getClauses() {
 			if (isNotNullOrEmpty(clauses)) {
 				return Arrays.asList(clauses);
 			}
@@ -171,7 +171,7 @@ public class Contents {
 		}
 		
 		@JsonIgnore
-		public final Collection<Paragraph> getParagraphs() {
+		public Collection<Paragraph> getParagraphs() {
 			if (isNotNullOrEmpty(paragraphs)) {
 				return Arrays.asList(paragraphs);
 			}
@@ -179,7 +179,7 @@ public class Contents {
 		}
 		
 		@JsonIgnore
-		public final void setParagraphs(final Collection<Paragraph> paragraphs) {
+		public void setParagraphs(final Collection<Paragraph> paragraphs) {
 			if (isNotNullOrEmpty(paragraphs)) {
 				this.paragraphs = paragraphs.toArray(new Paragraph[paragraphs.size()]);
 			}

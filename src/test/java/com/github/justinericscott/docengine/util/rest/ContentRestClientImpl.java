@@ -73,13 +73,8 @@ class ContentRestClientImpl extends AbstractRestClient implements RestClient {
 
 	@Override
 	public final <T> T findAll(final Class<T> type) {
-		return findAll(type, false);
-	}
-
-	@Override
-	public final <T> T findAll(final Class<T> type, boolean eagerKids) {
 		if (isNotNullOrEmpty(type)) {
-			final ResponseEntity<T> response = adhocGet(type, eagerKids);
+			final ResponseEntity<T> response = adhocGet(type);
 			if (isNotNullOrEmpty(response)) {
 				return type.cast(response.getBody());
 			}
@@ -87,7 +82,21 @@ class ContentRestClientImpl extends AbstractRestClient implements RestClient {
 			LOG.warn(LOG_NULL_TYPE);
 		}
 		return null;
+//		return findAll(type, false);
 	}
+
+//	@Override
+//	public final <T> T findAll(final Class<T> type, boolean eagerKids) {
+//		if (isNotNullOrEmpty(type)) {
+//			final ResponseEntity<T> response = adhocGet(type);
+//			if (isNotNullOrEmpty(response)) {
+//				return type.cast(response.getBody());
+//			}
+//		} else {
+//			LOG.warn(LOG_NULL_TYPE);
+//		}
+//		return null;
+//	}
 
 	@Override
 	public final Content findByCode(final String code) {
@@ -96,11 +105,6 @@ class ContentRestClientImpl extends AbstractRestClient implements RestClient {
 
 	@Override
 	public final <T> T findByCode(final String code, final Class<T> type) {
-		return findByCode(code, type, false);
-	}
-
-	@Override
-	public final <T> T findByCode(final String code, final Class<T> type, final boolean eagerKids) {
 		if (isNotNullOrEmpty(type)) {
 			if (isNotNullOrEmpty(code)) {
 				String dest = "";
@@ -114,11 +118,8 @@ class ContentRestClientImpl extends AbstractRestClient implements RestClient {
 					dest = PARAGRAPH;
 				}
 				dest = dest + BY_CODE;
-				if (eagerKids) {
-					dest = dest + IS_EAGER_KIDS;
-				}
 				if (isNotNullOrEmpty(dest)) {
-					final ResponseEntity<?> response = adhocGet(dest, type, code, eagerKids);
+					final ResponseEntity<?> response = adhocGet(dest, type, code);
 					if (isNotNullOrEmpty(response)) {
 						return type.cast(response.getBody());
 					}
@@ -132,7 +133,43 @@ class ContentRestClientImpl extends AbstractRestClient implements RestClient {
 			LOG.warn(LOG_NULL_TYPE);
 		}
 		return null;
+//		return findByCode(code, type, false);
 	}
+
+//	@Override
+//	public final <T> T findByCode(final String code, final Class<T> type, final boolean eagerKids) {
+//		if (isNotNullOrEmpty(type)) {
+//			if (isNotNullOrEmpty(code)) {
+//				String dest = "";
+//				if (type.equals(Document.class)) {
+//					dest = DOCUMENT;
+//				} else if (type.equals(Section.class)) {
+//					dest = SECTION;
+//				} else if (type.equals(Clause.class)) {
+//					dest = CLAUSE;
+//				} else if (type.equals(Paragraph.class)) {
+//					dest = PARAGRAPH;
+//				}
+//				dest = dest + BY_CODE;
+//				if (eagerKids) {
+//					dest = dest + IS_EAGER_KIDS;
+//				}
+//				if (isNotNullOrEmpty(dest)) {
+//					final ResponseEntity<?> response = adhocGet(dest, type, code, eagerKids);
+//					if (isNotNullOrEmpty(response)) {
+//						return type.cast(response.getBody());
+//					}
+//				} else {
+//					LOG.warn(LOG_NULL_DESTINATION);
+//				}
+//			} else {
+//				LOG.warn(LOG_NULL_CODE);
+//			}
+//		} else {
+//			LOG.warn(LOG_NULL_TYPE);
+//		}
+//		return null;
+//	}
 
 	@Override
 	public final Contents findByCodeLike(final String like) {
@@ -176,11 +213,6 @@ class ContentRestClientImpl extends AbstractRestClient implements RestClient {
 	}
 
 	public final <T> T findOne(final Long id, final Class<T> type) {
-		return findOne(id, type, false);
-	}
-
-	@Override
-	public final <T> T findOne(final Long id, final Class<T> type, final boolean eagerKids) {
 		if (isNotNullOrEmpty(type)) {
 			if (isNotNullOrZero(id)) {
 				String dest = "";
@@ -194,10 +226,7 @@ class ContentRestClientImpl extends AbstractRestClient implements RestClient {
 					dest = PARAGRAPH;
 				}
 				dest = dest + BY_ID;
-				if (eagerKids && !type.equals(Paragraph.class) && !type.equals(Content.class)) {
-					dest = dest + IS_EAGER_KIDS;
-				}
-				final ResponseEntity<T> response = adhocGet(dest, type, id, eagerKids);
+				final ResponseEntity<T> response = adhocGet(dest, type, id);
 				if (isNotNullOrEmpty(response)) {
 					return response.getBody();
 				}
@@ -210,13 +239,39 @@ class ContentRestClientImpl extends AbstractRestClient implements RestClient {
 		return null;
 	}
 
-	@Override
-	public final <T> T getChildren(final Long id, final Class<T> type) {
-		return getChildren(id, type, false);
-	}
+//	@Override
+//	public final <T> T findOne(final Long id, final Class<T> type, final boolean eagerKids) {
+//		if (isNotNullOrEmpty(type)) {
+//			if (isNotNullOrZero(id)) {
+//				String dest = "";
+//				if (type.equals(Document.class)) {
+//					dest = DOCUMENT;
+//				} else if (type.equals(Section.class)) {
+//					dest = SECTION;
+//				} else if (type.equals(Clause.class)) {
+//					dest = CLAUSE;
+//				} else if (type.equals(Paragraph.class)) {
+//					dest = PARAGRAPH;
+//				}
+//				dest = dest + BY_ID;
+//				if (eagerKids && !type.equals(Paragraph.class) && !type.equals(Content.class)) {
+//					dest = dest + IS_EAGER_KIDS;
+//				}
+//				final ResponseEntity<T> response = adhocGet(dest, type, id, eagerKids);
+//				if (isNotNullOrEmpty(response)) {
+//					return response.getBody();
+//				}
+//			} else {
+//				LOG.warn(LOG_NULL_CONTENT_ID);
+//			}
+//		} else {
+//			LOG.warn(LOG_NULL_TYPE);
+//		}
+//		return null;
+//	}
 
 	@Override
-	public final <T> T getChildren(final Long id, final Class<T> type, final boolean eagerKids) {
+	public final <T> T getChildren(final Long id, final Class<T> type) {
 		if (isNotNullOrEmpty(type)) {
 			if (isNotNullOrZero(id)) {
 				String dest = "";
@@ -230,10 +285,7 @@ class ContentRestClientImpl extends AbstractRestClient implements RestClient {
 					return null;
 				}
 				dest = dest + CHILDREN + BY_ID;
-				if (eagerKids) {
-					dest = dest + IS_EAGER_KIDS;
-				}
-				final ResponseEntity<T> response = adhocGet(dest, type, id, eagerKids);
+				final ResponseEntity<T> response = adhocGet(dest, type, id);
 				if (isNotNullOrEmpty(response)) {
 					return response.getBody();
 				}
@@ -244,15 +296,42 @@ class ContentRestClientImpl extends AbstractRestClient implements RestClient {
 			LOG.warn(LOG_NULL_TYPE);
 		}
 		return null;
+//		return getChildren(id, type, false);
 	}
+
+//	@Override
+//	public final <T> T getChildren(final Long id, final Class<T> type, final boolean eagerKids) {
+//		if (isNotNullOrEmpty(type)) {
+//			if (isNotNullOrZero(id)) {
+//				String dest = "";
+//				if (type.equals(Sections.class)) {
+//					dest = DOCUMENT;
+//				} else if (type.equals(Clauses.class)) {
+//					dest = SECTION;
+//				} else if (type.equals(Paragraphs.class)) {
+//					dest = CLAUSE;
+//				} else {
+//					return null;
+//				}
+//				dest = dest + CHILDREN + BY_ID;
+//				if (eagerKids) {
+//					dest = dest + IS_EAGER_KIDS;
+//				}
+//				final ResponseEntity<T> response = adhocGet(dest, type, id, eagerKids);
+//				if (isNotNullOrEmpty(response)) {
+//					return response.getBody();
+//				}
+//			} else {
+//				LOG.warn(LOG_NULL_CONTENT_ID);
+//			}
+//		} else {
+//			LOG.warn(LOG_NULL_TYPE);
+//		}
+//		return null;
+//	}
 
 	@Override
 	public final <T> T getChildren(final String code, final Class<T> type) {
-		return getChildren(code, type, false);
-	}
-
-	@Override
-	public final <T> T getChildren(final String code, final Class<T> type, final boolean eagerKids) {
 		if (isNotNullOrEmpty(type)) {
 			if (isNotNullOrEmpty(code)) {
 				String dest = "";
@@ -266,10 +345,7 @@ class ContentRestClientImpl extends AbstractRestClient implements RestClient {
 					return null;
 				}
 				dest = dest + CHILDREN + BY_CODE;
-				if (eagerKids) {
-					dest = dest + IS_EAGER_KIDS;
-				}
-				final ResponseEntity<?> response = adhocGet(dest, type, code, eagerKids);
+				final ResponseEntity<?> response = adhocGet(dest, type, code);
 				if (isNotNullOrEmpty(response)) {
 					return type.cast(response.getBody());
 				}
@@ -280,7 +356,39 @@ class ContentRestClientImpl extends AbstractRestClient implements RestClient {
 			LOG.warn(LOG_NULL_TYPE);
 		}
 		return null;
+//		return getChildren(code, type, false);
 	}
+
+//	@Override
+//	public final <T> T getChildren(final String code, final Class<T> type, final boolean eagerKids) {
+//		if (isNotNullOrEmpty(type)) {
+//			if (isNotNullOrEmpty(code)) {
+//				String dest = "";
+//				if (type.equals(Sections.class)) {
+//					dest = DOCUMENT;
+//				} else if (type.equals(Clauses.class)) {
+//					dest = SECTION;
+//				} else if (type.equals(Paragraphs.class)) {
+//					dest = CLAUSE;
+//				} else {
+//					return null;
+//				}
+//				dest = dest + CHILDREN + BY_CODE;
+//				if (eagerKids) {
+//					dest = dest + IS_EAGER_KIDS;
+//				}
+//				final ResponseEntity<?> response = adhocGet(dest, type, code, eagerKids);
+//				if (isNotNullOrEmpty(response)) {
+//					return type.cast(response.getBody());
+//				}
+//			} else {
+//				LOG.warn(LOG_NULL_CODE);
+//			}
+//		} else {
+//			LOG.warn(LOG_NULL_TYPE);
+//		}
+//		return null;
+//	}
 
 	@Override
 	public final <T> T save(final T object, final Class<T> type) {

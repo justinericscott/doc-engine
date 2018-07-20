@@ -48,38 +48,40 @@ public interface ContentService {
 	
 	<T> T findAll(Class<T> type);
 	
-	<T> T findAll(Class<T> type, boolean eagerKids);
+//	<T> T findAll(Class<T> type, boolean eagerKids);
 
 	Content findByCode(String code);
 	
 	<T> T findByCode(String code, Class<T> type);
 	
-	<T> T findByCode(String code, Class<T> type, boolean eagerKids);
+//	<T> T findByCode(String code, Class<T> type, boolean eagerKids);
 
 	Contents findByCodeLike(String like);
 	
 	<T> T findByCodeLike(String like, Class<T> type);
 	
-	<T> T findByCodeLike(String like, Class<T> type, boolean eagerKids);
+//	<T> T findByCodeLike(String like, Class<T> type, boolean eagerKids);
 
 	Content findOne(Long id);
 	
 	<T> T findOne(Long id, Class<T> type);
 	
-	<T> T findOne(Long id, Class<T> type, boolean eagerKids);
+//	<T> T findOne(Long id, Class<T> type, boolean eagerKids);
 
 	<T> T getChildren(Long id, Class<T> type);
 
-	<T> T getChildren(Long id, Class<T> type, boolean eagerKids);
+//	<T> T getChildren(Long id, Class<T> type, boolean eagerKids);
 
 	<T, P> T getChildren(P content, Class<T> type);
 
-	<T, P> T getChildren(P content, Class<T> type, boolean eagerKids);
+//	<T, P> T getChildren(P content, Class<T> type, boolean eagerKids);
 
 	<T> T getChildren(String code, Class<T> type);
 
-	<T> T getChildren(String code, Class<T> type, boolean eagerKids);
+//	<T> T getChildren(String code, Class<T> type, boolean eagerKids);
 
+	void initialize(Object content);
+	
 	Content save(Content content);
 	
 	Iterable<?> save(Iterable<?> objects);

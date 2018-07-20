@@ -9,8 +9,6 @@ import static com.github.justinericscott.docengine.util.TestUtils.TestConstants.
 import java.util.Collection;
 import java.util.TreeSet;
 
-import org.hibernate.LazyInitializationException;
-
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -107,10 +105,10 @@ public class InstanceServiceTest extends AbstractTest {
 		assertNotNull(paragraph);
 		assertNotNull(paragraph.getId());
 
-		document = _instances.findOne(document.getId(), DocumentInstance.class, true);
-		assertNotNull(document);
-		assertNotNull(document.getId());
-		validate(document);
+//		document = _instances.findOne(document.getId(), DocumentInstance.class, true);
+//		assertNotNull(document);
+//		assertNotNull(document.getId());
+//		validate(document);
 
 		// Save advanced all at once
 		document = createDocumentInstance();
@@ -189,12 +187,6 @@ public class InstanceServiceTest extends AbstractTest {
 		assertEquals(type, _instances.findOne(id, DocumentInstance.class).getClass());
 		assertEquals(type,
 				_instances.findByProjectIdAndCode(projectId, code, DocumentInstance.class).getClass());
-		try {
-			_instances.findOne(id, DocumentInstance.class).getSections().iterator().next().isValid(true);
-			fail("Should throw exception....");
-		} catch (final Exception e) {
-			assertEquals(LazyInitializationException.class, e.getClass());
-		}
 
 		SectionInstance section = document.getSections().iterator().next();
 		id = section.getId();
@@ -203,14 +195,6 @@ public class InstanceServiceTest extends AbstractTest {
 
 		assertEquals(type, _instances.findOne(id, SectionInstance.class).getClass());
 		assertEquals(type, _instances.findByProjectIdAndCode(projectId, code, SectionInstance.class).getClass());
-//		_instances.findOne(id, SectionInstanceJpaImpl.class).getClauses().iterator().next().isValid(true);
-
-		try {
-			_instances.findOne(id, SectionInstance.class).getClauses().iterator().next().isValid(true);
-			fail("Should throw exception....");
-		} catch (final Exception e) {
-			assertEquals(LazyInitializationException.class, e.getClass());
-		}
 
 		ClauseInstance clause = section.getClauses().iterator().next();
 		id = clause.getId();
@@ -219,14 +203,6 @@ public class InstanceServiceTest extends AbstractTest {
 
 		assertEquals(type, _instances.findOne(id, ClauseInstance.class).getClass());
 		assertEquals(type, _instances.findByProjectIdAndCode(projectId, code, ClauseInstance.class).getClass());
-//		_instances.findOne(id, ClauseInstanceJpaImpl.class).getParagraphs().iterator().next().isValid(true);
-
-		try {
-			_instances.findOne(id, ClauseInstance.class).getParagraphs().iterator().next().isValid(true);
-			fail("Should throw exception....");
-		} catch (final Exception e) {
-			assertEquals(LazyInitializationException.class, e.getClass());
-		}
 
 		ParagraphInstance paragraph = clause.getParagraphs().iterator().next();
 		id = paragraph.getId();
@@ -247,24 +223,12 @@ public class InstanceServiceTest extends AbstractTest {
 		assertFalse(sections.isEmpty());
 		sections.forEach(s -> {
 			Long sectionId = s.getId();
-			try {
-				s.getClauses().iterator().next().isValid(true);
-				fail("Should throw exception....");
-			} catch (final Exception e) {
-				assertEquals(LazyInitializationException.class, e.getClass());
-			}
 			Collection<ClauseInstance> clauses = _instances.getChildren(sectionId, ClauseInstances.class)
 					.getClausesList();
 			assertNotNull(clauses);
 			assertFalse(clauses.isEmpty());
 			clauses.forEach(c -> {
 				Long clauseId = c.getId();
-				try {
-					c.getParagraphs().iterator().next().isValid(true);
-					fail("Should throw exception....");
-				} catch (final Exception e) {
-					assertEquals(LazyInitializationException.class, e.getClass());
-				}
 				Collection<ParagraphInstance> paragraphs = _instances.getChildren(clauseId, ParagraphInstances.class)
 						.getParagraphsList();
 				assertNotNull(paragraphs);
@@ -276,13 +240,13 @@ public class InstanceServiceTest extends AbstractTest {
 		});
 
 		// Get Children by ID with kids
-		for (SectionInstance s : _instances.getChildren(document.getId(), SectionInstances.class, true)
+		for (SectionInstance s : _instances.getChildren(document.getId(), SectionInstances.class)
 				.getSectionsList()) {
 			validate(s);
-			for (ClauseInstance c : _instances.getChildren(s.getId(), ClauseInstances.class, true)
+			for (ClauseInstance c : _instances.getChildren(s.getId(), ClauseInstances.class)
 					.getClausesList()) {
 				validate(c);
-				for (ParagraphInstance p : _instances.getChildren(c.getId(), ParagraphInstances.class, true)
+				for (ParagraphInstance p : _instances.getChildren(c.getId(), ParagraphInstances.class)
 						.getParagraphsList()) {
 					validate((ParagraphInstance) p);
 				}
@@ -300,12 +264,6 @@ public class InstanceServiceTest extends AbstractTest {
 		for (SectionInstance s : sections) {
 			Section sec = (Section) s.getSection();
 			assertNotNull(sec);
-			try {
-				s.getClauses().iterator().next().isValid(true);
-				fail("Should throw exception....");
-			} catch (final Exception e) {
-				assertEquals(LazyInitializationException.class, e.getClass());
-			}
 			code = sec.getContentCd();
 			assertNotNull(code);
 			ClauseInstances clauseInstances = _instances.getChildren(projectId, code, ClauseInstances.class);
@@ -315,12 +273,6 @@ public class InstanceServiceTest extends AbstractTest {
 			for (ClauseInstance c : clauses) {
 				Clause cla = (Clause) c.getClause();
 				assertNotNull(cla);
-				try {
-					c.getParagraphs().iterator().next().isValid(true);
-					fail("Should throw exception....");
-				} catch (final Exception e) {
-					assertEquals(LazyInitializationException.class, e.getClass());
-				}
 				code = cla.getContentCd();
 				ParagraphInstances paraInstances = _instances.getChildren(c.getProjectId(), code,
 						ParagraphInstances.class);
@@ -339,14 +291,14 @@ public class InstanceServiceTest extends AbstractTest {
 		code = document.getDocument().getContentCd();
 
 		// Get Children by code with kids
-		for (SectionInstance s : _instances.getChildren(projectId, code, SectionInstances.class, true)
+		for (SectionInstance s : _instances.getChildren(projectId, code, SectionInstances.class)
 				.getSectionsList()) {
 			code = s.getSection().getContentCd();
-			for (ClauseInstance c : _instances.getChildren(projectId, code, ClauseInstances.class, true)
+			for (ClauseInstance c : _instances.getChildren(projectId, code, ClauseInstances.class)
 					.getClausesList()) {
 				code = c.getClause().getContentCd();
 				for (ParagraphInstance p : _instances
-						.getChildren(projectId, code, ParagraphInstances.class, true).getParagraphsList()) {
+						.getChildren(projectId, code, ParagraphInstances.class).getParagraphsList()) {
 					assertNotNull(p.getId());
 				}
 			}

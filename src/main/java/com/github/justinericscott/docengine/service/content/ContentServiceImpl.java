@@ -7,6 +7,7 @@ import static com.github.justinericscott.docengine.util.Utils.isNotNullOrZero;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.TreeSet;
 
 import org.hibernate.Hibernate;
@@ -41,7 +42,7 @@ import com.github.justinericscott.docengine.repository.content.SectionRepository
  */
 @Service
 @Transactional(AUTOWIRE_QUALIFIER_ORM_TX)
-final class ContentServiceImpl implements ContentService {
+class ContentServiceImpl implements ContentService {
 	private static final Logger LOG = LoggerFactory.getLogger(ContentServiceImpl.class);
 
 	@Autowired
@@ -64,28 +65,28 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public final boolean delete(final Long id) {
+	public boolean delete(final Long id) {
 		if (isNotNullOrZero(id)) {
-			_contents.delete(id);
+			_contents.deleteById(id);
 			return (!isNotNullOrEmpty(findOne(id)));
 		}
 		return false;
 	}
 
 	@Override
-	public final boolean delete(final Long id, final Class<?> type) {
+	public boolean delete(final Long id, final Class<?> type) {
 		if (isNotNullOrEmpty(type)) {
 			if (isNotNullOrZero(id)) {
 				if (type.equals(Document.class)) {
-					_documents.delete(id);
+					_documents.deleteById(id);
 				} else if (type.equals(Section.class)) {
-					_sections.delete(id);
+					_sections.deleteById(id);
 				} else if (type.equals(Clause.class)) {
-					_clauses.delete(id);
+					_clauses.deleteById(id);
 				} else if (type.equals(Paragraph.class)) {
-					_paragraphs.delete(id);
+					_paragraphs.deleteById(id);
 				} else if (type.equals(Content.class)) {
-					_contents.delete(id);
+					_contents.deleteById(id);
 				} else {
 					LOG.error("Could not determine which repository to use for this type: {}", type.getName());
 				}
@@ -96,7 +97,7 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public final boolean delete(final String code) {
+	public boolean delete(final String code) {
 		if (isNotNullOrEmpty(code)) {
 			delete(findByCode(code));
 			return (!isNotNullOrEmpty(findByCode(code)));
@@ -105,7 +106,7 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public final <T> boolean delete(final String code, final Class<T> type) {
+	public <T> boolean delete(final String code, final Class<T> type) {
 		if (isNotNullOrEmpty(type)) {
 			if (isNotNullOrEmpty(code)) {
 				final T object = findByCode(code, type);
@@ -118,7 +119,7 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public final boolean delete(final Content content) {
+	public boolean delete(final Content content) {
 		if (isNotNullOrEmpty(content)) {
 			_contents.delete(content);
 			return (isNotNullOrEmpty(findOne(content.getId())));
@@ -127,7 +128,7 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public final boolean delete(final Contents contents) {
+	public boolean delete(final Contents contents) {
 		if (isNotNullOrEmpty(contents)) {
 			return delete(contents.getContents());
 		}
@@ -135,10 +136,10 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public final boolean delete(final Content[] contents) {
+	public boolean delete(final Content[] contents) {
 		if (isNotNullOrEmpty(contents)) {
 			List<Content> list = Arrays.asList(contents);
-			_contents.delete(list);
+			_contents.deleteAll(list);
 			for (final Content content : contents) {
 				if (isNotNullOrEmpty(findOne(content.getId()))) {
 					return false;
@@ -150,7 +151,7 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public final <T> boolean delete(final T object, final Class<T> type) {
+	public <T> boolean delete(final T object, final Class<T> type) {
 		Long id = null;
 		if (type.equals(Document.class)) {
 			final Document document = Document.class.cast(object);
@@ -158,28 +159,28 @@ final class ContentServiceImpl implements ContentService {
 			_documents.delete(document);
 		} else if (type.equals(Documents.class)) {
 			final Documents documents = Documents.class.cast(object);
-			_documents.delete(Arrays.asList(documents.getDocuments()));
+			_documents.deleteAll(Arrays.asList(documents.getDocuments()));
 		} else if (type.equals(Section.class)) {
 			final Section section = Section.class.cast(object);
 			id = section.getId();
 			_sections.delete(section);
 		} else if (type.equals(Sections.class)) {
 			final Sections sections = Sections.class.cast(object);
-			_sections.delete(sections.getSections());
+			_sections.deleteAll(sections.getSections());
 		} else if (type.equals(Clause.class)) {
 			final Clause clause = Clause.class.cast(object);
 			id = clause.getId();
 			_clauses.delete(clause);
 		} else if (type.equals(Clauses.class)) {
 			final Clauses clauses = Clauses.class.cast(object);
-			_clauses.delete(clauses.getClauses());
+			_clauses.deleteAll(clauses.getClauses());
 		} else if (type.equals(Paragraph.class)) {
 			final Paragraph paragraph = Paragraph.class.cast(object);
 			id = paragraph.getId();
 			_paragraphs.delete(paragraph);
 		} else if (type.equals(Paragraphs.class)) {
 			final Paragraphs paragraphs = Paragraphs.class.cast(object);
-			_paragraphs.delete(paragraphs.getParagraphs());
+			_paragraphs.deleteAll(paragraphs.getParagraphs());
 		} else if (type.equals(Content.class)) {
 			return delete(Content.class.cast(object));
 		} else {
@@ -198,13 +199,12 @@ final class ContentServiceImpl implements ContentService {
 		_clauses.deleteAll();
 		_paragraphs.deleteAll();
 		_contents.deleteAll();
-		return (findAll(Document.class) == null && findAll(Section.class) == null
-				&& findAll(Clause.class) == null && findAll(Paragraph.class) == null
-				&& findAll() == null);
+		return (findAll(Document.class) == null && findAll(Section.class) == null && findAll(Clause.class) == null
+				&& findAll(Paragraph.class) == null && findAll() == null);
 	}
 
 	@Override
-	public final <T> boolean deleteByCodeLike(final String like, final Class<T> type) {
+	public <T> boolean deleteByCodeLike(final String like, final Class<T> type) {
 		if (isNotNullOrEmpty(type)) {
 			if (isNotNullOrEmpty(like)) {
 				return delete(findByCodeLike(like, type), type);
@@ -219,113 +219,180 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public final <T> T findAll(final Class<T> type) {
-		return findAll(type, false);
-	}
-
-	@Override
-	public final <T> T findAll(final Class<T> type, final boolean eagerKids) {
+	public <T> T findAll(final Class<T> type) {
 		if (isNotNullOrEmpty(type)) {
 			T one = null;
 			if (type.equals(Documents.class)) {
 				final Collection<Document> documents = (Collection<Document>) _documents.findAll();
 				if (isNotNullOrEmpty(documents)) {
-					LOG.trace("Found {} template object...", type.getSimpleName());
+					LOG.debug("Found {} template object...", type.getSimpleName());
 					one = type.cast(new Documents(documents));
 				}
 			} else if (type.equals(Sections.class)) {
 				final Collection<Section> sections = (Collection<Section>) _sections.findAll();
 				if (isNotNullOrEmpty(sections)) {
-					LOG.trace("Found {} template object...", type.getSimpleName());
+					LOG.debug("Found {} template object...", type.getSimpleName());
 					one = type.cast(new Sections(sections));
 				}
 			} else if (type.equals(Clauses.class)) {
 				final Collection<Clause> clauses = (Collection<Clause>) _clauses.findAll();
 				if (isNotNullOrEmpty(clauses)) {
-					LOG.trace("Found {} template object...", type.getSimpleName());
+					LOG.debug("Found {} template object...", type.getSimpleName());
 					one = type.cast(new Clauses(clauses));
 				}
 			} else if (type.equals(Paragraphs.class)) {
 				final Collection<Paragraph> paragraphs = (Collection<Paragraph>) _paragraphs.findAll();
 				if (isNotNullOrEmpty(paragraphs)) {
-					LOG.trace("Found {} template object...", type.getSimpleName());
+					LOG.debug("Found {} template object...", type.getSimpleName());
 					one = type.cast(new Paragraphs(paragraphs));
 				}
 			} else if (type.equals(Contents.class)) {
 				final Collection<Content> contents = (Collection<Content>) _contents.findAll();
 				if (isNotNullOrEmpty(contents)) {
-					LOG.trace("Found {} template object...", type.getSimpleName());
+					LOG.debug("Found {} template object...", type.getSimpleName());
 					one = type.cast(new Contents(contents));
 				}
 			}
 			if (one != null) {
-				if (eagerKids) {
-					LOG.trace("Eager fetch requested for {} template object...", type.getSimpleName());
-					initialize(one, eagerKids);
-				}
+				initialize(one);
 				return one;
 			}
 		} else {
 			LOG.warn("Type must not be null!");
 		}
 		return null;
+//		return findAll(type, false);
+	}
+
+//	@Override
+//	public <T> T findAll(final Class<T> type, final boolean eagerKids) {
+//		if (isNotNullOrEmpty(type)) {
+//			T one = null;
+//			if (type.equals(Documents.class)) {
+//				final Collection<Document> documents = (Collection<Document>) _documents.findAll();
+//				if (isNotNullOrEmpty(documents)) {
+//					LOG.debug("Found {} template object...", type.getSimpleName());
+//					one = type.cast(new Documents(documents));
+//				}
+//			} else if (type.equals(Sections.class)) {
+//				final Collection<Section> sections = (Collection<Section>) _sections.findAll();
+//				if (isNotNullOrEmpty(sections)) {
+//					LOG.debug("Found {} template object...", type.getSimpleName());
+//					one = type.cast(new Sections(sections));
+//				}
+//			} else if (type.equals(Clauses.class)) {
+//				final Collection<Clause> clauses = (Collection<Clause>) _clauses.findAll();
+//				if (isNotNullOrEmpty(clauses)) {
+//					LOG.debug("Found {} template object...", type.getSimpleName());
+//					one = type.cast(new Clauses(clauses));
+//				}
+//			} else if (type.equals(Paragraphs.class)) {
+//				final Collection<Paragraph> paragraphs = (Collection<Paragraph>) _paragraphs.findAll();
+//				if (isNotNullOrEmpty(paragraphs)) {
+//					LOG.debug("Found {} template object...", type.getSimpleName());
+//					one = type.cast(new Paragraphs(paragraphs));
+//				}
+//			} else if (type.equals(Contents.class)) {
+//				final Collection<Content> contents = (Collection<Content>) _contents.findAll();
+//				if (isNotNullOrEmpty(contents)) {
+//					LOG.debug("Found {} template object...", type.getSimpleName());
+//					one = type.cast(new Contents(contents));
+//				}
+//			}
+//			if (one != null) {
+//				if (eagerKids) {
+//					LOG.debug("Eager fetch requested for {} template object...", type.getSimpleName());
+//					initialize(one);
+//				}
+//				return one;
+//			}
+//		} else {
+//			LOG.warn("Type must not be null!");
+//		}
+//		return null;
+//	}
+
+	@Override
+	public Content findByCode(final String code) {
+		return findByCode(code, Content.class);
 	}
 
 	@Override
-	public final Content findByCode(final String code) {
+	public <T> T findByCode(final String code, Class<T> type) {
 		if (isNotNullOrEmpty(code)) {
-			return _contents.findByContentCd(code);
-		}
-		return null;
-	}
-
-	@Override
-	public final <T> T findByCode(final String code, Class<T> type) {
-		return findByCode(code, type, false);
-	}
-
-	@Override
-	public final <T> T findByCode(final String code, Class<T> type, final boolean eagerKids) {
-		if (type.equals(Document.class)) {
-			final Document content = _documents.findByContentCd(code);
-			if (isNotNullOrEmpty(content)) {
-				if (eagerKids) {
-					initialize(content, eagerKids);
-				}
-				return type.cast(content);
+			Optional<?> obj = null;
+			if (type.equals(Document.class)) {
+				obj = _documents.findOptionalByContentCd(code);
+			} else if (type.equals(Section.class)) {
+				obj = _sections.findOptionalByContentCd(code);
+			} else if (type.equals(Clause.class)) {
+				obj = _clauses.findOptionalByContentCd(code);
+			} else if (type.equals(Paragraph.class)) {
+				obj = _paragraphs.findOptionalByContentCd(code);
+			} else if (type.equals(Content.class)) {
+				obj = _contents.findOptionalByContentCd(code);
+			} else {
+				LOG.warn("Could not determine type to look for! Class: {}", type.getName());
 			}
-		} else if (type.equals(Section.class)) {
-			final Section content = _sections.findByContentCd(code);
-			if (isNotNullOrEmpty(content)) {
-				if (eagerKids) {
-					initialize(content, eagerKids);
+			if (isNotNullOrEmpty(obj)) {
+				if (obj.isPresent()) {
+					LOG.debug("Found {} content object...", type.getSimpleName());
+					Object one = obj.get();
+					initialize(one);
+					return type.cast(one);
+				} else {
+					LOG.debug("Nothing is present in the Optional object.");
 				}
-				return type.cast(content);
-			}
-		} else if (type.equals(Clause.class)) {
-			final Clause content = _clauses.findByContentCd(code);
-			if (isNotNullOrEmpty(content)) {
-				if (eagerKids) {
-					initialize(content, eagerKids);
-				}
-				return type.cast(content);
-			}
-		} else if (type.equals(Paragraph.class)) {
-			final Paragraph content = _paragraphs.findByContentCd(code);
-			if (isNotNullOrEmpty(content)) {
-				return type.cast(content);
+			} else {
+				LOG.debug("No Optional object returned from repository.");
 			}
 		} else {
-			final Content content = findByCode(code);
-			if (isNotNullOrEmpty(content)) {
-				return type.cast(content);
-			}
+			LOG.warn("Content code and/or project number must not be null or zero!");
 		}
 		return null;
+//		return findByCode(code, type, false);
 	}
 
+//	@Override
+//	public <T> T findByCode(final String code, Class<T> type, final boolean eagerKids) {
+//		if (isNotNullOrEmpty(code)) {
+//			Optional<?> obj = null;
+//			if (type.equals(Document.class)) {
+//				obj = _documents.findOptionalByContentCd(code);
+//			} else if (type.equals(Section.class)) {
+//				obj = _sections.findOptionalByContentCd(code);
+//			} else if (type.equals(Clause.class)) {
+//				obj = _clauses.findOptionalByContentCd(code);
+//			} else if (type.equals(Paragraph.class)) {
+//				obj = _paragraphs.findOptionalByContentCd(code);
+//			} else if (type.equals(Content.class)) {
+//				obj = _contents.findOptionalByContentCd(code);
+//			} else {
+//				LOG.warn("Could not determine type to look for! Class: {}", type.getName());
+//			}
+//			if (isNotNullOrEmpty(obj)) {
+//				if (obj.isPresent()) {
+//					LOG.debug("Found {} content object...", type.getSimpleName());
+//					Object one = obj.get();
+//					if (eagerKids) {
+//						LOG.debug("Eager fetch requested for {} instance object...", type.getSimpleName());
+//						initialize(one);
+//					}
+//					return type.cast(one);
+//				} else {
+//					LOG.debug("Nothing is present in the Optional object.");
+//				}
+//			} else {
+//				LOG.debug("No Optional object returned from repository.");
+//			}
+//		} else {
+//			LOG.warn("Content code and/or project number must not be null or zero!");
+//		}
+//		return null;
+//	}
+
 	@Override
-	public final Contents findByCodeLike(final String like) {
+	public Contents findByCodeLike(final String like) {
 		if (isNotNullOrEmpty(like)) {
 			final String term = ((like.startsWith("%") || like.endsWith("%")) ? like : "%".concat(like).concat("%"));
 			final Collection<Content> list = (Collection<Content>) _contents.findByContentCdLike(term);
@@ -337,12 +404,7 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public final <T> T findByCodeLike(final String like, Class<T> type) {
-		return findByCodeLike(like, type, false);
-	}
-
-	@Override
-	public final <T> T findByCodeLike(final String like, Class<T> type, final boolean eagerKids) {
+	public <T> T findByCodeLike(final String like, Class<T> type) {
 		if (isNotNullOrEmpty(like)) {
 			final String term = ((like.startsWith("%") || like.endsWith("%")) ? like : "%".concat(like).concat("%"));
 			T result = null;
@@ -351,9 +413,7 @@ final class ContentServiceImpl implements ContentService {
 				final Documents content = new Documents(list);
 				if (isNotNullOrEmpty(content)) {
 					result = type.cast(content);
-					if (eagerKids) {
-						initialize(result, eagerKids);
-					}
+					initialize(result);
 					return result;
 				}
 			} else if (type.equals(Sections.class)) {
@@ -361,9 +421,7 @@ final class ContentServiceImpl implements ContentService {
 				final Sections content = new Sections(list);
 				if (isNotNullOrEmpty(content)) {
 					result = type.cast(content);
-					if (eagerKids) {
-						initialize(result, eagerKids);
-					}
+					initialize(result);
 					return result;
 				}
 			} else if (type.equals(Clauses.class)) {
@@ -371,9 +429,7 @@ final class ContentServiceImpl implements ContentService {
 				final Clauses content = new Clauses(list);
 				if (isNotNullOrEmpty(content)) {
 					result = type.cast(content);
-					if (eagerKids) {
-						initialize(result, eagerKids);
-					}
+					initialize(result);
 					return result;
 				}
 			} else if (type.equals(Paragraphs.class)) {
@@ -391,122 +447,204 @@ final class ContentServiceImpl implements ContentService {
 			}
 		}
 		return null;
+//		return findByCodeLike(like, type, false);
+	}
+
+//	@Override
+//	public <T> T findByCodeLike(final String like, Class<T> type, final boolean eagerKids) {
+//		if (isNotNullOrEmpty(like)) {
+//			final String term = ((like.startsWith("%") || like.endsWith("%")) ? like : "%".concat(like).concat("%"));
+//			T result = null;
+//			if (type.equals(Documents.class)) {
+//				final List<Document> list = (List<Document>) _documents.findByContentCdLike(term);
+//				final Documents content = new Documents(list);
+//				if (isNotNullOrEmpty(content)) {
+//					result = type.cast(content);
+//					if (eagerKids) {
+//						initialize(result);
+//					}
+//					return result;
+//				}
+//			} else if (type.equals(Sections.class)) {
+//				final List<Section> list = (List<Section>) _sections.findByContentCdLike(term);
+//				final Sections content = new Sections(list);
+//				if (isNotNullOrEmpty(content)) {
+//					result = type.cast(content);
+//					if (eagerKids) {
+//						initialize(result);
+//					}
+//					return result;
+//				}
+//			} else if (type.equals(Clauses.class)) {
+//				final List<Clause> list = (List<Clause>) _clauses.findByContentCdLike(term);
+//				final Clauses content = new Clauses(list);
+//				if (isNotNullOrEmpty(content)) {
+//					result = type.cast(content);
+//					if (eagerKids) {
+//						initialize(result);
+//					}
+//					return result;
+//				}
+//			} else if (type.equals(Paragraphs.class)) {
+//				final List<Paragraph> list = (List<Paragraph>) _paragraphs.findByContentCdLike(term);
+//				final Paragraphs content = new Paragraphs(list);
+//				if (isNotNullOrEmpty(content)) {
+//					return type.cast(content);
+//				}
+//			} else if (type.equals(Contents.class)) {
+//				Collection<Content> list = (Collection<Content>) _contents.findByContentCdLike(term);
+//				final Contents contents = new Contents(list.toArray(new Content[list.size()]));
+//				if (isNotNullOrEmpty(contents)) {
+//					return type.cast(contents);
+//				}
+//			}
+//		}
+//		return null;
+//	}
+
+	@Override
+	public Content findOne(final Long id) {
+		return findOne(id, Content.class);
 	}
 
 	@Override
-	public final Content findOne(final Long id) {
+	public <T> T findOne(final Long id, final Class<T> type) {
 		if (isNotNullOrZero(id)) {
-			return _contents.findOne(id);
-		}
-		return null;
-	}
-
-	@Override
-	public final <T> T findOne(final Long id, final Class<T> type) {
-		return findOne(id, type, false);
-	}
-
-	@Override
-	public final <T> T findOne(final Long id, final Class<T> type, final boolean eagerKids) {
-		if (isNotNullOrZero(id)) {
-			T one = null;
+			Optional<?> obj = null;
+			LOG.debug("Looking for {} content object with id {}", type.getSimpleName(), id);
 			if (type.equals(Document.class)) {
-				final Document document = _documents.findOne(id);
-				if (isNotNullOrEmpty(document)) {
-					LOG.trace("Found {} template object...", type.getSimpleName());
-					one = type.cast(document);
-				}
+				obj = _documents.findById(id);
 			} else if (type.equals(Section.class)) {
-				final Section section = _sections.findOne(id);
-				if (isNotNullOrEmpty(section)) {
-					LOG.trace("Found {} template object...", type.getSimpleName());
-					one = type.cast(section);
-				}
+				obj = _sections.findById(id);
 			} else if (type.equals(Clause.class)) {
-				final Clause clause = _clauses.findOne(id);
-				if (isNotNullOrEmpty(clause)) {
-					LOG.trace("Found {} template object...", type.getSimpleName());
-					one = type.cast(clause);
-				}
+				obj = _clauses.findById(id);
 			} else if (type.equals(Paragraph.class)) {
-				final Paragraph paragraph = _paragraphs.findOne(id);
-				if (isNotNullOrEmpty(paragraph)) {
-					LOG.trace("Found {} template object...", type.getSimpleName());
-					one = type.cast(paragraph);
-				}
+				obj = _paragraphs.findById(id);
 			} else if (type.equals(Content.class)) {
-				final Content content = findOne(id);
-				if (isNotNullOrEmpty(content)) {
-					LOG.trace("Found {} template object...", type.getSimpleName());
-					one = type.cast(content);
-				}
+				obj = _contents.findById(id);
 			} else {
 				LOG.warn("Could not determine type to look for! Class: {}", type.getName());
 			}
-			if (one != null) {
-				if (eagerKids) {
-					LOG.trace("Eager fetch requested for {} template object...", type.getSimpleName());
-					initialize(one, eagerKids);
+			if (isNotNullOrEmpty(obj)) {
+				if (obj.isPresent()) {
+					LOG.debug("Found {} content object...", type.getSimpleName());
+					Object one = obj.get();
+					initialize(one);
+					return type.cast(one);
+				} else {
+					LOG.debug("Nothing is present in the Optional object.");
 				}
-				return one;
+			} else {
+				LOG.debug("No Optional object returned from repository.");
 			}
+		} else {
+			LOG.warn("Content ID must not be null or zero!");
 		}
 		return null;
+//		return findOne(id, type, false);
 	}
 
-	@Override
-	public final <T> T getChildren(final Long id, final Class<T> type) {
-		return getChildren(id, type, false);
-	}
+//	@Override
+//	public <T> T findOne(final Long id, final Class<T> type, final boolean eagerKids) {
+//		if (isNotNullOrZero(id)) {
+//			Optional<?> obj = null;
+//			LOG.debug("Looking for {} content object with id {}", type.getSimpleName(), id);
+//			if (type.equals(Document.class)) {
+//				obj = _documents.findById(id);
+//			} else if (type.equals(Section.class)) {
+//				obj = _sections.findById(id);
+//			} else if (type.equals(Clause.class)) {
+//				obj = _clauses.findById(id);
+//			} else if (type.equals(Paragraph.class)) {
+//				obj = _paragraphs.findById(id);
+//			} else if (type.equals(Content.class)) {
+//				obj = _contents.findById(id);
+//			} else {
+//				LOG.warn("Could not determine type to look for! Class: {}", type.getName());
+//			}
+//			if (isNotNullOrEmpty(obj)) {
+//				if (obj.isPresent()) {
+//					LOG.debug("Found {} content object...", type.getSimpleName());
+//					Object one = obj.get();
+//					if (eagerKids) {
+//						LOG.trace("Eager fetch requested for {} content object...", type.getSimpleName());
+//						initialize(one);
+//					}
+//					return type.cast(one);
+//				} else {
+//					LOG.debug("Nothing is present in the Optional object.");
+//				}
+//			} else {
+//				LOG.debug("No Optional object returned from repository.");
+//			}
+//		} else {
+//			LOG.warn("Content ID must not be null or zero!");
+//		}
+//		return null;
+//	}
 
 	@Override
-	public final <T> T getChildren(final Long id, final Class<T> type, final boolean eagerKids) {
+	public <T> T getChildren(final Long id, final Class<T> type) {
 		if (isNotNullOrZero(id)) {
 			if (isNotNullOrEmpty(type)) {
 				if (type.equals(Sections.class)) {
-					return getChildren(findOne(id, Document.class), type, eagerKids);
+					return getChildren(findOne(id, Document.class), type);
 				} else if (type.equals(Clauses.class)) {
-					return getChildren(findOne(id, Section.class), type, eagerKids);
+					return getChildren(findOne(id, Section.class), type);
 				} else if (type.equals(Paragraphs.class)) {
-					return getChildren(findOne(id, Clause.class), type, eagerKids);
+					return getChildren(findOne(id, Clause.class), type);
 				} else if (type.equals(Contents.class)) {
-					return getChildren(findOne(id), type, eagerKids);
+					return getChildren(findOne(id), type);
 				}
 			}
 		}
 		return null;
+//		return getChildren(id, type, false);
 	}
 
-	@Override
-	public final <T> T getChildren(final String code, final Class<T> type) {
-		return getChildren(code, type, false);
-	}
+//	@Override
+//	public <T> T getChildren(final Long id, final Class<T> type, final boolean eagerKids) {
+//		if (isNotNullOrZero(id)) {
+//			if (isNotNullOrEmpty(type)) {
+//				if (type.equals(Sections.class)) {
+//					return getChildren(findOne(id, Document.class), type, eagerKids);
+//				} else if (type.equals(Clauses.class)) {
+//					return getChildren(findOne(id, Section.class), type, eagerKids);
+//				} else if (type.equals(Paragraphs.class)) {
+//					return getChildren(findOne(id, Clause.class), type, eagerKids);
+//				} else if (type.equals(Contents.class)) {
+//					return getChildren(findOne(id), type, eagerKids);
+//				}
+//			}
+//		}
+//		return null;
+//	}
 
 	@Override
-	public final <T> T getChildren(final String code, final Class<T> type, final boolean eagerKids) {
-		return getChildren(findByCode(code), type, eagerKids);
+	public <T> T getChildren(final String code, final Class<T> type) {
+		return getChildren(findByCode(code), type);
 	}
 
-	@Override
-	public final <T, P> T getChildren(final P content, final Class<T> type) {
-		return getChildren(content, type, false);
-	}
+//	@Override
+//	public <T> T getChildren(final String code, final Class<T> type, final boolean eagerKids) {
+//		return getChildren(findByCode(code), type, eagerKids);
+//	}
 
 	@Override
-	public final <T, P> T getChildren(final P content, final Class<T> type, boolean eagerKids) {
+	public <T, P> T getChildren(final P content, final Class<T> type) {
 		if (isNotNullOrEmpty(content)) {
 			Object children = null;
 			if (content.getClass().equals(Document.class)) {
 				final Document parent = (Document) content;
-				initialize(parent, eagerKids);
+				initialize(parent);
 				children = new Sections(parent.getSections());
 			} else if (content.getClass().equals(Section.class)) {
 				final Section parent = (Section) content;
-				initialize(parent, eagerKids);
+				initialize(parent);
 				children = new Clauses(parent.getClauses());
 			} else if (content.getClass().equals(Clause.class)) {
 				final Clause parent = (Clause) content;
-				initialize(parent, eagerKids);
+				initialize(parent);
 				children = new Paragraphs(parent.getParagraphs());
 			}
 			if (children != null) {
@@ -514,7 +652,32 @@ final class ContentServiceImpl implements ContentService {
 			}
 		}
 		return null;
+		// return getChildren(content, type, false);
 	}
+
+//	@Override
+//	public <T, P> T getChildren(final P content, final Class<T> type, boolean eagerKids) {
+//		if (isNotNullOrEmpty(content)) {
+//			Object children = null;
+//			if (content.getClass().equals(Document.class)) {
+//				final Document parent = (Document) content;
+//				initialize(parent);
+//				children = new Sections(parent.getSections());
+//			} else if (content.getClass().equals(Section.class)) {
+//				final Section parent = (Section) content;
+//				initialize(parent);
+//				children = new Clauses(parent.getClauses());
+//			} else if (content.getClass().equals(Clause.class)) {
+//				final Clause parent = (Clause) content;
+//				initialize(parent);
+//				children = new Paragraphs(parent.getParagraphs());
+//			}
+//			if (children != null) {
+//				return type.cast(children);
+//			}
+//		}
+//		return null;
+//	}
 
 	@Override
 	public Content save(final Content content) {
@@ -523,7 +686,7 @@ final class ContentServiceImpl implements ContentService {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public Iterable<?> save(Iterable<?> objects) {
 		if (isNotNullOrEmpty(objects)) {
@@ -544,7 +707,7 @@ final class ContentServiceImpl implements ContentService {
 					saved.add(type.cast(p));
 				} else if (type.equals(Content.class)) {
 					final Content c = _contents.save((Content) o);
-					saved.add(type.cast(c));					
+					saved.add(type.cast(c));
 				}
 			});
 			return saved;
@@ -553,7 +716,7 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public final <T> Iterable<T> save(final Iterable<T> objects, final Class<T> type) {
+	public <T> Iterable<T> save(final Iterable<T> objects, final Class<T> type) {
 		if (isNotNullOrEmpty(objects)) {
 			final Collection<T> saved = new TreeSet<T>();
 			objects.forEach(o -> {
@@ -571,7 +734,7 @@ final class ContentServiceImpl implements ContentService {
 					saved.add(type.cast(p));
 				} else if (type.equals(Content.class)) {
 					final Content c = _contents.save((Content) o);
-					saved.add(type.cast(c));					
+					saved.add(type.cast(c));
 				}
 			});
 			return saved;
@@ -580,10 +743,10 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public final Contents save(final Contents contents) {
+	public Contents save(final Contents contents) {
 		if (isNotNullOrEmpty(contents)) {
 			Collection<Content> collection = Arrays.asList(contents.getContents());
-			collection = (Collection<Content>) _contents.save(collection);
+			collection = (Collection<Content>) _contents.saveAll(collection);
 			if (isNotNullOrEmpty(collection)) {
 				return new Contents(collection.toArray(new Content[collection.size()]));
 			}
@@ -592,7 +755,7 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public final Document save(final Document document) {
+	public Document save(final Document document) {
 		if (isNotNullOrEmpty(document)) {
 			return _documents.save(document);
 		}
@@ -600,7 +763,7 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public final Section save(final Section document) {
+	public Section save(final Section document) {
 		if (isNotNullOrEmpty(document)) {
 			return _sections.save(document);
 		}
@@ -608,7 +771,7 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public final Clause save(final Clause document) {
+	public Clause save(final Clause document) {
 		if (isNotNullOrEmpty(document)) {
 			return _clauses.save(document);
 		}
@@ -616,48 +779,64 @@ final class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public final Paragraph save(final Paragraph document) {
+	public Paragraph save(final Paragraph document) {
 		if (isNotNullOrEmpty(document)) {
 			return _paragraphs.save(document);
 		}
 		return null;
 	}
 
-	final void initialize(Object content, boolean recursive) {
+	@Override
+	public void initialize(Object content) {
 		if (isNotNullOrEmpty(content)) {
 			final Class<?> type = content.getClass();
-			if (type.equals(Document.class)) {
-				LOG.trace("Initializing {} template object...", type.getSimpleName());
+			if (type.equals(Documents.class)) {
+				LOG.debug("Initializing {} template object...", type.getSimpleName());
+				final Documents docs = (Documents) content;
+				for (final Document d : docs.getDocuments()) {
+					initialize(d);
+				}
+			} else if (type.equals(Document.class)) {
+				LOG.debug("Initializing {} template object...", type.getSimpleName());
 				final Document d = (Document) content;
 				Hibernate.initialize(d);
-				if (recursive) {
-					LOG.trace("Resurively initializing {} template object...", type.getSimpleName());
-					for (final Section s : d.getSections()) {
-						initialize(s, recursive);
-					}
+				for (final Section s : d.getSections()) {
+					initialize(s);
+				}
+			} else if (type.equals(Sections.class)) {
+				LOG.debug("Initializing Sections template object...");
+				final Sections sections = (Sections) content;
+				for (final Section s : sections.getSections()) {
+					initialize(s);
 				}
 			} else if (type.equals(Section.class)) {
-				LOG.trace("Initializing Section template object...");
+				LOG.debug("Initializing Section template object...");
 				final Section s = (Section) content;
 				Hibernate.initialize(s);
-				if (recursive) {
-					LOG.trace("Resurively initializing {} template object...", type.getSimpleName());
-					for (final Clause c : s.getClauses()) {
-						initialize(c, recursive);
-					}
+				for (final Clause c : s.getClauses()) {
+					initialize(c);
+				}
+			} else if (type.equals(Clauses.class)) {
+				LOG.debug("Initializing Clauses template object...");
+				final Clauses clauses = (Clauses) content;
+				for (final Clause c : clauses.getClauses()) {
+					initialize(c);
 				}
 			} else if (type.equals(Clause.class)) {
-				LOG.trace("Initializing Clause template object...");
+				LOG.debug("Initializing Clause template object...");
 				final Clause c = (Clause) content;
 				Hibernate.initialize(c);
-				if (recursive) {
-					LOG.trace("Resurively initializing {} template object...", type.getSimpleName());
-					for (final Paragraph p : c.getParagraphs()) {
-						initialize(p, recursive);
-					}
+				for (final Paragraph p : c.getParagraphs()) {
+					initialize(p);
+				}
+			} else if (type.equals(Paragraphs.class)) {
+				LOG.debug("Initializing Paragraphs template object...");
+				final Paragraphs paragraphs = (Paragraphs) content;
+				for (final Paragraph p : paragraphs.getParagraphs()) {
+					initialize(p);
 				}
 			} else if (type.equals(Paragraph.class)) {
-				LOG.trace("Initializing Paragraph template object...");
+				LOG.debug("Initializing Paragraph template object...");
 				final Paragraph p = (Paragraph) content;
 				Hibernate.initialize(p);
 			} else {

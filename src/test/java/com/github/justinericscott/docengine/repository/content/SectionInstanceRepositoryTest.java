@@ -1,4 +1,4 @@
-package com.github.justinericscott.docengine.repository.content.instance;
+package com.github.justinericscott.docengine.repository.content;
 
 import static org.junit.Assert.*;
 
@@ -55,9 +55,8 @@ public class SectionInstanceRepositoryTest extends AbstractTest {
 		section = sectionInstance.getSection();
 		assertNotNull(section);
 		assertTrue(section.isValid(true));
-
 		Collection<Section> sections = makeTestSections(7);
-		sections = (Collection<Section>) _sections.save(sections);
+		sections = (Collection<Section>) _sections.saveAll(sections);
 		assertNotNull(sections);
 		assertFalse(sections.isEmpty());
 		final Collection<SectionInstance> list = new TreeSet<SectionInstance>();
@@ -66,7 +65,7 @@ public class SectionInstanceRepositoryTest extends AbstractTest {
 			list.add(new SectionInstance(s, TEST_PROJECT_ID_VALUE));
 		});
 		Collection<SectionInstance> sectionInstances = new TreeSet<SectionInstance>();
-		sectionInstances = (Collection<SectionInstance>) _instances.save(list);
+		sectionInstances = (Collection<SectionInstance>) _instances.saveAll(list);
 		assertNotNull(sectionInstances);
 		assertFalse(sectionInstances.isEmpty());
 		sectionInstances.forEach(i -> {
@@ -75,7 +74,6 @@ public class SectionInstanceRepositoryTest extends AbstractTest {
 			assertNotNull(s);
 			assertTrue(s.isValid(true));
 		});
-
 		try {
 			_instances.save((SectionInstance) null);
 			fail("Should throw exception....");
@@ -115,20 +113,18 @@ public class SectionInstanceRepositoryTest extends AbstractTest {
 		assertNotNull(sectionInstance);
 		assertTrue(sectionInstance.isValid(true));
 		final Long id = sectionInstance.getId();
-
-		sectionInstance = _instances.findOne(id);
+		sectionInstance = _instances.findById(id).get();
 		assertNotNull(sectionInstance);
 		assertTrue(sectionInstance.isValid(true));
 		section = sectionInstance.getSection();
 		assertNotNull(section);
 		assertTrue(section.isValid(true));
-		sectionInstance = _instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, contentCd);
+		sectionInstance = _instances.findOptionalByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, contentCd).get();
 		assertNotNull(sectionInstance);
 		assertTrue(sectionInstance.isValid(true));
 		section = sectionInstance.getSection();
 		assertNotNull(section);
 		assertTrue(section.isValid(true));
-
 		Collection<SectionInstance> sectionInstances = (Collection<SectionInstance>) _instances.findAll(); 
 		assertNotNull(sectionInstances);
 		assertFalse(sectionInstances.isEmpty());
@@ -138,7 +134,6 @@ public class SectionInstanceRepositoryTest extends AbstractTest {
 			assertNotNull(s);
 			assertTrue(s.isValid(true));
 		});
-
 		sectionInstances = (Collection<SectionInstance>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "%TEST%");
 		assertNotNull(sectionInstances);
 		assertFalse(sectionInstances.isEmpty());
@@ -147,19 +142,25 @@ public class SectionInstanceRepositoryTest extends AbstractTest {
 			Section s = i.getSection();
 			assertNotNull(s);
 			assertTrue(s.isValid(true));
-		});
-		
+		});		
+	}
+	
+	@Test
+	public void bx_FindBreakTest() {
 		// Break it...		
-		assertNull(_instances.findOne(0L));
-		assertNull(_instances.findOne(99999999L));
-		assertNull(_instances.findByProjectIdAndContentContentCd("", contentCd));
-		assertNull(_instances.findByProjectIdAndContentContentCd((String) null, contentCd));
-		assertNull(_instances.findByProjectIdAndContentContentCd("Snicklefritz", contentCd));
-		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, null));
-		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, ""));
-		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, "Snicklefritz"));
-
-		sectionInstances = (Collection<SectionInstance>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_CODE_PREFIX_SECTION);
+		Section section = _sections.save(makeTestSection());
+		assertNotNull(section);
+		assertTrue(section.isValid(true));
+		final String contentCd = section.getContentCd();
+		assertFalse(_instances.findById(0L).isPresent());
+		assertFalse(_instances.findById(99999999L).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd("", contentCd).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd((String) null, contentCd).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd("Snicklefritz", contentCd).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, null).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, "").isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, "Snicklefritz").isPresent());
+		Collection<SectionInstance> sectionInstances = (Collection<SectionInstance>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_CODE_PREFIX_SECTION);
 		assertTrue(sectionInstances.isEmpty());
 		sectionInstances = (Collection<SectionInstance>) _instances.findByProjectIdAndContentContentCdLike("", TEST_CODE_PREFIX_SECTION);
 		assertTrue(sectionInstances.isEmpty());
@@ -170,7 +171,7 @@ public class SectionInstanceRepositoryTest extends AbstractTest {
 		sectionInstances = (Collection<SectionInstance>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "Snicklefritz");
 		assertTrue(sectionInstances.isEmpty());
 		try {
-			_instances.findOne((Long) null);
+			_instances.findById((Long) null).get();
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
@@ -202,47 +203,39 @@ public class SectionInstanceRepositoryTest extends AbstractTest {
 		section.addClause(clause);
 		Paragraph paragraph = makeTestParagraph();
 		clause.addParagraph(paragraph);
-		
 		section = _sections.save(section);
 		assertNotNull(section);
 		assertTrue(section.isValid(true));
 		assertFalse(section.getClauses().isEmpty());
-		
 		clause = section.getClauses().iterator().next();
 		assertNotNull(clause);
 		assertTrue(clause.isValid(true));
 		assertFalse(clause.getParagraphs().isEmpty());
-		
 		paragraph = clause.getParagraphs().iterator().next();
 		assertNotNull(paragraph);
 		assertTrue(paragraph.isValid(true));
 		assertNotNull(paragraph.getClause());
 		assertTrue(paragraph.getClause().isValid(true));
-		
 		SectionInstance sectionInstance = new SectionInstance(section, TEST_PROJECT_ID_VALUE);		
 		sectionInstance = _instances.save(sectionInstance);
 		assertNotNull(sectionInstance);
 		assertTrue(sectionInstance.isValid(true));
 		Long id = sectionInstance.getId();
 		assertFalse(sectionInstance.getClauses().isEmpty());
-		
 		ClauseInstance clauseInstance = sectionInstance.getClauses().iterator().next();		
 		assertNotNull(clauseInstance);
 		assertTrue(clauseInstance.isValid(true));
 		assertFalse(clauseInstance.getParagraphs().isEmpty());
-		
 		ParagraphInstance paragraphInstance = clauseInstance.getParagraphs().iterator().next();
 		assertNotNull(paragraphInstance);
 		assertTrue(paragraphInstance.isValid(true));
 		assertNotNull(paragraphInstance.getClause());
 		assertTrue(paragraphInstance.getClause().isValid(true));	
-		
-		sectionInstance = _instances.findOne(id);
+		sectionInstance = _instances.findById(id).get();
 		assertNotNull(sectionInstance);
 		assertTrue(sectionInstance.isValid(true));
-		
-		_instances.delete(id);
-		_sections.delete(section.getId());
+		_instances.deleteById(id);
+		_sections.deleteById(section.getId());
 	}
 	
 	@Test
@@ -257,18 +250,18 @@ public class SectionInstanceRepositoryTest extends AbstractTest {
 		assertTrue(sectionInstance.isValid(true));
 		Long id = sectionInstance.getId();
 
-		_instances.delete(id);
-		assertNull(_instances.findOne(sectionInstance.getId()));
+		_instances.deleteById(id);
+		assertFalse(_instances.findById(sectionInstance.getId()).isPresent());
 		sectionInstance = new SectionInstance(section, projectId);
 		sectionInstance = _instances.save(sectionInstance);
 		assertNotNull(sectionInstance);
 		assertTrue(sectionInstance.isValid(true));
 		id = sectionInstance.getId();
 		_instances.delete(sectionInstance);
-		assertNull(_instances.findOne(sectionInstance.getId()));
+		assertFalse(_instances.findById(sectionInstance.getId()).isPresent());
 		
 		Collection<Section> sections = makeTestSections(7);
-		sections = (Collection<Section>) _sections.save(sections);
+		sections = (Collection<Section>) _sections.saveAll(sections);
 		assertNotNull(sections);
 		assertFalse(sections.isEmpty());
 		final Collection<SectionInstance> list = new TreeSet<SectionInstance>();
@@ -276,7 +269,7 @@ public class SectionInstanceRepositoryTest extends AbstractTest {
 			assertTrue(s.isValid(true));
 			list.add(new SectionInstance(s, projectId));
 		});
-		Collection<SectionInstance> sectionInstances = (Collection<SectionInstance>) _instances.save(list);
+		Collection<SectionInstance> sectionInstances = (Collection<SectionInstance>) _instances.saveAll(list);
 		assertNotNull(sectionInstances);
 		assertFalse(sectionInstances.isEmpty());
 		sectionInstances.forEach(i -> {
@@ -285,9 +278,9 @@ public class SectionInstanceRepositoryTest extends AbstractTest {
 			assertNotNull(s);
 			assertTrue(s.isValid(true));
 		});		
-		_instances.delete(sectionInstances);
+		_instances.deleteAll(sectionInstances);
 		sectionInstances.forEach(i -> {
-			assertNull(_instances.findOne(i.getId()));;
+			assertFalse(_instances.findById(i.getId()).isPresent());;
 		});
 		
 		_instances.deleteAll();

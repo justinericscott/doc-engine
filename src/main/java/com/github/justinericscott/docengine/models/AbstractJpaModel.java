@@ -66,35 +66,35 @@ public abstract class AbstractJpaModel {
 		// Default constructor for Spring
 	}
 
-	public final Long getCreatedBy() {
+	public Long getCreatedBy() {
 		return createdBy;
 	}
 
-	public final void setCreatedBy(final Long createdBy) {
+	public void setCreatedBy(final Long createdBy) {
 		this.createdBy = createdBy;
 	}
 
-	public final Timestamp getCreatedDt() {
+	public Timestamp getCreatedDt() {
 		return createdDt;
 	}
 
-	public final void setCreatedDt(final Timestamp createdDt) {
+	public void setCreatedDt(final Timestamp createdDt) {
 		this.createdDt = createdDt;
 	}
 
-	public final Long getUpdatedBy() {
+	public Long getUpdatedBy() {
 		return updatedBy;
 	}
 
-	public final void setUpdatedBy(final Long updatedBy) {
+	public void setUpdatedBy(final Long updatedBy) {
 		this.updatedBy = updatedBy;
 	}
 
-	public final Timestamp getUpdatedDt() {
+	public Timestamp getUpdatedDt() {
 		return updatedDt;
 	}
 
-	public final void setUpdatedDt(final Timestamp updatedDt) {
+	public void setUpdatedDt(final Timestamp updatedDt) {
 		this.updatedDt = updatedDt;
 	}
 	

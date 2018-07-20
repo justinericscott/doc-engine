@@ -1,4 +1,4 @@
-package com.github.justinericscott.docengine.repository.content.instance;
+package com.github.justinericscott.docengine.repository.content;
 
 import static org.junit.Assert.*;
 
@@ -53,9 +53,8 @@ public class ClauseInstanceRepositoryTest extends AbstractTest {
 		clause = clauseInstance.getClause();
 		assertNotNull(clause);
 		assertTrue(clause.isValid(true));
-
 		Collection<Clause> clauses = makeTestClauses(7);
-		clauses = (Collection<Clause>) _clauses.save(clauses);
+		clauses = (Collection<Clause>) _clauses.saveAll(clauses);
 		assertNotNull(clauses);
 		assertFalse(clauses.isEmpty());
 		final Collection<ClauseInstance> list = new TreeSet<ClauseInstance>();
@@ -64,7 +63,7 @@ public class ClauseInstanceRepositoryTest extends AbstractTest {
 			list.add(new ClauseInstance(c, TEST_PROJECT_ID_VALUE));
 		});
 		Collection<ClauseInstance> clauseInstances = new TreeSet<ClauseInstance>();
-		clauseInstances = (Collection<ClauseInstance>) _instances.save(list);
+		clauseInstances = (Collection<ClauseInstance>) _instances.saveAll(list);
 		assertNotNull(clauseInstances);
 		assertFalse(clauseInstances.isEmpty());
 		clauseInstances.forEach(i -> {
@@ -73,7 +72,6 @@ public class ClauseInstanceRepositoryTest extends AbstractTest {
 			assertNotNull(c);
 			assertTrue(c.isValid(true));
 		});
-
 		try {
 			_instances.save((ClauseInstance) null);
 			fail("Should throw exception....");
@@ -113,20 +111,18 @@ public class ClauseInstanceRepositoryTest extends AbstractTest {
 		assertNotNull(clauseInstance);
 		assertTrue(clauseInstance.isValid(true));
 		final Long id = clauseInstance.getId();
-
-		clauseInstance = _instances.findOne(id);
+		clauseInstance = _instances.findById(id).get();
 		assertNotNull(clauseInstance);
 		assertTrue(clauseInstance.isValid(true));
 		clause = clauseInstance.getClause();
 		assertNotNull(clause);
 		assertTrue(clause.isValid(true));
-		clauseInstance = _instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, contentCd);
+		clauseInstance = _instances.findOptionalByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, contentCd).get();
 		assertNotNull(clauseInstance);
 		assertTrue(clauseInstance.isValid(true));
 		clause = clauseInstance.getClause();
 		assertNotNull(clause);
 		assertTrue(clause.isValid(true));
-
 		Collection<ClauseInstance> clauseInstances = (Collection<ClauseInstance>) _instances.findAll(); 
 		assertNotNull(clauseInstances);
 		assertFalse(clauseInstances.isEmpty());
@@ -136,7 +132,6 @@ public class ClauseInstanceRepositoryTest extends AbstractTest {
 			assertNotNull(c);
 			assertTrue(c.isValid(true));
 		});
-
 		clauseInstances = (Collection<ClauseInstance>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "%TEST%");
 		assertNotNull(clauseInstances);
 		assertFalse(clauseInstances.isEmpty());
@@ -145,19 +140,25 @@ public class ClauseInstanceRepositoryTest extends AbstractTest {
 			Clause c = i.getClause();
 			assertNotNull(c);
 			assertTrue(c.isValid(true));
-		});
-		
+		});		
+	}
+	
+	@Test
+	public void bx_FindBreakTest() {
 		// Break it...		
-		assertNull(_instances.findOne(0L));
-		assertNull(_instances.findOne(99999999L));
-		assertNull(_instances.findByProjectIdAndContentContentCd("", contentCd));
-		assertNull(_instances.findByProjectIdAndContentContentCd((String) null, contentCd));
-		assertNull(_instances.findByProjectIdAndContentContentCd("Snicklefritz", contentCd));
-		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, null));
-		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, ""));
-		assertNull(_instances.findByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, "Snicklefritz"));
-
-		clauseInstances = (Collection<ClauseInstance>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_CODE_PREFIX_CLAUSE);
+		Clause clause = _clauses.save(makeTestClause());
+		assertNotNull(clause);
+		assertTrue(clause.isValid(true));
+		final String contentCd = clause.getContentCd();
+		assertFalse(_instances.findById(0L).isPresent());
+		assertFalse(_instances.findById(99999999L).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd("", contentCd).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd((String) null, contentCd).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd("Snicklefritz", contentCd).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, null).isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, "").isPresent());
+		assertFalse(_instances.findOptionalByProjectIdAndContentContentCd(TEST_PROJECT_ID_VALUE, "Snicklefritz").isPresent());
+		Collection<ClauseInstance> clauseInstances = (Collection<ClauseInstance>) _instances.findByProjectIdAndContentContentCdLike(null, TEST_CODE_PREFIX_CLAUSE);
 		assertTrue(clauseInstances.isEmpty());
 		clauseInstances = (Collection<ClauseInstance>) _instances.findByProjectIdAndContentContentCdLike("", TEST_CODE_PREFIX_CLAUSE);
 		assertTrue(clauseInstances.isEmpty());
@@ -168,7 +169,7 @@ public class ClauseInstanceRepositoryTest extends AbstractTest {
 		clauseInstances = (Collection<ClauseInstance>) _instances.findByProjectIdAndContentContentCdLike(TEST_PROJECT_ID_VALUE, "Snicklefritz");
 		assertTrue(clauseInstances.isEmpty());
 		try {
-			_instances.findOne((Long) null);
+			_instances.findById((Long) null).get();
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
@@ -198,36 +199,31 @@ public class ClauseInstanceRepositoryTest extends AbstractTest {
 		Clause clause = makeTestClause();
 		Paragraph paragraph = makeTestParagraph();
 		clause.addParagraph(paragraph);
-		
 		clause = _clauses.save(clause);
 		assertNotNull(clause);
 		assertTrue(clause.isValid(true));
 		assertFalse(clause.getParagraphs().isEmpty());
-		
 		paragraph = clause.getParagraphs().iterator().next();
 		assertNotNull(paragraph);
 		assertTrue(paragraph.isValid(true));
 		assertNotNull(paragraph.getClause());
 		assertTrue(paragraph.getClause().isValid(true));
-		
 		ClauseInstance clauseInstance = new ClauseInstance(clause, TEST_PROJECT_ID_VALUE);
 		clauseInstance = _instances.save(clauseInstance);
 		assertNotNull(clauseInstance);
 		assertTrue(clauseInstance.isValid(true));
 		Long id = clauseInstance.getId();
 		assertFalse(clauseInstance.getParagraphs().isEmpty());
-		
 		ParagraphInstance paragraphInstance = clauseInstance.getParagraphs().iterator().next();
 		assertNotNull(paragraphInstance);
 		assertTrue(paragraphInstance.isValid(true));
 		assertNotNull(paragraphInstance.getClause());
 		assertTrue(paragraphInstance.getClause().isValid(true));	
-		
-		clauseInstance = _instances.findOne(id);
+		clauseInstance = _instances.findById(id).get();
 		assertNotNull(clauseInstance);
 		assertTrue(clauseInstance.isValid(true));
-		_instances.delete(id);
-		_clauses.delete(clause.getId());
+		_instances.deleteById(id);
+		_clauses.deleteById(clause.getId());
 	}
 	
 	@Test
@@ -241,19 +237,17 @@ public class ClauseInstanceRepositoryTest extends AbstractTest {
 		assertNotNull(clauseInstance);
 		assertTrue(clauseInstance.isValid(true));
 		Long id = clauseInstance.getId();
-
-		_instances.delete(id);
-		assertNull(_instances.findOne(clauseInstance.getId()));
+		_instances.deleteById(id);
+		assertFalse(_instances.findById(clauseInstance.getId()).isPresent());
 		clauseInstance = new ClauseInstance(clause, projectId);
 		clauseInstance = _instances.save(clauseInstance);
 		assertNotNull(clauseInstance);
 		assertTrue(clauseInstance.isValid(true));
 		id = clauseInstance.getId();
 		_instances.delete(clauseInstance);
-		assertNull(_instances.findOne(clauseInstance.getId()));
-		
+		assertFalse(_instances.findById(clauseInstance.getId()).isPresent());
 		Collection<Clause> clauses = makeTestClauses(7);
-		clauses = (Collection<Clause>) _clauses.save(clauses);
+		clauses = (Collection<Clause>) _clauses.saveAll(clauses);
 		assertNotNull(clauses);
 		assertFalse(clauses.isEmpty());
 		final Collection<ClauseInstance> list = new TreeSet<ClauseInstance>();
@@ -261,7 +255,7 @@ public class ClauseInstanceRepositoryTest extends AbstractTest {
 			assertTrue(c.isValid(true));
 			list.add(new ClauseInstance(c, projectId));
 		});
-		Collection<ClauseInstance> clauseInstances = (Collection<ClauseInstance>) _instances.save(list);
+		Collection<ClauseInstance> clauseInstances = (Collection<ClauseInstance>) _instances.saveAll(list);
 		assertNotNull(clauseInstances);
 		assertFalse(clauseInstances.isEmpty());
 		clauseInstances.forEach(i -> {
@@ -270,11 +264,10 @@ public class ClauseInstanceRepositoryTest extends AbstractTest {
 			assertNotNull(c);
 			assertTrue(c.isValid(true));
 		});		
-		_instances.delete(clauseInstances);
+		_instances.deleteAll(clauseInstances);
 		clauseInstances.forEach(i -> {
-			assertNull(_instances.findOne(i.getId()));;
+			assertFalse(_instances.findById(i.getId()).isPresent());;
 		});
-		
 		_instances.deleteAll();
 		clauseInstances = (Collection<ClauseInstance>) _instances.findAll();
 		assertTrue(clauseInstances.isEmpty());

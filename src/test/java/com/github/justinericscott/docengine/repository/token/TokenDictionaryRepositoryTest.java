@@ -36,7 +36,7 @@ public class TokenDictionaryRepositoryTest extends AbstractTest {
 		assertTrue(token.isValid(true));
 
 		Collection<TokenDefinition> tokens = makeTestTokens(5);
-		tokens = (Collection<TokenDefinition>) _tokens.save(tokens);
+		tokens = (Collection<TokenDefinition>) _tokens.saveAll(tokens);
 		assertNotNull(tokens);
 		assertFalse(tokens.isEmpty());
 
@@ -76,11 +76,11 @@ public class TokenDictionaryRepositoryTest extends AbstractTest {
 		final Long id = token.getId();
 		final String tokenCd = token.getTokenCd();
 		
-		token = _tokens.findOne(id);
+		token = _tokens.findById(id).get();
 		assertNotNull(token);
 		assertTrue(token.isValid(true));
 		
-		token = _tokens.findByTokenCd(tokenCd);
+		token = _tokens.findOptionalByTokenCd(tokenCd).get();
 		assertNotNull(token);
 		assertTrue(token.isValid(true));
 		
@@ -98,10 +98,10 @@ public class TokenDictionaryRepositoryTest extends AbstractTest {
 			assertTrue(t.isValid(true));
 		});
 
-		assertNull(_tokens.findByTokenCd((String) null));
-		assertNull(_tokens.findByTokenCd(""));
-		assertNull(_tokens.findOne(0L));
-		assertNull(_tokens.findByTokenCd("Snicklefritz"));
+		assertFalse(_tokens.findOptionalByTokenCd((String) null).isPresent());
+		assertFalse(_tokens.findOptionalByTokenCd("").isPresent());
+		assertFalse(_tokens.findById(0L).isPresent());
+		assertFalse(_tokens.findOptionalByTokenCd("Snicklefritz").isPresent());
 		try {
 			_tokens.findByTokenCdLike(null);
 			fail();

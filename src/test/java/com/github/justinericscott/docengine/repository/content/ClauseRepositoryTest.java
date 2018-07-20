@@ -1,4 +1,4 @@
-package com.github.justinericscott.docengine.repository.content.template;
+package com.github.justinericscott.docengine.repository.content;
 
 import static org.junit.Assert.*;
 
@@ -41,15 +41,13 @@ public class ClauseRepositoryTest extends AbstractTest {
 		clause = _clauses.save(clause);
 		assertNotNull(clause);
 		assertTrue(clause.isValid(true));
-
 		Collection<Clause> clauses = makeTestClauses(7);
-		clauses = (Collection<Clause>) _clauses.save(clauses);
+		clauses = (Collection<Clause>) _clauses.saveAll(clauses);
 		assertNotNull(clauses);
 		assertFalse(clauses.isEmpty());
 		clauses.forEach(c -> {
 			assertTrue(c.isValid(true));
 		});
-
 		try {
 			_clauses.save((Clause) null);
 			fail("Should throw exception....");
@@ -82,7 +80,7 @@ public class ClauseRepositoryTest extends AbstractTest {
 			copies.forEach(c -> {
 				c.setId(null);
 			});
-			copies = (Collection<Clause>) _clauses.save(copies);
+			copies = (Collection<Clause>) _clauses.saveAll(copies);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
@@ -95,37 +93,37 @@ public class ClauseRepositoryTest extends AbstractTest {
 		Clause clause = _clauses.save(makeTestClause());
 		final Long id = clause.getId();
 		final String contentCd = clause.getContentCd();
-		clause = _clauses.findOne(id);
+		clause = _clauses.findById(id).get();
 		assertTrue(clause.isValid(true));
-
-		clause = _clauses.findByContentCd(contentCd);
+		clause = _clauses.findOptionalByContentCd(contentCd).get();
 		assertTrue(clause.isValid(true));
 		assertEquals(contentCd, clause.getContentCd());
-
 		Collection<Clause> clauses = (Collection<Clause>) _clauses.findByContentCdLike("%TEST%");
 		assertNotNull(clauses);
 		assertFalse(clauses.isEmpty());
 		clauses.forEach(c -> {
 			assertTrue(c.isValid(true));
 		});
-
 		clauses = (Collection<Clause>) _clauses.findAll();
 		assertNotNull(clauses);
 		assertFalse(clauses.isEmpty());
 		clauses.forEach(c -> {
 			assertTrue(c.isValid(true));
 		});
-
+	}
+	
+	@Test
+	public void bx_FindBreakTest() {
 		// Break it...
-		assertNull(_clauses.findOne(Long.MIN_VALUE));
-		assertNull(_clauses.findOne(Long.MAX_VALUE));
-		assertNull(_clauses.findByContentCd("Snicklefritz"));
-		clauses = (Collection<Clause>) _clauses.findByContentCdLike("%Snicklefritz%");
+		assertFalse(_clauses.findById(Long.MIN_VALUE).isPresent());
+		assertFalse(_clauses.findById(Long.MAX_VALUE).isPresent());
+		assertFalse(_clauses.findOptionalByContentCd("Snicklefritz").isPresent());
+		Collection<Clause> clauses = (Collection<Clause>) _clauses.findByContentCdLike("%Snicklefritz%");
 		assertTrue(clauses.isEmpty());
 		clauses = (Collection<Clause>) _clauses.findByContentCdLike("");
 		assertTrue(clauses.isEmpty());
 		try {
-			_clauses.findOne((Long) null);
+			_clauses.findById((Long) null).get();
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
@@ -163,8 +161,7 @@ public class ClauseRepositoryTest extends AbstractTest {
 		assertTrue(paragraph.isValid(true));
 		assertNotNull(paragraph.getClause());
 		assertTrue(paragraph.getClause().isValid(true));
-
-		clause = _clauses.findOne(id);
+		clause = _clauses.findById(id).get();
 		assertNotNull(clause);
 		assertTrue(clause.isValid(true));
 		try {
@@ -173,7 +170,7 @@ public class ClauseRepositoryTest extends AbstractTest {
 		} catch (final Exception e) {
 			assertEquals(LazyInitializationException.class, e.getClass());
 		}
-		_clauses.delete(id);
+		_clauses.deleteById(id);
 	}
 
 	@Test
@@ -181,29 +178,30 @@ public class ClauseRepositoryTest extends AbstractTest {
 		// Happy path...
 		Clause clause = _clauses.save(makeTestClause());
 		final Long id = clause.getId();
-		_clauses.delete(id);
-		assertNull(_clauses.findOne(id));
-
+		_clauses.deleteById(id);
+		assertFalse(_clauses.findById(id).isPresent());
 		clause = _clauses.save(makeTestClause());
 		_clauses.delete(clause);
-		assertNull(_clauses.findOne(clause.getId()));
-
+		assertFalse(_clauses.findById(clause.getId()).isPresent());
 		Collection<Clause> clauses = makeTestClauses(7);
-		clauses = (Collection<Clause>) _clauses.save(clauses);
+		clauses = (Collection<Clause>) _clauses.saveAll(clauses);
 		assertNotNull(clauses);
 		assertFalse(clauses.isEmpty());
 		clauses.forEach(c -> {
 			assertTrue(c.isValid(true));
 		});
-		_clauses.delete(clauses);
+		_clauses.deleteAll(clauses);
 		clauses.forEach(c -> {
-			assertNull(_clauses.findOne(c.getId()));
+			assertFalse(_clauses.findById(c.getId()).isPresent());
 		});
 
 //		_clauses.deleteAll();
 //		clauses = (Collection<ClauseJpaImpl>) _clauses.findAll();
 //		assertTrue(clauses.isEmpty());
-
+	}
+	
+	@Test
+	public void xx_DeleteBreakTest() {
 		// Break it...
 		try {
 			_clauses.delete(new Clause());
@@ -212,7 +210,7 @@ public class ClauseRepositoryTest extends AbstractTest {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}
 		try {
-			_clauses.delete((Long) null);
+			_clauses.deleteById((Long) null);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());

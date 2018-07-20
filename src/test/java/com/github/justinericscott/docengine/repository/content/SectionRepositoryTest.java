@@ -1,4 +1,4 @@
-package com.github.justinericscott.docengine.repository.content.template;
+package com.github.justinericscott.docengine.repository.content;
 
 import static org.junit.Assert.*;
 
@@ -42,15 +42,13 @@ public class SectionRepositoryTest extends AbstractTest {
 		section = _sections.save(section);
 		assertNotNull(section);
 		assertTrue(section.isValid(true));
-
 		Collection<Section> sections = makeTestSections(7);
-		sections = (Collection<Section>) _sections.save(sections);
+		sections = (Collection<Section>) _sections.saveAll(sections);
 		assertNotNull(sections);
 		assertFalse(sections.isEmpty());
 		sections.forEach(s -> {
 			assertTrue(s.isValid(true));
 		});
-
 		try {
 			_sections.save((Section) null);
 			fail("Should throw exception....");
@@ -83,7 +81,7 @@ public class SectionRepositoryTest extends AbstractTest {
 			copies.forEach(s -> {
 				s.setId(null);
 			});
-			copies = (Collection<Section>) _sections.save(copies);
+			copies = (Collection<Section>) _sections.saveAll(copies);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
@@ -96,13 +94,11 @@ public class SectionRepositoryTest extends AbstractTest {
 		Section section = _sections.save(makeTestSection());
 		final Long id = section.getId();
 		final String contentCd = section.getContentCd();
-		section = _sections.findOne(id);
+		section = _sections.findById(id).get();
 		assertTrue(section.isValid(true));
-
-		section = _sections.findByContentCd(contentCd);
+		section = _sections.findOptionalByContentCd(contentCd).get();
 		assertTrue(section.isValid(true));
 		assertEquals(contentCd, section.getContentCd());
-
 		Collection<Section> sections = (Collection<Section>) _sections
 				.findByContentCdLike("%TEST%");
 		assertNotNull(sections);
@@ -110,24 +106,26 @@ public class SectionRepositoryTest extends AbstractTest {
 		sections.forEach(s -> {
 			assertTrue(s.isValid(true));
 		});
-
 		sections = (Collection<Section>) _sections.findAll();
 		assertNotNull(sections);
 		assertFalse(sections.isEmpty());
 		sections.forEach(s -> {
 			assertTrue(s.isValid(true));
-		});
-		
+		});		
+	}
+	
+	@Test
+	public void bx_FindBreakTest() {
 		// Break it...		
-		assertNull(_sections.findOne(Long.MIN_VALUE));
-		assertNull(_sections.findOne(Long.MAX_VALUE));
-		assertNull(_sections.findByContentCd("Snicklefritz"));
-		sections = (Collection<Section>) _sections.findByContentCdLike("%Snicklefritz%");
+		assertFalse(_sections.findById(Long.MIN_VALUE).isPresent());
+		assertFalse(_sections.findById(Long.MAX_VALUE).isPresent());
+		assertFalse(_sections.findOptionalByContentCd("Snicklefritz").isPresent());
+		Collection<Section> sections = (Collection<Section>) _sections.findByContentCdLike("%Snicklefritz%");
 		assertTrue(sections.isEmpty());
 		sections = (Collection<Section>) _sections.findByContentCdLike("");
 		assertTrue(sections.isEmpty());
 		try {
-			_sections.findOne((Long) null);
+			_sections.findById((Long) null).get();
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
@@ -173,8 +171,7 @@ public class SectionRepositoryTest extends AbstractTest {
 		assertTrue(paragraph.isValid(true));
 		assertNotNull(paragraph.getClause());
 		assertTrue(paragraph.getClause().isValid(true));
-
-		section = _sections.findOne(id);
+		section = _sections.findById(id).get();
 		assertNotNull(section);
 		assertTrue(section.isValid(true));
 		try {
@@ -183,7 +180,7 @@ public class SectionRepositoryTest extends AbstractTest {
 		} catch (final Exception e) {
 			assertEquals(LazyInitializationException.class, e.getClass());
 		}
-		_sections.delete(id);
+		_sections.deleteById(id);
 	}
 
 	@Test
@@ -191,29 +188,29 @@ public class SectionRepositoryTest extends AbstractTest {
 		// Happy path...
 		Section section = _sections.save(makeTestSection());
 		final Long id = section.getId();
-		_sections.delete(id);
-		assertNull(_sections.findOne(id));
-
+		_sections.deleteById(id);
+		assertFalse(_sections.findById(id).isPresent());
 		section = _sections.save(makeTestSection());
 		_sections.delete(section);
-		assertNull(_sections.findOne(section.getId()));
-
+		assertFalse(_sections.findById(section.getId()).isPresent());
 		Collection<Section> sections = makeTestSections(7);
-		sections = (Collection<Section>) _sections.save(sections);
+		sections = (Collection<Section>) _sections.saveAll(sections);
 		assertNotNull(sections);
 		assertFalse(sections.isEmpty());
 		sections.forEach(s -> {
 			assertTrue(s.isValid(true));
 		});
-		_sections.delete(sections);
+		_sections.deleteAll(sections);
 		sections.forEach(s -> {
-			assertNull(_sections.findOne(s.getId()));
+			assertFalse(_sections.findById(s.getId()).isPresent());
 		});
-
 //		_sections.deleteAll();
 //		sections = (Collection<SectionJpaImpl>) _sections.findAll();
-//		assertTrue(sections.isEmpty());
-		
+//		assertTrue(sections.isEmpty());		
+	}
+	
+	@Test
+	public void xx_DeleteBreakTest() {
 		// Break it...
 		try {
 			_sections.delete(new Section());
@@ -222,10 +219,10 @@ public class SectionRepositoryTest extends AbstractTest {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}		
 		try {
-			_sections.delete((Long) null);
+			_sections.deleteById((Long) null);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
-		}		
+		}
 	}
 }

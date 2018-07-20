@@ -6,7 +6,6 @@ import static com.github.justinericscott.docengine.util.TestUtils.TestConstants.
 import java.util.Collection;
 import java.util.TreeSet;
 
-import org.hibernate.LazyInitializationException;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -47,7 +46,6 @@ public class ContentServiceTest extends AbstractTest {
 		assertNull(_contents.save(new Content("", "TEST BODY")));
 		assertNull(_contents.save(new Content(TEST_CODE_PREFIX_CONTENT + uuid(), "")));
 		assertNull(_contents.save(new Content(content, content.getContentCd())));
-
 		// Many
 		Contents result = _contents.save(new Contents(makeTestContents(9)));
 		for (final Content c : result.getContents()) {
@@ -59,35 +57,28 @@ public class ContentServiceTest extends AbstractTest {
 	public void ab_SaveDocumentTest() {
 		// Merge 1
 		Content content = createContent();
-
 		// Merge complex one at a time
 		Document document = (Document) _contents
 				.save(new Document(content, TEST_CODE_PREFIX_DOCUMENT + uuid()));
 		assertNotNull(document.getId());
-
 		Section section = new Section(content, TEST_CODE_PREFIX_SECTION + uuid());
 		document.addSection(section);
 		section = (Section) _contents.save(section);
 		assertNotNull(section.getId());
-
 		Clause clause = new Clause(content, TEST_CODE_PREFIX_CLAUSE + uuid());
 		section.addClause(clause);
 		clause = (Clause) _contents.save(clause);
 		assertNotNull(clause.getId());
-
 		Paragraph paragraph = new Paragraph(content, TEST_CODE_PREFIX_PARAGRAPH + uuid());
 		clause.addParagraph(paragraph);
 		paragraph = (Paragraph) _contents.save(paragraph);
 		assertNotNull(paragraph.getId());
-
 		// Need to re-get after assembly to delete.
-		document = (Document) _contents.findOne(document.getId(), Document.class);
-		assertNotNull(document);
-		assertTrue(document.isValid(true));
-
+//		document = (Document) _contents.findOne(document.getId(), Document.class);
+//		assertNotNull(document);
+//		assertTrue(document.isValid(true));
 		// Merge complex all at once
 		document = createDocument();
-
 		// Merge a list
 		Collection<Content> list = new TreeSet<Content>();
 		list.add(createContent());
@@ -118,7 +109,6 @@ public class ContentServiceTest extends AbstractTest {
 		assertNull(_contents.findOne((Long) null));
 		assertNull(_contents.findOne(Long.MIN_VALUE));
 		assertNull(_contents.findOne(Long.MAX_VALUE));
-
 		// Find by code
 		content = _contents.findByCode(content.getContentCd());
 		assertNotNull(content);
@@ -126,7 +116,6 @@ public class ContentServiceTest extends AbstractTest {
 		assertNull(_contents.findByCode((String) null));
 		assertNull(_contents.findByCode(""));
 		assertNull(_contents.findByCode("%Snicklefritz%"));
-
 		// Find by code like
 		createContents(5);
 		Contents contents = _contents.findByCodeLike("%TEST%");
@@ -135,7 +124,6 @@ public class ContentServiceTest extends AbstractTest {
 		assertNull(_contents.findByCodeLike((String) null));
 		assertNull(_contents.findByCodeLike(""));
 		assertNull(_contents.findByCodeLike("%Snicklefritz%"));
-
 		// Find all
 		createContents(5);
 		contents = _contents.findAll();
@@ -158,81 +146,42 @@ public class ContentServiceTest extends AbstractTest {
 		assertNotNull(document);
 		assertTrue(document.isValid(true));
 		assertTrue(Document.class.equals(document.getClass()));
-
-		try {
-			_contents.findOne(id, Document.class).getSections().iterator().next().getId();
-			fail();
-		} catch (final Exception e) {
-			assertTrue(e.getClass().equals(LazyInitializationException.class));
-		}
-		
-		document = _contents.findOne(id, Document.class, true);
+		document = _contents.findOne(id, Document.class);
 		assertNotNull(document);
 		assertTrue(document.isValid(true));
 		assertTrue(Document.class.equals(document.getClass()));
 		assertFalse(document.getSections().isEmpty());
-		
 		assertTrue(Section.class
 				.equals(_contents.findOne(document.getSections().iterator().next().getId()).getClass()));
 		assertTrue(Section.class
 				.equals(_contents.findByCode(document.getSections().iterator().next().getContentCd()).getClass()));
-		try {
-			((Section) _contents.findOne(document.getSections().iterator().next().getId())).getClauses()
-					.iterator().next();
-			fail();
-		} catch (final Exception e) {
-			assertTrue(e.getClass().equals(LazyInitializationException.class));
-		}
 		assertTrue(Clause.class.equals(_contents
 				.findOne(document.getSections().iterator().next().getClauses().iterator().next().getId(), Clause.class).getClass()));
 		assertTrue(Clause.class.equals(_contents
 				.findByCode(document.getSections().iterator().next().getClauses().iterator().next().getContentCd())
 				.getClass()));
-		try {
-			((Clause) _contents
-					.findOne(document.getSections().iterator().next().getClauses().iterator().next().getId(), Clause.class))
-							.getParagraphs().iterator().next();
-			fail();
-		} catch (final Exception e) {
-			assertTrue(e.getClass().equals(LazyInitializationException.class));
-		}
 		assertTrue(Paragraph.class.equals(_contents.findOne(document.getSections().iterator().next().getClauses()
 				.iterator().next().getParagraphs().iterator().next().getId(), Paragraph.class).getClass()));
 		assertTrue(Paragraph.class.equals(_contents.findByCode(document.getSections().iterator().next()
 				.getClauses().iterator().next().getParagraphs().iterator().next().getContentCd()).getClass()));
-
 		// Get Children by ID
 		for (final Section s : _contents.getChildren(id, Sections.class).getSections()) {
-			try {
-				s.getClauses().iterator().hasNext();
-				fail();
-			} catch (final Exception e) {
-				assertTrue(e.getClass().equals(LazyInitializationException.class));
-			}
 			for (final Clause c : _contents.getChildren(s.getId(), Clauses.class).getClauses()) {
-				try {
-					c.getParagraphs().iterator().hasNext();
-					fail();
-				} catch (final Exception e) {
-					assertTrue(e.getClass().equals(LazyInitializationException.class));
-				}
 				for (final Content p : _contents.getChildren(c.getId(), Paragraphs.class).getParagraphs()) {
 					assertTrue(p.isValid(true));
 				}
 			}
 		}
-
 		// Get Children by ID with kids
-		for (Section s : _contents.getChildren(document.getId(), Sections.class, true).getSections()) {
+		for (Section s : _contents.getChildren(document.getId(), Sections.class).getSections()) {
 			assertTrue(s.isValid(true));
-			for (Clause c : _contents.getChildren(s.getId(), Clauses.class, true).getClauses()) {
+			for (Clause c : _contents.getChildren(s.getId(), Clauses.class).getClauses()) {
 				assertTrue(c.isValid(true));
-				for (Paragraph p : _contents.getChildren(c.getId(), Paragraphs.class, true).getParagraphs()) {
+				for (Paragraph p : _contents.getChildren(c.getId(), Paragraphs.class).getParagraphs()) {
 					assertTrue(p.isValid(true));
 				}
 			}
 		}
-
 		// Get Children by code
 		for (Section s : _contents.getChildren(document.getContentCd(), Sections.class).getSections()) {
 			for (Clause c : _contents.getChildren(s.getContentCd(), Clauses.class).getClauses()) {
@@ -241,17 +190,16 @@ public class ContentServiceTest extends AbstractTest {
 				}
 			}
 		}
-
 		// Get Children by code with kids
-		for (Section s : _contents.getChildren(document.getContentCd(), Sections.class, true).getSections()) {
+		for (Section s : _contents.getChildren(document.getContentCd(), Sections.class).getSections()) {
 			assertTrue(s.isValid(true));
 			assertTrue(s.getClauses().iterator().hasNext());
 			assertNotNull(s.getClauses().iterator().next().getId());
-			for (Clause c : _contents.getChildren(s.getContentCd(), Clauses.class, true).getClauses()) {
+			for (Clause c : _contents.getChildren(s.getContentCd(), Clauses.class).getClauses()) {
 				assertTrue(c.isValid(true));
 				assertTrue(c.getParagraphs().iterator().hasNext());
 				assertNotNull(c.getParagraphs().iterator().next().getId());
-				for (Paragraph p : _contents.getChildren(c.getContentCd(), Paragraphs.class, true)
+				for (Paragraph p : _contents.getChildren(c.getContentCd(), Paragraphs.class)
 						.getParagraphs()) {
 					assertTrue(p.isValid(true));
 				}
@@ -262,7 +210,6 @@ public class ContentServiceTest extends AbstractTest {
 		assertNull(_contents.findOne(0L));
 		assertNull(_contents.findOne(99999999999999999L));
 		assertNull(_contents.findByCode("Snicklefritz"));
-		
 		assertNotNull(_contents.findAll(Documents.class));
 	}
 

@@ -89,7 +89,6 @@ public class ContentRestControllerTest extends AbstractTest {
 		assertNull(_contents.save(new Document(new Content("TEST", "CODE")), Document.class));
 		assertNull(_contents.save(new Document(new Content(""), TEST_CODE_PREFIX_CONTENT + uuid()),
 				Document.class));
-
 	}
 
 	@Test
@@ -106,9 +105,6 @@ public class ContentRestControllerTest extends AbstractTest {
 		for (Content c : contents.getContents()) {
 			assertTrue(c.isValid(true));
 		}
-//		contents.getContents().forEach(c -> {
-//			assertTrue(c.isValid(true));
-//		});
 
 		// Get Content
 		final Content content = createContent();
@@ -129,14 +125,14 @@ public class ContentRestControllerTest extends AbstractTest {
 		assertNotNull(_contents.findOne(id, Document.class));
 		assertNotNull(_contents.findByCode(code, Document.class));
 
-		assertNotNull(_contents.findByCode(document.getSections().iterator().next().getContentCd(), Section.class, true));
-		assertNotNull(_contents.findOne(document.getSections().iterator().next().getId(), Section.class, true));
+		assertNotNull(_contents.findByCode(document.getSections().iterator().next().getContentCd(), Section.class));
+		assertNotNull(_contents.findOne(document.getSections().iterator().next().getId(), Section.class));
 
 		assertNotNull(_contents.findOne(document.getSections().iterator().next().getClauses().iterator().next().getId(),
-				Clause.class, true));
+				Clause.class));
 		assertNotNull(
 				_contents.findByCode(document.getSections().iterator().next().getClauses().iterator().next().getContentCd(),
-						Clause.class, true));
+						Clause.class));
 
 		assertNotNull(_contents.findOne(document.getSections().iterator().next().getClauses().iterator().next()
 				.getParagraphs().iterator().next().getId(), Paragraph.class));
@@ -144,22 +140,22 @@ public class ContentRestControllerTest extends AbstractTest {
 				.getParagraphs().iterator().next().getContentCd(), Paragraphs.class));
 
 		// Get Children by ID
-		for (Section s : _contents.getChildren(id, Sections.class, true).getSections()) {
+		for (Section s : _contents.getChildren(id, Sections.class).getSections()) {
 			assertTrue(s.isValid(true));
-			for (Clause c : _contents.getChildren(s.getId(), Clauses.class, true).getClauses()) {
+			for (Clause c : _contents.getChildren(s.getId(), Clauses.class).getClauses()) {
 				assertTrue(c.isValid(true));
-				for (Paragraph p : _contents.getChildren(c.getId(), Paragraphs.class, true).getParagraphs()) {
+				for (Paragraph p : _contents.getChildren(c.getId(), Paragraphs.class).getParagraphs()) {
 					assertTrue(p.isValid(true));
 				}
 			}
 		}
 
 		// Get Children by ID with kids
-		Sections sections = _contents.getChildren(document.getId(), Sections.class, true);
+		Sections sections = _contents.getChildren(document.getId(), Sections.class);
 		for (Section s : sections.getSections()) {
 			assertTrue(s.isValid(true));
 			assertNotNull(s.getClauses());
-			for (Clause c : _contents.getChildren(s.getId(), Clauses.class, true).getClauses()) {
+			for (Clause c : _contents.getChildren(s.getId(), Clauses.class).getClauses()) {
 				assertTrue(c.isValid(true));
 				assertNotNull(c.getParagraphs());
 				for (Paragraph p : _contents.getChildren(c.getId(), Paragraphs.class).getParagraphs()) {
@@ -169,9 +165,9 @@ public class ContentRestControllerTest extends AbstractTest {
 		}
 
 		// Get Children by code
-		for (Section s : _contents.getChildren(document.getContentCd(), Sections.class, true).getSections()) {
+		for (Section s : _contents.getChildren(document.getContentCd(), Sections.class).getSections()) {
 			assertTrue(s.isValid(true));
-			for (Clause c : _contents.getChildren(s.getContentCd(), Clauses.class, true).getClauses()) {
+			for (Clause c : _contents.getChildren(s.getContentCd(), Clauses.class).getClauses()) {
 				assertTrue(c.isValid(true));
 				for (Paragraph p : _contents.getChildren(c.getContentCd(), Paragraphs.class).getParagraphs()) {
 					assertTrue(p.isValid(true));
@@ -180,10 +176,10 @@ public class ContentRestControllerTest extends AbstractTest {
 		}
 
 		// Get Children by code with kids
-		for (Section s : _contents.getChildren(document.getContentCd(), Sections.class, true).getSections()) {
+		for (Section s : _contents.getChildren(document.getContentCd(), Sections.class).getSections()) {
 			assertTrue(s.isValid(true));
 			assertNotNull(s.getClauses());
-			for (Clause c : _contents.getChildren(s.getContentCd(), Clauses.class, true).getClauses()) {
+			for (Clause c : _contents.getChildren(s.getContentCd(), Clauses.class).getClauses()) {
 				assertTrue(c.isValid(true));
 				assertNotNull(c.getParagraphs());
 				for (Paragraph p : _contents.getChildren(c.getContentCd(), Paragraphs.class).getParagraphs()) {
@@ -220,7 +216,7 @@ public class ContentRestControllerTest extends AbstractTest {
 		paragraph = clause.getParagraphs().iterator().next();
 		assertTrue(paragraph.isValid(true));
 
-		document = _contents.findByCode(code, Document.class, true);
+		document = _contents.findByCode(code, Document.class);
 		assertTrue(document.isValid(true));
 		assertNotNull(document.getSections());
 		for (Section s : document.getSections()) {
@@ -234,7 +230,7 @@ public class ContentRestControllerTest extends AbstractTest {
 				}
 			}
 		}
-		section = _contents.findByCode(document.getSections().iterator().next().getContentCd(), Section.class, true);
+		section = _contents.findByCode(document.getSections().iterator().next().getContentCd(), Section.class);
 		assertTrue(section.isValid(true));
 		assertNotNull(section.getClauses());
 		for (Clause c : section.getClauses()) {
@@ -244,7 +240,7 @@ public class ContentRestControllerTest extends AbstractTest {
 				assertTrue(p.isValid(true));
 			}
 		}
-		clause = _contents.findByCode(section.getClauses().iterator().next().getContentCd(), Clause.class, true);
+		clause = _contents.findByCode(section.getClauses().iterator().next().getContentCd(), Clause.class);
 		assertTrue(clause.isValid(true));
 		assertNotNull(clause.getParagraphs());
 		for (Paragraph p : clause.getParagraphs()) {
@@ -253,7 +249,7 @@ public class ContentRestControllerTest extends AbstractTest {
 		paragraph = _contents.findByCode(clause.getParagraphs().iterator().next().getContentCd(), Paragraph.class);
 		assertNotNull(paragraph);
 		assertTrue(paragraph.isValid(true));
-		document = _contents.findByCode(code, Document.class, true);
+		document = _contents.findByCode(code, Document.class);
 		assertTrue(document.isValid(true));
 		assertNotNull(document.getSections());
 		document.getSections().forEach(s -> {

@@ -4,7 +4,6 @@ import static com.github.justinericscott.docengine.util.Utils.Constants.*;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullOrEmpty;
 import static org.springframework.http.HttpStatus.*;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 
 import org.slf4j.Logger;
@@ -71,11 +70,11 @@ public class RestUtils {
 
 	public final URI getURI(final String dest) {
 		if (isNotNullOrEmpty(dest)) {
-			try {
+//			try {
 				return URI.create(UriUtils.encode(dest, "UTF-8"));
-			} catch (final UnsupportedEncodingException e) {
-				LOG.error("Problem encoding the intended destination to URI.", e);
-			}
+//			} catch (final UnsupportedEncodingException e) {
+//				LOG.error("Problem encoding the intended destination to URI.", e);
+//			}
 		}
 		return null;
 	}
@@ -97,8 +96,11 @@ public class RestUtils {
 		public static final String DOCUMENT = "/document";
 		public static final String DOCUMENTS = "/documents";
 		public static final String SECTION = "/section";
+		public static final String SECTIONS = "/sections";
 		public static final String CLAUSE = "/clause";
+		public static final String CLAUSES = "/clauses";
 		public static final String PARAGRAPH = "/paragraph";
+		public static final String PARAGRAPHS = "/paragraphs";
 		public static final String INSTANCE = "/instance";
 		public static final String INSTANCES = "/instances";
 

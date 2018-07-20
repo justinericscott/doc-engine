@@ -1,13 +1,12 @@
 package com.github.justinericscott.docengine.config;
 
-import static com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature.*;
 import static com.github.justinericscott.docengine.util.Utils.Constants.*;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullOrEmpty;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-
+import java.text.SimpleDateFormat;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -22,10 +21,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 /**
  * @author Justin Scott
@@ -33,7 +31,7 @@ import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
  *         TODO: Description
  */
 @Configuration
-class WebConfig extends WebMvcConfigurerAdapter {
+class WebConfig implements WebMvcConfigurer {
 	private static final Logger LOG = LoggerFactory.getLogger(WebConfig.class);
 	private static final String HTTPS = "https://";
 	private static final String HTTP = "http://";
@@ -45,12 +43,21 @@ class WebConfig extends WebMvcConfigurerAdapter {
 
 	@Autowired
 	private ServerProperties _server;
+	
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder()
+                .indentOutput(true)
+                .dateFormat(new SimpleDateFormat("yyyy-MM-dd"))
+                .modulesToInstall(new ParameterNamesModule());
+        converters.add(new MappingJackson2HttpMessageConverter(builder.build()));
+    }
 
-	@Override
-	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-		LOG.trace("Adding Mapping Jackson 2 HTTP Message Converter...");
-		converters.add(new MappingJackson2HttpMessageConverter(objectMapper()));
-	}
+//	@Override
+//	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+//		LOG.trace("Adding Mapping Jackson 2 HTTP Message Converter...");
+//		converters.add(new MappingJackson2HttpMessageConverter(objectMapper()));
+//	}
 
 	@Bean(AUTOWIRE_QUALIFIER_ENDPOINT)
 	public String getEndpoint() {
@@ -63,16 +70,17 @@ class WebConfig extends WebMvcConfigurerAdapter {
 		return this.endpoint;
 	}
 
-	@Bean
-	public ObjectMapper objectMapper() {
-		final Hibernate5Module module = new Hibernate5Module();
-		module.enable(SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS);
-		return Jackson2ObjectMapperBuilder.json().failOnEmptyBeans(false).indentOutput(true).modulesToInstall(module)
-				.build();
-	}
+//	@Bean
+//	public ObjectMapper objectMapper() {
+//		
+//		final Hibernate5Module module = new Hibernate5Module();
+//		module.enable(SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS);
+//		return Jackson2ObjectMapperBuilder.json().failOnEmptyBeans(false).indentOutput(true).modulesToInstall(module)
+//				.build();
+//	}
 
 	private String getContextPath() {
-		final String path = _server.getContextPath();
+		final String path = _server.getServlet().getContextPath();
 		LOG.trace("Found the context path {}.", path);
 		return path;
 	}

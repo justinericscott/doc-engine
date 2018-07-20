@@ -5,6 +5,7 @@ import static com.github.justinericscott.docengine.util.Utils.*;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import org.hibernate.Hibernate;
 import org.slf4j.Logger;
@@ -13,6 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.github.justinericscott.docengine.models.Content;
+import com.github.justinericscott.docengine.models.Content.Clause;
+import com.github.justinericscott.docengine.models.Content.Document;
+import com.github.justinericscott.docengine.models.Content.Paragraph;
+import com.github.justinericscott.docengine.models.Content.Section;
+import com.github.justinericscott.docengine.models.Contents;
+import com.github.justinericscott.docengine.models.Contents.Clauses;
+import com.github.justinericscott.docengine.models.Contents.Documents;
+import com.github.justinericscott.docengine.models.Contents.Paragraphs;
+import com.github.justinericscott.docengine.models.Contents.Sections;
 import com.github.justinericscott.docengine.models.Instance;
 import com.github.justinericscott.docengine.models.Instance.ClauseInstance;
 import com.github.justinericscott.docengine.models.Instance.DocumentInstance;
@@ -31,7 +42,7 @@ import com.github.justinericscott.docengine.repository.content.SectionInstanceRe
 
 @Service
 @Transactional(AUTOWIRE_QUALIFIER_ORM_TX)
-final class InstanceServiceImpl implements InstanceService {
+class InstanceServiceImpl implements InstanceService {
 	private static final Logger LOG = LoggerFactory.getLogger(InstanceServiceImpl.class);
 
 	@Autowired
@@ -49,23 +60,26 @@ final class InstanceServiceImpl implements InstanceService {
 	@Autowired
 	private ParagraphInstanceRepository _paragraphs;
 
+	@Autowired
+	private ContentService _content;
+	
 	InstanceServiceImpl() {
 		LOG.trace("Creating new Instance Service.");
 	}
 
 	@Override
-	public final boolean delete(final Long id) {
+	public boolean delete(final Long id) {
 		if (isNotNullOrZero(id)) {
-			_instances.delete(id);
+			_instances.deleteById(id);
 			return !isNotNullOrEmpty(findOne(id));
 		}
 		return false;
 	}
 
 	@Override
-	public final boolean delete(final Long id, final Class<?> type) {
+	public boolean delete(final Long id, final Class<?> type) {
 		if (isNotNullOrZero(id)) {
-			_instances.delete(id);
+			_instances.deleteById(id);
 			if (isNotNullOrEmpty(type)) {
 				return !isNotNullOrEmpty(findOne(id, type));
 			} else {
@@ -76,37 +90,37 @@ final class InstanceServiceImpl implements InstanceService {
 	}
 
 	@Override
-	public final boolean delete(final String projectId, final String code) {
+	public boolean delete(final String projectId, final String code) {
 		return delete(findByProjectIdAndCode(projectId, code));
 	}
 
 	@Override
-	public final <T> boolean delete(final String projectId, final String code, Class<T> type) {
+	public <T> boolean delete(final String projectId, final String code, Class<T> type) {
 		return delete(type.cast(findByProjectIdAndCode(projectId, code, type)), type);
 	}
 
 	@Override
-	public final boolean delete(final Instance instance) {
+	public boolean delete(final Instance instance) {
 		if (isNotNullOrEmpty(instance)) {
 			final Long id = Instance.class.cast(instance).getId();
-			_instances.delete(id);
+			_instances.deleteById(id);
 			return !isNotNullOrEmpty(findOne(id));
 		}
 		return false;
 	}
 
 	@Override
-	public final <T> boolean delete(final T instance, Class<T> type) {
+	public <T> boolean delete(final T instance, Class<T> type) {
 		if (isNotNullOrEmpty(instance)) {
 			final Long id = Instance.class.cast(instance).getId();
-			_instances.delete(id);
+			_instances.deleteById(id);
 			return !isNotNullOrEmpty(findOne(id, type));
 		}
 		return false;
 	}
 
 	@Override
-	public final boolean deleteAll() {
+	public boolean deleteAll() {
 		_documents.deleteAll();
 		_sections.deleteAll();
 		_clauses.deleteAll();
@@ -118,7 +132,7 @@ final class InstanceServiceImpl implements InstanceService {
 	}
 
 	@Override
-	public final Instances findAll() {
+	public Instances findAll() {
 		final List<Instance> temp = (List<Instance>) _instances.findAll();
 		if (isNotNullOrEmpty(temp)) {
 			return new Instances(temp);
@@ -127,119 +141,182 @@ final class InstanceServiceImpl implements InstanceService {
 	}
 
 	@Override
-	public final <T> T findAll(final Class<T> type) {
-		return findAll(type, false);
-	}
-	
-	@Override
-	public final <T> T findAll(final Class<T> type, final boolean eagerKids) {
+	public <T> T findAll(final Class<T> type) {
 		if (isNotNullOrEmpty(type)) {
 			T one = null;
 			if (type.equals(DocumentInstances.class)) {
 				final Collection<DocumentInstance> documents = (Collection<DocumentInstance>) _documents.findAll();
 				if (isNotNullOrEmpty(documents)) {
-					LOG.trace("Found {} template object...", type.getSimpleName());
+					LOG.debug("Found {} instance object...", type.getSimpleName());
 					one = type.cast(new DocumentInstances(documents));
 				}
 			} else if (type.equals(SectionInstances.class)) {
 				final Collection<SectionInstance> sections = (Collection<SectionInstance>) _sections.findAll();
 				if (isNotNullOrEmpty(sections)) {
-					LOG.trace("Found {} template object...", type.getSimpleName());
+					LOG.debug("Found {} instance object...", type.getSimpleName());
 					one = type.cast(new SectionInstances(sections));
 				}
 			} else if (type.equals(ClauseInstances.class)) {
 				final Collection<ClauseInstance> clauses = (Collection<ClauseInstance>) _clauses.findAll();
 				if (isNotNullOrEmpty(clauses)) {
-					LOG.trace("Found {} template object...", type.getSimpleName());
+					LOG.debug("Found {} instance object...", type.getSimpleName());
 					one = type.cast(new ClauseInstances(clauses));
 				}
 			} else if (type.equals(ParagraphInstances.class)) {
 				final Collection<ParagraphInstance> paragraphs = (Collection<ParagraphInstance>) _paragraphs.findAll();
 				if (isNotNullOrEmpty(paragraphs)) {
-					LOG.trace("Found {} template object...", type.getSimpleName());
+					LOG.debug("Found {} instance object...", type.getSimpleName());
 					one = type.cast(new ParagraphInstances(paragraphs));
 				}
 			} else if (type.equals(Instances.class)) {
 				final Collection<Instance> contents = (Collection<Instance>) _instances.findAll();
 				if (isNotNullOrEmpty(contents)) {
-					LOG.trace("Found {} template object...", type.getSimpleName());
+					LOG.debug("Found {} instance object...", type.getSimpleName());
 					one = type.cast(new Instances(contents));
 				}
 			}
 			if (one != null) {
-				if (eagerKids) {
-					LOG.trace("Eager fetch requested for {} template object...", type.getSimpleName());
-					initialize(one, eagerKids);
-				}
+				initialize(one);
 				return one;
 			}
 		}
 		return null;
+//		return findAll(type, false);
+	}
+
+//	@Override
+//	public <T> T findAll(final Class<T> type, final boolean eagerKids) {
+//		if (isNotNullOrEmpty(type)) {
+//			T one = null;
+//			if (type.equals(DocumentInstances.class)) {
+//				final Collection<DocumentInstance> documents = (Collection<DocumentInstance>) _documents.findAll();
+//				if (isNotNullOrEmpty(documents)) {
+//					LOG.debug("Found {} instance object...", type.getSimpleName());
+//					one = type.cast(new DocumentInstances(documents));
+//				}
+//			} else if (type.equals(SectionInstances.class)) {
+//				final Collection<SectionInstance> sections = (Collection<SectionInstance>) _sections.findAll();
+//				if (isNotNullOrEmpty(sections)) {
+//					LOG.debug("Found {} instance object...", type.getSimpleName());
+//					one = type.cast(new SectionInstances(sections));
+//				}
+//			} else if (type.equals(ClauseInstances.class)) {
+//				final Collection<ClauseInstance> clauses = (Collection<ClauseInstance>) _clauses.findAll();
+//				if (isNotNullOrEmpty(clauses)) {
+//					LOG.debug("Found {} instance object...", type.getSimpleName());
+//					one = type.cast(new ClauseInstances(clauses));
+//				}
+//			} else if (type.equals(ParagraphInstances.class)) {
+//				final Collection<ParagraphInstance> paragraphs = (Collection<ParagraphInstance>) _paragraphs.findAll();
+//				if (isNotNullOrEmpty(paragraphs)) {
+//					LOG.debug("Found {} instance object...", type.getSimpleName());
+//					one = type.cast(new ParagraphInstances(paragraphs));
+//				}
+//			} else if (type.equals(Instances.class)) {
+//				final Collection<Instance> contents = (Collection<Instance>) _instances.findAll();
+//				if (isNotNullOrEmpty(contents)) {
+//					LOG.debug("Found {} instance object...", type.getSimpleName());
+//					one = type.cast(new Instances(contents));
+//				}
+//			}
+//			if (one != null) {
+//				if (eagerKids) {
+//					LOG.debug("Eager fetch requested for {} template object...", type.getSimpleName());
+//					initialize(one);
+//				}
+//				return one;
+//			}
+//		}
+//		return null;
+//	}
+
+	@Override
+	public Instance findByProjectIdAndCode(String projectId, String code) {
+		return findByProjectIdAndCode(projectId, code, Instance.class);
 	}
 
 	@Override
-	public final Instance findByProjectIdAndCode(String projectId, String code) {
-		if (isNotNullOrEmpty(projectId) && isNotNullOrEmpty(code)) {
-			return _instances.findByProjectIdAndContentContentCd(projectId, code);
-		}
-		return null;
-	}
-
-	@Override
-	public final <T> T findByProjectIdAndCode(final String projectId, final String code, final Class<T> type) {
-		return findByProjectIdAndCode(projectId, code, type, false);
-	}
-
-	@Override
-	public final <T> T findByProjectIdAndCode(final String projectId, final String code, final Class<T> type,
-			final boolean eagerKids) {
+	public <T> T findByProjectIdAndCode(final String projectId, final String code, final Class<T> type) {
 		if (isNotNullOrEmpty(code) && isNotNullOrEmpty(projectId) && isNotNullOrEmpty(type)) {
+			Optional<?> obj = null;
 			if (type.equals(DocumentInstance.class)) {
-				final DocumentInstance document = _documents.findByProjectIdAndContentContentCd(projectId, code);
-				if (eagerKids) {
-					initialize(document, eagerKids);
-					return type.cast(document);
-				}
-				return type.cast(document);
+				obj = _documents.findOptionalByProjectIdAndContentContentCd(projectId, code);
 			} else if (type.equals(SectionInstance.class)) {
-				final SectionInstance section = _sections.findByProjectIdAndContentContentCd(projectId, code);
-				if (eagerKids) {
-					initialize(section, eagerKids);
-					return type.cast(section);
-				}
-				return type.cast(section);
+				obj = _sections.findOptionalByProjectIdAndContentContentCd(projectId, code);
 			} else if (type.equals(ClauseInstance.class)) {
-				final ClauseInstance clause = _clauses.findByProjectIdAndContentContentCd(projectId, code);
-				if (eagerKids) {
-					initialize(clause, eagerKids);
-					return type.cast(clause);
-				}
-				return type.cast(clause);
+				obj = _clauses.findOptionalByProjectIdAndContentContentCd(projectId, code);
 			} else if (type.equals(ParagraphInstance.class)) {
-				final ParagraphInstance paragraph = _paragraphs.findByProjectIdAndContentContentCd(projectId,
-						code);
-				if (eagerKids) {
-					initialize(paragraph, eagerKids);
-					return type.cast(paragraph);
-				}
-				return type.cast(paragraph);
+				obj = _paragraphs.findOptionalByProjectIdAndContentContentCd(projectId, code);
 			} else if (type.equals(Instance.class)) {
-				final Instance instance = _instances.findByProjectIdAndContentContentCd(projectId, code);
-				if (eagerKids) {
-					initialize(instance, eagerKids);
-					return type.cast(instance);
-				}
-				return type.cast(instance);
+				obj = _instances.findOptionalByProjectIdAndContentContentCd(projectId, code);
+			} else {
+				LOG.warn("Could not determine type to look for! Class: {}", type.getName());
 			}
+			if (isNotNullOrEmpty(obj)) {
+				if (obj.isPresent()) {
+					LOG.debug("Found {} instance object...", type.getSimpleName());
+					Object one = obj.get();
+					initialize(one);
+					return type.cast(one);
+				} else {
+					LOG.debug("Nothing is present in the Optional object.");
+				}
+			} else {
+				LOG.debug("No Optional object returned from repository.");
+			}
+
+		} else {
+			LOG.warn("Content code must not be null or zero!");
 		}
 		return null;
+		// return findByProjectIdAndCode(projectId, code, type, false);
 	}
 
+//	@Override
+//	public <T> T findByProjectIdAndCode(final String projectId, final String code, final Class<T> type,
+//			final boolean eagerKids) {
+//		if (isNotNullOrEmpty(code) && isNotNullOrEmpty(projectId) && isNotNullOrEmpty(type)) {
+//			Optional<?> obj = null;
+//			if (type.equals(DocumentInstance.class)) {
+//				obj = _documents.findOptionalByProjectIdAndContentContentCd(projectId, code);
+//			} else if (type.equals(SectionInstance.class)) {
+//				obj = _sections.findOptionalByProjectIdAndContentContentCd(projectId, code);
+//			} else if (type.equals(ClauseInstance.class)) {
+//				obj = _clauses.findOptionalByProjectIdAndContentContentCd(projectId, code);
+//			} else if (type.equals(ParagraphInstance.class)) {
+//				obj = _paragraphs.findOptionalByProjectIdAndContentContentCd(projectId, code);
+//			} else if (type.equals(Instance.class)) {
+//				obj = _instances.findOptionalByProjectIdAndContentContentCd(projectId, code);
+//			} else {
+//				LOG.warn("Could not determine type to look for! Class: {}", type.getName());
+//			}
+//			if (isNotNullOrEmpty(obj)) {
+//				if (obj.isPresent()) {
+//					LOG.debug("Found {} instance object...", type.getSimpleName());
+//					Object one = obj.get();
+//					if (eagerKids) {
+//						LOG.debug("Eager fetch requested for {} instance object...", type.getSimpleName());
+//						initialize(one);
+//					}
+//					return type.cast(one);
+//				} else {
+//					LOG.debug("Nothing is present in the Optional object.");
+//				}
+//			} else {
+//				LOG.debug("No Optional object returned from repository.");
+//			}
+//
+//		} else {
+//			LOG.warn("Content code must not be null or zero!");
+//		}
+//		return null;
+//	}
+
 	@Override
-	public final Instances findByProjectIdAndCodeLike(final String projectId, final String like) {
+	public Instances findByProjectIdAndCodeLike(final String projectId, final String like) {
 		if (isNotNullOrEmpty(projectId) && isNotNullOrEmpty(like)) {
-			final List<Instance> temp = (List<Instance>) _instances
-					.findByProjectIdAndContentContentCdLike(projectId, like);
+			final List<Instance> temp = (List<Instance>) _instances.findByProjectIdAndContentContentCdLike(projectId,
+					like);
 			if (isNotNullOrEmpty(temp)) {
 				return new Instances(temp);
 			}
@@ -248,10 +325,10 @@ final class InstanceServiceImpl implements InstanceService {
 	}
 
 	@Override
-	public final <T> T findByProjectIdAndCodeLike(final String projectId, final String like, final Class<T> type) {
+	public <T> T findByProjectIdAndCodeLike(final String projectId, final String like, final Class<T> type) {
 		if (isNotNullOrEmpty(projectId) && isNotNullOrEmpty(like)) {
-			final List<Instance> temp = (List<Instance>) _instances
-					.findByProjectIdAndContentContentCdLike(projectId, like);
+			final List<Instance> temp = (List<Instance>) _instances.findByProjectIdAndContentContentCdLike(projectId,
+					like);
 			if (isNotNullOrEmpty(temp)) {
 				return type.cast(new Instances(temp));
 			}
@@ -260,222 +337,328 @@ final class InstanceServiceImpl implements InstanceService {
 	}
 
 	@Override
-	public final Instance findOne(final Long id) {
+	public Instance findOne(final Long id) {
 		return findOne(id, Instance.class);
 	}
 
 	@Override
-	public final <T> T findOne(final Long id, Class<T> type) {
-		return findOne(id, type, false);
-	}
-
-	@Override
-	public final <T> T findOne(final Long id, Class<T> type, final boolean eagerKids) {
+	public <T> T findOne(final Long id, Class<T> type) {
 		if (isNotNullOrZero(id)) {
-			T one = null;
+			Optional<?> obj = null;
+			LOG.debug("Looking for {} instance object with id {}", type.getSimpleName(), id);
 			if (type.equals(DocumentInstance.class)) {
-				LOG.trace("Looking for {} instance object with id {}", type.getSimpleName(), id);
-				final DocumentInstance document = _documents.findOne(id);
-				if (isNotNullOrEmpty(document)) {
-					LOG.trace("Found {} instance object...", type.getSimpleName());
-					one = type.cast(document);
-				}
+				obj = _documents.findById(id);
 			} else if (type.equals(SectionInstance.class)) {
-				LOG.trace("Looking for {} instance object with id {}", type.getSimpleName(), id);
-				final SectionInstance section = _sections.findOne(id);
-				if (isNotNullOrEmpty(section)) {
-					LOG.trace("Found {} instance object...", type.getSimpleName());
-					one = type.cast(section);
-				}
+				obj = _sections.findById(id);
 			} else if (type.equals(ClauseInstance.class)) {
-				LOG.trace("Looking for {} instance object with id {}", type.getSimpleName(), id);
-				final ClauseInstance clause = _clauses.findOne(id);
-				if (isNotNullOrEmpty(clause)) {
-					LOG.trace("Found {} instance object...", type.getSimpleName());
-					one = type.cast(clause);
-				}
+				obj = _clauses.findById(id);
 			} else if (type.equals(ParagraphInstance.class)) {
-				LOG.trace("Looking for {} instance object with id {}", type.getSimpleName(), id);
-				final ParagraphInstance paragraph = _paragraphs.findOne(id);
-				if (isNotNullOrEmpty(paragraph)) {
-					LOG.trace("Found {} instance object...", type.getSimpleName());
-					one = type.cast(paragraph);
-				}
+				obj = _paragraphs.findById(id);
 			} else if (type.equals(Instance.class)) {
-				LOG.trace("Looking for {} instance object with id {}", type.getSimpleName(), id);
-				final Instance instance = _instances.findOne(id);
-				if (isNotNullOrEmpty(instance)) {
-					LOG.trace("Found {} instance object...", type.getSimpleName());
-					one = type.cast(instance);
-				}
+				obj = _instances.findById(id);
 			} else {
 				LOG.warn("Could not determine type to look for! Class: {}", type.getName());
 			}
-			if (one != null) {
-				if (eagerKids) {
-					LOG.trace("Eager fetch requested for {} instance object...", type.getSimpleName());
-					initialize(one, eagerKids);
+			if (isNotNullOrEmpty(obj)) {
+				if (obj.isPresent()) {
+					LOG.debug("Found {} instance object...", type.getSimpleName());
+					Object one = obj.get();
+					initialize(one);
+					return type.cast(one);
+				} else {
+					LOG.debug("Nothing is present in the Optional object.");
 				}
-				return one;
 			} else {
-				LOG.warn("Nothing to return!");
+				LOG.debug("No Optional object returned from repository.");
 			}
 		} else {
 			LOG.warn("Instance ID must not be null or zero!");
 		}
 		return null;
+		// return findOne(id, type, false);
 	}
 
-	@Override
-	public final <T> T getChildren(final Long id, final Class<T> type) {
-		return getChildren(id, type, false);
-	}
+	// @Override
+	// public <T> T findOne(final Long id, Class<T> type, final boolean eagerKids) {
+	// if (isNotNullOrZero(id)) {
+	// Optional<?> obj = null;
+	// LOG.debug("Looking for {} instance object with id {}", type.getSimpleName(),
+	// id);
+	// if (type.equals(DocumentInstance.class)) {
+	// obj = _documents.findById(id);
+	// } else if (type.equals(SectionInstance.class)) {
+	// obj = _sections.findById(id);
+	// } else if (type.equals(ClauseInstance.class)) {
+	// obj = _clauses.findById(id);
+	// } else if (type.equals(ParagraphInstance.class)) {
+	// obj = _paragraphs.findById(id);
+	// } else if (type.equals(Instance.class)) {
+	// obj = _instances.findById(id);
+	// } else {
+	// LOG.warn("Could not determine type to look for! Class: {}", type.getName());
+	// }
+	// if (isNotNullOrEmpty(obj)) {
+	// if (obj.isPresent()) {
+	// LOG.debug("Found {} instance object...", type.getSimpleName());
+	// Object one = obj.get();
+	// if (eagerKids) {
+	// LOG.debug("Eager fetch requested for {} instance object...",
+	// type.getSimpleName());
+	// initialize(one);
+	// }
+	// return type.cast(one);
+	// } else {
+	// LOG.debug("Nothing is present in the Optional object.");
+	// }
+	// } else {
+	// LOG.debug("No Optional object returned from repository.");
+	// }
+	// } else {
+	// LOG.warn("Instance ID must not be null or zero!");
+	// }
+	// return null;
+	// }
 
 	@Override
-	public final <T> T getChildren(final Long id, final Class<T> type, final boolean eagerKids) {
+	public <T> T getChildren(final Long id, final Class<T> type) {
 		if (isNotNullOrZero(id)) {
-			T instance = null;
 			if (isNotNullOrEmpty(type)) {
 				if (type.equals(SectionInstances.class)) {
 					final DocumentInstance document = findOne(id, DocumentInstance.class);
 					Hibernate.initialize(document.getSections());
 					Collection<SectionInstance> sections = document.getSections();
-					if (eagerKids) {
-						sections.forEach(s -> {
-							initialize(s, eagerKids);
-						});
-					}
+					sections.forEach(s -> {
+						initialize(s);
+					});
 					return type.cast(new SectionInstances(sections));
 				} else if (type.equals(ClauseInstances.class)) {
 					final SectionInstance section = findOne(id, SectionInstance.class);
 					Hibernate.initialize(section.getClauses());
 					Collection<ClauseInstance> clauses = section.getClauses();
-					if (eagerKids) {
-						clauses.forEach(c -> {
-							initialize(c, eagerKids);
-						});
-					}
+					clauses.forEach(c -> {
+						initialize(c);
+					});
 					return type.cast(new ClauseInstances(clauses));
 				} else if (type.equals(ParagraphInstances.class)) {
 					final ClauseInstance clause = findOne(id, ClauseInstance.class);
 					Hibernate.initialize(clause.getParagraphs());
 					Collection<ParagraphInstance> paragraphs = clause.getParagraphs();
-					if (eagerKids) {
-						paragraphs.forEach(p -> {
-							initialize(p, eagerKids);
-						});
-					}
+					paragraphs.forEach(p -> {
+						initialize(p);
+					});
 					return type.cast(new ParagraphInstances(paragraphs));
 				} else if (type.equals(Instances.class)) {
-					if (eagerKids) {
-						final Instance one = findOne(id);
-						initialize(one, eagerKids);
-						return type.cast(one);
-					} else {
-						return type.cast(instance);
-					}
+					final Instance one = findOne(id);
+					initialize(one);
+					return type.cast(one);
 				}
 			}
 		} else {
 			LOG.warn("The ID of the parent must not be null, empty or zero!");
 		}
 		return null;
+		// return getChildren(id, type, false);
 	}
 
-	@Override
-	public final <T> T getChildren(final String projectId, final String code, final Class<T> type) {
-		return getChildren(projectId, code, type, false);
-	}
+	// @Override
+	// public <T> T getChildren(final Long id, final Class<T> type, final boolean
+	// eagerKids) {
+	// if (isNotNullOrZero(id)) {
+	// T instance = null;
+	// if (isNotNullOrEmpty(type)) {
+	// if (type.equals(SectionInstances.class)) {
+	// final DocumentInstance document = findOne(id, DocumentInstance.class);
+	// Hibernate.initialize(document.getSections());
+	// Collection<SectionInstance> sections = document.getSections();
+	// if (eagerKids) {
+	// sections.forEach(s -> {
+	// initialize(s);
+	// });
+	// }
+	// return type.cast(new SectionInstances(sections));
+	// } else if (type.equals(ClauseInstances.class)) {
+	// final SectionInstance section = findOne(id, SectionInstance.class);
+	// Hibernate.initialize(section.getClauses());
+	// Collection<ClauseInstance> clauses = section.getClauses();
+	// if (eagerKids) {
+	// clauses.forEach(c -> {
+	// initialize(c);
+	// });
+	// }
+	// return type.cast(new ClauseInstances(clauses));
+	// } else if (type.equals(ParagraphInstances.class)) {
+	// final ClauseInstance clause = findOne(id, ClauseInstance.class);
+	// Hibernate.initialize(clause.getParagraphs());
+	// Collection<ParagraphInstance> paragraphs = clause.getParagraphs();
+	// if (eagerKids) {
+	// paragraphs.forEach(p -> {
+	// initialize(p);
+	// });
+	// }
+	// return type.cast(new ParagraphInstances(paragraphs));
+	// } else if (type.equals(Instances.class)) {
+	// if (eagerKids) {
+	// final Instance one = findOne(id);
+	// initialize(one);
+	// return type.cast(one);
+	// } else {
+	// return type.cast(instance);
+	// }
+	// }
+	// }
+	// } else {
+	// LOG.warn("The ID of the parent must not be null, empty or zero!");
+	// }
+	// return null;
+	// }
 
 	@Override
-	public final <T> T getChildren(final String projectId, final String code, final Class<T> type,
-			final boolean eagerKids) {
+	public <T> T getChildren(final String projectId, final String code, final Class<T> type) {
 		if (isNotNullOrEmpty(code) && isNotNullOrEmpty(projectId) && isNotNullOrEmpty(type)) {
 			if (type.equals(SectionInstances.class)) {
-				final DocumentInstance document = findByProjectIdAndCode(projectId, code,
-						DocumentInstance.class);
-				return getChildren(document, type, eagerKids);
+				final DocumentInstance document = findByProjectIdAndCode(projectId, code, DocumentInstance.class);
+				return getChildren(document, type);
 			} else if (type.equals(ClauseInstances.class)) {
-				final SectionInstance section = findByProjectIdAndCode(projectId, code,
-						SectionInstance.class);
-				return getChildren(section, type, eagerKids);
+				final SectionInstance section = findByProjectIdAndCode(projectId, code, SectionInstance.class);
+				return getChildren(section, type);
 			} else if (type.equals(ParagraphInstances.class)) {
-				final ClauseInstance clause = findByProjectIdAndCode(projectId, code,
-						ClauseInstance.class);
-				return getChildren(clause, type, eagerKids);
+				final ClauseInstance clause = findByProjectIdAndCode(projectId, code, ClauseInstance.class);
+				return getChildren(clause, type);
 			} else if (type.equals(Instances.class)) {
 				final Instance instance = findByProjectIdAndCode(projectId, code);
-				return getChildren(instance, type, eagerKids);
+				return getChildren(instance, type);
 			}
 		}
 		return null;
+		// return getChildren(projectId, code, type, false);
 	}
 
-	@Override
-	public final <T, P> T getChildren(final P instance, final Class<T> type) {
-		return getChildren(instance, type, false);
-	}
+	// @Override
+	// public <T> T getChildren(final String projectId, final String code, final
+	// Class<T> type, final boolean eagerKids) {
+	// if (isNotNullOrEmpty(code) && isNotNullOrEmpty(projectId) &&
+	// isNotNullOrEmpty(type)) {
+	// if (type.equals(SectionInstances.class)) {
+	// final DocumentInstance document = findByProjectIdAndCode(projectId, code,
+	// DocumentInstance.class);
+	// return getChildren(document, type, eagerKids);
+	// } else if (type.equals(ClauseInstances.class)) {
+	// final SectionInstance section = findByProjectIdAndCode(projectId, code,
+	// SectionInstance.class);
+	// return getChildren(section, type, eagerKids);
+	// } else if (type.equals(ParagraphInstances.class)) {
+	// final ClauseInstance clause = findByProjectIdAndCode(projectId, code,
+	// ClauseInstance.class);
+	// return getChildren(clause, type, eagerKids);
+	// } else if (type.equals(Instances.class)) {
+	// final Instance instance = findByProjectIdAndCode(projectId, code);
+	// return getChildren(instance, type, eagerKids);
+	// }
+	// }
+	// return null;
+	// }
 
 	@Override
-	public final <T, P> T getChildren(final P instance, final Class<T> type, final boolean eagerKids) {
+	public <T, P> T getChildren(final P instance, final Class<T> type) {
 		if (isNotNullOrEmpty(instance)) {
 			if (type.equals(SectionInstances.class)) {
 				final DocumentInstance document = (DocumentInstance) instance;
 				Hibernate.initialize(document.getSections());
 				Collection<SectionInstance> sections = document.getSections();
-				if (eagerKids) {
-					sections.forEach(s -> {
-						initialize(s, eagerKids);
-					});
-				}
+				sections.forEach(s -> {
+					initialize(s);
+				});
 				return type.cast(new SectionInstances(sections));
 			} else if (type.equals(ClauseInstances.class)) {
 				final SectionInstance section = (SectionInstance) instance;
 				Hibernate.initialize(section.getClauses());
 				Collection<ClauseInstance> clauses = section.getClauses();
-				if (eagerKids) {
-					clauses.forEach(c -> {
-						initialize(c, eagerKids);
-					});
-				}
+				clauses.forEach(c -> {
+					initialize(c);
+				});
 				return type.cast(new ClauseInstances(clauses));
-			} else if (type.equals(ParagraphInstances.class)
-					&& instance.getClass().equals(ClauseInstance.class)) {
+			} else if (type.equals(ParagraphInstances.class) && instance.getClass().equals(ClauseInstance.class)) {
 				final ClauseInstance clause = (ClauseInstance) instance;
 				Hibernate.initialize(clause.getParagraphs());
 				Collection<ParagraphInstance> paragraphs = clause.getParagraphs();
-				if (eagerKids) {
-					paragraphs.forEach(p -> {
-						initialize(p, eagerKids);
-					});
-				}
+				paragraphs.forEach(p -> {
+					initialize(p);
+				});
 				return type.cast(new ParagraphInstances(paragraphs));
 			} else if (type.equals(Instances.class)) {
-				if (eagerKids) {
-					initialize(type.cast(instance), eagerKids);
-				} else {
-					return type.cast(instance);
-				}
+				initialize(type.cast(instance));
+				return type.cast(instance);
 			}
 		} else {
 			LOG.warn("Parent instance must be null!");
 		}
 		return null;
+		// return getChildren(instance, type, false);
 	}
 
+	// @Override
+	// public <T, P> T getChildren(final P instance, final Class<T> type, final
+	// boolean eagerKids) {
+	// if (isNotNullOrEmpty(instance)) {
+	// if (type.equals(SectionInstances.class)) {
+	// final DocumentInstance document = (DocumentInstance) instance;
+	// Hibernate.initialize(document.getSections());
+	// Collection<SectionInstance> sections = document.getSections();
+	// if (eagerKids) {
+	// sections.forEach(s -> {
+	// initialize(s);
+	// });
+	// }
+	// return type.cast(new SectionInstances(sections));
+	// } else if (type.equals(ClauseInstances.class)) {
+	// final SectionInstance section = (SectionInstance) instance;
+	// Hibernate.initialize(section.getClauses());
+	// Collection<ClauseInstance> clauses = section.getClauses();
+	// if (eagerKids) {
+	// clauses.forEach(c -> {
+	// initialize(c);
+	// });
+	// }
+	// return type.cast(new ClauseInstances(clauses));
+	// } else if (type.equals(ParagraphInstances.class) &&
+	// instance.getClass().equals(ClauseInstance.class)) {
+	// final ClauseInstance clause = (ClauseInstance) instance;
+	// Hibernate.initialize(clause.getParagraphs());
+	// Collection<ParagraphInstance> paragraphs = clause.getParagraphs();
+	// if (eagerKids) {
+	// paragraphs.forEach(p -> {
+	// initialize(p);
+	// });
+	// }
+	// return type.cast(new ParagraphInstances(paragraphs));
+	// } else if (type.equals(Instances.class)) {
+	// if (eagerKids) {
+	// initialize(type.cast(instance));
+	// } else {
+	// return type.cast(instance);
+	// }
+	// }
+	// } else {
+	// LOG.warn("Parent instance must be null!");
+	// }
+	// return null;
+	// }
+
 	@Override
-	public final Instance save(final Instance instance) {
-		if (isNotNullOrEmpty(instance) && isNotNullOrEmpty(instance.getContent())) {
+	public Instance save(final Instance instance) {
+		if (isNotNullOrEmpty(instance) && isNotNullOrEmpty(instance.getContent())
+				&& instance.getContent().isValid(true)) {
+
 			return _instances.save(instance);
 		}
 		return null;
 	}
 
 	@Override
-	public final Instances save(final Instances instances) {
+	public Instances save(final Instances instances) {
 		if (isNotNullOrEmpty(instances)) {
 			Collection<Instance> collection = instances.getInstances();
-			collection = (Collection<Instance>) _instances.save(collection);
+			collection = (Collection<Instance>) _instances.saveAll(collection);
 			if (isNotNullOrEmpty(collection)) {
 				return new Instances(collection);
 			}
@@ -484,7 +667,7 @@ final class InstanceServiceImpl implements InstanceService {
 	}
 
 	@Override
-	public final DocumentInstance save(final DocumentInstance document) {
+	public DocumentInstance save(final DocumentInstance document) {
 		if (isNotNullOrEmpty(document)) {
 			return _instances.save(document);
 		}
@@ -492,7 +675,7 @@ final class InstanceServiceImpl implements InstanceService {
 	}
 
 	@Override
-	public final SectionInstance save(final SectionInstance section) {
+	public SectionInstance save(final SectionInstance section) {
 		if (isNotNullOrEmpty(section)) {
 			return _instances.save(section);
 		}
@@ -500,7 +683,7 @@ final class InstanceServiceImpl implements InstanceService {
 	}
 
 	@Override
-	public final ClauseInstance save(final ClauseInstance clause) {
+	public ClauseInstance save(final ClauseInstance clause) {
 		if (isNotNullOrEmpty(clause)) {
 			return _instances.save(clause);
 		}
@@ -508,50 +691,84 @@ final class InstanceServiceImpl implements InstanceService {
 	}
 
 	@Override
-	public final ParagraphInstance save(final ParagraphInstance paragraph) {
+	public ParagraphInstance save(final ParagraphInstance paragraph) {
 		if (isNotNullOrEmpty(paragraph)) {
 			return _instances.save(paragraph);
 		}
 		return null;
 	}
 
-	final void initialize(Object content, boolean recursive) {
-		if (isNotNullOrEmpty(content)) {
-			final Class<?> type = content.getClass();
+	void initialize(Object instance) {
+		if (isNotNullOrEmpty(instance)) {
+			final Class<?> type = instance.getClass();
+			if (type.equals(Content.class) || type.equals(Contents.class) || type.equals(Document.class) || type.equals(Documents.class) || type.equals(Section.class) || type.equals(Sections.class) || type.equals(Clause.class) || type.equals(Clauses.class) || type.equals(Paragraph.class) || type.equals(Paragraphs.class)) {
+				_content.initialize(instance);
+			}
 			if (type.equals(DocumentInstance.class)) {
-				LOG.trace("Initializing {} instance object...", type.getSimpleName());
-				final DocumentInstance d = (DocumentInstance) content;
+				LOG.debug("Initializing {} instance object...", type.getSimpleName());
+				final DocumentInstance d = (DocumentInstance) instance;
 				Hibernate.initialize(d);
-				if (recursive) {
-					LOG.trace("Resurively initializing {} instance object...", type.getSimpleName());
-					for (final SectionInstance s : d.getSections()) {
-						initialize(s, recursive);
-					}
+				initialize(d.getContent());
+				for (final SectionInstance s : d.getSections()) {
+					initialize(s);
+				}
+			} else if (type.equals(DocumentInstances.class)) {
+				LOG.debug("Initializing {} instance object...", type.getSimpleName());
+				final DocumentInstances d = (DocumentInstances) instance;
+				for (final DocumentInstance i : d.getDocumentsList()) {
+					initialize(i);
 				}
 			} else if (type.equals(SectionInstance.class)) {
-				LOG.trace("Initializing {} instance object...", type.getSimpleName());
-				final SectionInstance s = (SectionInstance) content;
+				LOG.debug("Initializing {} instance object...", type.getSimpleName());
+				final SectionInstance s = (SectionInstance) instance;
 				Hibernate.initialize(s);
-				if (recursive) {
-					LOG.trace("Resurively initializing {} instance object...", type.getSimpleName());
-					for (final ClauseInstance c : s.getClauses()) {
-						initialize(c, recursive);
-					}
+				initialize(s.getContent());
+				for (final ClauseInstance c : s.getClauses()) {
+					initialize(c);
+				}
+			} else if (type.equals(SectionInstances.class)) {
+				LOG.debug("Initializing {} instance object...", type.getSimpleName());
+				final SectionInstances s = (SectionInstances) instance;
+				for (final SectionInstance i : s.getSectionsList()) {
+					initialize(i);
 				}
 			} else if (type.equals(ClauseInstance.class)) {
-				LOG.trace("Initializing {} instance object...", type.getSimpleName());
-				final ClauseInstance c = (ClauseInstance) content;
+				LOG.debug("Initializing {} instance object...", type.getSimpleName());
+				final ClauseInstance c = (ClauseInstance) instance;
 				Hibernate.initialize(c);
-				if (recursive) {
-					LOG.trace("Resurively initializing {} instance object...", type.getSimpleName());
-					for (final ParagraphInstance p : c.getParagraphs()) {
-						initialize(p, recursive);
-					}
+				initialize(c.getContent());
+				for (final ParagraphInstance p : c.getParagraphs()) {
+					initialize(p);
 				}
-			} else if (content.getClass().equals(ParagraphInstance.class)) {
-				LOG.trace("Initializing {} instance object...", type.getSimpleName());
-				final ParagraphInstance p = (ParagraphInstance) content;
+			} else if (type.equals(ClauseInstances.class)) {
+				LOG.debug("Initializing {} instance object...", type.getSimpleName());
+				final ClauseInstances c = (ClauseInstances) instance;
+				for (final ClauseInstance i : c.getClausesList()) {
+					initialize(i);
+				}
+			} else if (type.equals(ParagraphInstance.class)) {
+				LOG.debug("Initializing {} instance object...", type.getSimpleName());
+				final ParagraphInstance p = (ParagraphInstance) instance;
 				Hibernate.initialize(p);
+				initialize(p.getContent());
+			} else if (type.equals(ParagraphInstances.class)) {
+				LOG.debug("Initializing {} instance object...", type.getSimpleName());
+				final ParagraphInstances p = (ParagraphInstances) instance;
+				for (final ParagraphInstance i : p.getParagraphsList()) {
+					initialize(i);
+				}
+			} else if (type.equals(Instance.class)) {
+				LOG.debug("Initializing {} instance object...", type.getSimpleName());
+				final Instance i = (Instance) instance;
+//				initialize(i);
+				Hibernate.initialize(i);
+				initialize(i.getContent());
+			} else if (type.equals(Instances.class)) {
+				LOG.debug("Initializing {} instance object...", type.getSimpleName());
+				final Instances i = (Instances) instance;
+				for (final Instance idx : i.getInstances()) {
+					initialize(idx);
+				}
 			} else {
 				LOG.error("Attempting to initialize, cannot determine type! Class: {}", type.getName());
 			}

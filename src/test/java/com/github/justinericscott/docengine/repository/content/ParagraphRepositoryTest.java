@@ -1,4 +1,4 @@
-package com.github.justinericscott.docengine.repository.content.template;
+package com.github.justinericscott.docengine.repository.content;
 
 import static org.junit.Assert.*;
 
@@ -38,15 +38,13 @@ public class ParagraphRepositoryTest extends AbstractTest {
 		paragraph = _paragraphs.save(paragraph);
 		assertNotNull(paragraph);
 		assertTrue(paragraph.isValid(true));
-
 		Collection<Paragraph> paragraphs = makeTestParagraphs(7);
-		paragraphs = (Collection<Paragraph>) _paragraphs.save(paragraphs);
+		paragraphs = (Collection<Paragraph>) _paragraphs.saveAll(paragraphs);
 		assertNotNull(paragraphs);
 		assertFalse(paragraphs.isEmpty());
 		paragraphs.forEach(p -> {
 			assertTrue(p.isValid(true));
 		});
-
 		try {
 			_paragraphs.save((Paragraph) null);
 			fail("Should throw exception....");
@@ -79,7 +77,7 @@ public class ParagraphRepositoryTest extends AbstractTest {
 			copies.forEach(p -> {
 				p.setId(null);
 			});
-			copies = (Collection<Paragraph>) _paragraphs.save(copies);
+			copies = (Collection<Paragraph>) _paragraphs.saveAll(copies);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
@@ -92,13 +90,11 @@ public class ParagraphRepositoryTest extends AbstractTest {
 		Paragraph paragraph = _paragraphs.save(makeTestParagraph());
 		final Long id = paragraph.getId();
 		final String contentCd = paragraph.getContentCd();
-		paragraph = _paragraphs.findOne(id);
+		paragraph = _paragraphs.findById(id).get();
 		assertTrue(paragraph.isValid(true));
-
-		paragraph = _paragraphs.findByContentCd(contentCd);
+		paragraph = _paragraphs.findOptionalByContentCd(contentCd).get();
 		assertTrue(paragraph.isValid(true));
 		assertEquals(contentCd, paragraph.getContentCd());
-
 		Collection<Paragraph> paragraphs = (Collection<Paragraph>) _paragraphs
 				.findByContentCdLike("%TEST%");
 		assertNotNull(paragraphs);
@@ -106,24 +102,26 @@ public class ParagraphRepositoryTest extends AbstractTest {
 		paragraphs.forEach(p -> {
 			assertTrue(p.isValid(true));
 		});
-
 		paragraphs = (Collection<Paragraph>) _paragraphs.findAll();
 		assertNotNull(paragraphs);
 		assertFalse(paragraphs.isEmpty());
 		paragraphs.forEach(p -> {
 			assertTrue(p.isValid(true));
-		});
-		
+		});		
+	}
+	
+	@Test
+	public void bx_FindBreakTest() {
 		// Break it...		
-		assertNull(_paragraphs.findOne(Long.MIN_VALUE));
-		assertNull(_paragraphs.findOne(Long.MAX_VALUE));
-		assertNull(_paragraphs.findByContentCd("Snicklefritz"));
-		paragraphs = (Collection<Paragraph>) _paragraphs.findByContentCdLike("%Snicklefritz%");
+		assertFalse(_paragraphs.findById(Long.MIN_VALUE).isPresent());
+		assertFalse(_paragraphs.findById(Long.MAX_VALUE).isPresent());
+		assertFalse(_paragraphs.findOptionalByContentCd("Snicklefritz").isPresent());
+		Collection<Paragraph> paragraphs = (Collection<Paragraph>) _paragraphs.findByContentCdLike("%Snicklefritz%");
 		assertTrue(paragraphs.isEmpty());
 		paragraphs = (Collection<Paragraph>) _paragraphs.findByContentCdLike("");
 		assertTrue(paragraphs.isEmpty());
 		try {
-			_paragraphs.findOne((Long) null);
+			_paragraphs.findById((Long) null).get();
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
@@ -151,29 +149,30 @@ public class ParagraphRepositoryTest extends AbstractTest {
 		// Happy path...
 		Paragraph paragraph = _paragraphs.save(makeTestParagraph());
 		final Long id = paragraph.getId();
-		_paragraphs.delete(id);
-		assertNull(_paragraphs.findOne(id));
-
+		_paragraphs.deleteById(id);
+		assertFalse(_paragraphs.findById(id).isPresent());
 		paragraph = _paragraphs.save(makeTestParagraph());
 		_paragraphs.delete(paragraph);
-		assertNull(_paragraphs.findOne(paragraph.getId()));
-
+		assertFalse(_paragraphs.findById(paragraph.getId()).isPresent());
 		Collection<Paragraph> paragraphs = makeTestParagraphs(7);
-		paragraphs = (Collection<Paragraph>) _paragraphs.save(paragraphs);
+		paragraphs = (Collection<Paragraph>) _paragraphs.saveAll(paragraphs);
 		assertNotNull(paragraphs);
 		assertFalse(paragraphs.isEmpty());
 		paragraphs.forEach(p -> {
 			assertTrue(p.isValid(true));
 		});
-		_paragraphs.delete(paragraphs);
+		_paragraphs.deleteAll(paragraphs);
 		paragraphs.forEach(p -> {
-			assertNull(_paragraphs.findOne(p.getId()));
+			assertFalse(_paragraphs.findById(p.getId()).isPresent());
 		});
 
 //		_paragraphs.deleteAll();
 //		paragraphs = (Collection<ParagraphJpaImpl>) _paragraphs.findAll();
-//		assertTrue(paragraphs.isEmpty());
-		
+//		assertTrue(paragraphs.isEmpty());	
+	}
+	
+	@Test
+	public void xx_DeleteBreakTest() {
 		// Break it...
 		try {
 			_paragraphs.delete(new Paragraph());
@@ -182,10 +181,10 @@ public class ParagraphRepositoryTest extends AbstractTest {
 			assertEquals(DataIntegrityViolationException.class, e.getClass());
 		}		
 		try {
-			_paragraphs.delete((Long) null);
+			_paragraphs.deleteById((Long) null);
 			fail("Should throw exception....");
 		} catch (final Exception e) {
 			assertEquals(InvalidDataAccessApiUsageException.class, e.getClass());
-		}		
+		}	
 	}
 }
