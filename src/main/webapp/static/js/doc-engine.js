@@ -65,7 +65,7 @@ docEngine.config(['$routeProvider',
     }
 ]);
 
-docEngine.controller('SecurityCtrl', [
+/* docEngine.controller('SecurityCtrl', [
 	'$rootScope', '$scope', '$http', '$location', '$route', 
 	function($rootScope, $scope, $http, $location, $route) {
 	
@@ -137,4 +137,4 @@ docEngine.controller('SecurityCtrl', [
 			});
 		};	
 	}
-]);
+]);*/

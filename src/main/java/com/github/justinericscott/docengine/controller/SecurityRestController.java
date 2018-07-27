@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 
  *         TODO: Description
  */
-@RestController
+//@RestController
 public class SecurityRestController {
 	private static final Logger LOG = LoggerFactory.getLogger(SecurityRestController.class);
 
