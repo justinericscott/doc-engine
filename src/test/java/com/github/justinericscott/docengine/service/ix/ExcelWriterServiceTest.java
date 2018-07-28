@@ -3,13 +3,7 @@ package com.github.justinericscott.docengine.service.ix;
 import static org.junit.Assert.*;
 
 import static com.github.justinericscott.docengine.util.TestUtils.TestConstants.*;
-import static com.github.justinericscott.docengine.util.TestUtils.getSystemTempDirectory;
 import static com.github.justinericscott.docengine.util.TestUtils.list;
-import static com.github.justinericscott.docengine.util.Utils.copy;
-import static com.github.justinericscott.docengine.util.Utils.create;
-import static com.github.justinericscott.docengine.util.Utils.delete;
-import static com.github.justinericscott.docengine.util.Utils.get;
-import static com.github.justinericscott.docengine.util.Utils.getSize;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +31,7 @@ import com.github.justinericscott.docengine.service.ix.ExcelWriterServiceImpl;
 import com.github.justinericscott.docengine.service.ix.types.ExampleExcelType;
 import com.github.justinericscott.docengine.service.ix.types.ExampleExcelTypeWithCustomLabelsOrdered;
 import com.github.justinericscott.docengine.util.AbstractTest;
+import com.github.justinericscott.docengine.util.Utils;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ExcelWriterServiceTest extends AbstractTest {
@@ -190,13 +185,13 @@ public class ExcelWriterServiceTest extends AbstractTest {
 
 	@Test
 	public void f_writeTest() {
-		delete(get(TEST_FILE_NAME_WRITE));
-		File file = create(TEST_FILE_NAME_WRITE);
-		assertEquals(0, getSize(file));
+		Utils.delete(Utils.get(TEST_FILE_NAME_WRITE));
+		File file = Utils.create(TEST_FILE_NAME_WRITE);
+		assertEquals(0, Utils.getSize(file));
 		file = service.write(TEST_CLASS_CUSTOM_LABELS_ORDERED, file, TEST_DATA, true);
 		assertNotNull(file);
 		assertTrue(file.exists());
-		File copy = copy(file);
+		File copy = Utils.copy(file);
 		List<ExampleExcelTypeWithCustomLabelsOrdered> list = new ArrayList<ExampleExcelTypeWithCustomLabelsOrdered>(
 				TEST_DATA.size());
 		for (ExampleExcelTypeWithCustomLabelsOrdered e : TEST_DATA) {
@@ -207,8 +202,8 @@ public class ExcelWriterServiceTest extends AbstractTest {
 		copy = service.write(TEST_CLASS_CUSTOM_LABELS_ORDERED, copy, list, true);
 		assertNotNull(copy);
 		assertTrue(copy.exists());
-		delete(get(TEST_FILE_NAME_WRITE));
-		file = create(TEST_FILE_NAME_WRITE);
+		Utils.delete(Utils.get(TEST_FILE_NAME_WRITE));
+		file = Utils.create(TEST_FILE_NAME_WRITE);
 		assertNull(service.write(null, file, TEST_DATA, true));
 		assertNull(service.write(TEST_CLASS_CUSTOM_LABELS_ORDERED, file, null, true));
 		assertNull(service.write(TEST_CLASS_CUSTOM_LABELS_ORDERED, null, TEST_DATA, true));
@@ -216,7 +211,7 @@ public class ExcelWriterServiceTest extends AbstractTest {
 
 	@Test
 	public void g_writeTestSameFileDifferentClassesTest() {
-		File file = create(TEST_FILE_NAME_WRITE);
+		File file = Utils.create(TEST_FILE_NAME_WRITE);
 		file = service.write(TEST_CLASS_CUSTOM_LABELS_ORDERED, file, TEST_DATA, true);
 		assertNotNull(file);
 		assertTrue(file.exists());
@@ -238,15 +233,15 @@ public class ExcelWriterServiceTest extends AbstractTest {
 
 	@BeforeClass
 	public static void x_clearTemporaryDirectory() {
-		delete(get("target/Copy of - test-data-write.xlsx"));
+		Utils.delete(Utils.get("target/Copy of - test-data-write.xlsx"));
 		cleanup();
 	}
 
 	private static void cleanup() {
-		final File temp = getSystemTempDirectory();
+		final File temp = Utils.getSystemTempDirectory();
 		final Collection<File> contents = (Collection<File>) list(temp, null, false);
 		for (final File f : contents) {
-			delete(f);
+			Utils.delete(f);
 		}
 	}
 

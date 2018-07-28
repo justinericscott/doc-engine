@@ -3,10 +3,7 @@ package com.github.justinericscott.docengine.service.ix;
 import static org.junit.Assert.*;
 import static com.github.justinericscott.docengine.service.ix.ExcelUtils.*;
 import static com.github.justinericscott.docengine.util.TestUtils.TestConstants.*;
-import static com.github.justinericscott.docengine.util.TestUtils.getSystemTempDirectory;
 import static com.github.justinericscott.docengine.util.TestUtils.list;
-import static com.github.justinericscott.docengine.util.Utils.delete;
-import static com.github.justinericscott.docengine.util.Utils.get;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +29,7 @@ import com.github.justinericscott.docengine.service.ix.ExcelReaderService;
 import com.github.justinericscott.docengine.service.ix.ExcelReaderServiceImpl;
 import com.github.justinericscott.docengine.service.ix.types.ExampleExcelTypeWithCustomLabelsOrdered;
 import com.github.justinericscott.docengine.util.AbstractTest;
+import com.github.justinericscott.docengine.util.Utils;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ExcelReaderServiceTest extends AbstractTest {
@@ -125,11 +123,11 @@ public class ExcelReaderServiceTest extends AbstractTest {
 	@Test
 	public void e_readTest() {
 		final Collection<?> objects = (Collection<?>) service.read(TEST_CLASS_CUSTOM_LABELS_ORDERED,
-				get(TEST_FILE_NAME_READ));
+				Utils.get(TEST_FILE_NAME_READ));
 		assertNotNull(objects);
 		assertEquals(100, objects.size());
 		assertNull(service.read(TEST_CLASS_CUSTOM_LABELS_ORDERED, null));
-		assertNull(service.read((Class<?>) null, get(TEST_FILE_NAME_READ)));
+		assertNull(service.read((Class<?>) null, Utils.get(TEST_FILE_NAME_READ)));
 	}
 
 	@Test
@@ -154,10 +152,10 @@ public class ExcelReaderServiceTest extends AbstractTest {
 	}
 
 	private static void cleanup() {
-		final File temp = getSystemTempDirectory();
+		final File temp = Utils.getSystemTempDirectory();
 		final Collection<File> contents = (Collection<File>) list(temp, null, false);
 		for (final File f : contents) {
-			delete(f);
+			Utils.delete(f);
 		}
 	}
 

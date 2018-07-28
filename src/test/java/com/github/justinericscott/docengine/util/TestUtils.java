@@ -74,16 +74,16 @@ public class TestUtils {
 	 * 
 	 * @return {@link File} representing the temporary directory.
 	 */
-	public static File getSystemTempDirectory() {
-		final String path = System.getProperty(FILE_SYS_TEMP_DIR);
-		if (isNotNullOrEmpty(path)) {
-			final File file = new File(path);
-			return (isNotNullAndExists(file) ? file : null);
-		} else {
-			LOG.warn("Could not determine system temporary directory!");
-		}
-		return null;
-	}
+//	public static File getSystemTempDirectory() {
+//		final String path = System.getProperty(FILE_SYS_TEMP_DIR);
+//		if (isNotNullOrEmpty(path)) {
+//			final File file = new File(path);
+//			return (isNotNullAndExists(file) ? file : null);
+//		} else {
+//			LOG.warn("Could not determine system temporary directory!");
+//		}
+//		return null;
+//	}
 
 	/**
 	 * Provides a {@link List} of all {@link File}s in the given directory or
