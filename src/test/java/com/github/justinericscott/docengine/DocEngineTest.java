@@ -22,4 +22,10 @@ public class DocEngineTest {
 		DocEngine.main(new String[] { ENGINE_CONTROL_STOP });
 		assertFalse(DocEngine.running());
 	}
+	
+	@Test
+	public void temp() {
+		String path = System.getProperty("java.io.tmpdir");
+		System.err.println(path);
+	}
 }
