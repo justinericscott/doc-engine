@@ -31,17 +31,17 @@ docEngine.config(['$routeProvider',
     		templateUrl: 'html/home/welcome.html'})
     		
     	/** Content Repository Routing **/
-    	.when('/content-repository', {
-    		templateUrl: 'html/content-repo/content-repository-home.html'})
+/*    	.when('/content-repository', {
+    		templateUrl: 'html/content-repo/content-repository-home.html'})*/
 /*    	.when('/import-export', {
     		templateUrl: 'html/content-repo/ix/import-export.html'})*/
 /*    	.when('/inclusion-logic', {
     		templateUrl: 'html/content-repo/logic/inclusion-logic.html'})*/
     	.when('/template-library', {
-    		templateUrl: 'html/content-repo/library/template-library.html',
+    		templateUrl: 'html/library/template-library.html',
     		controller: 'DocumentSourceModalServiceCtrl'})
     	.when('/token-dictionary', {
-    		templateUrl: 'html/content-repo/dictionary/token-dictionary.html',
+    		templateUrl: 'html/dictionary/token-dictionary.html',
     		controller: 'TokenDictionaryItemModalServiceCtrl'})
     		
     	/** Create A Document Routing **/
@@ -49,8 +49,8 @@ docEngine.config(['$routeProvider',
     		templateUrl: 'html/doc-central/create-a-doc/create-a-document.html'})*/
     		
     	/** Existing Documents Routing **/
-    	.when('/document-central', {
-    		templateUrl: 'html/doc-central/doc-central-home.html'})
+/*    	.when('/document-central', {
+    		templateUrl: 'html/doc-central/doc-central-home.html'})*/
 /*    	.when('/edit-document', {
     		templateUrl: 'html/doc-central/editor/edit-document.html'})*/
 /*    	.when('/enter-document-data', {
