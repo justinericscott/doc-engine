@@ -2,12 +2,13 @@ package com.github.justinericscott.docengine.config;
 
 import static com.github.justinericscott.docengine.util.Utils.Constants.*;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullOrEmpty;
+import static com.github.justinericscott.docengine.util.Utils.isNotNullOrZero;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
+//import java.net.InetAddress;
+//import java.net.NetworkInterface;
+//import java.net.SocketException;
 import java.text.SimpleDateFormat;
-import java.util.Enumeration;
+//import java.util.Enumeration;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -36,7 +37,7 @@ class WebConfig implements WebMvcConfigurer {
 	private static final String HTTPS = "https://";
 	private static final String HTTP = "http://";
 	private String endpoint;
-	private String port;
+	private Integer port;
 
 	@Autowired
 	private Environment _environment;
@@ -93,17 +94,23 @@ class WebConfig implements WebMvcConfigurer {
 	}
 
 	private String getPort() {
-		if (isNotNullOrEmpty(port)) {
-			LOG.trace("Found the port number {}.", port);
+		if (isNotNullOrZero(port)) {
+			LOG.trace("Found the existing port number {}.", port);
 		} else {
-			port = String.valueOf(_server.getPort());
-			LOG.trace("Found the port number {}.", port);
-			if (Integer.valueOf(port) <= 0) {
-				port = _environment.getProperty("system.port");
-				LOG.trace("Found the port number {}.", port);
-				if (!isNotNullOrEmpty(port)) {
-					port = _environment.getProperty("server.port");
-					LOG.trace("Found the port number {}.", port);
+			port = _server.getPort();
+			LOG.trace("Found the port number using _server.getPort() {}.", port);
+			if (!isNotNullOrZero(port)) {
+				String val = _environment.getProperty("system.port");
+				if (isNotNullOrEmpty(val)) {
+					port = Integer.valueOf(val);
+					LOG.trace("Found the port number using property system.port {}.", port);					
+				}
+				if (!isNotNullOrZero(port)) {
+					val = _environment.getProperty("server.port");
+					if (isNotNullOrEmpty(val)) {
+						port = Integer.valueOf(val);
+						LOG.trace("Found the port number using property server.port {}.", port);						
+					}
 				}
 			}
 		}
@@ -111,28 +118,48 @@ class WebConfig implements WebMvcConfigurer {
 	}
 
 	private String getURL() {
-		try {
-			final Enumeration<NetworkInterface> network = NetworkInterface.getNetworkInterfaces();
-			String name = null;
-			if (network.hasMoreElements()) {
-				final Enumeration<InetAddress> addresses = network.nextElement().getInetAddresses();
-				if (addresses.hasMoreElements()) {
-					final InetAddress address = addresses.nextElement();
-					final String n = address.getHostName();
-					if (isNotNullOrEmpty(n)) {
-						name = n;
-						LOG.trace("Found host name: {}.", name);
-					}
-				}
-			}
+		if (isNotNullOrEmpty(endpoint)) {
+			LOG.trace("Found existing endpoint config {}.", endpoint);
+		} else {
+			String name = _environment.getProperty("system.address");
 			if (isNotNullOrEmpty(name)) {
+				LOG.trace("Found system address {}.", name);
 				return name;
-			} else {
-				throw new IllegalStateException("Could not determine host name!");
 			}
-		} catch (final SocketException e) {
-			LOG.error("Problem obtaining host name!", e);
 		}
+		
+//		try {
+//			final Enumeration<NetworkInterface> network = NetworkInterface.getNetworkInterfaces();
+//			String name = null;
+//			while (network.hasMoreElements()) {
+//				final Enumeration<InetAddress> addresses = network.nextElement().getInetAddresses();
+//				while (addresses.hasMoreElements()) {
+//					final InetAddress address = addresses.nextElement();
+//					final String n = address.getHostName();
+//					if (isNotNullOrEmpty(n)) {
+//						LOG.trace("Found a host name: {}.", n);
+//					}
+//				}
+//			}
+//			if (network.hasMoreElements()) {
+//				final Enumeration<InetAddress> addresses = network.nextElement().getInetAddresses();
+//				if (addresses.hasMoreElements()) {
+//					final InetAddress address = addresses.nextElement();
+//					final String n = address.getHostName();
+//					if (isNotNullOrEmpty(n)) {
+//						name = n;
+//						LOG.trace("Setting host name: {}.", name);
+//					}
+//				}
+//			}
+//			if (isNotNullOrEmpty(name)) {
+//				return name;
+//			} else {
+//				throw new IllegalStateException("Could not determine host name!");
+//			}
+//		} catch (final SocketException e) {
+//			LOG.error("Problem obtaining host name!", e);
+//		}
 		return null;
 	}
 }

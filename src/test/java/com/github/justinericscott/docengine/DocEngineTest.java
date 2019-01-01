@@ -15,6 +15,7 @@ public class DocEngineTest {
 
 	@Test
 	public void aa_MainTest() {
+		DocEngine.main(new String[]{"stop"});
 		assertFalse(DocEngine.running());
 		DocEngine.main();
 		DocEngine.main();

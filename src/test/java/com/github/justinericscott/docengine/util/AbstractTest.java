@@ -37,7 +37,7 @@ import com.github.justinericscott.docengine.models.TokenDefinition;
  * 
  *         TODO: Description
  */
-@SpringBootTest(properties = { "server.port=8087" }, webEnvironment = DEFINED_PORT)
+@SpringBootTest(webEnvironment = DEFINED_PORT, properties = "server.port=8446")
 @RunWith(SpringRunner.class)
 @ContextConfiguration
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)

@@ -12,11 +12,11 @@ package com.github.justinericscott.docengine.config;
 //import org.apache.logging.log4j.LogManager;
 //import org.apache.logging.log4j.Logger;
 //import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
+//import org.springframework.context.annotation.Configuration;
 //import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+//import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 //import org.springframework.security.web.csrf.CsrfFilter;
 //import org.springframework.security.web.csrf.CsrfToken;
 //import org.springframework.security.web.csrf.CsrfTokenRepository;
@@ -27,9 +27,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 /**
  * @author Justin Scott TODO: Description
  */
-@Configuration
-@EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+//@Configuration
+//@EnableWebSecurity
+public class SecurityConfig /*extends WebSecurityConfigurerAdapter*/ {
 //	private static final Logger LOG = LogManager.getLogger(SecurityConfig.class);
 //	private static final String COOKIE = "XSRF-TOKEN";
 //	private static final String CSRF_HEADER = "X-XSRF-TOKEN";
@@ -45,11 +45,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //		auth.inMemoryAuthentication().withUser("user").password("pass").roles("user");
 //	}
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		// TODO: Trace log entry
-		http.formLogin().disable().logout().disable();
-	}
+//	@Override
+//	protected void configure(HttpSecurity http) throws Exception {
+//		// TODO: Trace log entry
+//		http.formLogin().disable().logout().disable();
+//	}
 
 //	private Filter csrfHeaderFilter() {
 //		// TODO: Trace log entry
