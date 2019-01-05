@@ -1,61 +1,65 @@
 <script type="text/ng-template" id="template-edit.html">
-  <form editable-form name="docEditForm" onaftersave="save()">
-    <div class="modal-header">
-      <h3 class="modal-title">
-        Document Information 
-        <span class="pull-right">Name: {{ docToEdit.name }}</span>
-      </h3>
-    </div>
+<form class="form-horizontal" editable-form name="docEditForm" onaftersave="save()">
+	<div class="modal-header">
+		<p class="modal-view-header">
+			Document Information <span class="pull-right">{{ docToEdit.name }}</span>
+		</p>
+	</div>
+	<div class="modal-body" style="margin-bottom: -20px;">
 
-    <div class="modal-body">
+		<div class="well row">
 
-      <div class="well row">
+			<p class="text-center modal-section-header">Document Details</p>
 
-        <h4 class="text-center modal-view-header">Document Details</h4>
+			<div class="form-group">
+				<label for="name" class="col-sm-2 control-label">Name:</label>
+				<div class="col-sm-4">
+					<input id="name" class="form-control" ng-model="docToEdit.name"></input>
+				</div>			
+				<label for="contentCd" class="col-sm-2 control-label">Content Code:</label>
+				<div class="col-sm-4">
+					<input id="contentCd" class="form-control" ng-model="docToEdit.contentCd"></input>
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="description" class="col-sm-2 control-label">Description:</label>
+				<div class="col-sm-10">
+					<textarea id="description" class="form-control" ng-model="docToEdit.description"></textarea>
+				</div>
+			</div>
 
-        <div class="col-md-6">
-          <label for="name">Name:</label><br/>
-          <input id="name" class="form-control" ng-model="docToEdit.name"></input> 
-        </div>
-
-        <div class="col-md-6">
-          <label for="contentCd">Content Code:</label><br/>
-          <input id="contentCd" class="form-control" ng-model="docToEdit.contentCd"></input>
-        </div>
-
-        <div class="col-md-12">
-          <label for="description">Description:</label><br/>
-          <textarea id="description" class="form-control" ng-model="docToEdit.description"></textarea>
-        </div>
-
-      </div>      
-
-	  <div class="well row">
-
-		<h4 class="text-center modal-view-header">Template Body (HTML)</h4><br/>
-
-		<div class="col-md-12">
-          <pre><textarea class="form-control" ng-model="docToEdit.body"></textarea></pre>
 		</div>
 
-	  </div>
+		<div class="well row">
 
-	  <div class="well row">
+			<p class="text-center modal-section-header">Template Body (HTML)</p>
 
-		<h4 class="text-center modal-view-header">Template Style (CSS)</h4><br/>
+			<div class="col-md-12">
+				<pre>
+					<textarea rows="16" class="form-control modal-textarea" ng-model="docToEdit.body"></textarea>
+				</pre>
+			</div>
 
-		<div class="col-md-12">
-		  <pre><textarea class="form-control" ng-model="docToEdit.css"></textarea></pre>
 		</div>
 
-      </div>
+		<div class="well row">
 
-    </div>
-        
-    <div class="modal-footer">
-      <button class="btn-lg btn-success" type="submit" ng-disabled="itemEdit.$waiting">Save</button>
-	  &nbsp;&nbsp;&nbsp;
-      <button class="btn-lg btn-warning" type="button" ng-disabled="itemEdit.$waiting" ng-click="cancel()">Cancel</button>
-    </div>
-  </form>
+			<p class="text-center modal-section-header">Template Style (CSS)</p>
+
+			<div class="col-md-12">
+				<pre>
+					<textarea rows="16" class="form-control modal-textarea" ng-model="docToEdit.css"></textarea>
+				</pre>
+			</div>
+
+		</div>
+
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary pull-left" type="submit" ng-disabled="itemEdit.$waiting">Save</button>
+		<button class="btn btn-secondary" type="button" ng-click="back()">Back</button>
+		<button class="btn btn-danger" type="button" ng-disabled="itemEdit.$waiting" ng-click="cancel()">Cancel</button>
+	</div>
+</form>
 </script>

@@ -13,9 +13,14 @@ import java.util.Iterator;
 import java.util.TreeSet;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
@@ -35,6 +40,9 @@ import com.github.justinericscott.docengine.models.Content.Section;
 
 @Entity
 @Table(name = Instance.DB_TBL_INSTANCE)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "DTYPE", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue("Instance")
 public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 	protected static final String STATUS_AUTO_IN = "Automatically Included";
 	protected static final String STATUS_AUTO_OUT = "Automatically Excluded";
@@ -272,6 +280,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 	}
 
 	@Entity
+	@DiscriminatorValue("Document")
 	public static class DocumentInstance extends Instance {
 
 		@JsonManagedReference("section-instance")
@@ -339,6 +348,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 	}
 
 	@Entity
+	@DiscriminatorValue("Section")
 	public static class SectionInstance extends Instance {
 
 		@JsonBackReference("section-instance")
@@ -423,6 +433,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 	}
 
 	@Entity
+	@DiscriminatorValue("Clause")
 	public static class ClauseInstance extends Instance {
 
 		/** Parent Type **/
@@ -525,6 +536,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 	}
 
 	@Entity
+	@DiscriminatorValue("Paragraph")
 	public static class ParagraphInstance extends Instance {
 
 		/** Parent Type **/

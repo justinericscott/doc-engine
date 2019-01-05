@@ -14,9 +14,14 @@ import java.util.Iterator;
 import java.util.TreeSet;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
@@ -43,6 +48,9 @@ import com.github.justinericscott.docengine.annotation.ExcelSheet;
 @Entity
 @ExcelSheet(Content.XLS_SHEET_CONTENT)
 @Table(name = Content.DB_TBL_CONTENT)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "DTYPE", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue("Content")
 public class Content extends AbstractJpaModel implements Comparable<Content> {
 	static final String CONTENT_FLAG_FIRST = "FIRST";
 	static final String CONTENT_FLAG_FIRST_IN_CLAUSE = "1ST_IN_CLAUSE";
@@ -337,6 +345,7 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 	}
 
 	@Entity
+	@DiscriminatorValue("Document")
 	public static class Document extends Content {
 
 		/** Child Type **/
@@ -387,6 +396,7 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 	}
 
 	@Entity
+	@DiscriminatorValue("Section")
 	public static class Section extends Content {
 
 		/** Parent Type **/
@@ -492,6 +502,7 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 	}
 
 	@Entity
+	@DiscriminatorValue("Clause")
 	public static class Clause extends Content {
 		
 		/** Parent Type **/
@@ -589,6 +600,7 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 	}
 
 	@Entity
+	@DiscriminatorValue("Paragraph")
 	public static class Paragraph extends Content {
 		@Transient
 		private boolean isFirst = false;

@@ -107,12 +107,12 @@ public class Contents {
 			setSections(sections);
 		}
 
-//		public Section[] getSectionsArray() {
-//			return sections;
-//		}
+		public Section[] getSections() {
+			return sections;
+		}
 
 		@JsonIgnore
-		public Collection<Section> getSections() {
+		public Collection<Section> getSectionsList() {
 			if (isNotNullOrEmpty(sections)) {
 				return Arrays.asList(sections);
 			}
@@ -149,7 +149,7 @@ public class Contents {
 			return null;
 		}
 
-		private void setClauses(final Collection<Clause> clauses) {
+		public void setClauses(final Collection<Clause> clauses) {
 			if (isNotNullOrEmpty(clauses)) {
 				this.clauses = clauses.toArray(new Clause[clauses.size()]);
 			}

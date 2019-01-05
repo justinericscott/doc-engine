@@ -1,60 +1,64 @@
 <script type="text/ng-template" id="template-detail.html">
-  <form>
-    <div class="modal-header">
-      <h3 class="modal-title">
-        Document Information 
-        <span class="pull-right">Name: {{ selectedDoc.name }}</span>
-      </h3>
-    </div>
-    
-    <div class="modal-body">
+<form class="form-horizontal">
+	<div class="modal-header">
+		<p class="modal-view-header">
+			Document Information <span class="pull-right">{{ selectedDoc.name }}</span>
+		</p>
+	</div>
+	<div class="modal-body" style="margin-bottom: -20px;">
 
-      <div class="well row">
+		<div class="well row">
 
-        <h4 class="text-center modal-view-header">Document Details</h4>
+			<p class="text-center modal-section-header">Document Details</p>
 
-        <div class="col-md-6">
-          <label for="name">Name:</label><br/>
-          <input id="name" class="form-control" ng-model="selectedDoc.name" readonly></input> 
-        </div>
+			<div class="form-group">
+				<label for="name" class="col-sm-2 control-label">Name:</label>
+				<div class="col-sm-4">
+					<input id="name" class="form-control" ng-model="selectedDoc.name" readonly></input>
+				</div>
+				<label for="contentCd" class="col-sm-2 control-label">Content Code:</label>
+				<div class="col-sm-4">
+					<input id="contentCd" class="form-control" ng-model="selectedDoc.contentCd" readonly></input>
+				</div>
+			</div>
 
-        <div class="col-md-6">
-          <label for="contentCd">Content Code:</label><br/>
-          <input id="contentCd" class="form-control" ng-model="selectedDoc.contentCd" readonly></input>
-        </div>
+			<div class="form-group">
+				<label for="description" class="col-sm-2 control-label">Description:</label>
+				<div class="col-sm-10">
+					<input id="description" class="form-control" ng-model="selectedDoc.description" readonly></input>
+				</div>
+			</div>
 
-        <div class="col-md-12">
-          <label for="description">Description:</label><br/>
-          <textarea id="description" class="form-control" ng-model="selectedDoc.description" readonly></textarea>
-        </div>
-
-      </div>      
-
-	  <div class="well row">
-
-		<h4 class="text-center modal-view-header">Template Body (HTML)</h4><br/>
-
-		<div class="col-md-12">
-          <pre><textarea readonly class="form-control" ng-model="selectedDoc.body"></textarea></pre>
 		</div>
 
-	  </div>
+		<div class="well row">
 
-	  <div class="well row">
+			<p class="text-center modal-section-header">Template Body (HTML)</p>
 
-		<h4 class="text-center modal-view-header">Template Style (CSS)</h4><br/>
+			<div class="col-md-12">
+				<pre>
+					<textarea readonly rows="16" class="form-control modal-textarea" ng-model="selectedDoc.body"></textarea>
+				</pre>
+			</div>
 
-		<div class="col-md-12">
-		  <pre><textarea readonly class="form-control" ng-model="selectedDoc.css"></textarea></pre>
 		</div>
 
-      </div>
+		<div class="well row">
 
-    </div>
-        
-    <div class="modal-footer">
-      <button class="btn-lg btn-danger pull-left" ng-click="edit()">Edit Template</button>
-      <button class="btn-lg btn-success" ng-click="close()">Close</button>
-    </div>
-  </form>
+			<p class="text-center modal-section-header">Template Style (CSS)</p>
+
+			<div class="col-md-12">
+				<pre>
+					<textarea readonly rows="16" class="form-control modal-textarea" ng-model="selectedDoc.css"></textarea>
+				</pre>
+			</div>
+
+		</div>
+
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary pull-left" ng-click="edit() && close()">Edit</button>
+		<button class="btn btn-danger" ng-click="close()">Close</button>
+	</div>
+</form>
 </script>

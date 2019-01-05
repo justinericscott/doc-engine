@@ -4,12 +4,11 @@
 	</div>
 </div>
 <!-- Document Selection Grid -->
-<div class="container" ng-controller="GetDocumentSourcesAllGridCtrl" ng-animate>
+<div class="container" ng-controller="GetSectionSourcesForDocumentGridCtrl" ng-animate>
 	<div class="grid-default" ui-grid="gridOptions" ui-grid-selection></div>
 	<button type="button" class="btn btn-primary" ng-show="isSelected()" ng-click="isSelected && open()">Details</button>
-	<a class="btn btn-secondary" role="button" ng-show="isSelected()" href="#/template-library-sections">Sections</a>
+	<a class="btn btn-secondary" role="button" ng-show="isSelected()" href="#/template-library-clauses">Clauses</a>
 </div>
-
 <!-- Modal View Template -->
 <div ng-include="'html/library/template-detail.html'"></div>
 <!-- Modal Edit Template -->

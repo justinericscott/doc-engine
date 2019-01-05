@@ -1,24 +1,13 @@
 body {
 	font-family: Calibri, sans-serif !important;
-	padding-bottom: 25px;
-	padding-top: 50px;
 }
 
 label {
-	padding-top: 15px;
-	font-size: 18px !important;
+	font-size: 14px;
 }
 
 pre {
 	border: none;
-	margin-bottom: -10px;
-	margin-top: -10px;
-	padding-left: 0px;
-	padding-right: 0px;
-}
-
-.cloak {
-	display: none !important;
 }
 
 .center-bold {
@@ -37,15 +26,24 @@ pre {
 	font-size: 26px;
 }
 
-.modal {
-	display: block;
-}
-
 .modal-view-header {
-	font-size: 24px;
+	font-size: 30px;
 	font-weight: bold;
 	margin-bottom: -10px;
-	margin-top: -15px;
+	margin-top: -10px;
+}
+
+.modal-section-header {
+	font-size: 20px;
+	font-weight: bold;
+	margin-top: -10px;	
+}
+
+.modal-textarea {
+	font-size: 12px !important;
+	height: 100%;
+	margin-top: -25px;
+	margin-bottom: -45px !important;
 }
 
 .version {
