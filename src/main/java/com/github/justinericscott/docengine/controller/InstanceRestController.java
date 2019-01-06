@@ -18,10 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-//import com.github.justinericscott.docengine.models.ClauseInstance;
-//import com.github.justinericscott.docengine.models.ClauseInstances;
-//import com.github.justinericscott.docengine.models.DocumentInstance;
-//import com.github.justinericscott.docengine.models.DocumentInstances;
 import com.github.justinericscott.docengine.models.Instance;
 import com.github.justinericscott.docengine.models.Instance.ClauseInstance;
 import com.github.justinericscott.docengine.models.Instance.DocumentInstance;
@@ -32,10 +28,6 @@ import com.github.justinericscott.docengine.models.Instances.ClauseInstances;
 import com.github.justinericscott.docengine.models.Instances.DocumentInstances;
 import com.github.justinericscott.docengine.models.Instances.ParagraphInstances;
 import com.github.justinericscott.docengine.models.Instances.SectionInstances;
-//import com.github.justinericscott.docengine.models.ParagraphInstance;
-//import com.github.justinericscott.docengine.models.ParagraphInstances;
-//import com.github.justinericscott.docengine.models.SectionInstance;
-//import com.github.justinericscott.docengine.models.SectionInstances;
 import com.github.justinericscott.docengine.service.content.InstanceService;
 
 /**
@@ -79,16 +71,6 @@ final class InstanceRestController<T, L> {
 			}
 		}
 
-//		@RequestMapping(method = GET, value = DOCUMENTS + IS_EAGER_KIDS)
-//		final ResponseEntity<DocumentInstances> findAll(@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-//			final DocumentInstances instances = _instances.findAll(DocumentInstances.class, eagerKids);
-//			if (isNotNullOrEmpty(instances)) {
-//				return createResponseForSuccess(instances);
-//			} else {
-//				return createResponseForNoContent(_utils.getURI(_utils.getDestination(INSTANCE + DOCUMENT + DOCUMENTS)), instances);
-//			}
-//		}
-
 		@RequestMapping(method = GET, value = BY_PROJECT_ID + BY_CODE)
 		final ResponseEntity<DocumentInstance> findByProjectIdAndCode(
 				@PathVariable(PARAM_PROJECT_ID) final String projectId, @PathVariable(PARAM_CODE) final String code) {
@@ -101,20 +83,6 @@ final class InstanceRestController<T, L> {
 			}
 		}
 
-//		@RequestMapping(method = GET, value = BY_PROJECT_ID + BY_CODE + IS_EAGER_KIDS)
-//		final ResponseEntity<DocumentInstance> findByProjectIdAndCode(
-//				@PathVariable(PARAM_PROJECT_ID) final String projectId, @PathVariable(PARAM_CODE) final String code,
-//				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-//			final DocumentInstance document = _instances.findByProjectIdAndCode(projectId, code,
-//					DocumentInstance.class, eagerKids);
-//			if (isNotNullOrEmpty(document)) {
-//				return createResponseForSuccess(document);
-//			} else {
-//				return createResponseForNoContent(
-//						_utils.getURI(INSTANCE + DOCUMENT, BY_PROJECT_ID + BY_CODE + IS_EAGER_KIDS), document);
-//			}
-//		}
-
 		@RequestMapping(method = GET, value = BY_ID)
 		final ResponseEntity<DocumentInstance> findOne(@PathVariable(PARAM_ID) final Long id) {
 			final DocumentInstance document = _instances.findOne(id, DocumentInstance.class);
@@ -125,17 +93,6 @@ final class InstanceRestController<T, L> {
 			}
 		}
 
-//		@RequestMapping(method = GET, value = BY_ID + IS_EAGER_KIDS)
-//		final ResponseEntity<DocumentInstance> findOne(@PathVariable(PARAM_ID) final Long id,
-//				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-//			final DocumentInstance document = _instances.findOne(id, DocumentInstance.class, eagerKids);
-//			if (isNotNullOrEmpty(document)) {
-//				return createResponseForSuccess(document);
-//			} else {
-//				return createResponseForNoContent(_utils.getURI(INSTANCE + DOCUMENT, BY_ID + IS_EAGER_KIDS), document);
-//			}
-//		}
-
 		@RequestMapping(method = GET, value = CHILDREN + BY_ID)
 		final ResponseEntity<SectionInstances> getChildren(@PathVariable(PARAM_ID) final Long id) {
 			final SectionInstances sections = _instances.getChildren(id, SectionInstances.class);
@@ -145,18 +102,6 @@ final class InstanceRestController<T, L> {
 				return createResponseForNoContent(_utils.getURI(INSTANCE + DOCUMENT, CHILDREN + BY_ID), sections);
 			}
 		}
-
-//		@RequestMapping(method = GET, value = CHILDREN + BY_ID + IS_EAGER_KIDS)
-//		final ResponseEntity<SectionInstances> getChildren(@PathVariable(PARAM_ID) final Long id,
-//				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-//			final SectionInstances sections = _instances.getChildren(id, SectionInstances.class, eagerKids);
-//			if (isNotNullOrEmpty(sections)) {
-//				return createResponseForSuccess(sections);
-//			} else {
-//				return createResponseForNoContent(_utils.getURI(INSTANCE + DOCUMENT, CHILDREN + BY_ID + IS_EAGER_KIDS),
-//						sections);
-//			}
-//		}
 
 		@RequestMapping(method = GET, value = CHILDREN + BY_PROJECT_ID + BY_CODE)
 		final ResponseEntity<SectionInstances> getChildren(@PathVariable(PARAM_PROJECT_ID) final String projectId,
@@ -169,20 +114,6 @@ final class InstanceRestController<T, L> {
 						sections);
 			}
 		}
-
-//		@RequestMapping(method = GET, value = CHILDREN + BY_PROJECT_ID + BY_CODE + IS_EAGER_KIDS)
-//		final ResponseEntity<SectionInstances> getChildren(@PathVariable(PARAM_PROJECT_ID) final String projectId,
-//				@PathVariable(PARAM_CODE) final String code, @PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-//			final SectionInstances sections = _instances.getChildren(projectId, code, SectionInstances.class,
-//					eagerKids);
-//			if (isNotNullOrEmpty(sections)) {
-//				return createResponseForSuccess(sections);
-//			} else {
-//				return createResponseForNoContent(
-//						_utils.getURI(INSTANCE + DOCUMENT, CHILDREN + BY_PROJECT_ID + BY_CODE + IS_EAGER_KIDS),
-//						sections);
-//			}
-//		}
 
 		@RequestMapping(method = PUT)
 		final ResponseEntity<DocumentInstance> save(@RequestBody final DocumentInstance document) {
@@ -215,20 +146,6 @@ final class InstanceRestController<T, L> {
 			}
 		}
 
-//		@RequestMapping(method = GET, value = BY_PROJECT_ID + BY_CODE + IS_EAGER_KIDS)
-//		final ResponseEntity<SectionInstance> findByProjectIdAndCode(
-//				@PathVariable(PARAM_PROJECT_ID) final String projectId, @PathVariable(PARAM_CODE) final String code,
-//				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-//			final SectionInstance section = _instances.findByProjectIdAndCode(projectId, code,
-//					SectionInstance.class, eagerKids);
-//			if (isNotNullOrEmpty(section)) {
-//				return createResponseForSuccess(section);
-//			} else {
-//				return createResponseForNoContent(
-//						_utils.getURI(INSTANCE + SECTION, BY_PROJECT_ID + BY_CODE + IS_EAGER_KIDS), section);
-//			}
-//		}
-
 		@RequestMapping(method = GET, value = BY_ID)
 		final ResponseEntity<SectionInstance> findOne(@PathVariable(PARAM_ID) final Long id) {
 			final SectionInstance section = _instances.findOne(id, SectionInstance.class);
@@ -239,17 +156,6 @@ final class InstanceRestController<T, L> {
 			}
 		}
 
-//		@RequestMapping(method = GET, value = BY_ID + IS_EAGER_KIDS)
-//		final ResponseEntity<SectionInstance> findOne(@PathVariable(PARAM_ID) final Long id,
-//				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-//			final SectionInstance section = _instances.findOne(id, SectionInstance.class, eagerKids);
-//			if (isNotNullOrEmpty(section)) {
-//				return createResponseForSuccess(section);
-//			} else {
-//				return createResponseForNoContent(_utils.getURI(INSTANCE + SECTION, BY_ID + IS_EAGER_KIDS), section);
-//			}
-//		}
-
 		@RequestMapping(method = GET, value = CHILDREN + BY_ID)
 		final ResponseEntity<ClauseInstances> getChildren(@PathVariable(PARAM_ID) final Long id) {
 			final ClauseInstances clauses = _instances.getChildren(id, ClauseInstances.class);
@@ -259,18 +165,6 @@ final class InstanceRestController<T, L> {
 				return createResponseForNoContent(_utils.getURI(INSTANCE + SECTION, CHILDREN + BY_ID), clauses);
 			}
 		}
-
-//		@RequestMapping(method = GET, value = CHILDREN + BY_ID + IS_EAGER_KIDS)
-//		final ResponseEntity<ClauseInstances> getChildren(@PathVariable(PARAM_ID) final Long id,
-//				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-//			final ClauseInstances clauses = _instances.getChildren(id, ClauseInstances.class, eagerKids);
-//			if (isNotNullOrEmpty(clauses)) {
-//				return createResponseForSuccess(clauses);
-//			} else {
-//				return createResponseForNoContent(_utils.getURI(INSTANCE + SECTION, CHILDREN + BY_ID + IS_EAGER_KIDS),
-//						clauses);
-//			}
-//		}
 
 		@RequestMapping(method = GET, value = CHILDREN + BY_PROJECT_ID + BY_CODE)
 		final ResponseEntity<ClauseInstances> getChildren(@PathVariable(PARAM_PROJECT_ID) final String projectId,
@@ -283,18 +177,6 @@ final class InstanceRestController<T, L> {
 						clauses);
 			}
 		}
-
-//		@RequestMapping(method = GET, value = CHILDREN + BY_PROJECT_ID + BY_CODE + IS_EAGER_KIDS)
-//		final ResponseEntity<ClauseInstances> getChildren(@PathVariable(PARAM_PROJECT_ID) final String projectId,
-//				@PathVariable(PARAM_CODE) final String code, @PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-//			final ClauseInstances clauses = _instances.getChildren(projectId, code, ClauseInstances.class, eagerKids);
-//			if (isNotNullOrEmpty(clauses)) {
-//				return createResponseForSuccess(clauses);
-//			} else {
-//				return createResponseForNoContent(
-//						_utils.getURI(INSTANCE + SECTION, CHILDREN + BY_PROJECT_ID + BY_CODE + IS_EAGER_KIDS), clauses);
-//			}
-//		}
 
 		@RequestMapping(method = PUT)
 		final ResponseEntity<SectionInstance> save(@RequestBody final SectionInstance section) {
@@ -327,20 +209,6 @@ final class InstanceRestController<T, L> {
 			}
 		}
 
-//		@RequestMapping(method = GET, value = BY_PROJECT_ID + BY_CODE + IS_EAGER_KIDS)
-//		final ResponseEntity<ClauseInstance> findByProjectIdAndCode(
-//				@PathVariable(PARAM_PROJECT_ID) final String projectId, @PathVariable(PARAM_CODE) final String code,
-//				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-//			final ClauseInstance clause = _instances.findByProjectIdAndCode(projectId, code,
-//					ClauseInstance.class, eagerKids);
-//			if (isNotNullOrEmpty(clause)) {
-//				return createResponseForSuccess(clause);
-//			} else {
-//				return createResponseForNoContent(
-//						_utils.getURI(INSTANCE + CLAUSE, BY_PROJECT_ID + BY_CODE + IS_EAGER_KIDS), clause);
-//			}
-//		}
-
 		@RequestMapping(method = GET, value = BY_ID)
 		final ResponseEntity<ClauseInstance> findOne(@PathVariable(PARAM_ID) final Long id) {
 			final ClauseInstance clause = _instances.findOne(id, ClauseInstance.class);
@@ -351,17 +219,6 @@ final class InstanceRestController<T, L> {
 			}
 		}
 
-//		@RequestMapping(method = GET, value = BY_ID + IS_EAGER_KIDS)
-//		final ResponseEntity<ClauseInstance> findOne(@PathVariable(PARAM_ID) final Long id,
-//				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-//			final ClauseInstance clause = _instances.findOne(id, ClauseInstance.class, eagerKids);
-//			if (isNotNullOrEmpty(clause)) {
-//				return createResponseForSuccess(clause);
-//			} else {
-//				return createResponseForNoContent(_utils.getURI(INSTANCE + CLAUSE, BY_ID + IS_EAGER_KIDS), clause);
-//			}
-//		}
-
 		@RequestMapping(method = GET, value = CHILDREN + BY_ID)
 		final ResponseEntity<ParagraphInstances> getChildren(@PathVariable(PARAM_ID) final Long id) {
 			final ParagraphInstances paragraphs = _instances.getChildren(id, ParagraphInstances.class);
@@ -371,18 +228,6 @@ final class InstanceRestController<T, L> {
 				return createResponseForNoContent(_utils.getURI(INSTANCE + CLAUSE, CHILDREN + BY_ID), paragraphs);
 			}
 		}
-
-//		@RequestMapping(method = GET, value = CHILDREN + BY_ID + IS_EAGER_KIDS)
-//		final ResponseEntity<ParagraphInstances> getChildren(@PathVariable(PARAM_ID) final Long id,
-//				@PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-//			final ParagraphInstances paragraphs = _instances.getChildren(id, ParagraphInstances.class, eagerKids);
-//			if (isNotNullOrEmpty(paragraphs)) {
-//				return createResponseForSuccess(paragraphs);
-//			} else {
-//				return createResponseForNoContent(_utils.getURI(INSTANCE + CLAUSE, CHILDREN + BY_ID + IS_EAGER_KIDS),
-//						paragraphs);
-//			}
-//		}
 
 		@RequestMapping(method = GET, value = CHILDREN + BY_PROJECT_ID + BY_CODE)
 		final ResponseEntity<ParagraphInstances> getChildren(@PathVariable(PARAM_PROJECT_ID) final String projectId,
@@ -395,20 +240,6 @@ final class InstanceRestController<T, L> {
 						paragraphs);
 			}
 		}
-
-//		@RequestMapping(method = GET, value = CHILDREN + BY_PROJECT_ID + BY_CODE + IS_EAGER_KIDS)
-//		final ResponseEntity<ParagraphInstances> getChildren(@PathVariable(PARAM_PROJECT_ID) final String projectId,
-//				@PathVariable(PARAM_CODE) final String code, @PathVariable(PARAM_EAGER_KIDS) final Boolean eagerKids) {
-//			final ParagraphInstances paragraphs = _instances.getChildren(projectId, code, ParagraphInstances.class,
-//					eagerKids);
-//			if (isNotNullOrEmpty(paragraphs)) {
-//				return createResponseForSuccess(paragraphs);
-//			} else {
-//				return createResponseForNoContent(
-//						_utils.getURI(INSTANCE + CLAUSE, CHILDREN + BY_PROJECT_ID + BY_CODE + IS_EAGER_KIDS),
-//						paragraphs);
-//			}
-//		}
 
 		@RequestMapping(method = PUT)
 		final ResponseEntity<ClauseInstance> save(@RequestBody final ClauseInstance clause) {

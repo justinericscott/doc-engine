@@ -261,7 +261,6 @@ class ContentServiceImpl implements ContentService {
 			LOG.warn("Type must not be null!");
 		}
 		return null;
-//		return findAll(type, false);
 	}
 
 	@Override
@@ -302,7 +301,6 @@ class ContentServiceImpl implements ContentService {
 			LOG.warn("Content code and/or project number must not be null or zero!");
 		}
 		return null;
-//		return findByCode(code, type, false);
 	}
 
 	@Override
@@ -361,7 +359,6 @@ class ContentServiceImpl implements ContentService {
 			}
 		}
 		return null;
-//		return findByCodeLike(like, type, false);
 	}
 
 	@Override
@@ -403,7 +400,6 @@ class ContentServiceImpl implements ContentService {
 			LOG.warn("Content ID must not be null or zero!");
 		}
 		return null;
-//		return findOne(id, type, false);
 	}
 
 	@Override

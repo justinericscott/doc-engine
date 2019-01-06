@@ -97,6 +97,4 @@ public abstract class AbstractJpaModel {
 	public void setUpdatedDt(final Timestamp updatedDt) {
 		this.updatedDt = updatedDt;
 	}
-	
-//	abstract String toHTML();
 }

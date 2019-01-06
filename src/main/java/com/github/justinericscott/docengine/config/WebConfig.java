@@ -4,11 +4,7 @@ import static com.github.justinericscott.docengine.util.Utils.Constants.*;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullOrEmpty;
 import static com.github.justinericscott.docengine.util.Utils.isNotNullOrZero;
 
-//import java.net.InetAddress;
-//import java.net.NetworkInterface;
-//import java.net.SocketException;
 import java.text.SimpleDateFormat;
-//import java.util.Enumeration;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -54,12 +50,6 @@ class WebConfig implements WebMvcConfigurer {
         converters.add(new MappingJackson2HttpMessageConverter(builder.build()));
     }
 
-//	@Override
-//	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-//		LOG.trace("Adding Mapping Jackson 2 HTTP Message Converter...");
-//		converters.add(new MappingJackson2HttpMessageConverter(objectMapper()));
-//	}
-
 	@Bean(AUTOWIRE_QUALIFIER_ENDPOINT)
 	public String getEndpoint() {
 		if (!isNotNullOrEmpty(this.endpoint)) {
@@ -70,15 +60,6 @@ class WebConfig implements WebMvcConfigurer {
 		}
 		return this.endpoint;
 	}
-
-//	@Bean
-//	public ObjectMapper objectMapper() {
-//		
-//		final Hibernate5Module module = new Hibernate5Module();
-//		module.enable(SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS);
-//		return Jackson2ObjectMapperBuilder.json().failOnEmptyBeans(false).indentOutput(true).modulesToInstall(module)
-//				.build();
-//	}
 
 	private String getContextPath() {
 		final String path = _server.getServlet().getContextPath();
@@ -127,39 +108,6 @@ class WebConfig implements WebMvcConfigurer {
 				return name;
 			}
 		}
-		
-//		try {
-//			final Enumeration<NetworkInterface> network = NetworkInterface.getNetworkInterfaces();
-//			String name = null;
-//			while (network.hasMoreElements()) {
-//				final Enumeration<InetAddress> addresses = network.nextElement().getInetAddresses();
-//				while (addresses.hasMoreElements()) {
-//					final InetAddress address = addresses.nextElement();
-//					final String n = address.getHostName();
-//					if (isNotNullOrEmpty(n)) {
-//						LOG.trace("Found a host name: {}.", n);
-//					}
-//				}
-//			}
-//			if (network.hasMoreElements()) {
-//				final Enumeration<InetAddress> addresses = network.nextElement().getInetAddresses();
-//				if (addresses.hasMoreElements()) {
-//					final InetAddress address = addresses.nextElement();
-//					final String n = address.getHostName();
-//					if (isNotNullOrEmpty(n)) {
-//						name = n;
-//						LOG.trace("Setting host name: {}.", name);
-//					}
-//				}
-//			}
-//			if (isNotNullOrEmpty(name)) {
-//				return name;
-//			} else {
-//				throw new IllegalStateException("Could not determine host name!");
-//			}
-//		} catch (final SocketException e) {
-//			LOG.error("Problem obtaining host name!", e);
-//		}
 		return null;
 	}
 }

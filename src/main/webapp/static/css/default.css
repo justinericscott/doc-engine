@@ -22,6 +22,11 @@ pre {
     width: 100%;
 }
 
+.jumbotron {
+	background-color: #7B1600;
+	color: #FFFFFF;
+}
+
 .login {
 	font-size: 26px;
 }

@@ -72,10 +72,6 @@ public class Contents {
 			// Default constructor for Spring
 		}
 
-//		public Documents(final Document[] documents) {
-//			this.documents = documents;
-//		}
-
 		public Documents(final Collection<Document> documents) {
 			this.documents = documents.toArray(new Document[documents.size()]);
 		}
@@ -83,10 +79,6 @@ public class Contents {
 		public Document[] getDocuments() {
 			return documents;
 		}
-
-//		public void setDocuments(final Document[] documents) {
-//			this.documents = documents;
-//		}
 	}
 	
 	public static class Sections {
@@ -99,10 +91,6 @@ public class Contents {
 			// Default constructor for Spring
 		}
 
-//		public Sections(final Section[] sections) {
-//			this.sections = sections;
-//		}
-		
 		public Sections(final Collection<Section> sections) {
 			setSections(sections);
 		}

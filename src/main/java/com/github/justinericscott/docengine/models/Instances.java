@@ -28,17 +28,9 @@ public class Instances {
 		// Default constructor for Spring
 	}
 
-//	public Instances(final Instance[] instances) {
-//		this.instances = instances;
-//	}
-
 	public Instances(final Collection<Instance> instances) {
 		setInstances(instances);
 	}
-
-//	public Instance[] getInstances() {
-//		return instances;
-//	}
 
 	@JsonIgnore
 	public Collection<Instance> getInstances() {
@@ -47,10 +39,6 @@ public class Instances {
 		}
 		return null;
 	}
-
-//	public void setInstances(final Instance[] instances) {
-//		this.instances = instances;
-//	}
 
 	@JsonIgnore
 	public void setInstances(final Collection<Instance> instances) {
@@ -69,17 +57,9 @@ public class Instances {
 			// Default constructor for Spring
 		}
 
-//		public DocumentInstances(final DocumentInstance[] documents) {
-//			this.documents = documents;
-//		}
-
 		public DocumentInstances(final Collection<DocumentInstance> documents) {
 			setDocuments(documents);
 		}
-
-//		public DocumentInstance[] getDocuments() {
-//			return documents;
-//		}
 
 		@JsonIgnore
 		public Collection<DocumentInstance> getDocumentsList() {
@@ -88,10 +68,6 @@ public class Instances {
 			}
 			return null;
 		}
-
-//		public void setDocuments(final DocumentInstance[] documents) {
-//			this.documents = documents;
-//		}
 
 		@JsonIgnore
 		public void setDocuments(final Collection<DocumentInstance> documents) {
@@ -111,17 +87,9 @@ public class Instances {
 			// Default constructor for Spring
 		}
 
-//		public SectionInstances(final SectionInstance[] sections) {
-//			this.sections = sections;
-//		}
-		
 		public SectionInstances(final Collection<SectionInstance> sections) {
 			setSections(sections);
 		}
-
-//		public SectionInstance[] getSections() {
-//			return sections;
-//		}
 
 		@JsonIgnore
 		public Collection<SectionInstance> getSectionsList() {
@@ -130,10 +98,6 @@ public class Instances {
 			}
 			return null;
 		}
-
-//		public void setSections(final SectionInstance[] sections) {
-//			this.sections = sections;
-//		}
 
 		@JsonIgnore
 		public void setSections(final Collection<SectionInstance> sections) {
@@ -153,17 +117,9 @@ public class Instances {
 			// Default constructor for Spring
 		}
 		
-//		public ClauseInstances(final ClauseInstance[] clauses) {
-//			this.clauses = clauses;
-//		}	
-
 		public ClauseInstances(final Collection<ClauseInstance> clauses) {
 			setClauses(clauses);
 		}
-
-//		public ClauseInstance[] getClauses() {
-//			return this.clauses;
-//		}
 
 		@JsonIgnore
 		public Collection<ClauseInstance> getClausesList() {
@@ -172,10 +128,6 @@ public class Instances {
 			}
 			return null;
 		}
-
-//		public void setClauses(final ClauseInstance[] clauses) {
-//			this.clauses = clauses;
-//		}
 
 		@JsonIgnore
 		public void setClauses(final Collection<ClauseInstance> clauses) {
@@ -195,17 +147,9 @@ public class Instances {
 			// Default constructor for Spring
 		}
 
-//		public ParagraphInstances(final ParagraphInstance[] paragraphs) {
-//			this.paragraphs = paragraphs;
-//		}
-
 		public ParagraphInstances(final Collection<ParagraphInstance> paragraphs) {
 			setParagraphs(paragraphs);
 		}
-
-//		public ParagraphInstance[] getParagraphs() {
-//			return paragraphs;
-//		}
 
 		@JsonIgnore
 		public Collection<ParagraphInstance> getParagraphsList() {
@@ -214,10 +158,6 @@ public class Instances {
 			}
 			return null;
 		}
-
-//		public void setParagraphs(final ParagraphInstance[] paragraphs) {
-//			this.paragraphs = paragraphs;
-//		}
 
 		@JsonIgnore
 		public void setParagraphs(final Collection<ParagraphInstance> paragraphs) {

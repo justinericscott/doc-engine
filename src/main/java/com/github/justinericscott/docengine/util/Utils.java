@@ -816,10 +816,8 @@ public class Utils {
 		private static final String ATTR_CSS_TYPE = "type=\"%s\"";
 		private static final String BRACKET_CLOSE = ">";
 		private static final String BRACKET_OPEN = "<";
-//		private static final String HEADER_HTML5 = "<!DOCTYPE html>";
 		private static final String HEADER_XHTML_STRICT = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">";
 		private static final String NAMESPACE = "xmlns=\"http://www.w3.org/1999/xhtml\"";
-//		private static final String NON_BREAKING_SPACE = "&nbsp;";
 		private static final String XML_NON_BREAKING_SPACE = "&#160;";
 		private static final String SLASH = "/";
 

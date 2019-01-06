@@ -93,9 +93,7 @@ public class TokenDefinition extends AbstractJpaModel implements Comparable<Toke
 
 	public TokenDefinition(final TokenDefinition token) {
 		if (isNotNullOrEmpty(token)) {
-//			this.id = token.getId();
 			this.name = token.getName();
-//			this.tokenCd = token.getTokenCd();
 			this.documentCd = token.getDocumentCd();
 			this.phase = token.getPhase();
 			this.description = token.getDescription();
@@ -293,7 +291,6 @@ public class TokenDefinition extends AbstractJpaModel implements Comparable<Toke
 		return this.getTokenCd().compareTo(o.getTokenCd());
 	}
 	
-//	@Override
 	public String toHTML() {		
 		return toString();
 	}
