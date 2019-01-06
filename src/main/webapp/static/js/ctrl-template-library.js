@@ -2,9 +2,15 @@
 
 /* Angular.js Controller Declaration */
 var ctrlTemplateLibrary = angular.module('ctrlTemplateLibrary', []);
+var isComplex = false;
+var isDocument = false;
 var isSaved = false;
 var isSelected = false;
 var selection = null;
+var selectedDocument = null;
+var selectedSection = null;
+var selectedClause = null;
+
 var updateUi = function(window) {
 	if (isSaved) {
 		window.location.reload();
@@ -20,11 +26,11 @@ ctrlTemplateLibrary.controller(
 		'$http', 
 		'$window', 
 		function($scope, $http, $window) {
+			isSelected = false;
 			$http.get( /* Get all Document Sources via REST */
 				"/doc-engine/content/document/documents"
 			).success(
 				function(response) {
-					selection = null;
 					$scope.gridOptions.data = response.documents;	
 				}
 			);
@@ -46,13 +52,30 @@ ctrlTemplateLibrary.controller(
 							if (row.isSelected) {
 								isSelected = true;
 								selection = row.entity;
+								selectedDocument = selection;
+								if (selection.category == "COMPLEX") {
+									isComplex = true;
+								} else {
+									isComplex = false;
+								}
+								if (selection.discriminator == "Document") {
+									isDocument = true;
+								} else {
+									isDocument = false;
+								}
 							} else {
+								isComplex = false;
+								isDocument = false;
 								isSelected = false;
 								selection = null;
+								selectedDocument = null;
 							}					
 						}
 					);
 				}
+			};
+			$scope.isComplex = function () {
+				return isComplex;
 			};
 			$scope.isSelected = function () {
 				return isSelected;
@@ -69,19 +92,19 @@ ctrlTemplateLibrary.controller(
 		'$http',
 		'$window',
 		function($scope, $http, $window) {
+			isSelected = false;
 			$http.get( /* Get all Section Sources for a specific Document via REST */
-					"/doc-engine/content/document/children/id/" + selection.id
+					"/doc-engine/content/document/children/id/" + selectedDocument.id
 			).success(
 				function(response) { 
-					selection = null;
 					$scope.gridOptions.data = response.sections;	
 				}
 			);
 			$scope.gridOptions = { /* Grid options to display the REST response */
 				columnDefs: [
-					{ name: 'Content Code',	field: 'contentCd', 	width: '25%' },
-					{ name: 'Name',			field: 'name', 			width: '15%' },
-					{ name: 'Description',	field: 'description', 	width: '60%' }
+					{ name: 'Content Code',		field: 'contentCd', 	width: '25%' },
+					{ name: 'Section Number',	field: 'contentNumber',	width: '15%' },
+					{ name: 'Section Header',	field: 'body',		 	width: '60%' }
 				],
 				/* enableFiltering: true, */
 				enableRowHeaderSelection: false,
@@ -95,13 +118,30 @@ ctrlTemplateLibrary.controller(
 							if (row.isSelected) {
 								isSelected = true;
 								selection = row.entity;
+								selectedSection = selection;
+								if (selection.category == "COMPLEX") {
+									isComplex = true;
+								} else {
+									isComplex = false;
+								}						
+								if (selection.discriminator == "Document") {
+									isDocument = true;
+								} else {
+									isDocument = false;
+								}
 							} else {
+								isComplex = false;
+								isDocument = false;
 								isSelected = false;
 								selection = null;
+								selectedSection = null;
 							}					
 						}
 					);
 				}
+			};
+			$scope.isComplex = function () {
+				return isComplex;
 			};
 			$scope.isSelected = function () {
 				return isSelected;
@@ -118,8 +158,9 @@ ctrlTemplateLibrary.controller(
 		'$http',
 		'$window',
 		function($scope, $http, $window) {
+			isSelected = false;
 			$http.get( /* Get all Clause Sources for a specific Section via REST */
-					"/doc-engine/content/section/children/id/" + selection.id
+					"/doc-engine/content/section/children/id/" + selectedSection.id
 			).success(
 				function(response) { 
 					$scope.gridOptions.data = response.clauses;	
@@ -127,9 +168,9 @@ ctrlTemplateLibrary.controller(
 			);
 			$scope.gridOptions = { /* Grid options to display the REST response */
 				columnDefs: [
-					{ name: 'Content Code',	field: 'contentCd', 	width: '25%' },
-					{ name: 'Name',			field: 'name', 			width: '15%' },
-					{ name: 'Description',	field: 'description', 	width: '60%' }
+					{ name: 'Content Code',		field: 'contentCd', 	width: '25%' },
+					{ name: 'Clause Number',	field: 'contentNumber',	width: '15%' },
+					{ name: 'Clause Header',	field: 'body',		 	width: '60%' }
 				],
 				/* enableFiltering: true, */
 				enableRowHeaderSelection: false,
@@ -143,13 +184,30 @@ ctrlTemplateLibrary.controller(
 							if (row.isSelected) {
 								isSelected = true;
 								selection = row.entity;
+								selectedClause = selection;
+								if (selection.category == "COMPLEX") {
+									isComplex = true;
+								} else {
+									isComplex = false;
+								}
+								if (selection.discriminator == "Document") {
+									isDocument = true;
+								} else {
+									isDocument = false;
+								}
 							} else {
+								isComplex = false;
+								isDocument = false;
 								isSelected = false;
 								selection = null;
+								selectedClause = null;
 							}					
 						}
 					);
 				}
+			};
+			$scope.isComplex = function () {
+				return isComplex;
 			};
 			$scope.isSelected = function () {
 				return isSelected;
@@ -166,19 +224,19 @@ ctrlTemplateLibrary.controller(
 		'$http',
 		'$window',
 		function($scope, $http, $window) {
+			isSelected = false;
 			$http.get( /* Get all Paragraph Sources for a specific Clause via REST */
-					"/doc-engine/content/clause/children/id/" + selection.id
+					"/doc-engine/content/clause/children/id/" + selectedClause.id
 			).success(
 				function(response) { 
-					selection = null;
 					$scope.gridOptions.data = response.paragraphs;	
 				}
 			);
 			$scope.gridOptions = { /* Grid options to display the REST response */
 				columnDefs: [
-					{ name: 'Content Code',	field: 'contentCd', 	width: '25%' },
-					{ name: 'Name',			field: 'name', 			width: '15%' },
-					{ name: 'Description',	field: 'description', 	width: '60%' }
+					{ name: 'Content Code',		field: 'contentCd', 	width: '25%' },
+					{ name: 'Order By',			field: 'orderBy', 		width: '15%' },
+					{ name: 'Flags',			field: 'flags',		 	width: '60%' }
 				],
 				/* enableFiltering: true, */
 				enableRowHeaderSelection: false,
@@ -196,6 +254,11 @@ ctrlTemplateLibrary.controller(
 								isSelected = false;
 								selection = null;
 							}					
+							if (selection.discriminator == "Document") {
+								isDocument = true;
+							} else {
+								isDocument = false;
+							}
 						}
 					);
 				}
@@ -243,9 +306,11 @@ ctrlTemplateLibrary.controller(
 		'$scope', 
 		'$modal', 
 		'$modalInstance',
-		'$http',
-		function ($scope, $modal, $modalInstance, $http) {
+		function ($scope, $modal, $modalInstance) {
 			$scope.selection = selection;
+			$scope.isDocument = function () {
+				return isDocument;
+			};
 			$scope.cancel = function () {
 				$modalInstance.dismiss('cancel');
 			};
@@ -262,23 +327,6 @@ ctrlTemplateLibrary.controller(
 					}
 				);
 			};
-			$scope.back = function () { /* Opens the modal view */
-				var modalInstance = $modal.open(
-					{
-						templateUrl: 'template-detail.html',
-						controller: 'DocumentSourceModalViewCtrl',
-						size: 'lg'
-					}
-				);
-				modalInstance.result.then(
-		    		function(result) {
-	    				updateUi($window);
-	    			}, 
-	    			function(result) {
-	    				updateUi($window);
-	    			}
-    			);
-			};	
 		}
 	]
 );
@@ -288,10 +336,12 @@ ctrlTemplateLibrary.controller(
 	'DocumentSourceModalEditCtrl', 
 	[ 
 		'$scope', 
-		'$modalInstance', 
-		'$http', 
-		function ($scope, $modalInstance, $http) {
+		'$modalInstance',  
+		function ($scope, $modalInstance) {
 			$scope.docToEdit = angular.copy(selection);
+			$scope.isDocument = function () {
+				return isDocument;
+			};
 			$scope.cancel = function () { /* Cancels the Modal edit view */
 				$scope.docEditForm.$cancel();
 				$modalInstance.dismiss('cancel');

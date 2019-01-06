@@ -38,9 +38,9 @@ docEngine.config(
 				}
 			)
 	    	.when( /* Content Repository Routing */
-    			'/template-library', 
+    			'/template-library-documents', 
     			{
-    				templateUrl: 'html/library/template-library.html',
+    				templateUrl: 'html/library/template-library-documents.html',
     				controller: 'DocumentSourceModalServiceCtrl'
 				}
 			)

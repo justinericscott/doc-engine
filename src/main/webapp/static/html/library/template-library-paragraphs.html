@@ -1,11 +1,11 @@
 <div class="container">
 	<div class="jumbotron">
-		<h1>Template Library</h1>
+		<h1>Paragraph Template Library</h1>
 	</div>
 </div>
 <!-- Document Selection Grid -->
 <div class="container" ng-controller="GetParagraphSourcesForClauseGridCtrl" ng-animate>
-	<div class="grid-default" ui-grid="gridOptions" ng-click="isSelected && open()" ui-grid-selection></div>
+	<div class="grid-default" ui-grid="gridOptions" ng-click="isSelected() && open()" ui-grid-selection></div>
 </div>
 <!-- Modal View Template -->
 <div ng-include="'html/library/template-detail.html'"></div>

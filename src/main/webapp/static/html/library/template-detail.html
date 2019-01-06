@@ -2,7 +2,7 @@
 <form class="form-horizontal">
 	<div class="modal-header">
 		<p class="modal-view-header">
-			Document Information <span class="pull-right">{{ selectedDoc.name }}</span>
+			Document Information <span class="pull-right">{{ selection.name }}</span>
 		</p>
 	</div>
 	<div class="modal-body" style="margin-bottom: -20px;">
@@ -14,18 +14,18 @@
 			<div class="form-group">
 				<label for="name" class="col-sm-2 control-label">Name:</label>
 				<div class="col-sm-4">
-					<input id="name" class="form-control" ng-model="selectedDoc.name" readonly></input>
+					<input id="name" class="form-control" ng-model="selection.name" readonly></input>
 				</div>
 				<label for="contentCd" class="col-sm-2 control-label">Content Code:</label>
 				<div class="col-sm-4">
-					<input id="contentCd" class="form-control" ng-model="selectedDoc.contentCd" readonly></input>
+					<input id="contentCd" class="form-control" ng-model="selection.contentCd" readonly></input>
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label for="description" class="col-sm-2 control-label">Description:</label>
 				<div class="col-sm-10">
-					<input id="description" class="form-control" ng-model="selectedDoc.description" readonly></input>
+					<input id="description" class="form-control" ng-model="selection.description" readonly></input>
 				</div>
 			</div>
 
@@ -37,19 +37,19 @@
 
 			<div class="col-md-12">
 				<pre>
-					<textarea readonly rows="16" class="form-control modal-textarea" ng-model="selectedDoc.body"></textarea>
+					<textarea readonly rows="16" class="form-control modal-textarea" ng-model="selection.body"></textarea>
 				</pre>
 			</div>
 
 		</div>
 
-		<div class="well row">
+		<div class="well row" ng-show="isDocument()">
 
 			<p class="text-center modal-section-header">Template Style (CSS)</p>
 
 			<div class="col-md-12">
 				<pre>
-					<textarea readonly rows="16" class="form-control modal-textarea" ng-model="selectedDoc.css"></textarea>
+					<textarea readonly rows="16" class="form-control modal-textarea" ng-model="selection.css"></textarea>
 				</pre>
 			</div>
 

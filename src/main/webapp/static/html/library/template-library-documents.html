@@ -1,13 +1,13 @@
 <div class="container">
 	<div class="jumbotron">
-		<h1>Template Library</h1>
+		<h1>Document Template Library</h1>
 	</div>
 </div>
 <!-- Document Selection Grid -->
 <div class="container" ng-controller="GetDocumentSourcesAllGridCtrl" ng-animate>
 	<div class="grid-default" ui-grid="gridOptions" ui-grid-selection></div>
-	<button type="button" class="btn btn-primary" ng-show="isSelected()" ng-click="isSelected && open()">Details</button>
-	<a class="btn btn-secondary" role="button" ng-show="isSelected()" href="#/template-library-sections">Sections</a>
+	<button type="button" class="btn btn-primary" ng-show="isSelected()" ng-click="isSelected() && open()">Details</button>
+	<a class="btn btn-secondary" role="button" ng-show="isSelected() && isComplex()" href="#/template-library-sections">Sections</a>
 </div>
 
 <!-- Modal View Template -->
