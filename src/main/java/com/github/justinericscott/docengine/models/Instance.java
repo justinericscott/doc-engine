@@ -5,7 +5,7 @@ import static com.github.justinericscott.docengine.util.Utils.HTML.P;
 
 import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.*;
-import static javax.persistence.GenerationType.AUTO;
+import static javax.persistence.GenerationType.IDENTITY;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,6 +21,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
@@ -53,6 +54,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 	protected static final String[] STATUSES_OUT = { STATUS_AUTO_OUT, STATUS_MAN_OUT, STATUS_PENDING };
 	protected static final String DB_TBL_INSTANCE = "INSTANCE";
 	private static final String DB_SEQ_INSTANCE = DB_TBL_INSTANCE + "_SQ";
+	private static final String DB_COL_CONTENT_ID = "CONTENT_ID";
 	private static final String DB_COL_CUSTOM_BODY = "CUSTOM_BODY_TXT";
 	private static final String DB_COL_CUSTOM_CONTENT_NBR = "CUSTOM_CONTENT_NBR";
 	private static final String DB_COL_INSTANCE_ID = DB_TBL_INSTANCE + "_ID";
@@ -65,10 +67,12 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 	private static final Logger LOG = LoggerFactory.getLogger(Instance.class);
 
 	@Column(name = DB_COL_INSTANCE_ID, unique = true)
-	@GeneratedValue(strategy = AUTO, generator = DB_SEQ_INSTANCE)
+	@GeneratedValue(strategy = IDENTITY, generator = DB_SEQ_INSTANCE)
 	@Id
 	@SequenceGenerator(name = DB_SEQ_INSTANCE, sequenceName = DB_SEQ_INSTANCE)
 	protected Long id;
+	@Column(name = DB_COL_PARENT, length = 4000)
+	private Long parentId;
 	@Column(name = DB_COL_PROJECT, length = 100, nullable = false)
 	protected String projectId;
 	@Column(name = DB_COL_CUSTOM_BODY, length = 4000)
@@ -93,7 +97,8 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 	protected String markedForActionComment;
 
 	@OrderColumn(name = DB_COL_ORDER)
-	@ManyToOne(targetEntity = Content.class, cascade = REFRESH, optional = false)
+	@ManyToOne(cascade = REFRESH, optional = false)
+	@JoinColumn(name = DB_COL_CONTENT_ID)
 	protected Content content;
 
 	public Instance() {
@@ -134,6 +139,14 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 
 	public void setId(final Long id) {
 		this.id = id;
+	}
+
+	public Long getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(Long parentId) {
+		this.parentId = parentId;
 	}
 
 	public String getProjectId() {
@@ -283,8 +296,9 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 	public static class DocumentInstance extends Instance {
 
 		@JsonManagedReference("section-instance")
+		@OneToMany(cascade = ALL)
 		@OrderColumn(name = DB_COL_ORDER)
-		@OneToMany(targetEntity = SectionInstance.class, cascade = ALL, mappedBy = JPA_MAPPED_BY_DOCUMENT)
+		@JoinColumn(name = DB_COL_PARENT)
 		private Collection<SectionInstance> sections = new TreeSet<SectionInstance>();
 		
 		public DocumentInstance() {
@@ -294,7 +308,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 		public DocumentInstance(final Document document, final String projectId) {
 			this.projectId = projectId;
 			if (isNotNullOrEmpty(document)) {
-				super.setContent(document);
+				setDocument(document);
 				final Collection<Section> sections = document.getSections();
 				if (isNotNullOrEmpty(sections)) {
 					instantiateSections(sections);
@@ -308,7 +322,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 		}
 
 		public void setDocument(final Document document) {
-			super.setContent(document);
+			setContent(document);
 		}
 
 		public void addSection(final SectionInstance section) {
@@ -340,7 +354,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 		void instantiateSections(final Collection<Section> sections) {
 			if (isNotNullOrEmpty(sections)) {
 				for (final Section section : sections) {
-					this.addSection(new SectionInstance(section, this.getProjectId()));
+					addSection(new SectionInstance(section, getProjectId()));
 				}
 			}
 		}	
@@ -351,12 +365,14 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 	public static class SectionInstance extends Instance {
 
 		@JsonBackReference("section-instance")
-		@ManyToOne(targetEntity = DocumentInstance.class, fetch = LAZY, cascade = REFRESH)
+		@ManyToOne(cascade = REFRESH, fetch = LAZY)
+		@JoinColumn(name = DB_COL_PARENT, insertable = false, updatable = false)
 		private DocumentInstance document;
 
 		@JsonManagedReference("clause-instance")
+		@OneToMany(cascade = ALL)
 		@OrderColumn(name = DB_COL_ORDER)
-		@OneToMany(targetEntity = ClauseInstance.class, cascade = ALL, mappedBy = JPA_MAPPED_BY_SECTION)
+		@JoinColumn(name = DB_COL_PARENT)
 		private Collection<ClauseInstance> clauses = new TreeSet<ClauseInstance>();
 
 		public SectionInstance() {
@@ -369,7 +385,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 
 		public SectionInstance(final Section section, final String projectId) {
 			this(projectId);
-			super.setContent(section);
+			setSection(section);
 			final Collection<Clause> clauses = section.getClauses();
 			if (isNotNullOrEmpty(clauses)) {
 				instantiateClauses(clauses);
@@ -382,7 +398,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 		}
 
 		public void setSection(final Section section) {
-			super.setContent(section);
+			setContent(section);
 		}
 
 		public DocumentInstance getDocument() {
@@ -413,7 +429,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 		void instantiateClauses(final Collection<Clause> clauses) {
 			if (isNotNullOrEmpty(clauses)) {
 				for (final Clause clause : clauses) {
-					this.addClause(new ClauseInstance(clause, this.getProjectId()));
+					addClause(new ClauseInstance(clause, getProjectId()));
 				}
 			}
 		}
@@ -437,13 +453,15 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 
 		/** Parent Type **/
 		@JsonBackReference("clause-instance")
-		@ManyToOne(targetEntity = SectionInstance.class, fetch = LAZY, cascade = REFRESH)
+		@ManyToOne(cascade = REFRESH, fetch = LAZY)
+		@JoinColumn(name = DB_COL_PARENT, insertable = false, updatable = false)
 		private SectionInstance section;
 
 		/** Child Type **/
 		@JsonManagedReference("paragraph-instance")
+		@OneToMany(cascade = ALL)
 		@OrderColumn(name = DB_COL_ORDER)
-		@OneToMany(targetEntity = ParagraphInstance.class, cascade = ALL, mappedBy = JPA_MAPPED_BY_CLAUSE)
+		@JoinColumn(name = DB_COL_PARENT)
 		private Collection<ParagraphInstance> paragraphs = new TreeSet<ParagraphInstance>();
 
 		public ClauseInstance() {
@@ -456,7 +474,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 
 		public ClauseInstance(final Clause clause, final String projectId) {
 			this(projectId);
-			super.setContent(clause);
+			setClause(clause);
 			final Collection<Paragraph> paragraphs = clause.getParagraphs();
 			if (isNotNullOrEmpty(paragraphs)) {
 				instantiateParagraphs(paragraphs);
@@ -469,7 +487,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 		}
 
 		public void setClause(final Clause clause) {
-			super.setContent(clause);
+			setContent(clause);
 		}
 
 		public SectionInstance getSection() {
@@ -483,7 +501,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 		public void addParagraph(final ParagraphInstance paragraph) {
 			if (isNotNullOrEmpty(paragraph)) {
 				paragraph.setClause(this);
-				this.paragraphs.add(paragraph);
+				paragraphs.add(paragraph);
 			}
 		}
 
@@ -500,7 +518,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 		void instantiateParagraphs(final Collection<Paragraph> paragraphs) {
 			if (isNotNullOrEmpty(paragraphs)) {
 				for (final Paragraph paragraph : paragraphs) {
-					this.addParagraph(new ParagraphInstance(paragraph, this.getProjectId()));
+					addParagraph(new ParagraphInstance(paragraph, getProjectId()));
 				}
 			}
 		}
@@ -540,7 +558,8 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 
 		/** Parent Type **/
 		@JsonBackReference("paragraph-instance")
-		@ManyToOne(targetEntity = ClauseInstance.class, fetch = LAZY, cascade = REFRESH)
+		@ManyToOne(cascade = REFRESH, fetch = LAZY)
+		@JoinColumn(name = DB_COL_PARENT, insertable = false, updatable = false)
 		private ClauseInstance clause;
 
 		public ParagraphInstance() {
@@ -553,7 +572,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 
 		public ParagraphInstance(final Paragraph paragraph, final String projectId) {
 			this(projectId);
-			super.setContent(paragraph);
+			setParagraph(paragraph);
 		}
 
 		public ParagraphInstance(final Paragraph paragraph, final String projectId, final String body) {
@@ -572,7 +591,7 @@ public class Instance extends AbstractJpaModel implements Comparable<Instance> {
 		}
 
 		public void setParagraph(final Paragraph paragraph) {
-			super.setContent(paragraph);
+			setContent(paragraph);
 		}
 
 		public ClauseInstance getClause() {

@@ -3,16 +3,12 @@
  */
 package com.github.justinericscott.docengine.service.content;
 
-//import com.github.justinericscott.docengine.models.Clause;
 import com.github.justinericscott.docengine.models.Content;
 import com.github.justinericscott.docengine.models.Content.Clause;
 import com.github.justinericscott.docengine.models.Content.Document;
 import com.github.justinericscott.docengine.models.Content.Paragraph;
 import com.github.justinericscott.docengine.models.Content.Section;
 import com.github.justinericscott.docengine.models.Contents;
-//import com.github.justinericscott.docengine.models.Document;
-//import com.github.justinericscott.docengine.models.Paragraph;
-//import com.github.justinericscott.docengine.models.Section;
 
 /**
  * @author Justin Scott

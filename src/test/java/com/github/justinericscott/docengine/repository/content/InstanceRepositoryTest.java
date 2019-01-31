@@ -44,6 +44,7 @@ public class InstanceRepositoryTest extends AbstractTest {
 		content = _contents.save(content);
 		assertNotNull(content);
 		assertTrue(content.isValid(true));
+		System.err.println("Content ID: " + content.getId());
 		Instance instance = new Instance(content, TEST_PROJECT_ID_VALUE);
 		instance = _instances.save(instance);
 		assertNotNull(instance);

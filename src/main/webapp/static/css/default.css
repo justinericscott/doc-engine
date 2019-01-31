@@ -25,6 +25,8 @@ pre {
 .jumbotron {
 	background-color: #7B1600;
 	color: #FFFFFF;
+	margin-top: 15px;
+	text-align: center;
 }
 
 .login {
@@ -58,6 +60,10 @@ pre {
 
 .viewport-footer {
 	color: grey;
+}
+
+.welcome {
+	text-align: left;
 }
 
 .wordwrap { 

@@ -138,10 +138,15 @@ public class ContentServiceTest extends AbstractTest {
 		Document document = createDocument();
 		Long id = document.getId();
 		String code = document.getContentCd();
+		assertFalse(document.getSections().isEmpty());
 		document = _contents.findOne(id, Document.class);
 		assertNotNull(document);
 		assertTrue(document.isValid(true));
 		assertTrue(Document.class.equals(document.getClass()));
+		assertFalse(document.getSections().isEmpty());
+		
+		
+		
 		document = _contents.findByCode(code, Document.class);
 		assertNotNull(document);
 		assertTrue(document.isValid(true));

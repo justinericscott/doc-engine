@@ -5,7 +5,7 @@ import static com.github.justinericscott.docengine.util.Utils.HTML.*;
 
 import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.*;
-import static javax.persistence.GenerationType.AUTO;
+import static javax.persistence.GenerationType.IDENTITY;
 import static javax.persistence.TemporalType.DATE;
 
 import java.util.Collection;
@@ -22,6 +22,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
@@ -46,11 +47,11 @@ import com.github.justinericscott.docengine.annotation.ExcelSheet;
  *         ContentJpaImpl Data Model
  */
 @Entity
-@ExcelSheet(Content.XLS_SHEET_CONTENT)
 @Table(name = Content.DB_TBL_CONTENT)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "DTYPE", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("Content")
+@ExcelSheet(Content.XLS_SHEET_CONTENT)
 public class Content extends AbstractJpaModel implements Comparable<Content> {
 	static final String CONTENT_FLAG_FIRST = "FIRST";
 	static final String CONTENT_FLAG_FIRST_IN_CLAUSE = "1ST_IN_CLAUSE";
@@ -79,7 +80,7 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 	private static final Logger LOG = LoggerFactory.getLogger(Content.class);
 
 	@Column(name = DB_COL_CONTENT_ID, unique = true)
-	@GeneratedValue(strategy = AUTO, generator = DB_SEQ_CONTENT)
+	@GeneratedValue(strategy = IDENTITY, generator = DB_SEQ_CONTENT)
 	@Id
 	@SequenceGenerator(name = DB_SEQ_CONTENT, sequenceName = DB_SEQ_CONTENT)
 	protected Long id;
@@ -349,8 +350,9 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 
 		/** Child Type **/
 		@JsonManagedReference("sections")
-		@OneToMany(cascade = ALL, mappedBy = JPA_MAPPED_BY_DOCUMENT, targetEntity = Section.class)
+		@OneToMany(cascade = ALL)
 		@OrderColumn(name = DB_COL_ORDER)
+		@JoinColumn(name = DB_COL_PARENT)
 		private Collection<Section> sections = new TreeSet<Section>();
 
 		public Document() {
@@ -400,13 +402,15 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 
 		/** Parent Type **/
 		@JsonBackReference("sections")
-		@ManyToOne(cascade = REFRESH, fetch = LAZY, targetEntity = Document.class)
+		@ManyToOne(cascade = REFRESH, fetch = LAZY)
+		@JoinColumn(name = DB_COL_PARENT, insertable = false, updatable = false)
 		private Document document;
 
 		/** Child Type **/
 		@JsonManagedReference("clauses")
-		@OneToMany(cascade = ALL, mappedBy = JPA_MAPPED_BY_SECTION, targetEntity = Clause.class)
+		@OneToMany(cascade = ALL)
 		@OrderColumn(name = DB_COL_ORDER)
+		@JoinColumn(name = DB_COL_PARENT)
 		private Collection<Clause> clauses = new TreeSet<Clause>();
 
 		public Section() {
@@ -506,13 +510,15 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 		
 		/** Parent Type **/
 		@JsonBackReference("clauses")
-		@ManyToOne(cascade = REFRESH, fetch = LAZY, targetEntity = Section.class)
+		@ManyToOne(cascade = REFRESH, fetch = LAZY)
+		@JoinColumn(name = DB_COL_PARENT, insertable = false, updatable = false)
 		private Section section;
 
 		/** Child Type **/
 		@JsonManagedReference("paragraphs")
-		@OneToMany(cascade = ALL, mappedBy = JPA_MAPPED_BY_CLAUSE, targetEntity = Paragraph.class)
+		@OneToMany(cascade = ALL)
 		@OrderColumn(name = DB_COL_ORDER)
+		@JoinColumn(name = DB_COL_PARENT)
 		private Collection<Paragraph> paragraphs = new TreeSet<Paragraph>();
 
 		public Clause() {
@@ -617,7 +623,8 @@ public class Content extends AbstractJpaModel implements Comparable<Content> {
 		private boolean isTable = false;
 
 		@JsonBackReference("paragraphs")
-		@ManyToOne(cascade = REFRESH, fetch = LAZY, targetEntity = Clause.class)
+		@ManyToOne(cascade = REFRESH, fetch = LAZY)
+		@JoinColumn(name = DB_COL_PARENT, insertable = false, updatable = false)
 		private Clause clause;
 
 		public Paragraph() {

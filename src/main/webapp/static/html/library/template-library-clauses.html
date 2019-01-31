@@ -7,7 +7,7 @@
 <div class="container" ng-controller="GetClauseSourcesForSectionGridCtrl" ng-animate>
 	<div class="grid-default" ui-grid="gridOptions" ui-grid-selection></div>
 	<button type="button" class="btn btn-primary" ng-show="isSelected()" ng-click="isSelected() && open()">Details</button>
-	<a class="btn btn-secondary" role="button" ng-show="isSelected() && isComplex)" href="#/template-library-paragraphs">Paragraphs</a>
+	<a class="btn btn-secondary" role="button" ng-show="isSelected() && isComplex()" href="#/template-library-paragraphs">Paragraphs</a>
 </div>
 <!-- Modal View Template -->
 <div ng-include="'html/library/template-detail.html'"></div>

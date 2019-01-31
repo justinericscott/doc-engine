@@ -228,7 +228,6 @@ public class DocumentInstanceRepositoryTest extends AbstractTest {
 		documentInstance = _instances.save(documentInstance);
 		assertNotNull(documentInstance);
 		assertTrue(documentInstance.isValid(true));
-		Long id = documentInstance.getId();
 		assertFalse(documentInstance.getSections().isEmpty());
 		SectionInstance sectionInstance = documentInstance.getSections().iterator().next();		
 		assertNotNull(sectionInstance);
@@ -245,11 +244,15 @@ public class DocumentInstanceRepositoryTest extends AbstractTest {
 		assertTrue(paragraphInstance.isValid(true));
 		assertNotNull(paragraphInstance.getClause());
 		assertTrue(paragraphInstance.getClause().isValid(true));	
+		Long id = documentInstance.getId();
 		documentInstance = _instances.findById(id).get();
 		assertNotNull(documentInstance);
 		assertTrue(documentInstance.isValid(true));
 		_instances.deleteById(id);
-		_documents.deleteById(document.getId());
+		assertFalse(_instances.findById(id).isPresent());
+		id = document.getId();
+		_documents.deleteById(id);
+		assertFalse(_documents.findById(id).isPresent());
 	}
 	
 	@Test
